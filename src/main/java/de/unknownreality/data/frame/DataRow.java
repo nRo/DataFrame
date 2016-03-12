@@ -117,7 +117,44 @@ public class DataRow implements Row<Comparable> {
             throw new IllegalArgumentException("no float value in col " + headerName + " (" + value + ")");
         }
     }
+    @Override
+    public Long getLong(int index) {
+        Object value = get(index);
+        try {
+            return Number.class.cast(value).longValue();
+        } catch (Exception e) {
+            throw new IllegalArgumentException("no float value in col " + index + " (" + value + ")");
+        }
+    }
 
+    @Override
+    public Long getLong(String headerName) {
+        Object value = get(headerName);
+        try {
+            return Number.class.cast(value).longValue();
+        } catch (Exception e) {
+            throw new IllegalArgumentException("no float value in col " + headerName + " (" + value + ")");
+        }
+    }
+
+    public boolean isNA(String headerName){
+        return get(headerName) ==  Values.NA || get(headerName) == null;
+    }
+
+    public boolean isNA(int index){
+        return get(index) ==  Values.NA || get(index) == null;
+    }
+    @Override
+    public<T> T get(String headerName, Class<T> cl) {
+        Object value = get(headerName);
+        try {
+            return cl.cast(value);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("no "+cl.getName()+" value in col " + headerName + " (" + value + ")");
+        }
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < values.length; i++) {

@@ -197,10 +197,25 @@ public class BooleanColumn implements DataColumn<Boolean> {
         throw new UnsupportedOperationException("appendAll is not supported by data column");
     }
 
+    @Override
+    public void appendNA() {
+        append(false);
+    }
+
+    @Override
+    public boolean isNA(int index) {
+        return false;
+    }
+
+    @Override
+    public void setNA(int index) {
+        set(index,false);
+    }
 
     @Override
     public void clear() {
         bitSet.clear();
         size = 0;
     }
+
 }

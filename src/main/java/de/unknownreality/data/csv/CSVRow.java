@@ -113,6 +113,10 @@ public class CSVRow implements Iterable<String>,Row<String> {
         return getValueAsOrNull(get(headerName),Character.class);
     }
 
+    @Override
+    public<T> T get(String headerName, Class<T> cl) {
+        return getValueAsOrNull(get(headerName),cl);
+    }
     private  <T> T getValueAsOrNull(String value, Class<T> cl){
         try {
             return Parsers.parse(cl,value);

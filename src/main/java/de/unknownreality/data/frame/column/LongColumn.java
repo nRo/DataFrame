@@ -2,12 +2,14 @@ package de.unknownreality.data.frame.column;
 
 import de.unknownreality.data.common.parser.Parser;
 import de.unknownreality.data.common.parser.Parsers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by Alex on 09.03.2016.
  */
 public class LongColumn extends BasicColumn<Long> implements NumberColumn<Long> {
-
+    private static Logger log = LoggerFactory.getLogger(LongColumn.class);
 
     public LongColumn() {
         super();
@@ -43,12 +45,18 @@ public class LongColumn extends BasicColumn<Long> implements NumberColumn<Long> 
 
     @Override
     public LongColumn add(NumberColumn column) {
-        if (column.size() != size()) {
-            throw new IllegalArgumentException("'append' required column of same size");
-        }
+        int naCount = 0;
         int size = size();
         for (int i = 0; i < size; i++) {
-            set(i,get(i) + column.get(i).longValue());
+            if(!isNA(i) && ! column.isNA(i)){
+                set(i,get(i) + column.get(i).longValue());
+            }
+            else{
+                naCount++;
+            }
+        }
+        if(naCount > 0){
+            log.warn("add() ignored {} NA",naCount);
         }
         return this;
     }
@@ -58,9 +66,18 @@ public class LongColumn extends BasicColumn<Long> implements NumberColumn<Long> 
         if (column.size() != size()) {
             throw new IllegalArgumentException("'subtract' required column of same size");
         }
+        int naCount = 0;
         int size = size();
         for (int i = 0; i < size; i++) {
-            set(i,get(i) - column.get(i).longValue());
+            if(!isNA(i) && ! column.isNA(i)){
+                set(i,get(i) - column.get(i).longValue());
+            }
+            else{
+                naCount++;
+            }
+        }
+        if(naCount > 0){
+            log.warn("subtract() ignored {} NA",naCount);
         }
         return this;
     }
@@ -70,9 +87,18 @@ public class LongColumn extends BasicColumn<Long> implements NumberColumn<Long> 
         if (column.size() != size()) {
             throw new IllegalArgumentException("'multiply' required column of same size");
         }
+        int naCount = 0;
         int size = size();
         for (int i = 0; i < size; i++) {
-            set(i,get(i) * column.get(i).longValue());
+            if(!isNA(i) && ! column.isNA(i)){
+                set(i,get(i) * column.get(i).longValue());
+            }
+            else{
+                naCount++;
+            }
+        }
+        if(naCount > 0){
+            log.warn("multiply() ignored {} NA",naCount);
         }
         return this;
     }
@@ -82,55 +108,128 @@ public class LongColumn extends BasicColumn<Long> implements NumberColumn<Long> 
         if (column.size() != size()) {
             throw new IllegalArgumentException("'divide' required column of same size");
         }
+        int naCount = 0;
         int size = size();
         for (int i = 0; i < size; i++) {
-            set(i,get(i) / column.get(i).longValue());
+            if(!isNA(i) && ! column.isNA(i)){
+                set(i,get(i) / column.get(i).longValue());
+            }
+            else{
+                naCount++;
+            }
+        }
+        if(naCount > 0){
+            log.warn("divide() ignored {} NA",naCount);
         }
         return this;
     }
 
     @Override
     public LongColumn add(Number value) {
-        for (int i = 0; i < size(); i++) {
-            set(i,get(i) + value.longValue());
+        int naCount = 0;
+        int size = size();
+        for (int i = 0; i < size; i++) {
+            if(!isNA(i) && value != null){
+                set(i,get(i) + value.longValue());
+            }
+            else{
+                naCount++;
+            }
+        }
+        if(naCount > 0){
+            log.warn("add() ignored {} NA",naCount);
         }
         return this;
     }
 
     @Override
     public LongColumn subtract(Number value) {
-        for (int i = 0; i < size(); i++) {
-            set(i,get(i) + value.longValue());
+        int naCount = 0;
+        int size = size();
+        for (int i = 0; i < size; i++) {
+            if(!isNA(i) && value != null){
+                set(i,get(i) - value.longValue());
+            }
+            else{
+                naCount++;
+            }
+        }
+        if(naCount > 0){
+            log.warn("subtract() ignored {} NA",naCount);
         }
         return this;
     }
 
     @Override
     public LongColumn multiply(Number value) {
-        for (int i = 0; i < size(); i++) {
-            set(i,get(i) + value.longValue());
+        int naCount = 0;
+        int size = size();
+        for (int i = 0; i < size; i++) {
+            if(!isNA(i) && value != null){
+                set(i,get(i) * value.longValue());
+            }
+            else{
+                naCount++;
+            }
+        }
+        if(naCount > 0){
+            log.warn("multiply() ignored {} NA",naCount);
         }
         return this;
     }
 
     @Override
     public LongColumn divide(Number value) {
-        for (int i = 0; i < size(); i++) {
-            set(i,get(i) + value.longValue());
+        int naCount = 0;
+        int size = size();
+        for (int i = 0; i < size; i++) {
+            if(!isNA(i) && value != null){
+                set(i,get(i) / value.longValue());
+            }
+            else{
+                naCount++;
+            }
+        }
+        if(naCount > 0){
+            log.warn("divide() ignored {} NA",naCount);
         }
         return this;
     }
 
     @Override
     public Double mean() {
-        return sum().doubleValue() / size();
+        int naCount = 0;
+        Long sum = 0l;
+        int count = 0;
+        int size = size();
+        for(int i = 0; i < size;i++){
+            if(isNA(i)){
+                naCount++;
+                continue;
+            }
+            count++;
+            sum += get(i);
+        }
+        if(naCount > 0){
+            log.warn("mean() ignored {} NA",naCount);
+        }
+        return sum.doubleValue() / count;
     }
 
     @Override
     public Long sum() {
+        int naCount = 0;
         long sum = 0;
-        for (long num : getValues()) {
-            sum += num;
+        int size = size();
+        for(int i = 0; i < size;i++){
+            if(isNA(i)){
+                naCount++;
+                continue;
+            }
+            sum += get(i);
+        }
+        if(naCount > 0){
+            log.warn("sum() ignored {} NA",naCount);
         }
         return sum;
     }
@@ -138,8 +237,18 @@ public class LongColumn extends BasicColumn<Long> implements NumberColumn<Long> 
     @Override
     public Long min() {
         Long min = Long.MAX_VALUE;
-        for (Long num : getValues()) {
-            min = Math.min(min, num);
+        int naCount = 0;
+        long sum = 0;
+        int size = size();
+        for(int i = 0; i < size;i++){
+            if(isNA(i)){
+                naCount++;
+                continue;
+            }
+            min = Math.min(min,get(i));
+        }
+        if(naCount > 0){
+            log.warn("min() ignored {} NA",naCount);
         }
         return min;
     }
@@ -147,8 +256,18 @@ public class LongColumn extends BasicColumn<Long> implements NumberColumn<Long> 
     @Override
     public Long max() {
         Long max = Long.MIN_VALUE;
-        for (Long num : getValues()) {
-            max = Math.max(max, num);
+        int naCount = 0;
+        long sum = 0;
+        int size = size();
+        for(int i = 0; i < size;i++){
+            if(isNA(i)){
+                naCount++;
+                continue;
+            }
+            max = Math.max(max,get(i));
+        }
+        if(naCount > 0){
+            log.warn("max() ignored {} NA",naCount);
         }
         return max;
     }

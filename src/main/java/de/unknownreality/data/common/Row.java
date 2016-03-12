@@ -16,4 +16,6 @@ public interface Row<T>{
     public Integer getInteger(String headerName);
     public Float getFloat(int index);
     public Float getFloat(String headerName);
-}
+    public<T> T get(String headerName, Class<T> cl);
+    public Long getLong(int index);
+    public Long getLong(String headerName);}

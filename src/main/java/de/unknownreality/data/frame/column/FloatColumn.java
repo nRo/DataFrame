@@ -2,12 +2,14 @@ package de.unknownreality.data.frame.column;
 
 import de.unknownreality.data.common.parser.Parser;
 import de.unknownreality.data.common.parser.Parsers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by Alex on 09.03.2016.
  */
 public class FloatColumn extends BasicColumn<Float> implements NumberColumn<Float> {
-
+    private static Logger log = LoggerFactory.getLogger(FloatColumn.class);
 
     public FloatColumn() {
         super();
@@ -43,12 +45,18 @@ public class FloatColumn extends BasicColumn<Float> implements NumberColumn<Floa
 
     @Override
     public FloatColumn add(NumberColumn column) {
-        if (column.size() != size()) {
-            throw new IllegalArgumentException("'append' required column of same size");
-        }
+        int naCount = 0;
         int size = size();
         for (int i = 0; i < size; i++) {
-            set(i,get(i) + column.get(i).floatValue());
+            if(!isNA(i) && ! column.isNA(i)){
+                set(i,get(i) + column.get(i).floatValue());
+            }
+            else{
+                naCount++;
+            }
+        }
+        if(naCount > 0){
+            log.warn("add() ignored {} NA",naCount);
         }
         return this;
     }
@@ -58,9 +66,18 @@ public class FloatColumn extends BasicColumn<Float> implements NumberColumn<Floa
         if (column.size() != size()) {
             throw new IllegalArgumentException("'subtract' required column of same size");
         }
+        int naCount = 0;
         int size = size();
         for (int i = 0; i < size; i++) {
-            set(i,get(i) - column.get(i).floatValue());
+            if(!isNA(i) && ! column.isNA(i)){
+                set(i,get(i) - column.get(i).floatValue());
+            }
+            else{
+                naCount++;
+            }
+        }
+        if(naCount > 0){
+            log.warn("subtract() ignored {} NA",naCount);
         }
         return this;
     }
@@ -70,9 +87,18 @@ public class FloatColumn extends BasicColumn<Float> implements NumberColumn<Floa
         if (column.size() != size()) {
             throw new IllegalArgumentException("'multiply' required column of same size");
         }
+        int naCount = 0;
         int size = size();
         for (int i = 0; i < size; i++) {
-            set(i,get(i) * column.get(i).floatValue());
+            if(!isNA(i) && ! column.isNA(i)){
+                set(i,get(i) * column.get(i).floatValue());
+            }
+            else{
+                naCount++;
+            }
+        }
+        if(naCount > 0){
+            log.warn("multiply() ignored {} NA",naCount);
         }
         return this;
     }
@@ -82,55 +108,128 @@ public class FloatColumn extends BasicColumn<Float> implements NumberColumn<Floa
         if (column.size() != size()) {
             throw new IllegalArgumentException("'divide' required column of same size");
         }
+        int naCount = 0;
         int size = size();
         for (int i = 0; i < size; i++) {
-            set(i,get(i) / column.get(i).floatValue());
+            if(!isNA(i) && ! column.isNA(i)){
+                set(i,get(i) / column.get(i).floatValue());
+            }
+            else{
+                naCount++;
+            }
+        }
+        if(naCount > 0){
+            log.warn("divide() ignored {} NA",naCount);
         }
         return this;
     }
 
     @Override
     public FloatColumn add(Number value) {
-        for (int i = 0; i < size(); i++) {
-            set(i,get(i) + value.floatValue());
+        int naCount = 0;
+        int size = size();
+        for (int i = 0; i < size; i++) {
+            if(!isNA(i) && value != null){
+                set(i,get(i) + value.floatValue());
+            }
+            else{
+                naCount++;
+            }
+        }
+        if(naCount > 0){
+            log.warn("add() ignored {} NA",naCount);
         }
         return this;
     }
 
     @Override
     public FloatColumn subtract(Number value) {
-        for (int i = 0; i < size(); i++) {
-            set(i,get(i) - value.floatValue());
+        int naCount = 0;
+        int size = size();
+        for (int i = 0; i < size; i++) {
+            if(!isNA(i) && value != null){
+                set(i,get(i) - value.floatValue());
+            }
+            else{
+                naCount++;
+            }
+        }
+        if(naCount > 0){
+            log.warn("subtract() ignored {} NA",naCount);
         }
         return this;
     }
 
     @Override
     public FloatColumn multiply(Number value) {
-        for (int i = 0; i < size(); i++) {
-            set(i,get(i) * value.floatValue());
+        int naCount = 0;
+        int size = size();
+        for (int i = 0; i < size; i++) {
+            if(!isNA(i) && value != null){
+                set(i,get(i) * value.floatValue());
+            }
+            else{
+                naCount++;
+            }
+        }
+        if(naCount > 0){
+            log.warn("multiply() ignored {} NA",naCount);
         }
         return this;
     }
 
     @Override
     public FloatColumn divide(Number value) {
-        for (int i = 0; i < size(); i++) {
-            set(i,get(i) / value.floatValue());
+        int naCount = 0;
+        int size = size();
+        for (int i = 0; i < size; i++) {
+            if(!isNA(i) && value != null){
+                set(i,get(i) / value.floatValue());
+            }
+            else{
+                naCount++;
+            }
+        }
+        if(naCount > 0){
+            log.warn("divide() ignored {} NA",naCount);
         }
         return this;
     }
 
     @Override
     public Double mean() {
-        return sum().doubleValue() / size();
+        int naCount = 0;
+        Float sum = 0f;
+        int count = 0;
+        int size = size();
+        for(int i = 0; i < size;i++){
+            if(isNA(i)){
+                naCount++;
+                continue;
+            }
+            count++;
+            sum += get(i);
+        }
+        if(naCount > 0){
+            log.warn("mean() ignored {} NA",naCount);
+        }
+        return sum.doubleValue() / count;
     }
 
     @Override
     public Float sum() {
+        int naCount = 0;
         float sum = 0;
-        for (float num : getValues()) {
-            sum += num;
+        int size = size();
+        for(int i = 0; i < size;i++){
+            if(isNA(i)){
+                naCount++;
+                continue;
+            }
+            sum += get(i);
+        }
+        if(naCount > 0){
+            log.warn("sum() ignored {} NA",naCount);
         }
         return sum;
     }
@@ -138,8 +237,18 @@ public class FloatColumn extends BasicColumn<Float> implements NumberColumn<Floa
     @Override
     public Float min() {
         Float min = Float.MAX_VALUE;
-        for (Float num : getValues()) {
-            min = Math.min(min, num);
+        int naCount = 0;
+        float sum = 0;
+        int size = size();
+        for(int i = 0; i < size;i++){
+            if(isNA(i)){
+                naCount++;
+                continue;
+            }
+            min = Math.min(min,get(i));
+        }
+        if(naCount > 0){
+            log.warn("min() ignored {} NA",naCount);
         }
         return min;
     }
@@ -147,8 +256,18 @@ public class FloatColumn extends BasicColumn<Float> implements NumberColumn<Floa
     @Override
     public Float max() {
         Float max = Float.MIN_VALUE;
-        for (Float num : getValues()) {
-            max = Math.max(max, num);
+        int naCount = 0;
+        float sum = 0;
+        int size = size();
+        for(int i = 0; i < size;i++){
+            if(isNA(i)){
+                naCount++;
+                continue;
+            }
+            max = Math.max(max,get(i));
+        }
+        if(naCount > 0){
+            log.warn("max() ignored {} NA",naCount);
         }
         return max;
     }

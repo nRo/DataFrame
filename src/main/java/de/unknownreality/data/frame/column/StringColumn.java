@@ -29,6 +29,7 @@ public class StringColumn extends BasicColumn<String> {
         };
     }
 
+
     @Override
     public Class<String> getType() {
         return String.class;

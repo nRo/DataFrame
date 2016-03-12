@@ -48,6 +48,15 @@ public class DataFrameGroupUtil {
 
     private static boolean equals(Object[] values, DataRow row, String[] columns){
         for(int i = 0; i < values.length;i++){
+            if(values[i] == null && !row.isNA(i)){
+                return false;
+            }
+            if(values[i] != null && row.isNA(i)){
+                return false;
+            }
+            if(values[i] == null && row.isNA(i)){
+                continue;
+            }
             if(!values[i].equals(row.get(columns[i]))){
                 return false;
             }

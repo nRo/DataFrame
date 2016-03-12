@@ -1,7 +1,6 @@
 package de.unknownreality.data.csv;
 
-import de.unknownreality.data.frame.DataFrame;
-import de.unknownreality.data.util.MultiIterator;
+import de.unknownreality.data.common.MultiIterator;
 
 import java.io.File;
 

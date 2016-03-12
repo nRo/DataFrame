@@ -1,9 +1,4 @@
-package de.unknownreality.data.util;
-
-import de.unknownreality.data.frame.DataFrame;
-import de.unknownreality.data.frame.DataRow;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package de.unknownreality.data.common;
 
 import java.lang.reflect.Array;
 import java.util.Collection;

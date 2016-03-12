@@ -2,12 +2,14 @@ package de.unknownreality.data.frame.column;
 
 import de.unknownreality.data.common.parser.Parser;
 import de.unknownreality.data.common.parser.Parsers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by Alex on 09.03.2016.
  */
 public class DoubleColumn extends BasicColumn<Double> implements NumberColumn<Double> {
-
+    private static Logger log = LoggerFactory.getLogger(DoubleColumn.class);
 
     public DoubleColumn() {
         super();
@@ -47,12 +49,18 @@ public class DoubleColumn extends BasicColumn<Double> implements NumberColumn<Do
 
     @Override
     public DoubleColumn add(NumberColumn column) {
-        if (column.size() != size()) {
-            throw new IllegalArgumentException("'append' required column of same size");
-        }
+        int naCount = 0;
         int size = size();
         for (int i = 0; i < size; i++) {
-            set(i,get(i) + column.get(i).doubleValue());
+            if(!isNA(i) && ! column.isNA(i)){
+                set(i,get(i) + column.get(i).doubleValue());
+            }
+            else{
+                naCount++;
+            }
+        }
+        if(naCount > 0){
+            log.warn("add() ignored {} NA",naCount);
         }
         return this;
     }
@@ -62,9 +70,18 @@ public class DoubleColumn extends BasicColumn<Double> implements NumberColumn<Do
         if (column.size() != size()) {
             throw new IllegalArgumentException("'subtract' required column of same size");
         }
+        int naCount = 0;
         int size = size();
         for (int i = 0; i < size; i++) {
-            set(i,get(i) - column.get(i).doubleValue());
+            if(!isNA(i) && ! column.isNA(i)){
+                set(i,get(i) - column.get(i).doubleValue());
+            }
+            else{
+                naCount++;
+            }
+        }
+        if(naCount > 0){
+            log.warn("subtract() ignored {} NA",naCount);
         }
         return this;
     }
@@ -74,9 +91,18 @@ public class DoubleColumn extends BasicColumn<Double> implements NumberColumn<Do
         if (column.size() != size()) {
             throw new IllegalArgumentException("'multiply' required column of same size");
         }
+        int naCount = 0;
         int size = size();
         for (int i = 0; i < size; i++) {
-            set(i,get(i) * column.get(i).doubleValue());
+            if(!isNA(i) && ! column.isNA(i)){
+                set(i,get(i) * column.get(i).doubleValue());
+            }
+            else{
+                naCount++;
+            }
+        }
+        if(naCount > 0){
+            log.warn("multiply() ignored {} NA",naCount);
         }
         return this;
     }
@@ -86,55 +112,128 @@ public class DoubleColumn extends BasicColumn<Double> implements NumberColumn<Do
         if (column.size() != size()) {
             throw new IllegalArgumentException("'divide' required column of same size");
         }
+        int naCount = 0;
         int size = size();
         for (int i = 0; i < size; i++) {
-            set(i,get(i) / column.get(i).doubleValue());
+            if(!isNA(i) && ! column.isNA(i)){
+                set(i,get(i) / column.get(i).doubleValue());
+            }
+            else{
+                naCount++;
+            }
+        }
+        if(naCount > 0){
+            log.warn("divide() ignored {} NA",naCount);
         }
         return this;
     }
 
     @Override
     public DoubleColumn add(Number value) {
-        for (int i = 0; i < size(); i++) {
-            set(i,get(i)+value.doubleValue());
+        int naCount = 0;
+        int size = size();
+        for (int i = 0; i < size; i++) {
+            if(!isNA(i) && value != null){
+                set(i,get(i) + value.doubleValue());
+            }
+            else{
+                naCount++;
+            }
+        }
+        if(naCount > 0){
+            log.warn("add() ignored {} NA",naCount);
         }
         return this;
     }
 
     @Override
     public DoubleColumn subtract(Number value) {
-        for (int i = 0; i < size(); i++) {
-            set(i,get(i)-value.doubleValue());
+        int naCount = 0;
+        int size = size();
+        for (int i = 0; i < size; i++) {
+            if(!isNA(i) && value != null){
+                set(i,get(i) - value.doubleValue());
+            }
+            else{
+                naCount++;
+            }
+        }
+        if(naCount > 0){
+            log.warn("subtract() ignored {} NA",naCount);
         }
         return this;
     }
 
     @Override
     public DoubleColumn multiply(Number value) {
-        for (int i = 0; i < size(); i++) {
-            set(i,get(i)*value.doubleValue());
+        int naCount = 0;
+        int size = size();
+        for (int i = 0; i < size; i++) {
+            if(!isNA(i) && value != null){
+                set(i,get(i) * value.doubleValue());
+            }
+            else{
+                naCount++;
+            }
+        }
+        if(naCount > 0){
+            log.warn("multiply() ignored {} NA",naCount);
         }
         return this;
     }
 
     @Override
     public DoubleColumn divide(Number value) {
-        for (int i = 0; i < size(); i++) {
-            set(i,get(i)/value.doubleValue());
+        int naCount = 0;
+        int size = size();
+        for (int i = 0; i < size; i++) {
+            if(!isNA(i) && value != null){
+                set(i,get(i) / value.doubleValue());
+            }
+            else{
+                naCount++;
+            }
+        }
+        if(naCount > 0){
+            log.warn("divide() ignored {} NA",naCount);
         }
         return this;
     }
 
     @Override
     public Double mean() {
-        return sum() / size();
+        int naCount = 0;
+        Double sum = 0d;
+        int count = 0;
+        int size = size();
+        for(int i = 0; i < size;i++){
+            if(isNA(i)){
+                naCount++;
+                continue;
+            }
+            count++;
+            sum += get(i);
+        }
+        if(naCount > 0){
+            log.warn("mean() ignored {} NA",naCount);
+        }
+        return sum.doubleValue() / count;
     }
 
     @Override
     public Double sum() {
+        int naCount = 0;
         double sum = 0;
-        for (double num : getValues()) {
-            sum += num;
+        int size = size();
+        for(int i = 0; i < size;i++){
+            if(isNA(i)){
+                naCount++;
+                continue;
+            }
+            sum += get(i);
+        }
+        if(naCount > 0){
+            log.warn("sum() ignored {} NA",naCount);
         }
         return sum;
     }
@@ -142,8 +241,18 @@ public class DoubleColumn extends BasicColumn<Double> implements NumberColumn<Do
     @Override
     public Double min() {
         Double min = Double.MAX_VALUE;
-        for (double num : getValues()) {
-            min = Math.min(min, num);
+        int naCount = 0;
+        double sum = 0;
+        int size = size();
+        for(int i = 0; i < size;i++){
+            if(isNA(i)){
+                naCount++;
+                continue;
+            }
+            min = Math.min(min,get(i));
+        }
+        if(naCount > 0){
+            log.warn("min() ignored {} NA",naCount);
         }
         return min;
     }
@@ -151,11 +260,23 @@ public class DoubleColumn extends BasicColumn<Double> implements NumberColumn<Do
     @Override
     public Double max() {
         Double max = Double.MIN_VALUE;
-        for (double num : getValues()) {
-            max = Math.max(max, num);
+        int naCount = 0;
+        double sum = 0;
+        int size = size();
+        for(int i = 0; i < size;i++){
+            if(isNA(i)){
+                naCount++;
+                continue;
+            }
+            max = Math.max(max,get(i));
+        }
+        if(naCount > 0){
+            log.warn("max() ignored {} NA",naCount);
         }
         return max;
     }
+
+
 
     @Override
     public DoubleColumn copy() {

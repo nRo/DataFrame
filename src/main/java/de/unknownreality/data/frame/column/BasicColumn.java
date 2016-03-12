@@ -2,6 +2,7 @@ package de.unknownreality.data.frame.column;
 
 
 import de.unknownreality.data.frame.MapFunction;
+import de.unknownreality.data.frame.Values;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -38,6 +39,10 @@ public abstract class BasicColumn<T extends Comparable<T>> implements DataColumn
 
     @Override
     public DataColumn<T> set(int index, T value) {
+        if(value == Values.NA){
+            appendNA();
+            return this;
+        }
         values[index] = value;
         return this;
     }
@@ -136,7 +141,20 @@ public abstract class BasicColumn<T extends Comparable<T>> implements DataColumn
         values[size++] = t;
         return true;
     }
+    @Override
+    public void appendNA() {
+        append(null);
+    }
 
+    @Override
+    public boolean isNA(int index) {
+        return values[index] == null;
+    }
+
+    @Override
+    public void setNA(int index) {
+        values[index] = null;
+    }
 
     @Override
     public boolean containsAll(Collection<?> c) {

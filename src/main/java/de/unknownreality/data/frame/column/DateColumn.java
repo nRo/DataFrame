@@ -36,6 +36,7 @@ public class DateColumn extends BasicColumn<Date> {
         };
     }
 
+
     @Override
     public Class<Date> getType() {
         return Date.class;

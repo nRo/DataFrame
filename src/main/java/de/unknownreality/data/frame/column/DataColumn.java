@@ -43,4 +43,9 @@ public interface DataColumn<T extends Comparable<T>> extends Iterable<T> {
 
     boolean isEmpty();
     public boolean appendAll(Collection<T> c);
+
+    public void appendNA();
+
+    public boolean isNA(int index);
+    public void setNA(int index);
 }

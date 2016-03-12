@@ -48,18 +48,16 @@ public class CSVHeader  implements Iterable<String>{
     private void parse(String line, String separator, boolean isContentLine){
         headerMap.clear();
         headers.clear();
-        StringTokenizer st = new StringTokenizer(line,separator);
-        int i = 0;
-        while(st.hasMoreTokens()){
+        String[] values = line.split(separator);
+        for(int i = 0; i < values.length;i++){
             String name;
             if(!isContentLine){
-                name = st.nextToken().trim();
+                name = values[i].trim();
             }
             else{
-                st.nextToken();
                 name = "V"+(i+1);
             }
-            headerMap.put(name,i++);
+            headerMap.put(name,i);
             headers.add(name);
         }
     }

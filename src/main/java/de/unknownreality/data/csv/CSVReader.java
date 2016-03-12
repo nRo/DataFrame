@@ -125,21 +125,17 @@ public class CSVReader implements RowIterator<CSVRow>{
                     return null;
                 }
 
-                StringTokenizer st = new StringTokenizer(line,separator);
-                int stTokens = st.countTokens();
+                String[] values = line.split(separator);
                 if(cols == -1){
-                    cols = stTokens;
+                    cols = values.length;
                 }
                 else{
-                    if(stTokens != cols){
-                        throw new CSVException(file,String.format("unequal number of column %d != %d in line %d",stTokens,cols,lineNumber));
+                    if(values.length != cols){
+                        throw new CSVException(file,String.format("unequal number of column %d != %d in line %d",values.length,cols,lineNumber));
                     }
                 }
-                int i = 0;
-                String[] values = new String[st.countTokens()];
-                while(st.hasMoreTokens()){
-                    String val = st.nextToken().trim();
-                    values[i++] = val;
+                for(int i = 0; i < cols;i++){
+                    values[i] = values[i].trim();
                 }
                 return new CSVRow(header,values,lineNumber,separator);
 

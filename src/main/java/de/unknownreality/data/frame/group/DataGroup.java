@@ -129,6 +129,16 @@ public class DataGroup extends DataFrame implements Row<Comparable> {
             throw new IllegalArgumentException("no float value in col " + headerName + " (" + value + ")");
         }
     }
+
+    @Override
+    public<T> T get(String headerName, Class<T> cl) {
+        Object value = get(headerName);
+        try {
+            return cl.cast(value);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("no "+cl.getName()+" value in col " + headerName + " (" + value + ")");
+        }
+    }
 }
 
 

@@ -82,7 +82,12 @@ public class DataFrame implements RowIterator<DataRow>{
         for(DataRow row : rows){
             for(String h : header){
                 DataColumn column = columns.get(h);
-                column.set(i,row.get(h));
+                if(row.isNA(h)){
+                    column.setNA(i);
+                }
+                else{
+                    column.set(i,row.get(h));
+                }
             }
             i++;
         }
@@ -232,7 +237,12 @@ public class DataFrame implements RowIterator<DataRow>{
         Comparable[] values = new Comparable[columns.size()];
         int j = 0;
         for(DataColumn column : columns.values()){
-            values[j++] = column.get(i);
+            if(column.isNA(i)){
+                values[j++] = Values.NA;
+            }
+            else{
+                values[j++] = column.get(i);
+            }
         }
         return new DataRow(header,values);
     }
