@@ -281,7 +281,7 @@ public class DoubleColumn extends BasicColumn<Double> implements NumberColumn<Do
     @Override
     public DoubleColumn copy() {
         Double[] copyValues = new Double[size()];
-        System.arraycopy(getValues(), 0, copyValues, 0, getValues().length);
+        System.arraycopy(getValues(), 0, copyValues, 0, size());
         return new DoubleColumn(getName(), copyValues);
     }
 

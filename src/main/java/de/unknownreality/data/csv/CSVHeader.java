@@ -24,6 +24,17 @@ public class CSVHeader  implements Iterable<String>{
         return headers.get(index);
     }
 
+    public void add(String name){
+        headerMap.put(name,headers.size());
+        headers.add(name);
+    }
+
+    public void add(){
+        String name = "V"+(headers.size()+1);
+        headerMap.put(name,headers.size());
+        headers.add(name);
+    }
+
     public boolean contains(String name){
         return headerMap.containsKey(name);
     }

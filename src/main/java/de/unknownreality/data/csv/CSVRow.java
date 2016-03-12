@@ -129,6 +129,11 @@ public class CSVRow implements Iterable<String>,Row<String> {
     }
 
     @Override
+    public int size() {
+        return values.length;
+    }
+
+    @Override
     public Iterator<String> iterator() {
         return new Iterator<String>() {
             private int index = 0;

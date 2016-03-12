@@ -276,7 +276,7 @@ public class IntegerColumn extends BasicColumn<Integer> implements NumberColumn<
     @Override
     public IntegerColumn copy() {
         Integer[] copyValues = new Integer[size()];
-        System.arraycopy(getValues(), 0, copyValues, 0, getValues().length);
+        System.arraycopy(getValues(), 0, copyValues, 0, size());
         return new IntegerColumn(getName(), copyValues);
     }
 

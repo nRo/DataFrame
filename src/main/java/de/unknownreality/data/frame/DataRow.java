@@ -69,10 +69,12 @@ public class DataRow implements Row<Comparable> {
         }
     }
 
+    @Override
     public String getString(String name) {
         return getString(header.getIndex(name));
     }
 
+    @Override
     public Boolean getBoolean(String name) {
         return getBoolean(header.getIndex(name));
 
@@ -117,6 +119,7 @@ public class DataRow implements Row<Comparable> {
             throw new IllegalArgumentException("no float value in col " + headerName + " (" + value + ")");
         }
     }
+
     @Override
     public Long getLong(int index) {
         Object value = get(index);
@@ -137,20 +140,21 @@ public class DataRow implements Row<Comparable> {
         }
     }
 
-    public boolean isNA(String headerName){
-        return get(headerName) ==  Values.NA || get(headerName) == null;
+    public boolean isNA(String headerName) {
+        return get(headerName) == Values.NA || get(headerName) == null;
     }
 
-    public boolean isNA(int index){
-        return get(index) ==  Values.NA || get(index) == null;
+    public boolean isNA(int index) {
+        return get(index) == Values.NA || get(index) == null;
     }
+
     @Override
-    public<T> T get(String headerName, Class<T> cl) {
+    public <T> T get(String headerName, Class<T> cl) {
         Object value = get(headerName);
         try {
             return cl.cast(value);
         } catch (Exception e) {
-            throw new IllegalArgumentException("no "+cl.getName()+" value in col " + headerName + " (" + value + ")");
+            throw new IllegalArgumentException("no " + cl.getName() + " value in col " + headerName + " (" + value + ")");
         }
     }
 

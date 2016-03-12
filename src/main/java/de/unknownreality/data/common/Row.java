@@ -18,4 +18,6 @@ public interface Row<T>{
     public Float getFloat(String headerName);
     public<T> T get(String headerName, Class<T> cl);
     public Long getLong(int index);
-    public Long getLong(String headerName);}
+    public Long getLong(String headerName);
+    public int size();
+}

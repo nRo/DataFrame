@@ -139,6 +139,31 @@ public class DataGroup extends DataFrame implements Row<Comparable> {
             throw new IllegalArgumentException("no "+cl.getName()+" value in col " + headerName + " (" + value + ")");
         }
     }
+
+    @Override
+    public Long getLong(int index) {
+        Object value = get(index);
+        try {
+            return Number.class.cast(value).longValue();
+        } catch (Exception e) {
+            throw new IllegalArgumentException("no float value in col " + index + " (" + value + ")");
+        }
+    }
+
+    @Override
+    public Long getLong(String headerName) {
+        Object value = get(headerName);
+        try {
+            return Number.class.cast(value).longValue();
+        } catch (Exception e) {
+            throw new IllegalArgumentException("no float value in col " + headerName + " (" + value + ")");
+        }
+    }
+    
+    @Override
+    public int size() {
+        return super.getSize();
+    }
 }
 
 

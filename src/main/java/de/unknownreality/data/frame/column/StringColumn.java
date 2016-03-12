@@ -37,7 +37,7 @@ public class StringColumn extends BasicColumn<String> {
     @Override
     public StringColumn copy() {
         String[] copyValues = new String[size()];
-        System.arraycopy(getValues(),0,copyValues,0,getValues().length);
+        System.arraycopy(getValues(),0,copyValues,0,size());
         return new StringColumn(getName(),copyValues);
     }
 }

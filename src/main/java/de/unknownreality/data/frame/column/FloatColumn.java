@@ -275,7 +275,7 @@ public class FloatColumn extends BasicColumn<Float> implements NumberColumn<Floa
     @Override
     public FloatColumn copy() {
         Float[] copyValues = new Float[size()];
-        System.arraycopy(getValues(), 0, copyValues, 0, getValues().length);
+        System.arraycopy(getValues(), 0, copyValues, 0, size());
         return new FloatColumn(getName(), copyValues);
     }
 

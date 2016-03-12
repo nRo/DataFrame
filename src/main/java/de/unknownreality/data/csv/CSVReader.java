@@ -9,48 +9,68 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.util.Iterator;
 import java.util.List;
-import java.util.StringTokenizer;
 
 /**
  * Created by Alex on 09.03.2016.
  */
-public class CSVReader implements RowIterator<CSVRow>{
+public abstract class CSVReader implements RowIterator<CSVRow>{
     private static Logger log = LoggerFactory.getLogger(CSVReader.class);
     private String headerPrefix = "#";
     private String separator;
     private File file;
-    private CSVHeader header;
+    private CSVHeader header = new CSVHeader();
     private boolean containsHeader;
 
-    protected CSVReader(File file, String separator, boolean containsHeader,String headerPrefix){
-        this.file = file;
+    protected CSVReader(String separator, boolean containsHeader,String headerPrefix){
         this.separator = separator;
         this.containsHeader = containsHeader;
         this.headerPrefix = headerPrefix;
-        initHeader();
+    }
+
+    public boolean containsHeader() {
+        return containsHeader;
+    }
+
+    public String getHeaderPrefix() {
+        return headerPrefix;
+    }
+
+    public String getSeparator() {
+        return separator;
     }
 
     public CSVHeader getHeader() {
+        if(header == null){
+            initHeader();
+        }
         return header;
     }
 
-    private void initHeader(){
-        try(BufferedReader reader = new BufferedReader(new FileReader(file))){
-            String headerLine = reader.readLine();
-            if(headerLine == null){
+    public void initHeader(){
+        try{
+            CSVIterator iterator = iterator();
+            CSVRow row = iterator.getFirstRow();
+            iterator.close();
+            if(row == null){
                 containsHeader = false;
-                header = new CSVHeader();
                 return;
             }
             if(containsHeader){
-                if(!headerLine.startsWith(headerPrefix)){
-                    throw new CSVException(file,"invalid header prefix in first line");
+                if(!row.get(0).startsWith(headerPrefix)){
+                    throw new CSVException("invalid header prefix in first line");
                 }
-                headerLine = headerPrefix == null ? headerLine : headerLine.substring(headerPrefix.length());
-                header = CSVHeader.fromLine(headerLine, separator);
+                for(int i = 0; i < row.size();i++){
+                    String name = row.get(i);
+                    if(i == 0){
+                        name = headerPrefix == null ? name : name.substring(headerPrefix.length());
+                    }
+                    header.add(name);
+                }
             }
             else{
-                header = CSVHeader.fromContentLine(headerLine, separator);
+                for(int i = 0; i < row.size();i++){
+                    header.add();
+                }
                 containsHeader = false;
             }
         } catch (FileNotFoundException e) {
@@ -63,9 +83,7 @@ public class CSVReader implements RowIterator<CSVRow>{
     }
 
     @Override
-    public Iterator<CSVRow> iterator() {
-        return new CSVIterator(file,header, separator,containsHeader);
-    }
+    public abstract CSVIterator iterator();
 
     public DataFrameBuilder buildDataFrame(){
         return DataFrameBuilder.create(this);
@@ -75,94 +93,4 @@ public class CSVReader implements RowIterator<CSVRow>{
     }
 
 
-
-    private static class CSVIterator implements Iterator<CSVRow>{
-        private static Logger log = LoggerFactory.getLogger(CSVIterator.class);
-
-        private File file;
-        private BufferedReader reader;
-        private CSVRow next;
-        private boolean skip;
-        private int lineNumber = 0;
-        private String separator;
-        private int cols = -1;
-        private CSVHeader header;
-        public CSVIterator(File file,CSVHeader header,String separator, boolean skipFirst){
-            this.file = file;
-            this.skip = skipFirst;
-            this.separator = separator;
-            this.header = header;
-            open();
-            next = getNext();
-        }
-
-        private void open()  {
-            try {
-                reader = new BufferedReader(new FileReader(file));
-            } catch (FileNotFoundException e) {
-                log.error("file not found: {}",file,e);
-            }
-        }
-
-        private void close() {
-            try {
-                reader.close();
-            } catch (IOException e) {
-                log.error("error closing file: {}",file,e);
-            }
-        }
-
-        private CSVRow getNext(){
-            try {
-                if(skip){
-                    lineNumber++;
-                    reader.readLine();
-                    skip = false;
-                }
-                lineNumber++;
-                String line = reader.readLine();
-                if(line == null){
-                    return null;
-                }
-
-                String[] values = line.split(separator);
-                if(cols == -1){
-                    cols = values.length;
-                }
-                else{
-                    if(values.length != cols){
-                        throw new CSVException(file,String.format("unequal number of column %d != %d in line %d",values.length,cols,lineNumber));
-                    }
-                }
-                for(int i = 0; i < cols;i++){
-                    values[i] = values[i].trim();
-                }
-                return new CSVRow(header,values,lineNumber,separator);
-
-            } catch (IOException e) {
-                log.error("error reading file: {}:{}",file,lineNumber,e);
-                close();
-            } catch (CSVException e) {
-                log.error("error parsing file: {}:{}",file,lineNumber,e);
-                close();
-            }
-            return null;
-        }
-
-
-        @Override
-        public boolean hasNext() {
-            return next != null;
-        }
-
-        @Override
-        public CSVRow next() {
-            CSVRow row = next;
-            next = getNext();
-            if(next == null){
-                close();
-            }
-            return row;
-        }
-    }
 }
