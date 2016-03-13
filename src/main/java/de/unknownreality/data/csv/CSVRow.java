@@ -3,7 +3,7 @@ package de.unknownreality.data.csv;
 import de.unknownreality.data.common.Row;
 
 import de.unknownreality.data.common.parser.ParserNotFoundException;
-import de.unknownreality.data.common.parser.Parsers;
+import de.unknownreality.data.common.parser.ParserUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,7 +63,7 @@ public class CSVRow implements Iterable<String>,Row<String> {
     public boolean getBooleanValue(int index){
         String val = get(index);
         try {
-            return Parsers.parse(Boolean.class,values[index]);
+            return ParserUtil.parse(Boolean.class,values[index]);
         } catch (ParseException e) {
             log.error("error parsing value {} to {}",val,Boolean.class,e);
         } catch (ParserNotFoundException e) {
@@ -119,7 +119,7 @@ public class CSVRow implements Iterable<String>,Row<String> {
     }
     private  <T> T getValueAsOrNull(String value, Class<T> cl){
         try {
-            return Parsers.parse(cl,value);
+            return ParserUtil.parse(cl,value);
         } catch (ParseException e) {
             log.error("error parsing value {} to {}",value,cl,e);
         } catch (ParserNotFoundException e) {

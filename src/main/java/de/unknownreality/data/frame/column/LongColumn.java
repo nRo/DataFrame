@@ -1,7 +1,7 @@
 package de.unknownreality.data.frame.column;
 
 import de.unknownreality.data.common.parser.Parser;
-import de.unknownreality.data.common.parser.Parsers;
+import de.unknownreality.data.common.parser.ParserUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +32,7 @@ public class LongColumn extends BasicColumn<Long> implements NumberColumn<Long> 
 
     @Override
     public Parser<Long> getParser() {
-        return Parsers.findParserOrNull(Long.class);
+        return ParserUtil.findParserOrNull(Long.class);
     }
 
     @Override

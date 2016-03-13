@@ -12,10 +12,15 @@ import java.util.Map;
 public class DataRow implements Row<Comparable> {
     private Comparable[] values;
     private Header<String> header;
-
-    public DataRow(Header<String> header, Comparable[] values) {
+    private int index;
+    public DataRow(Header<String> header, Comparable[] values, int index) {
         this.header = header;
         this.values = values;
+        this.index = index;
+    }
+
+    public int getIndex() {
+        return index;
     }
 
     public Comparable get(String headerName) {
@@ -161,6 +166,7 @@ public class DataRow implements Row<Comparable> {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
+        sb.append("[").append(index).append("] ");
         for (int i = 0; i < values.length; i++) {
             sb.append(values[i]);
             if (i < values.length - 1) {

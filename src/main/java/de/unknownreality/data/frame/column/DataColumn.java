@@ -10,6 +10,7 @@ import java.util.Comparator;
  * Created by Alex on 11.03.2016.
  */
 public interface DataColumn<T extends Comparable<T>> extends Iterable<T> {
+
     String getName();
 
     void setName(String name);

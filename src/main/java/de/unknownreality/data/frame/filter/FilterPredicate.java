@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * Created by Alex on 09.03.2016.
@@ -156,6 +157,12 @@ public abstract class FilterPredicate {
     }
     public static FilterPredicate btwn(final String name, Object low, Object high){
         return FilterPredicate.and(FilterPredicate.gt(name,low),FilterPredicate.lt(name,high));
+    }
+    public static FilterPredicate matches(final String name, Pattern pattern){
+        return new MatchPredicate(name,pattern);
+    }
+    public static FilterPredicate matches(final String name, String patternString){
+        return new MatchPredicate(name,patternString);
     }
 
 }

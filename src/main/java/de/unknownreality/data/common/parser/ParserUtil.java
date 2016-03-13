@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by Alex on 04.06.2015.
  */
-public class Parsers {
+public class ParserUtil {
     private static Map<Class<?>,Parser> parserMap;
     private static  Map<Class<?>,Parser> getParserMap(){
         if(parserMap == null){

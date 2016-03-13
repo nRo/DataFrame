@@ -1,7 +1,7 @@
 package de.unknownreality.data.frame.column;
 
 import de.unknownreality.data.common.parser.Parser;
-import de.unknownreality.data.common.parser.Parsers;
+import de.unknownreality.data.common.parser.ParserUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +32,7 @@ public class FloatColumn extends BasicColumn<Float> implements NumberColumn<Floa
 
     @Override
     public Parser<Float> getParser() {
-        return Parsers.findParserOrNull(Float.class);
+        return ParserUtil.findParserOrNull(Float.class);
     }
 
     @Override

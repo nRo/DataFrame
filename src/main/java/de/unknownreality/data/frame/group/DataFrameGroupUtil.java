@@ -31,7 +31,7 @@ public class DataFrameGroupUtil {
             }
             if (!currentList.isEmpty()) {
                 DataGroup group = new DataGroup(columns,lastValues);
-                group.set(df.getHeader(), currentList);
+                group.set(df.getHeader().copy(), currentList);
                 groupList.add(group);
             }
             currentList.clear();
@@ -40,7 +40,7 @@ public class DataFrameGroupUtil {
         }
         if (!currentList.isEmpty()) {
             DataGroup group = new DataGroup(columns,lastValues);
-            group.set(df.getHeader(), currentList);
+            group.set(df.getHeader().copy(), currentList);
             groupList.add(group);
         }
         return new DataGrouping(groupList,columns);

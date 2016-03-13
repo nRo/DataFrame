@@ -1,7 +1,7 @@
 package de.unknownreality.data.frame.column;
 
 import de.unknownreality.data.common.parser.Parser;
-import de.unknownreality.data.common.parser.Parsers;
+import de.unknownreality.data.common.parser.ParserUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +32,7 @@ public class DoubleColumn extends BasicColumn<Double> implements NumberColumn<Do
 
     @Override
     public Parser<Double> getParser() {
-        return Parsers.findParserOrNull(Double.class);
+        return ParserUtil.findParserOrNull(Double.class);
     }
 
     @Override

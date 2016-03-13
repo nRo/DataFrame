@@ -50,6 +50,9 @@ public abstract class BasicColumn<T extends Comparable<T>> implements DataColumn
     @Override
     public DataColumn<T> map(MapFunction<T> dataFunction) {
         for (int i = 0; i < size(); i++) {
+            if(isNA(i)){
+                continue;
+            }
             values[i] = dataFunction.map(values[i]);
         }
         return this;
@@ -87,6 +90,7 @@ public abstract class BasicColumn<T extends Comparable<T>> implements DataColumn
         return values[index];
     }
 
+    @Override
     public int size() {
         return size;
     }
@@ -135,8 +139,8 @@ public abstract class BasicColumn<T extends Comparable<T>> implements DataColumn
 
     @Override
     public boolean append(T t) {
-        if(size == values.length){
-            values = Arrays.copyOf(values, (int)(values.length * GROW_FACTOR));
+        if(size == values.length - 1){
+            values = Arrays.copyOf(values, (int)((double)values.length * GROW_FACTOR));
         }
         values[size++] = t;
         return true;
@@ -153,6 +157,7 @@ public abstract class BasicColumn<T extends Comparable<T>> implements DataColumn
 
     @Override
     public void setNA(int index) {
+
         values[index] = null;
     }
 

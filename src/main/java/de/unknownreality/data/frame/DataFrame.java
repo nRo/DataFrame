@@ -5,6 +5,9 @@ import de.unknownreality.data.frame.column.*;
 import de.unknownreality.data.frame.filter.FilterPredicate;
 import de.unknownreality.data.frame.group.DataFrameGroupUtil;
 import de.unknownreality.data.frame.group.DataGrouping;
+import de.unknownreality.data.frame.join.DataFrameJoinUtil;
+import de.unknownreality.data.frame.join.JoinColumn;
+import de.unknownreality.data.frame.join.JoinedDataFrame;
 import de.unknownreality.data.frame.sort.RowColumnComparator;
 import de.unknownreality.data.frame.sort.SortColumn;
 import org.slf4j.Logger;
@@ -24,6 +27,11 @@ public class DataFrame implements RowIterator<DataRow>{
     private int size;
     private Map<String,DataColumn> columns = new LinkedHashMap<>();
     private DataFrameHeader header = new DataFrameHeader();
+
+
+    public DataFrame(){
+
+    }
 
     public DataFrame addColumn(String name, DataColumn column){
         if(columns.isEmpty()){
@@ -65,9 +73,23 @@ public class DataFrame implements RowIterator<DataRow>{
         return this;
     }
 
+    public void set(Collection<DataRow> rows){
+        for(DataRow row : rows){
+            for(String h : header){
+                DataColumn column = columns.get(h);
+                if(row.isNA(h)){
+                    column.appendNA();
+                }
+                else{
+                    column.append(row.get(h));
+                }
+            }
+        }
+        size = rows.size();
+    }
+
     public void set(DataFrameHeader header,Collection<DataRow> rows){
-        columns.clear();
-        this.header = header.copy();
+        this.header = header;
 
         for(String h : header){
             try {
@@ -78,22 +100,34 @@ public class DataFrame implements RowIterator<DataRow>{
                 log.error("error creating column instance",e);
             }
         }
-        int i = 0;
-        for(DataRow row : rows){
-            for(String h : header){
-                DataColumn column = columns.get(h);
-                if(row.isNA(h)){
-                    column.setNA(i);
-                }
-                else{
-                    column.set(i,row.get(h));
-                }
-            }
-            i++;
-        }
-        size = rows.size();
+        set(rows);
     }
 
+    public void setHeader(DataFrameHeader header) {
+        this.header = header;
+    }
+
+    public <I extends Comparable<I>,T extends DataColumn<I>> DataFrame addColumn(Class<T> cl, String name, ColumnAppender<I> appender){
+        try {
+            T col =  cl.newInstance();
+            col.setName(name);
+            for(DataRow row : this){
+                I val = appender.createRowValue(row);
+                if(val == null || val == Values.NA){
+                    col.appendNA();
+                }
+                else{
+                    col.append(val);
+                }
+            }
+            addColumn(col);
+        } catch (InstantiationException e) {
+            log.error("error creating instance of column [{}], empty Constructor required",cl,e);
+        } catch (IllegalAccessException e) {
+            log.error("error creating instance of column [{}], empty Constructor required",cl,e);
+        };
+        return this;
+    }
 
     public DataFrame sort(SortColumn... columns){
         List<DataRow> rows = getRows(0,size);
@@ -138,7 +172,6 @@ public class DataFrame implements RowIterator<DataRow>{
                 rows.add(row);
             }
         }
-        set(header,rows);
         return rows;
     }
 
@@ -149,12 +182,6 @@ public class DataFrame implements RowIterator<DataRow>{
         return this;
     }
 
-
-    public DataFrame remove(int index){
-        List<DataRow> rows = getRows(0,index);
-        set(header,rows);
-        return this;
-    }
 
     public int getSize() {
         return size;
@@ -167,7 +194,7 @@ public class DataFrame implements RowIterator<DataRow>{
 
     public DataFrame createSubset(int from, int to){
         DataFrame newFrame = new DataFrame();
-        newFrame.set(header,getRows(from,to));
+        newFrame.set(header.copy(),getRows(from,to));
         return newFrame;
     }
 
@@ -194,8 +221,23 @@ public class DataFrame implements RowIterator<DataRow>{
         }
         List<DataRow> rows = getRows();
         rows.addAll(frame.getRows());
-        set(header,rows);
+        set(rows);
         return this;
+    }
+    public DataFrame concat(Collection<DataFrame> dataFrames){
+        List<DataRow> rows = getRows();
+        for(DataFrame dataFrame : dataFrames){
+            if(!header.equals(dataFrame.getHeader())){
+                throw new IllegalArgumentException(String.format("dataframes not compatible"));
+            }
+            rows.addAll(dataFrame.getRows());
+
+        }
+        set(rows);
+        return this;
+    }
+    public DataFrame concat(DataFrame... dataFrames){
+        return concat(Arrays.asList(dataFrames));
     }
 
     public boolean isCompatible(DataFrame frame){
@@ -244,7 +286,7 @@ public class DataFrame implements RowIterator<DataRow>{
                 values[j++] = column.get(i);
             }
         }
-        return new DataRow(header,values);
+        return new DataRow(header,values,i);
     }
 
     public Collection<String> getColumnNames(){
@@ -290,10 +332,58 @@ public class DataFrame implements RowIterator<DataRow>{
     public DataGrouping groupBy(String... column){
         return DataFrameGroupUtil.groupBy(this,column);
     }
+
+    public JoinedDataFrame joinLeft(DataFrame dataFrame,String... joinColumns){
+        JoinColumn[] joinColumnsArray = new JoinColumn[joinColumns.length];
+        for(int i = 0; i < joinColumns.length;i++){
+            joinColumnsArray[i] = new JoinColumn(joinColumns[i]);
+        }
+        return joinLeft(dataFrame,joinColumnsArray);
+    }
+
+    public JoinedDataFrame joinLeft(DataFrame dataFrame, JoinColumn... joinColumns){
+        return DataFrameJoinUtil.leftJoin(this,dataFrame,joinColumns);
+    }
+
+    public JoinedDataFrame joinLeft(DataFrame dataFrame,String suffixA,String suffixB,JoinColumn... joinColumns){
+        return DataFrameJoinUtil.leftJoin(this,dataFrame,suffixA,suffixB,joinColumns);
+    }
+
+    public JoinedDataFrame joinRight(DataFrame dataFrame,String... joinColumns){
+        JoinColumn[] joinColumnsArray = new JoinColumn[joinColumns.length];
+        for(int i = 0; i < joinColumns.length;i++){
+            joinColumnsArray[i] = new JoinColumn(joinColumns[i]);
+        }
+        return joinRight(dataFrame,joinColumnsArray);
+    }
+
+    public JoinedDataFrame joinRight(DataFrame dataFrame, JoinColumn... joinColumns){
+        return DataFrameJoinUtil.rightJoin(this,dataFrame,joinColumns);
+    }
+
+    public JoinedDataFrame joinRight(DataFrame dataFrame,String suffixA,String suffixB,JoinColumn... joinColumns){
+        return DataFrameJoinUtil.rightJoin(this,dataFrame,suffixA,suffixB,joinColumns);
+    }
+
+    public JoinedDataFrame joinInner(DataFrame dataFrame,String... joinColumns){
+        JoinColumn[] joinColumnsArray = new JoinColumn[joinColumns.length];
+        for(int i = 0; i < joinColumns.length;i++){
+            joinColumnsArray[i] = new JoinColumn(joinColumns[i]);
+        }
+        return joinInner(dataFrame,joinColumnsArray);
+    }
+
+    public JoinedDataFrame joinInner(DataFrame dataFrame, JoinColumn... joinColumns){
+        return DataFrameJoinUtil.innerJoin(this,dataFrame,joinColumns);
+    }
+
+    public JoinedDataFrame joinInner(DataFrame dataFrame,String suffixA,String suffixB,JoinColumn... joinColumns){
+        return DataFrameJoinUtil.innerJoin(this,dataFrame,suffixA,suffixB,joinColumns);
+    }
     public DataFrame copy(){
         List<DataRow> rows = getRows(0,size);
         DataFrame copy = new DataFrame();
-        copy.set(header,rows);
+        copy.set(header.copy(),rows);
         return copy;
     }
 

@@ -2,10 +2,9 @@ package de.unknownreality.data.frame.column;
 
 
 import de.unknownreality.data.common.parser.Parser;
-import de.unknownreality.data.common.parser.Parsers;
+import de.unknownreality.data.common.parser.ParserUtil;
 import de.unknownreality.data.frame.MapFunction;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -55,7 +54,7 @@ public class BooleanColumn implements DataColumn<Boolean> {
 
     @Override
     public Parser<Boolean> getParser() {
-        return Parsers.findParserOrNull(Boolean.class);
+        return ParserUtil.findParserOrNull(Boolean.class);
     }
 
     @Override

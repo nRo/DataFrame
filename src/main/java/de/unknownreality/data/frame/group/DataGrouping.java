@@ -11,11 +11,22 @@ import java.util.*;
 public class DataGrouping implements Iterable<DataGroup>{
     private DataGroup[] groups;
     private String[] groupColumns;
+    private Map<GroupKey,DataGroup> groupMap = new HashMap<>();
 
     public DataGrouping(Collection<DataGroup> groups,String... groupColumns) {
         this.groupColumns = groupColumns;
         this.groups = new DataGroup[groups.size()];
         groups.toArray(this.groups);
+        for(DataGroup g : groups){
+            groupMap.put(new GroupKey(g.getGroupValues()),g);
+        }
+    }
+
+    public DataGroup findByGroupValues(Object... values){
+        if(values.length != groupColumns.length){
+            throw new IllegalArgumentException("values must have same length as GroupColumns");
+        }
+        return groupMap.get(new GroupKey(values));
     }
     public String[] getGroupColumns() {
         return groupColumns;
@@ -79,5 +90,26 @@ public class DataGrouping implements Iterable<DataGroup>{
                 return groups[index++];
             }
         };
+    }
+
+    private static class GroupKey{
+        int hash;
+        private GroupKey(Object[] values){
+            hash = Arrays.hashCode(values);
+        }
+
+        public boolean equals(Object o){
+            if(o == this){
+                return true;
+            }
+            if(!(o instanceof  GroupKey)){
+                return false;
+            }
+            return hashCode() == ((GroupKey)o).hashCode();
+        }
+        @Override
+        public int hashCode() {
+            return hash;
+        }
     }
 }

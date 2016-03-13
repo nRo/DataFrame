@@ -1,7 +1,6 @@
 package de.unknownreality.data.csv.mapping;
 
-import de.unknownreality.data.common.parser.Parser;
-import de.unknownreality.data.common.parser.Parsers;
+import de.unknownreality.data.common.parser.ParserUtil;
 import de.unknownreality.data.csv.CSVRow;
 
 import java.beans.IntrospectionException;
@@ -35,7 +34,7 @@ public class FieldColumn {
         set(row.get(headerName),object);
     }
     public void set(String value, Object object){
-        Object convertedVal = Parsers.parseOrNull(field.getType(),value);
+        Object convertedVal = ParserUtil.parseOrNull(field.getType(),value);
         try {
             if(Modifier.isPublic(field.getModifiers())){
                 field.set(object,convertedVal);

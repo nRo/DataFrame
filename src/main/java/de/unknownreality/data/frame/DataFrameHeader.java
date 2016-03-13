@@ -123,6 +123,19 @@ public class DataFrameHeader implements Header<String> {
     }
 
     @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("#");
+        for (int i = 0; i < headers.size(); i++) {
+            sb.append(headers.get(i));
+            if (i < headers.size() - 1) {
+                sb.append("\t");
+            }
+        }
+        return sb.toString();
+    }
+
+    @Override
     public Iterator<String> iterator() {
         return headers.iterator();
     }

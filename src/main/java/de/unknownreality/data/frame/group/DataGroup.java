@@ -18,8 +18,13 @@ public class DataGroup extends DataFrame implements Row<Comparable> {
         System.arraycopy(values,0,groupValues,0,values.length);
     }
 
+
     public GroupHeader getGroupHeader() {
         return groupHeader;
+    }
+
+    public Comparable[] getGroupValues() {
+        return groupValues;
     }
 
     public String getGroupDescription(){
