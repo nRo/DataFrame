@@ -74,7 +74,34 @@ public class DataFrame implements DataContainer<DataFrameHeader,DataRow>{
         return this;
     }
 
-    private void append(DataRow row){
+    public void append(Comparable... values){
+        if(values.length != columns.size()){
+            throw new IllegalArgumentException(String.format("value for each column required"));
+        }
+        int i = 0;
+        for(DataColumn column : columns.values()){
+            if(values[i] != null && !column.getType().isInstance(values[i])){
+                throw new IllegalArgumentException(
+                        String.format("value %i has wrong type (%s != %s)",i,
+                                values[i].getClass().getName(),
+                                column.getType().getName()));
+            }
+            i++;
+        }
+        i = 0;
+        for(DataColumn column : columns.values()){
+           if(values[i] == null){
+               column.appendNA();
+           }
+            else{
+               column.append(values[i]);
+           }
+            i++;
+        }
+        size++;
+    }
+
+    public void append(DataRow row){
         for(String h : header){
             DataColumn column = columns.get(h);
             if(row.isNA(h)){
