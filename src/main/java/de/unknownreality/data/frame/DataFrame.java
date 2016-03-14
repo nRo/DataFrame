@@ -237,7 +237,7 @@ public class DataFrame implements DataContainer<DataFrameHeader,DataRow>{
     }
 
 
-    public int getSize() {
+    public int size() {
         return size;
     }
 
