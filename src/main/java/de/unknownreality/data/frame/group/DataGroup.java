@@ -164,10 +164,9 @@ public class DataGroup extends DataFrame implements Row<Comparable> {
             throw new IllegalArgumentException("no float value in col " + headerName + " (" + value + ")");
         }
     }
-    
-    @Override
-    public int size() {
-        return super.getSize();
+
+    public int getGroupValuesCount(){
+        return groupValues.length;
     }
 }
 

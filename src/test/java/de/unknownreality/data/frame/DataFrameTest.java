@@ -43,7 +43,7 @@ public class DataFrameTest {
         for(int i = 0; i < header.length;i++){
             Assert.assertEquals(header[i],df.getHeader().get(i));
         }
-        Assert.assertEquals(col1.length,df.getSize());
+        Assert.assertEquals(col1.length,df.size());
         int i = 0;
         for(DataRow row : df){
             Assert.assertEquals(col1[i],row.get(0));
