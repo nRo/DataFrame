@@ -73,24 +73,32 @@ public class DataFrame implements RowIterator<DataRow>{
         return this;
     }
 
-    public void set(Collection<DataRow> rows){
-        for(DataRow row : rows){
-            for(String h : header){
-                DataColumn column = columns.get(h);
-                if(row.isNA(h)){
-                    column.appendNA();
-                }
-                else{
-                    column.append(row.get(h));
-                }
+    private void append(DataRow row){
+        for(String h : header){
+            DataColumn column = columns.get(h);
+            if(row.isNA(h)){
+                column.appendNA();
+            }
+            else{
+                column.append(row.get(h));
             }
         }
-        size = rows.size();
+        this.size++;
+    }
+
+    public void set(Collection<DataRow> rows){
+        this.size = 0;
+        for(DataColumn column : columns.values()){
+            column.clear();
+        }
+        for(DataRow row : rows){
+            append(row);
+        }
     }
 
     public void set(DataFrameHeader header,Collection<DataRow> rows){
         this.header = header;
-
+        this.columns.clear();
         for(String h : header){
             try {
                 columns.put(h,header.getColumnType(h).newInstance());
@@ -219,21 +227,20 @@ public class DataFrame implements RowIterator<DataRow>{
         if(!header.equals(frame.getHeader())){
             throw new IllegalArgumentException(String.format("dataframes not compatible"));
         }
-        List<DataRow> rows = getRows();
-        rows.addAll(frame.getRows());
-        set(rows);
+        for(DataRow row : frame){
+            append(row);
+        }
         return this;
     }
     public DataFrame concat(Collection<DataFrame> dataFrames){
-        List<DataRow> rows = getRows();
         for(DataFrame dataFrame : dataFrames){
             if(!header.equals(dataFrame.getHeader())){
                 throw new IllegalArgumentException(String.format("dataframes not compatible"));
             }
-            rows.addAll(dataFrame.getRows());
-
+            for(DataRow row : dataFrame){
+                append(row);
+            }
         }
-        set(rows);
         return this;
     }
     public DataFrame concat(DataFrame... dataFrames){
