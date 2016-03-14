@@ -1,5 +1,6 @@
-package de.unknownreality.data.csv.mapping;
+package de.unknownreality.data.common.mapping;
 
+import de.unknownreality.data.common.Row;
 import de.unknownreality.data.common.parser.ParserUtil;
 import de.unknownreality.data.csv.CSVRow;
 
@@ -29,12 +30,18 @@ public class FieldColumn {
         return field;
     }
 
-    public void set(CSVRow row,
+    public void set(Row row,
                     Object object){
         set(row.get(headerName),object);
     }
-    public void set(String value, Object object){
-        Object convertedVal = ParserUtil.parseOrNull(field.getType(),value);
+    public void set(Object value, Object object){
+        Object convertedVal;
+        if(field.getType().isInstance(value)){
+            convertedVal = value;
+        }
+        else{
+            convertedVal = ParserUtil.parseOrNull(field.getType(),value.toString());
+        }
         try {
             if(Modifier.isPublic(field.getModifiers())){
                 field.set(object,convertedVal);

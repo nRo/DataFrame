@@ -1,8 +1,12 @@
-package de.unknownreality.data.csv.mapping;
+package de.unknownreality.data.common.mapping;
 
-import de.unknownreality.data.csv.CSVHeader;
+import de.unknownreality.data.common.DataContainer;
+import de.unknownreality.data.common.Header;
+import de.unknownreality.data.common.Row;
 import de.unknownreality.data.csv.CSVReader;
 import de.unknownreality.data.csv.CSVRow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -13,18 +17,19 @@ import java.util.Map;
 /**
  * Created by Alex on 08.03.2016.
  */
-public class CSVMapper<T> {
-    private CSVReader reader;
+public class DataMapper<T> {
+    private static Logger log = LoggerFactory.getLogger(DataMapper.class);
+    private DataContainer<? extends Header,? extends Row> reader;
     private FieldColumn[] columns;
     private Map<Integer,FieldColumn> columnMap = new HashMap<>();
     private Class<T> cl;
-    private CSVMapper(CSVReader reader, Class<T> cl){
+    private DataMapper(DataContainer<? extends Header,? extends Row> reader, Class<T> cl){
             this.reader = reader;
             this.cl = cl;
     }
 
-    public static <T> List<T> map(CSVReader reader,Class<T> cl){
-        CSVMapper<T> mapper = new CSVMapper<>(reader,cl);
+    public static <T> List<T> map(DataContainer<? extends Header,? extends Row> reader,Class<T> cl){
+        DataMapper<T> mapper = new DataMapper<>(reader,cl);
         return mapper.map();
     }
 
@@ -32,17 +37,17 @@ public class CSVMapper<T> {
     public List<T> map(){
         List<T> result = new ArrayList<>();
         initFields(reader.getHeader());
-        for(CSVRow row : reader){
+        for(Row row : reader){
             result.add(processRow(row));
         }
         return result;
     }
-    private void initFields(CSVHeader header) {
+    private void initFields(Header header) {
 
         List<FieldColumn> fieldColumnList = new ArrayList<>();
         for (Field field : cl.getDeclaredFields()) {
             String name = field.getName();
-            CSVColumn annotation = field.getAnnotation(CSVColumn.class);
+            MappedColumn annotation = field.getAnnotation(MappedColumn.class);
             if (annotation == null) {
                 continue;
             }
@@ -50,7 +55,7 @@ public class CSVMapper<T> {
             if (!isValid(headerName, header)) {
                 if (annotation.index() != -1) {
                     if (annotation.index() < header.size()) {
-                        headerName = header.get(annotation.index());
+                        headerName = header.get(annotation.index()).toString();
                     }
                 }
             }
@@ -58,7 +63,7 @@ public class CSVMapper<T> {
                 if (isValid(name, header)) {
                     headerName = name;
                 } else {
-                    System.err.println(annotation.toString() + " not found in file");
+                    log.error("{} not found in file",annotation.toString());
                     continue;
                 }
             }
@@ -69,12 +74,12 @@ public class CSVMapper<T> {
         fieldColumnList.toArray(columns);
     }
 
-    private boolean isValid(String headerName, CSVHeader header){
+    private boolean isValid(Object headerName, Header header){
         return !"".equals(headerName) && header.contains(headerName);
     }
 
 
-    private T processRow(CSVRow row){
+    private T processRow(Row row){
         T obj = null;
         try {
             obj = cl.newInstance();

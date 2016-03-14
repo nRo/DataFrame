@@ -50,6 +50,26 @@ public class DataFrameHeader implements Header<String> {
         colTypeMap.remove(name);
     }
 
+    public void rename(String oldName, String newName){
+        for(int i = 0; i < headers.size();i++){
+            if(headers.get(i).equals(oldName)){
+                headers.set(i,newName);
+                Class<? extends Comparable> type = typesMap.get(oldName);
+                typesMap.remove(oldName);
+                typesMap.put(newName,type);
+
+                Class<? extends DataColumn> colType = colTypeMap.get(oldName);
+                colTypeMap.remove(oldName);
+                colTypeMap.put(newName,colType);
+
+                Integer index = headerMap.get(oldName);
+                headerMap.remove(oldName);
+                headerMap.put(newName,index);
+                return;
+            }
+        }
+    }
+
     @Override
     public boolean equals(Object other){
         if(other == this){

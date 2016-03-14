@@ -1,10 +1,9 @@
 package de.unknownreality.data.csv;
 
 import de.unknownreality.data.common.DataContainer;
-import de.unknownreality.data.common.RowIterator;
-import de.unknownreality.data.csv.mapping.CSVMapper;
+import de.unknownreality.data.common.mapping.*;
+
 import de.unknownreality.data.frame.DataFrameBuilder;
-import de.unknownreality.data.frame.column.DataColumn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,7 +91,7 @@ public abstract class CSVReader implements DataContainer<CSVHeader,CSVRow>{
         return DataFrameBuilder.create(this);
     }
     public <T> List<T> map(Class<T> cl){
-        return CSVMapper.map(this,cl);
+        return DataMapper.map(this,cl);
     }
 
 

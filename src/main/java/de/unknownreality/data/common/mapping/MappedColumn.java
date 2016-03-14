@@ -1,4 +1,4 @@
-package de.unknownreality.data.csv.mapping;
+package de.unknownreality.data.common.mapping;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -8,7 +8,7 @@ import java.lang.annotation.RetentionPolicy;
  */
 
 @Retention(RetentionPolicy.RUNTIME)
-public @interface CSVColumn {
+public @interface MappedColumn {
     String header() default "";
     int index() default -1;
 }
