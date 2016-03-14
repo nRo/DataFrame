@@ -1,5 +1,6 @@
 package de.unknownreality.data.csv;
 
+import de.unknownreality.data.common.Header;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,7 +9,7 @@ import java.util.*;
 /**
  * Created by Alex on 09.03.2016.
  */
-public class CSVHeader  implements Iterable<String>{
+public class CSVHeader  implements Header<String> {
     private static Logger log = LoggerFactory.getLogger(CSVHeader.class);
     private Map<String,Integer> headerMap = new HashMap<>();
     private List<String> headers = new ArrayList<>();

@@ -2,7 +2,6 @@ package de.unknownreality.data.frame;
 
 import de.unknownreality.data.csv.CSVReader;
 import de.unknownreality.data.csv.CSVReaderBuilder;
-import de.unknownreality.data.csv.CSVRow;
 import de.unknownreality.data.frame.column.*;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -28,12 +27,12 @@ public class DataFrameTest {
         Boolean[] col4 = new Boolean[]{false,false,true,false,true};
         String csv = createCSV(header,col1,col2,col3,col4);
 
-        CSVReader reader = CSVReaderBuilder.create(csv)
+        CSVReader reader = CSVReaderBuilder.create()
                 .withHeaderPrefix("#")
                 .withSeparator("\t")
-                .containsHeader(true).build();
+                .containsHeader(true).load(csv);
 
-        DataFrame df = reader.buildDataFrame()
+        DataFrame df = reader.toDataFrame()
                 .addColumn(new IntegerColumn("A"))
                 .addColumn(new DoubleColumn("B"))
                 .addColumn(new StringColumn("C"))
@@ -75,12 +74,12 @@ public class DataFrameTest {
         Boolean[] col4 = new Boolean[]{false,false,true,false,true};
         String csv = createCSV(header,col1,col2,col3,col4);
 
-        CSVReader reader = CSVReaderBuilder.create(csv)
+        CSVReader reader = CSVReaderBuilder.create()
                 .withHeaderPrefix("#")
                 .withSeparator("\t")
-                .containsHeader(true).build();
+                .containsHeader(true).load(csv);
 
-        DataFrame df = reader.buildDataFrame()
+        DataFrame df = reader.toDataFrame()
                 .addColumn(new IntegerColumn("A"))
                 .addColumn(new DoubleColumn("B"))
                 .addColumn(new StringColumn("C"))

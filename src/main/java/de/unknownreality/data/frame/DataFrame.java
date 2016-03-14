@@ -1,5 +1,6 @@
 package de.unknownreality.data.frame;
 
+import de.unknownreality.data.common.DataContainer;
 import de.unknownreality.data.common.RowIterator;
 import de.unknownreality.data.frame.column.*;
 import de.unknownreality.data.frame.filter.FilterPredicate;
@@ -22,7 +23,7 @@ import java.util.*;
 /**
  * Created by Alex on 09.03.2016.
  */
-public class DataFrame implements RowIterator<DataRow>{
+public class DataFrame implements DataContainer<DataFrameHeader,DataRow>{
     private static Logger log = LoggerFactory.getLogger(DataFrame.class);
     private int size;
     private Map<String,DataColumn> columns = new LinkedHashMap<>();

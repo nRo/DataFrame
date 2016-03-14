@@ -1,7 +1,6 @@
 package de.unknownreality.data.frame.filter;
 
 import de.unknownreality.data.common.Row;
-import de.unknownreality.data.frame.DataRow;
 
 /**
  * Created by Alex on 09.03.2016.

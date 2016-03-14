@@ -1,7 +1,6 @@
 package de.unknownreality.data.csv;
 
 import de.unknownreality.data.common.Row;
-
 import de.unknownreality.data.common.parser.ParserNotFoundException;
 import de.unknownreality.data.common.parser.ParserUtil;
 import org.slf4j.Logger;

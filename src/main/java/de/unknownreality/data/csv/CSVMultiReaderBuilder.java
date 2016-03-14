@@ -40,11 +40,11 @@ public class CSVMultiReaderBuilder {
     public MultiIterator<CSVRow> build(){
         CSVReader[] readers = new CSVReader[files.length];
         for(int i = 0; i < readers.length;i++){
-            readers[i] = CSVReaderBuilder.create(files[i])
+            readers[i] = CSVReaderBuilder.create()
                     .containsHeader(containsHeader)
                     .withHeaderPrefix(headerPrefix)
                     .withSeparator(separator)
-                    .build();
+                    .load(files[i]);
         }
         return MultiIterator.create(readers,CSVRow.class);
     }

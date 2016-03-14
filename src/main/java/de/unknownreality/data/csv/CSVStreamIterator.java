@@ -3,9 +3,10 @@ package de.unknownreality.data.csv;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.util.Iterator;
-import java.util.stream.Stream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 public class CSVStreamIterator implements CSVIterator {
     private static Logger log = LoggerFactory.getLogger(CSVStreamIterator.class);

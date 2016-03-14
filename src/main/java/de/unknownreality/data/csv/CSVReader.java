@@ -1,19 +1,22 @@
 package de.unknownreality.data.csv;
 
+import de.unknownreality.data.common.DataContainer;
 import de.unknownreality.data.common.RowIterator;
 import de.unknownreality.data.csv.mapping.CSVMapper;
 import de.unknownreality.data.frame.DataFrameBuilder;
+import de.unknownreality.data.frame.column.DataColumn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.util.Iterator;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 /**
  * Created by Alex on 09.03.2016.
  */
-public abstract class CSVReader implements RowIterator<CSVRow>{
+public abstract class CSVReader implements DataContainer<CSVHeader,CSVRow>{
     private static Logger log = LoggerFactory.getLogger(CSVReader.class);
     private String headerPrefix = "#";
     private String separator;
@@ -85,7 +88,7 @@ public abstract class CSVReader implements RowIterator<CSVRow>{
     @Override
     public abstract CSVIterator iterator();
 
-    public DataFrameBuilder buildDataFrame(){
+    public DataFrameBuilder toDataFrame(){
         return DataFrameBuilder.create(this);
     }
     public <T> List<T> map(Class<T> cl){

@@ -4,7 +4,6 @@ import de.unknownreality.data.common.parser.Parser;
 import de.unknownreality.data.frame.MapFunction;
 
 import java.util.Collection;
-import java.util.Comparator;
 
 /**
  * Created by Alex on 11.03.2016.
