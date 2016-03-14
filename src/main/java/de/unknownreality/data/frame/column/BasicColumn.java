@@ -152,7 +152,7 @@ public abstract class BasicColumn<T extends Comparable<T>> implements DataColumn
 
     @Override
     public boolean isNA(int index) {
-        return values[index] == null;
+        return values.length <= index || values[index] == null;
     }
 
     @Override

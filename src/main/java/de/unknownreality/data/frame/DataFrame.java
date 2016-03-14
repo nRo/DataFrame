@@ -26,7 +26,8 @@ import java.util.*;
 public class DataFrame implements DataContainer<DataFrameHeader,DataRow>{
     private static Logger log = LoggerFactory.getLogger(DataFrame.class);
     private int size;
-    private Map<String,DataColumn> columns = new LinkedHashMap<>();
+    private Map<String,DataColumn> columnsMap = new LinkedHashMap<>();
+    private List<DataColumn> columnList = new ArrayList<>();
     private DataFrameHeader header = new DataFrameHeader();
 
 
@@ -34,8 +35,20 @@ public class DataFrame implements DataContainer<DataFrameHeader,DataRow>{
 
     }
 
+    public DataFrame renameColumn(String name, String newName){
+        DataColumn column = columnsMap.get(name);
+        if(column == null){
+            return this;
+        }
+        header.rename(name,newName);
+        column.setName(newName);
+        columnsMap.remove(name);
+        columnsMap.put(newName,column);
+        return this;
+    }
+
     public DataFrame addColumn(String name, DataColumn column){
-        if(columns.isEmpty()){
+        if(columnList.isEmpty()){
             this.size = column.size();
         }
         else{
@@ -44,12 +57,13 @@ public class DataFrame implements DataContainer<DataFrameHeader,DataRow>{
             }
         }
         header.add(name,column.getClass(),column.getType());
-        columns.put(name,column);
+        columnsMap.put(name,column);
+        columnList.add(column);
         return this;
     }
 
     public DataFrame addColumn(DataColumn column){
-        if(columns.isEmpty()){
+        if(columnList.isEmpty()){
             this.size = column.size();
         }
         else{
@@ -58,7 +72,8 @@ public class DataFrame implements DataContainer<DataFrameHeader,DataRow>{
             }
         }
         header.add(column);
-        columns.put(column.getName(),column);
+        columnsMap.put(column.getName(),column);
+        columnList.add(column);
         return this;
     }
     public DataFrame addColumns(Collection<DataColumn> columns){
@@ -75,11 +90,11 @@ public class DataFrame implements DataContainer<DataFrameHeader,DataRow>{
     }
 
     public void append(Comparable... values){
-        if(values.length != columns.size()){
+        if(values.length != columnList.size()){
             throw new IllegalArgumentException(String.format("value for each column required"));
         }
         int i = 0;
-        for(DataColumn column : columns.values()){
+        for(DataColumn column : columnList){
             if(values[i] != null && !column.getType().isInstance(values[i])){
                 throw new IllegalArgumentException(
                         String.format("value %i has wrong type (%s != %s)",i,
@@ -89,7 +104,7 @@ public class DataFrame implements DataContainer<DataFrameHeader,DataRow>{
             i++;
         }
         i = 0;
-        for(DataColumn column : columns.values()){
+        for(DataColumn column : columnList){
            if(values[i] == null){
                column.appendNA();
            }
@@ -103,7 +118,7 @@ public class DataFrame implements DataContainer<DataFrameHeader,DataRow>{
 
     public void append(DataRow row){
         for(String h : header){
-            DataColumn column = columns.get(h);
+            DataColumn column = columnsMap.get(h);
             if(row.isNA(h)){
                 column.appendNA();
             }
@@ -116,7 +131,7 @@ public class DataFrame implements DataContainer<DataFrameHeader,DataRow>{
 
     public void set(Collection<DataRow> rows){
         this.size = 0;
-        for(DataColumn column : columns.values()){
+        for(DataColumn column : columnsMap.values()){
             column.clear();
         }
         for(DataRow row : rows){
@@ -126,10 +141,13 @@ public class DataFrame implements DataContainer<DataFrameHeader,DataRow>{
 
     public void set(DataFrameHeader header,Collection<DataRow> rows){
         this.header = header;
-        this.columns.clear();
+        this.columnsMap.clear();
+        this.columnList.clear();
         for(String h : header){
             try {
-                columns.put(h,header.getColumnType(h).newInstance());
+                DataColumn instance =header.getColumnType(h).newInstance();
+                columnsMap.put(h,instance);
+                columnList.add(instance);
             } catch (InstantiationException e) {
                 log.error("error creating column instance",e);
             } catch (IllegalAccessException e) {
@@ -212,7 +230,7 @@ public class DataFrame implements DataContainer<DataFrameHeader,DataRow>{
     }
 
     public DataFrame reverse(){
-        for(DataColumn col : columns.values()){
+        for(DataColumn col : columnList){
             col.reverse();
         }
         return this;
@@ -311,9 +329,9 @@ public class DataFrame implements DataContainer<DataFrameHeader,DataRow>{
         if(i >= size){
             throw new IllegalArgumentException(String.format("index out of bounds"));
         }
-        Comparable[] values = new Comparable[columns.size()];
+        Comparable[] values = new Comparable[columnList.size()];
         int j = 0;
-        for(DataColumn column : columns.values()){
+        for(DataColumn column : columnList){
             if(column.isNA(i)){
                 values[j++] = Values.NA;
             }
@@ -325,15 +343,15 @@ public class DataFrame implements DataContainer<DataFrameHeader,DataRow>{
     }
 
     public Collection<String> getColumnNames(){
-        return new ArrayList<>(columns.keySet());
+        return new ArrayList<>(columnsMap.keySet());
     }
 
     public <T extends Comparable<T>> DataColumn<T> getColumn(String name){
-        return columns.get(name);
+        return columnsMap.get(name);
     }
 
     public <T extends DataColumn> T getColumn(String name,Class<T> cl){
-        DataColumn column = columns.get(name);
+        DataColumn column = columnsMap.get(name);
         if(column == null){
             throw new IllegalArgumentException(String.format("column '%s' not found",name));
         }

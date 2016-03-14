@@ -10,7 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Alex on 09.03.2016.
@@ -18,36 +20,36 @@ import java.util.List;
 public class DataFrameParser {
     private static Logger log = LoggerFactory.getLogger(DataFrameParser.class);
 
-    public static DataFrame fromCSV(DataContainer<?super Header,? super Row> reader, List<DataColumn> columns){
+    public static DataFrame fromCSV(DataContainer<?super Header,? super Row> reader, LinkedHashMap<String,DataColumn> columns){
         for(Row row : reader){
-            for(DataColumn column : columns){
-                String strVal = row.getString(column.getName());
+            for(Map.Entry<String,DataColumn> columnEntry : columns.entrySet()){
+                String strVal = row.getString(columnEntry.getKey());
                 if(strVal == null || "".equals(strVal) || "null".equals(strVal)){
-                    column.appendNA();
+                    columnEntry.getValue().appendNA();
                     continue;
                 }
                 try{
                     if(Values.NA.isNA(strVal)){
-                        column.appendNA();
+                        columnEntry.getValue().appendNA();
                         continue;
                     }
-                    Object o = column.getParser().parse(strVal);
+                    Object o = columnEntry.getValue().getParser().parse(strVal);
                     if(o == null || !(o instanceof Comparable)){
-                        column.appendNA();
+                        columnEntry.getValue().appendNA();
                         continue;
                     }
-                    column.append((Comparable)o);
+                    columnEntry.getValue().append((Comparable)o);
                 }
                 catch (ParseException e){
                     log.warn("error parsing value, NA added",e);
-                    column.appendNA();
+                    columnEntry.getValue().appendNA();
                     continue;
                 }
 
             }
         }
         DataFrame dataFrame = new DataFrame();
-        for(DataColumn column : columns){
+        for(DataColumn column : columns.values()){
             dataFrame.addColumn(column);
         }
         return dataFrame;

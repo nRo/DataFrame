@@ -5,13 +5,15 @@ import de.unknownreality.data.csv.CSVReader;
 import de.unknownreality.data.frame.column.DataColumn;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 /**
  * Created by Alex on 09.03.2016.
  */
 public class DataFrameBuilder {
-    private List<DataColumn> columns = new ArrayList<>();
+    private LinkedHashMap<String,DataColumn> columns = new LinkedHashMap<>();
     private DataContainer dataContainer;
 
     private DataFrameBuilder(DataContainer dataContainer){
@@ -22,7 +24,12 @@ public class DataFrameBuilder {
     }
 
     public DataFrameBuilder addColumn(DataColumn column){
-        columns.add(column);
+        columns.put(column.getName(),column);
+        return this;
+    }
+
+    public DataFrameBuilder addColumn(String header,DataColumn column){
+        columns.put(header,column);
         return this;
     }
 
