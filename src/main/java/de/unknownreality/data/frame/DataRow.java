@@ -3,9 +3,6 @@ package de.unknownreality.data.frame;
 import de.unknownreality.data.common.Header;
 import de.unknownreality.data.common.Row;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Created by Alex on 09.03.2016.
  */

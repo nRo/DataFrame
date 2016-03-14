@@ -1,5 +1,6 @@
 package de.unknownreality.data.frame;
 
+import de.unknownreality.data.common.DataContainer;
 import de.unknownreality.data.csv.CSVReader;
 import de.unknownreality.data.frame.column.DataColumn;
 
@@ -11,13 +12,13 @@ import java.util.List;
  */
 public class DataFrameBuilder {
     private List<DataColumn> columns = new ArrayList<>();
-    private CSVReader csvReader;
+    private DataContainer dataContainer;
 
-    private DataFrameBuilder(CSVReader csvReader){
-        this.csvReader = csvReader;
+    private DataFrameBuilder(DataContainer dataContainer){
+        this.dataContainer = dataContainer;
     }
-    public static DataFrameBuilder create(CSVReader csvReader){
-        return new DataFrameBuilder(csvReader);
+    public static DataFrameBuilder create(DataContainer dataContainer){
+        return new DataFrameBuilder(dataContainer);
     }
 
     public DataFrameBuilder addColumn(DataColumn column){
@@ -27,7 +28,7 @@ public class DataFrameBuilder {
 
 
     public DataFrame build(){
-        return DataFrameParser.fromCSV(csvReader,columns);
+        return DataFrameParser.fromCSV(dataContainer,columns);
     }
 
 

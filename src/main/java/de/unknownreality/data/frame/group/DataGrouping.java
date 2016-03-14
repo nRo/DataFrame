@@ -1,6 +1,5 @@
 package de.unknownreality.data.frame.group;
 
-import de.unknownreality.data.frame.DataRow;
 import de.unknownreality.data.frame.filter.FilterPredicate;
 
 import java.util.*;

@@ -1,7 +1,5 @@
 package de.unknownreality.data.csv;
 
-import java.io.File;
-
 /**
  * Created by Alex on 09.03.2016.
  */

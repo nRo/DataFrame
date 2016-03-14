@@ -5,8 +5,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.text.ParseException;
-
 /**
  * Created by Alex on 12.03.2016.
  */
@@ -17,10 +15,10 @@ public class CSVReaderTest {
     @Test
     public void testReader(){
         String testCSV = "#A\tB\tC\n1\tX\t3\n1\tX\t3\n";
-        CSVReader reader = CSVReaderBuilder.create(testCSV)
+        CSVReader reader = CSVReaderBuilder.create()
                 .withHeaderPrefix("#")
                 .containsHeader(true)
-                .withSeparator("\t").build();
+                .withSeparator("\t").load(testCSV);
         Assert.assertEquals("A",reader.getHeader().get(0));
         Assert.assertEquals("B",reader.getHeader().get(1));
         Assert.assertEquals("C",reader.getHeader().get(2));

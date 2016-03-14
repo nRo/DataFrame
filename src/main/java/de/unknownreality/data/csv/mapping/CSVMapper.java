@@ -5,7 +5,10 @@ import de.unknownreality.data.csv.CSVReader;
 import de.unknownreality.data.csv.CSVRow;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Alex on 08.03.2016.

@@ -1,5 +1,8 @@
 package de.unknownreality.data.frame;
 
+import de.unknownreality.data.common.DataContainer;
+import de.unknownreality.data.common.Header;
+import de.unknownreality.data.common.Row;
 import de.unknownreality.data.csv.CSVReader;
 import de.unknownreality.data.csv.CSVRow;
 import de.unknownreality.data.frame.column.DataColumn;
@@ -15,8 +18,8 @@ import java.util.List;
 public class DataFrameParser {
     private static Logger log = LoggerFactory.getLogger(DataFrameParser.class);
 
-    public static DataFrame fromCSV(CSVReader reader, List<DataColumn> columns){
-        for(CSVRow row : reader){
+    public static DataFrame fromCSV(DataContainer<?super Header,? super Row> reader, List<DataColumn> columns){
+        for(Row row : reader){
             for(DataColumn column : columns){
                 String strVal = row.getString(column.getName());
                 if(strVal == null || "".equals(strVal) || "null".equals(strVal)){
