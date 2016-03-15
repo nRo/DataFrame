@@ -76,7 +76,7 @@ public class DataFrameTest {
 
         CSVReader reader = CSVReaderBuilder.create()
                 .withHeaderPrefix("#")
-                .withSeparator('t')
+                .withSeparator('\t')
                 .containsHeader(true).load(csv);
 
         DataFrame df = reader.toDataFrame()
