@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
 
 /**
  * Created by Alex on 12.03.2016.
@@ -12,7 +13,7 @@ import java.nio.charset.StandardCharsets;
 public class CSVStringReader extends  CSVReader{
     private static Logger log = LoggerFactory.getLogger(CSVStringReader.class);
     private String content;
-    public CSVStringReader(String content, String separator, boolean containsHeader, String headerPrefix){
+    public CSVStringReader(String content, Character separator, boolean containsHeader, String headerPrefix){
         super(separator,containsHeader,headerPrefix);
         this.content = content;
         initHeader();
@@ -24,7 +25,7 @@ public class CSVStringReader extends  CSVReader{
 
     @Override
     public CSVIterator iterator() {
-        return new CSVStreamIterator(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8))
+        return new CSVIterator(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8))
                 ,getHeader(),getSeparator(),containsHeader());
     }
 }

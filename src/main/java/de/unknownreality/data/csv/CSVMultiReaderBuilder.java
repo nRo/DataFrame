@@ -9,7 +9,7 @@ import java.io.File;
  */
 public class CSVMultiReaderBuilder {
     private File[] files;
-    private String separator = "\t";
+    private Character separator = '\t';
     private String headerPrefix = "#";
     private boolean containsHeader = true;
     private CSVMultiReaderBuilder(File[] files){
@@ -22,7 +22,7 @@ public class CSVMultiReaderBuilder {
 
 
 
-    public CSVMultiReaderBuilder withSeparator(String separator){
+    public CSVMultiReaderBuilder withSeparator(Character separator){
         this.separator = separator;
         return this;
     }

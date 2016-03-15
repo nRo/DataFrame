@@ -6,7 +6,7 @@ import java.io.File;
  * Created by Alex on 09.03.2016.
  */
 public class CSVReaderBuilder {
-    private String separator = "\t";
+    private Character separator = '\t';
     private String headerPrefix = "#";
     private boolean containsHeader = true;
 
@@ -16,7 +16,7 @@ public class CSVReaderBuilder {
     }
 
 
-    public CSVReaderBuilder withSeparator(String separator) {
+    public CSVReaderBuilder withSeparator(Character separator) {
         this.separator = separator;
         return this;
     }
@@ -31,7 +31,7 @@ public class CSVReaderBuilder {
         return this;
     }
 
-    public String getSeparator() {
+    public Character getSeparator() {
         return separator;
     }
 

@@ -1,9 +1,9 @@
-package de.unknownreality.data.csv;
+package de.unknownreality.data.arff;
 
-import de.unknownreality.data.common.BasicHeader;
 import de.unknownreality.data.common.Row;
 import de.unknownreality.data.common.parser.ParserNotFoundException;
 import de.unknownreality.data.common.parser.ParserUtil;
+import de.unknownreality.data.csv.CSVHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,18 +11,16 @@ import java.text.ParseException;
 import java.util.Iterator;
 
 /**
- * Created by Alex on 09.03.2016.
+ * Created by Alex on 15.03.2016.
  */
-public class CSVRow implements Iterable<String>,Row<String> {
-    private static Logger log = LoggerFactory.getLogger(CSVRow.class);
+public class ARFFRow implements Iterable<String>,Row<String> {
+    private static Logger log = LoggerFactory.getLogger(ARFFRow.class);
 
     private String[] values;
-    private Character separator;
-    private BasicHeader header;
+    private ARFFHeader header;
     private int rowNumber;
-    public CSVRow(BasicHeader header, String[] values, int rowNumber, Character separator){
+    public ARFFRow(ARFFHeader header,String[] values,int rowNumber){
         this.values = values;
-        this.separator = separator;
         this.header = header;
         this.rowNumber = rowNumber;
     }
@@ -151,6 +149,6 @@ public class CSVRow implements Iterable<String>,Row<String> {
 
     @Override
     public String toString(){
-        return String.join(separator.toString(), values);
+        return String.join(",", values);
     }
 }
