@@ -17,7 +17,7 @@ public class DataGrouping implements Iterable<DataGroup>{
         this.groups = new DataGroup[groups.size()];
         groups.toArray(this.groups);
         for(DataGroup g : groups){
-            groupMap.put(new GroupKey(g.getGroupValues()),g);
+            groupMap.put(new GroupKey(g.getGroupValues().getValues()),g);
         }
     }
 
@@ -59,7 +59,7 @@ public class DataGrouping implements Iterable<DataGroup>{
 
     public DataGroup findFirst(FilterPredicate predicate){
         for(DataGroup row : this){
-            if(predicate.valid(row)){
+            if(predicate.valid(row.getGroupValues())){
                 return row;
             }
         }
@@ -69,7 +69,7 @@ public class DataGrouping implements Iterable<DataGroup>{
     private List<DataGroup> findGroups(FilterPredicate predicate){
         List<DataGroup> groups = new ArrayList<>();
         for(DataGroup g : this) {
-            if (predicate.valid(g)) {
+            if (predicate.valid(g.getGroupValues())) {
                 groups.add(g);
             }
         }
