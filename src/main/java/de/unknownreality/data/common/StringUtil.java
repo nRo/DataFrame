@@ -41,7 +41,7 @@ public class StringUtil {
                     continue;
                 }
                 if (!inDoubleQuotation) {
-                    inQuotation = true;
+                    inDoubleQuotation = true;
                     continue;
                 }
             }

@@ -1,4 +1,4 @@
-# DataUtil
+# Java DataFrame
 DataFrame Library for Java.
 ## Features
 - create DataFrame from CSV files
@@ -19,7 +19,7 @@ DataFrame Library for Java.
 ```java
 File file = new File("person.csv");
 CSVReader reader = CSVReaderBuilder.create(file)
-        .withSeparator(";")
+        .withSeparator(';')
         .withHeaderPrefix("#")
         .containsHeader(true)
         .build();
