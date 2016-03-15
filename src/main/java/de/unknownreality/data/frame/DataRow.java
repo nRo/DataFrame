@@ -71,6 +71,19 @@ public class DataRow implements Row<Comparable> {
         }
     }
 
+    public Number getNumber(int index) {
+        Object value = get(index);
+        if (value instanceof Number) {
+            return (Number) value;
+        }
+        throw new IllegalArgumentException("no boolean value in col " + index + " (" + value + ")");
+    }
+
+
+    public Number getNumber(String name) {
+       return getNumber(header.getIndex(name));
+    }
+
     @Override
     public String getString(String name) {
         return getString(header.getIndex(name));

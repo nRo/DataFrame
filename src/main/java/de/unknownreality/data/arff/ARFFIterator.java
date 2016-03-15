@@ -1,5 +1,7 @@
-package de.unknownreality.data.csv;
+package de.unknownreality.data.arff;
 
+import de.unknownreality.data.common.RowIterator;
+import de.unknownreality.data.common.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -7,32 +9,23 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Iterator;
 
-public class CSVStreamIterator implements CSVIterator {
-    private static Logger log = LoggerFactory.getLogger(CSVStreamIterator.class);
+public class ARFFIterator implements Iterator<ARFFRow> {
+    private static Logger log = LoggerFactory.getLogger(ARFFIterator.class);
 
     private BufferedReader reader;
-    private CSVRow next;
+    private ARFFRow next;
     private boolean skip;
     private int lineNumber = 0;
-    private String separator;
     private int cols = -1;
-    private CSVHeader header;
-    private CSVRow firstRow;
+    private ARFFHeader header;
 
-    public CSVStreamIterator(InputStream stream, CSVHeader header, String separator, boolean skipFirst) {
+    public ARFFIterator(ARFFHeader header, InputStream stream) {
         this.reader = new BufferedReader(new InputStreamReader(stream));
-        this.skip = skipFirst;
-        this.separator = separator;
         this.header = header;
-        if (skip) {
-            skip = false;
-            firstRow = getNext();
-            next = getNext();
-        } else {
-            next = getNext();
-            firstRow = next;
-        }
+        next = getNext();
+
     }
 
     public void close() {
@@ -43,15 +36,9 @@ public class CSVStreamIterator implements CSVIterator {
         }
     }
 
-    public CSVRow getFirstRow() {
-        return firstRow;
-    }
 
-    public void setSkip(boolean skip) {
-        this.skip = skip;
-    }
 
-    private CSVRow getNext() {
+    private ARFFRow getNext() {
         try {
             if (skip) {
                 lineNumber++;
@@ -60,28 +47,31 @@ public class CSVStreamIterator implements CSVIterator {
             }
             lineNumber++;
             String line = reader.readLine();
+            while(line != null && (line.startsWith("@")||line.startsWith("%") || "".equals(line.trim()))){
+                line = reader.readLine();
+            }
             if (line == null) {
                 return null;
             }
-
-            String[] values = line.split(separator);
+            String[] values = StringUtil.splitQuoted(line,',');
             if (cols == -1) {
                 cols = values.length;
             } else {
                 if (values.length != cols) {
-                    throw new CSVException(String.format("unequal number of column %d != %d in line %d", values.length, cols, lineNumber));
+                    throw new ARFFException(String.format("unequal number of column %d != %d in line %d", values.length, cols, lineNumber));
                 }
             }
             for (int i = 0; i < cols; i++) {
                 values[i] = values[i].trim();
             }
-            return new CSVRow(header, values, lineNumber, separator);
+
+            return new ARFFRow(header, values, lineNumber);
 
         } catch (IOException e) {
-            log.error("error reading file: {}:{}", lineNumber, e);
+            log.error("error reading arff file [{}]", lineNumber, e);
             close();
-        } catch (CSVException e) {
-            log.error("error parsing file: {}:{}", lineNumber, e);
+        } catch (ARFFException e) {
+            log.error("error parsing arff file [{}]", lineNumber, e);
             close();
         }
         return null;
@@ -94,8 +84,8 @@ public class CSVStreamIterator implements CSVIterator {
     }
 
     @Override
-    public CSVRow next() {
-        CSVRow row = next;
+    public ARFFRow next() {
+        ARFFRow row = next;
         next = getNext();
         if (next == null) {
             close();

@@ -8,8 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -18,12 +17,12 @@ import java.util.List;
 public abstract class CSVReader implements DataContainer<CSVHeader,CSVRow>{
     private static Logger log = LoggerFactory.getLogger(CSVReader.class);
     private String headerPrefix = "#";
-    private String separator;
+    private Character separator;
     private File file;
     private CSVHeader header = new CSVHeader();
     private boolean containsHeader;
 
-    protected CSVReader(String separator, boolean containsHeader,String headerPrefix){
+    protected CSVReader(Character separator, boolean containsHeader,String headerPrefix){
         this.separator = separator;
         this.containsHeader = containsHeader;
         this.headerPrefix = headerPrefix;
@@ -37,7 +36,7 @@ public abstract class CSVReader implements DataContainer<CSVHeader,CSVRow>{
         return headerPrefix;
     }
 
-    public String getSeparator() {
+    public Character getSeparator() {
         return separator;
     }
 
@@ -75,11 +74,7 @@ public abstract class CSVReader implements DataContainer<CSVHeader,CSVRow>{
                 }
                 containsHeader = false;
             }
-        } catch (FileNotFoundException e) {
-            log.error("file not found: {}",file,e);
-        } catch (IOException e) {
-            log.error("error reading file: {}",file,e);
-        } catch (CSVException e) {
+        }  catch (CSVException e) {
             log.error("error reading file: {}",file,e);
         }
     }

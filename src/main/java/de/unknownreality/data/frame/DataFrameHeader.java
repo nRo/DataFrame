@@ -1,5 +1,6 @@
 package de.unknownreality.data.frame;
 
+import de.unknownreality.data.common.BasicHeader;
 import de.unknownreality.data.common.Header;
 import de.unknownreality.data.frame.column.DataColumn;
 import org.slf4j.Logger;
@@ -10,7 +11,7 @@ import java.util.*;
 /**
  * Created by Alex on 09.03.2016.
  */
-public class DataFrameHeader implements Header<String> {
+public class DataFrameHeader extends BasicHeader {
     private static Logger log = LoggerFactory.getLogger(DataFrameHeader.class);
     private Map<String,Integer> headerMap = new HashMap<>();
     private List<String> headers = new ArrayList<>();

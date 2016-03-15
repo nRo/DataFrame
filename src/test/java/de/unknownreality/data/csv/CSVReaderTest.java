@@ -18,7 +18,7 @@ public class CSVReaderTest {
         CSVReader reader = CSVReaderBuilder.create()
                 .withHeaderPrefix("#")
                 .containsHeader(true)
-                .withSeparator("\t").load(testCSV);
+                .withSeparator('\t').load(testCSV);
         Assert.assertEquals("A",reader.getHeader().get(0));
         Assert.assertEquals("B",reader.getHeader().get(1));
         Assert.assertEquals("C",reader.getHeader().get(2));

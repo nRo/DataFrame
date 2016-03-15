@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.Iterator;
 
 /**
  * Created by Alex on 12.03.2016.
@@ -13,7 +14,7 @@ import java.io.FileNotFoundException;
 public class CSVFileReader extends  CSVReader{
     private static Logger log = LoggerFactory.getLogger(CSVFileReader.class);
     private File file;
-    public CSVFileReader(File file,String separator, boolean containsHeader,String headerPrefix){
+    public CSVFileReader(File file,Character separator, boolean containsHeader,String headerPrefix){
         super(separator,containsHeader,headerPrefix);
         this.file = file;
         initHeader();
@@ -21,7 +22,7 @@ public class CSVFileReader extends  CSVReader{
     @Override
     public CSVIterator iterator() {
         try{
-            return new CSVStreamIterator(new FileInputStream(file),getHeader(),getSeparator(),containsHeader());
+            return new CSVIterator(new FileInputStream(file),getHeader(),getSeparator(),containsHeader());
         } catch (FileNotFoundException e) {
             log.error("file not found: {}",file,e);
         }
