@@ -34,6 +34,9 @@ public class DataFrame implements DataContainer<DataFrameHeader,DataRow>{
     public DataFrame(){
 
     }
+    public DataFrame(DataFrameHeader header, Collection<DataRow> rows){
+        set(header,rows);
+    }
 
     public DataFrame renameColumn(String name, String newName){
         DataColumn column = columnsMap.get(name);
@@ -189,14 +192,18 @@ public class DataFrame implements DataContainer<DataFrameHeader,DataRow>{
         set(header,rows);
         return this;
     }
+
+    public DataFrame sort(String name){
+        return sort(name, SortColumn.Direction.Ascending);
+    }
     public DataFrame sort(String name, SortColumn.Direction dir){
         List<DataRow> rows = getRows(0,size);
         rows.sort(new RowColumnComparator(header,new SortColumn[]{new SortColumn(name,dir)}));
-        set(header,rows);
+        set(rows);
         return this;
     }
 
-    public List<DataRow> find(String colName,Comparable value){
+    public DataFrame find(String colName,Comparable value){
         return find(FilterPredicate.eq(colName,value));
     }
 
@@ -215,11 +222,16 @@ public class DataFrame implements DataContainer<DataFrameHeader,DataRow>{
     }
 
     public DataFrame filter(FilterPredicate predicate){
-        set(header,find(predicate));
+        set(header,findRows(predicate));
         return this;
     }
 
-    public List<DataRow> find(FilterPredicate predicate){
+    public DataFrame find(FilterPredicate predicate){
+        List<DataRow> rows = findRows(predicate);
+        return new DataFrame(header.copy(),rows);
+    }
+
+    public List<DataRow> findRows(FilterPredicate predicate){
         List<DataRow> rows = new ArrayList<>();
         for(DataRow row : this){
             if(predicate.valid(row)){
@@ -228,6 +240,7 @@ public class DataFrame implements DataContainer<DataFrameHeader,DataRow>{
         }
         return rows;
     }
+
 
     public DataFrame reverse(){
         for(DataColumn col : columnList){
