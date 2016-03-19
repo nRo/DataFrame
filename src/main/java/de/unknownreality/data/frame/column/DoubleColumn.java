@@ -30,9 +30,10 @@ public class DoubleColumn extends BasicColumn<Double> implements NumberColumn<Do
         return Double.class;
     }
 
+    private Parser parser = ParserUtil.findParserOrNull(Double.class);
     @Override
     public Parser<Double> getParser() {
-        return ParserUtil.findParserOrNull(Double.class);
+        return parser;
     }
 
     @Override

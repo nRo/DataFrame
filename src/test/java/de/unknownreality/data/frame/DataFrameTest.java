@@ -23,7 +23,7 @@ public class DataFrameTest {
         String[] header = new String[]{"A","B","C","D"};
         Integer[] col1 = new Integer[]{5,3,2,4,1};
         Double[] col2 = new Double[]{1d,3d,5d,5d,2d};
-        String[] col3 = new String[]{"X","Y","Y","X","X"};
+        String[] col3 = new String[]{"","Y","Y","X",""};
         Boolean[] col4 = new Boolean[]{false,false,true,false,true};
         String csv = createCSV(header,col1,col2,col3,col4);
 
@@ -48,12 +48,12 @@ public class DataFrameTest {
         for(DataRow row : df){
             Assert.assertEquals(col1[i],row.get(0));
             Assert.assertEquals(col2[i],row.get(1));
-            Assert.assertEquals(col3[i],row.get(2));
+            Assert.assertEquals(col3[i].equals("") ? Values.NA : col3[i],row.get(2));
             Assert.assertEquals(col4[i],row.get(3));
 
             Assert.assertEquals(col1[i],row.get(header[0]));
             Assert.assertEquals(col2[i],row.get(header[1]));
-            Assert.assertEquals(col3[i],row.get(header[2]));
+            Assert.assertEquals(col3[i].equals("") ? Values.NA : col3[i],row.get(header[2]));
             Assert.assertEquals(col4[i],row.get(header[3]));
 
             row.getInteger(0);

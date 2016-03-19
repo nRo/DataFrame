@@ -52,9 +52,10 @@ public class BooleanColumn implements DataColumn<Boolean> {
         this.name = name;
     }
 
+    private Parser parser = ParserUtil.findParserOrNull(Boolean.class);
     @Override
     public Parser<Boolean> getParser() {
-        return ParserUtil.findParserOrNull(Boolean.class);
+        return parser;
     }
 
     @Override

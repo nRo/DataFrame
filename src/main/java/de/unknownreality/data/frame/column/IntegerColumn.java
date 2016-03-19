@@ -30,9 +30,10 @@ public class IntegerColumn extends BasicColumn<Integer> implements NumberColumn<
         return Integer.class;
     }
 
+    private Parser parser = ParserUtil.findParserOrNull(Integer.class);
     @Override
     public Parser<Integer> getParser() {
-        return ParserUtil.findParserOrNull(Integer.class);
+        return parser;
     }
 
     @Override

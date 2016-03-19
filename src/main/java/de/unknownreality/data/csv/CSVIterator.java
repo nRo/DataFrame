@@ -20,10 +20,10 @@ public class CSVIterator implements Iterator<CSVRow>{
     private int lineNumber = 0;
     private Character separator;
     private int cols = -1;
-    private BasicHeader header;
+    private CSVHeader header;
     private CSVRow firstRow;
 
-    public CSVIterator(InputStream stream, BasicHeader header, Character separator, boolean skipFirst) {
+    public CSVIterator(InputStream stream, CSVHeader header, Character separator, boolean skipFirst) {
         this.reader = new BufferedReader(new InputStreamReader(stream));
         this.skip = skipFirst;
         this.separator = separator;
@@ -75,9 +75,9 @@ public class CSVIterator implements Iterator<CSVRow>{
                     throw new CSVException(String.format("unequal number of column %d != %d in line %d", values.length, cols, lineNumber));
                 }
             }
-            for (int i = 0; i < cols; i++) {
-                values[i] = values[i].trim();
-            }
+           // for (int i = 0; i < cols; i++) {
+                //values[i] = values[i].trim();
+            //}
             return new CSVRow(header, values, lineNumber, separator);
 
         } catch (IOException e) {

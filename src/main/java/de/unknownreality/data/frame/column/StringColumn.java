@@ -2,6 +2,7 @@ package de.unknownreality.data.frame.column;
 
 
 import de.unknownreality.data.common.parser.Parser;
+import de.unknownreality.data.common.parser.ParserUtil;
 
 /**
  * Created by Alex on 09.03.2016.
@@ -19,14 +20,10 @@ public class StringColumn extends BasicColumn<String> {
         super(name,values);
     }
 
+    private Parser parser = ParserUtil.findParserOrNull(String.class);
     @Override
     public Parser<String> getParser() {
-        return new Parser() {
-            @Override
-            public Object parse(String s) {
-                return s;
-            }
-        };
+        return parser;
     }
 
 
