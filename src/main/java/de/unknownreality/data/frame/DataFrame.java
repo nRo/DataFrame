@@ -56,7 +56,7 @@ public class DataFrame implements DataContainer<DataFrameHeader,DataRow>{
         }
         else{
             if(column.size() != size){
-                throw new IllegalArgumentException(String.format("column lengths have to be equal"));
+                throw new IllegalArgumentException(String.format("column lengths must be equal"));
             }
         }
         header.add(name,column.getClass(),column.getType());
@@ -71,7 +71,7 @@ public class DataFrame implements DataContainer<DataFrameHeader,DataRow>{
         }
         else{
             if(column.size() != size){
-                throw new IllegalArgumentException(String.format("column lengths have to be equal"));
+                throw new IllegalArgumentException(String.format("column lengths must be equal"));
             }
         }
         header.add(column);

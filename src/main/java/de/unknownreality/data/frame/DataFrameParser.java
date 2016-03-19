@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ public class DataFrameParser {
     private static Logger log = LoggerFactory.getLogger(DataFrameParser.class);
 
     public static DataFrame fromCSV(DataContainer<?super Header,? super Row> reader, LinkedHashMap<String,DataColumn> columns){
+        Map<String,Object> parserCache = new HashMap<>();
         for(Row row : reader){
             for(Map.Entry<String,DataColumn> columnEntry : columns.entrySet()){
                 String strVal = row.getString(columnEntry.getKey());
@@ -33,7 +35,12 @@ public class DataFrameParser {
                         columnEntry.getValue().appendNA();
                         continue;
                     }
-                    Object o = columnEntry.getValue().getParser().parse(strVal);
+                    Object o;
+                    String object_ident = columnEntry.getValue().getType()+"::"+strVal;
+                    if((o = parserCache.get(object_ident)) == null){
+                        o = columnEntry.getValue().getParser().parse(strVal);
+                        parserCache.put(object_ident,o);
+                    }
                     if(o == null || !(o instanceof Comparable)){
                         columnEntry.getValue().appendNA();
                         continue;

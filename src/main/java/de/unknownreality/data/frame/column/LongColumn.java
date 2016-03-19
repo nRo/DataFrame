@@ -30,9 +30,10 @@ public class LongColumn extends BasicColumn<Long> implements NumberColumn<Long> 
         return Long.class;
     }
 
+    private Parser parser = ParserUtil.findParserOrNull(Long.class);
     @Override
     public Parser<Long> getParser() {
-        return ParserUtil.findParserOrNull(Long.class);
+        return parser;
     }
 
     @Override

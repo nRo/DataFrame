@@ -13,19 +13,23 @@ public class StringUtil {
     }
 
     public static String[] splitQuoted(String input,Character split) {
-        List<String> parts = new ArrayList<String>();
+        List<String> parts = new ArrayList<>();
         boolean inQuotation = false;
         boolean inDoubleQuotation = false;
-        StringBuilder currentPart = new StringBuilder();
         boolean escapeNext = false;
-        for (char c : input.trim().toCharArray()) {
+        int currentStart = 0;
+        char[] chars = input.trim().toCharArray();
+        char c;
+        String p;
+        for (int i = 0; i < chars.length;i++) {
+            c = chars[i];
             boolean escape = escapeNext;
             escapeNext = false;
             if (!escape && c == '\\') {
                 escapeNext = true;
                 continue;
             }
-            if (c == '\'') {
+            else if (c == '\'') {
                 if (inQuotation && !escape) {
                     inQuotation = false;
                     continue;
@@ -35,7 +39,7 @@ public class StringUtil {
                     continue;
                 }
             }
-            if (c == '\"') {
+            else if (c == '\"') {
                 if (inDoubleQuotation && !escape) {
                     inDoubleQuotation = false;
                     continue;
@@ -45,18 +49,21 @@ public class StringUtil {
                     continue;
                 }
             }
-            if (c == split && !inDoubleQuotation && !inQuotation) {
-                String p = currentPart.toString().trim();
-                currentPart = new StringBuilder();
-                if (!p.isEmpty()) {
-                    parts.add(p);
+            else if (c == split && !inDoubleQuotation && !inQuotation) {
+                int length = i - currentStart;
+                if(length == 0){
+                    p = new String();
                 }
+                else{
+                    p = new String(chars,currentStart,length).trim();
+                }
+                parts.add(p);
+                currentStart = i + 1;
                 continue;
             }
-            currentPart.append(c);
         }
-        String p = currentPart.toString().trim();
-        if (!p.isEmpty()) {
+        if (currentStart < chars.length) {
+            p = new String(chars,currentStart,chars.length - currentStart).trim();
             parts.add(p);
         }
         String[] result = new String[parts.size()];

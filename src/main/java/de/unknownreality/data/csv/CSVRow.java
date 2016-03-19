@@ -2,13 +2,18 @@ package de.unknownreality.data.csv;
 
 import de.unknownreality.data.common.BasicHeader;
 import de.unknownreality.data.common.Row;
+import de.unknownreality.data.common.parser.Parser;
 import de.unknownreality.data.common.parser.ParserNotFoundException;
 import de.unknownreality.data.common.parser.ParserUtil;
+import de.unknownreality.data.frame.column.DoubleColumn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by Alex on 09.03.2016.
@@ -18,9 +23,9 @@ public class CSVRow implements Iterable<String>,Row<String> {
 
     private String[] values;
     private Character separator;
-    private BasicHeader header;
+    private CSVHeader header;
     private int rowNumber;
-    public CSVRow(BasicHeader header, String[] values, int rowNumber, Character separator){
+    public CSVRow(CSVHeader header, String[] values, int rowNumber, Character separator){
         this.values = values;
         this.separator = separator;
         this.header = header;
@@ -60,58 +65,76 @@ public class CSVRow implements Iterable<String>,Row<String> {
         return get(headerName);
     }
 
-    public boolean getBooleanValue(int index){
-        String val = get(index);
-        try {
-            return ParserUtil.parse(Boolean.class,values[index]);
-        } catch (ParseException e) {
-            log.error("error parsing value {} to {}",val,Boolean.class,e);
-        } catch (ParserNotFoundException e) {
-            log.error("error parsing value {} to {}",val,Boolean.class,e);
-        }
-        return false;
+    private static Parser<Boolean> BOOLEAN_PARSER = ParserUtil.findParserOrNull(Boolean.class);
+    private static Parser<Double> DOUBLE_PARSER = ParserUtil.findParserOrNull(Double.class);
+    private static Parser<Float> FLOAT_PARSER = ParserUtil.findParserOrNull(Float.class);
+    private static Parser<Long> LONG_PARSER = ParserUtil.findParserOrNull(Long.class);
+    private static Parser<Integer> INTEGER_PARSER = ParserUtil.findParserOrNull(Integer.class);
+
+
+    public Boolean getBoolean(int index){
+        return parse(index,Boolean.class,BOOLEAN_PARSER);
+
     }
 
+    public Boolean getBoolean(String header){
+        return parse(header,Boolean.class,BOOLEAN_PARSER);
+
+    }
 
     public Double getDouble(int index){
-        return getValueAsOrNull(get(index),Double.class);
-    }
-    public Double getDouble(String headerName){
-        return getValueAsOrNull(get(headerName),Double.class);
+        return parse(index,Double.class,DOUBLE_PARSER);
+
     }
 
-    public Integer getInteger(int index){
-        return getValueAsOrNull(get(index),Integer.class);
+    public Double getDouble(String header){
+        return parse(header,Double.class,DOUBLE_PARSER);
     }
-    public Integer getInteger(String headerName){
-        return getValueAsOrNull(get(headerName),Integer.class);
-    }
+
 
     public Long getLong(int index){
-        return getValueAsOrNull(get(index),Long.class);
-    }
-    public Long getLong(String headerName){
-        return getValueAsOrNull(get(headerName),Long.class);
-    }
-    public Boolean getBoolean(int index){
-        return getValueAsOrNull(get(index),Boolean.class);
-    }
-    public Boolean getBoolean(String headerName){
-        return getValueAsOrNull(get(headerName),Boolean.class);
-    }
-    public Float getFloat(int index){
-        return getValueAsOrNull(get(index),Float.class);
-    }
-    public Float getFloat(String headerName){
-        return getValueAsOrNull(get(headerName),Float.class);
+        return parse(index,Long.class,LONG_PARSER);
     }
 
-    public Character getChar(int index){
-        return getValueAsOrNull(get(index),Character.class);
+    public Long getLong(String header){
+        return parse(header,Long.class,LONG_PARSER);
     }
-    public Character getChar(String headerName){
-        return getValueAsOrNull(get(headerName),Character.class);
+    public Integer getInteger(int index){
+        return parse(index,Integer.class,INTEGER_PARSER);
     }
+
+    public Integer getInteger(String header){
+        return parse(header,Integer.class,INTEGER_PARSER);
+    }
+    public Float getFloat(int index){
+        return parse(index,Float.class,FLOAT_PARSER);
+    }
+
+    public Float getFloat(String header){
+        return parse(header,Float.class,FLOAT_PARSER);
+    }
+
+
+
+    private <T> T parse(String name,Class<T> cl,Parser<T> parser){
+        String val = get(name);
+        try {
+            return parser.parse(val);
+        } catch (ParseException e) {
+            log.error("error parsing value {} to {}",val,cl,e);
+        }
+        return null;
+    }
+    private <T> T parse(int index,Class<T> cl,Parser<T> parser){
+        String val = get(index);
+        try {
+            return parser.parse(val);
+        } catch (ParseException e) {
+            log.error("error parsing value {} to {}",val,cl,e);
+        }
+        return null;
+    }
+
 
     @Override
     public<T> T get(String headerName, Class<T> cl) {

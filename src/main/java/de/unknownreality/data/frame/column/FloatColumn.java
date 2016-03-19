@@ -30,9 +30,10 @@ public class FloatColumn extends BasicColumn<Float> implements NumberColumn<Floa
         return Float.class;
     }
 
+    private Parser parser = ParserUtil.findParserOrNull(Float.class);
     @Override
     public Parser<Float> getParser() {
-        return ParserUtil.findParserOrNull(Float.class);
+        return parser;
     }
 
     @Override
