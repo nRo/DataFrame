@@ -14,6 +14,8 @@ import java.util.regex.Pattern;
 public abstract class FilterPredicate {
     public abstract boolean valid(Row row);
 
+    public abstract String toString();
+
     public FilterPredicate and(FilterPredicate p) {
         return FilterPredicate.and(this, p);
     }
@@ -37,6 +39,10 @@ public abstract class FilterPredicate {
             public boolean valid(Row row) {
                 return !filterPredicate.valid(row);
             }
+            @Override
+            public String toString() {
+                return "!("+filterPredicate.toString()+")";
+            }
         };
     }
     public static FilterPredicate ne(final FilterPredicate p1, final FilterPredicate p2) {
@@ -45,6 +51,10 @@ public abstract class FilterPredicate {
             public boolean valid(Row value) {
                 return p1.valid(value) != p2.valid(value);
             }
+            @Override
+            public String toString() {
+                return "("+p1.toString()+") != ("+p2.toString()+")";
+            }
         };
     }
     public static <T> FilterPredicate eq(final FilterPredicate p1, final FilterPredicate p2) {
@@ -52,6 +62,10 @@ public abstract class FilterPredicate {
             @Override
             public boolean valid(Row row) {
                 return p1.valid(row) == p2.valid(row);
+            }
+            @Override
+            public String toString() {
+                return "("+p1.toString()+") == ("+p2.toString()+")";
             }
         };
     }
@@ -68,6 +82,18 @@ public abstract class FilterPredicate {
                 }
                 return true;
             }
+
+            @Override
+            public String toString() {
+                StringBuilder sb  = new StringBuilder();
+                for(int i = 0; i < predicates.length;i++){
+                    sb.append("(").append(predicates[i]).append(")");
+                    if(i < predicates.length - 1){
+                        sb.append(" AND ");
+                    }
+                }
+                return sb.toString();
+            }
         };
     }
 
@@ -82,6 +108,18 @@ public abstract class FilterPredicate {
                 }
                 return false;
             }
+
+            @Override
+            public String toString() {
+                StringBuilder sb  = new StringBuilder();
+                for(int i = 0; i < predicates.length;i++){
+                    sb.append("(").append(predicates[i]).append(")");
+                    if(i < predicates.length - 1){
+                        sb.append(" OR ");
+                    }
+                }
+                return sb.toString();
+            }
         };
     }
 
@@ -91,6 +129,10 @@ public abstract class FilterPredicate {
             public boolean valid(Row row) {
                 return p1.valid(row) && p2.valid(row);
             }
+            @Override
+            public String toString() {
+                return "("+p1.toString()+") AND ("+p2.toString()+")";
+            }
         };
     }
 
@@ -99,6 +141,11 @@ public abstract class FilterPredicate {
             @Override
             public boolean valid(Row row) {
                 return p1.valid(row) || p2.valid(row);
+            }
+
+            @Override
+            public String toString() {
+                return "("+p1.toString()+") OR ("+p2.toString()+")";
             }
         };
     }
@@ -110,6 +157,11 @@ public abstract class FilterPredicate {
                 boolean p1v = p1.valid(row);
                 boolean p2v = p2.valid(row);
                 return (p1v && !p2v) || (p2v && !p1v);
+            }
+
+            @Override
+            public String toString() {
+                return "("+p1.toString()+") XOR ("+p2.toString()+")";
             }
         };
     }
@@ -152,6 +204,11 @@ public abstract class FilterPredicate {
             @Override
             public boolean valid(Row row) {
                 return values.contains(row.get(name));
+            }
+
+            @Override
+            public String toString() {
+                return name +" in " + values.toString();
             }
         };
     }
