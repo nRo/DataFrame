@@ -310,33 +310,6 @@ public class DataFrame implements DataContainer<DataFrameHeader,DataRow>{
         return header.equals(frame.getHeader());
     }
 
-    public void write(File file){
-        write(file,"\t");
-    }
-    public void write(File file,String separator){
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter(file))){
-            writer.write("#");
-            for(int i = 0; i < header.size();i++){
-                writer.write(header.get(i));
-                if(i < header.size() - 1){
-                    writer.write(separator);
-                }
-            }
-            writer.newLine();
-            for(DataRow row : this){
-                for(int i = 0; i < row.size();i++){
-                    writer.write(row.get(i).toString());
-                    if(i < row.size() - 1){
-                        writer.write(separator);
-                    }
-                }
-                writer.newLine();
-            }
-        } catch (IOException e) {
-            log.error("error writing {}",file,e);
-        }
-    }
-
 
     public DataRow getRow(int i){
         if(i >= size){

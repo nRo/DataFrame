@@ -9,7 +9,17 @@ import java.math.BigDecimal;
  */
 public class ComparePredicate extends FilterPredicate{
     enum Operation{
-        GT,GE,LT,LE,EQ,NE
+        GT(">"),GE(">="),LT("<"),LE("<="),EQ("=="),NE("!=");
+
+        private String str;
+        Operation(String str){
+            this.str = str;
+        }
+
+        @Override
+        public String toString() {
+            return str;
+        }
     }
     private String headerName;
     private Object value;
@@ -56,5 +66,10 @@ public class ComparePredicate extends FilterPredicate{
                 return c != 0;
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return headerName+" "+operation+" "+value;
     }
 }

@@ -25,4 +25,9 @@ public class MatchPredicate extends FilterPredicate{
         Object v = row.get(headerName);
         return pattern.matcher(v.toString()).matches();
     }
+
+    @Override
+    public String toString() {
+        return headerName+" =~ /"+pattern.toString()+"/";
+    }
 }
