@@ -1,8 +1,6 @@
 package de.unknownreality.data.frame.group;
 
-import de.unknownreality.data.frame.DataRow;
 import de.unknownreality.data.frame.filter.FilterPredicate;
-import de.unknownreality.data.frame.sort.RowColumnComparator;
 import de.unknownreality.data.frame.sort.SortColumn;
 
 import java.util.*;
@@ -70,7 +68,7 @@ public class DataGrouping implements Iterable<DataGroup>{
     }
 
     public DataGrouping sort(SortColumn... columns){
-        Arrays.sort(groups,new GroupValueColumnComparator(columns));
+        Arrays.sort(groups,new GroupValueComparator(columns));
         return this;
     }
 
@@ -78,7 +76,12 @@ public class DataGrouping implements Iterable<DataGroup>{
         return sort(name, SortColumn.Direction.Ascending);
     }
     public DataGrouping sort(String name, SortColumn.Direction dir){
-        Arrays.sort(groups,new GroupValueColumnComparator(new SortColumn[]{new SortColumn(name,dir)}));
+        Arrays.sort(groups,new GroupValueComparator(new SortColumn[]{new SortColumn(name,dir)}));
+        return this;
+    }
+
+    public DataGrouping sort(Comparator<DataGroup> comp){
+        Arrays.sort(groups,comp);
         return this;
     }
 
