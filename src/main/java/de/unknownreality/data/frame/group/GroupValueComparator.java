@@ -10,9 +10,9 @@ import java.util.Comparator;
 /**
  * Created by Alex on 09.03.2016.
  */
-public class GroupValueColumnComparator implements Comparator<DataGroup> {
+public class GroupValueComparator implements Comparator<DataGroup> {
     private SortColumn[] sortColumns;
-    public GroupValueColumnComparator(SortColumn[] sortColumns){
+    public GroupValueComparator(SortColumn[] sortColumns){
         this.sortColumns = sortColumns;
     }
 
