@@ -188,7 +188,14 @@ public class DataFrame implements DataContainer<DataFrameHeader,DataRow>{
 
     public DataFrame sort(SortColumn... columns){
         List<DataRow> rows = getRows(0,size);
-        rows.sort(new RowColumnComparator(header,columns));
+        Collections.sort(rows,new RowColumnComparator(header,columns));
+        set(header,rows);
+        return this;
+    }
+
+    public DataFrame sort(Comparator<DataRow> comp){
+        List<DataRow> rows = getRows(0,size);
+        Collections.sort(rows,comp);
         set(header,rows);
         return this;
     }
@@ -198,7 +205,7 @@ public class DataFrame implements DataContainer<DataFrameHeader,DataRow>{
     }
     public DataFrame sort(String name, SortColumn.Direction dir){
         List<DataRow> rows = getRows(0,size);
-        rows.sort(new RowColumnComparator(header,new SortColumn[]{new SortColumn(name,dir)}));
+        Collections.sort(rows,new RowColumnComparator(header,new SortColumn[]{new SortColumn(name,dir)}));
         set(rows);
         return this;
     }
@@ -439,6 +446,11 @@ public class DataFrame implements DataContainer<DataFrameHeader,DataRow>{
             @Override
             public DataRow next() {
                 return getRow(index++);
+            }
+
+            @Override
+            public void remove() {
+
             }
         };
     }

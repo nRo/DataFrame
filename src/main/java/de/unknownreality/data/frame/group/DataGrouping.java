@@ -107,6 +107,11 @@ public class DataGrouping implements Iterable<DataGroup>{
             public DataGroup next() {
                 return groups[index++];
             }
+
+            @Override
+            public void remove() {
+
+            }
         };
     }
 
