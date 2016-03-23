@@ -7,4 +7,5 @@ import java.io.File;
  */
 public interface DataWriter {
     public void write(File file, DataContainer<? extends Header,? extends Row> dataContainer);
+    public void print(DataContainer<? extends Header,? extends Row> dataContainer);
 }

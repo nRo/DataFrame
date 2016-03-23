@@ -103,4 +103,9 @@ public class CSVIterator implements Iterator<CSVRow>{
         }
         return row;
     }
+
+    @Override
+    public void remove() {
+
+    }
 }
