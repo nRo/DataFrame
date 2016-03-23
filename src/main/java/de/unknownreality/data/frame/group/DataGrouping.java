@@ -11,7 +11,7 @@ import java.util.*;
 public class DataGrouping implements Iterable<DataGroup>{
     private DataGroup[] groups;
     private String[] groupColumns;
-    private Map<List,DataGroup> groupMap = new HashMap<>();
+    private Map<GroupKey,DataGroup> groupMap = new HashMap<>();
 
     public DataGrouping(Collection<DataGroup> groups,String... groupColumns) {
         this.groupColumns = groupColumns;
@@ -21,8 +21,8 @@ public class DataGrouping implements Iterable<DataGroup>{
             groupMap.put(getKey(g.getGroupValues().getValues()),g);
         }
     }
-    private List getKey(Object... values){
-        return Arrays.asList(values);
+    private GroupKey getKey(Object... values){
+        return new GroupKey(values);
     }
 
     public DataGroup findByGroupValues(Object... values){
@@ -119,9 +119,12 @@ public class DataGrouping implements Iterable<DataGroup>{
     }
 
     private static class GroupKey{
-        int hash;
+        private Object[] values;
+        private int hash;
         private GroupKey(Object[] values){
-            hash = Arrays.hashCode(values);
+            this.values = new Object[values.length];
+            System.arraycopy(values,0,this.values,0,values.length);
+            hash = Arrays.asList(values).hashCode();
         }
 
         public boolean equals(Object o){
@@ -131,8 +134,17 @@ public class DataGrouping implements Iterable<DataGroup>{
             if(!(o instanceof  GroupKey)){
                 return false;
             }
-            return hashCode() == ((GroupKey)o).hashCode();
+            GroupKey other = (GroupKey) o;
+            if(hashCode() != other.hashCode()){
+                return false;
+            }
+            return Arrays.equals(values,other.values);
         }
+
+        public Object[] getValues() {
+            return values;
+        }
+
         @Override
         public int hashCode() {
             return hash;
