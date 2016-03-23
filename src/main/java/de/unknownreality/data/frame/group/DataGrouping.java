@@ -18,15 +18,18 @@ public class DataGrouping implements Iterable<DataGroup>{
         this.groups = new DataGroup[groups.size()];
         groups.toArray(this.groups);
         for(DataGroup g : groups){
-            groupMap.put(Arrays.asList(g.getGroupValues().getValues()),g);
+            groupMap.put(getKey(g.getGroupValues().getValues()),g);
         }
+    }
+    private List getKey(Object... values){
+        return Arrays.asList(values);
     }
 
     public DataGroup findByGroupValues(Object... values){
         if(values.length != groupColumns.length){
             throw new IllegalArgumentException("values must have same length as GroupColumns");
         }
-        return groupMap.get(Arrays.asList(values));
+        return groupMap.get(getKey(values));
     }
     public String[] getGroupColumns() {
         return groupColumns;
