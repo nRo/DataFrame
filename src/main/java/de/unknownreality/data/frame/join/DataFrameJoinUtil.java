@@ -183,7 +183,7 @@ public class DataFrameJoinUtil {
 
     private static void setGroupValuesB(Comparable[] groupValues, Row<Comparable> row, JoinColumn[] joinColumns) {
         for (int i = 0; i < joinColumns.length; i++) {
-            String headerName = joinColumns[i].getColumnA();
+            String headerName = joinColumns[i].getColumnB();
             groupValues[i] = row.get(headerName);
         }
     }
