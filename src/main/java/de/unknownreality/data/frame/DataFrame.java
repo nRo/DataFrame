@@ -160,6 +160,18 @@ public class DataFrame implements DataContainer<DataFrameHeader,DataRow>{
         set(rows);
     }
 
+    public DataFrame removeColumn(String header){
+        DataColumn column = getColumn(header);
+        if(column == null){
+            log.error("error column not found '"+header+"'");
+            return this;
+        }
+        this.header.remove(header);
+        this.columnsMap.remove(header);
+        this.columnList.remove(column);
+        return this;
+    }
+
     public void setHeader(DataFrameHeader header) {
         this.header = header;
     }
@@ -227,6 +239,7 @@ public class DataFrame implements DataContainer<DataFrameHeader,DataRow>{
         }
         return null;
     }
+
 
     public DataFrame filter(FilterPredicate predicate){
         set(header,findRows(predicate));
