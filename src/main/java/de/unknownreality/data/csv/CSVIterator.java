@@ -63,6 +63,9 @@ public class CSVIterator implements Iterator<CSVRow>{
             }
             lineNumber++;
             String line = reader.readLine();
+            while(line != null && "".equals(line.trim())){
+                line = reader.readLine();
+            }
             if (line == null) {
                 return null;
             }

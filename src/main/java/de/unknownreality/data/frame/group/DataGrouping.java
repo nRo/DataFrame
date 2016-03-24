@@ -21,6 +21,20 @@ public class DataGrouping implements Iterable<DataGroup>{
             groupMap.put(getKey(g.getGroupValues().getValues()),g);
         }
     }
+
+    public DataGrouping concat(DataGrouping other){
+        if(!Arrays.equals(this.getGroupColumns(),other.getGroupColumns())){
+            throw new IllegalArgumentException("other DataGrouping must have the same GroupColumns");
+        }
+        DataGroup[] newGroups = new DataGroup[groups.length+other.size()];
+        System.arraycopy(groups,0,newGroups,0,groups.length);
+        int i = groups.length;
+        for(DataGroup g : other){
+            newGroups[i++] = g;
+            groupMap.put(getKey(g.getGroupValues().getValues()),g);
+        }
+        return this;
+    }
     private GroupKey getKey(Object... values){
         return new GroupKey(values);
     }
