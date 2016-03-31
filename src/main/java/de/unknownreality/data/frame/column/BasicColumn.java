@@ -111,6 +111,11 @@ public abstract class BasicColumn<T extends Comparable<T>> implements DataColumn
             int index = 0;
 
             @Override
+            public void remove() {
+
+            }
+
+            @Override
             public boolean hasNext() {
                 return index < size();
             }
@@ -145,6 +150,7 @@ public abstract class BasicColumn<T extends Comparable<T>> implements DataColumn
         values[size++] = t;
         return true;
     }
+
     @Override
     public void appendNA() {
         append(null);
