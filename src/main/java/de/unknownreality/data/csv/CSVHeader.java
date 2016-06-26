@@ -4,13 +4,19 @@ import de.unknownreality.data.common.BasicHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Created by Alex on 09.03.2016.
  */
 public class CSVHeader extends BasicHeader {
+    public static final String TYPE_DESCRIPTION_PREFIX = "{";
+    public static final String TYPE_DESCRIPTION_SUFFIX = "}";
+
     private static Logger log = LoggerFactory.getLogger(CSVHeader.class);
-
-
 
     public void add(){
         String name = "V"+(size()+1);

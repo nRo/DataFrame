@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -21,11 +20,13 @@ public abstract class CSVReader implements DataContainer<CSVHeader,CSVRow>{
     private File file;
     private CSVHeader header = new CSVHeader();
     private boolean containsHeader;
+    private String[] ignorePrefixes;
 
-    protected CSVReader(Character separator, boolean containsHeader,String headerPrefix){
+    protected CSVReader(Character separator, boolean containsHeader, String headerPrefix, String[] ignorePrefixes ){
         this.separator = separator;
         this.containsHeader = containsHeader;
         this.headerPrefix = headerPrefix;
+        this.ignorePrefixes = ignorePrefixes;
     }
 
     public boolean containsHeader() {
@@ -47,11 +48,14 @@ public abstract class CSVReader implements DataContainer<CSVHeader,CSVRow>{
         return header;
     }
 
+    public String[] getIgnorePrefixes() {
+        return ignorePrefixes;
+    }
+
     public void initHeader(){
         try{
             CSVIterator iterator = iterator();
-            CSVRow row = iterator.getFirstRow();
-            iterator.close();
+            CSVRow row = iterator.next();
             if(row == null){
                 containsHeader = false;
                 return;
@@ -74,8 +78,11 @@ public abstract class CSVReader implements DataContainer<CSVHeader,CSVRow>{
                 }
                 containsHeader = false;
             }
+            iterator.close();
+
         }  catch (CSVException e) {
             log.error("error reading file: {}",file,e);
+
         }
     }
 

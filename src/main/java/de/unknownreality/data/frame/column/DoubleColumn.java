@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by Alex on 09.03.2016.
  */
-public class DoubleColumn extends BasicColumn<Double> implements NumberColumn<Double> {
+public class DoubleColumn extends NumberColumn<Double> {
     private static Logger log = LoggerFactory.getLogger(DoubleColumn.class);
 
     public DoubleColumn() {
@@ -43,10 +43,6 @@ public class DoubleColumn extends BasicColumn<Double> implements NumberColumn<Do
         return sorted.get(size() / 2);
     }
 
-    @Override
-    public Double get(int index) {
-        return super.get(index);
-    }
 
     @Override
     public DoubleColumn add(NumberColumn column) {
@@ -282,7 +278,7 @@ public class DoubleColumn extends BasicColumn<Double> implements NumberColumn<Do
     @Override
     public DoubleColumn copy() {
         Double[] copyValues = new Double[size()];
-        System.arraycopy(getValues(), 0, copyValues, 0, size());
+        toArray(copyValues);
         return new DoubleColumn(getName(), copyValues);
     }
 

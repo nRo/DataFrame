@@ -39,6 +39,7 @@ public class GroupHeader implements Header<String> {
         return headerMap.get(name);
     }
 
+
     @Override
     public Iterator<String> iterator() {
         return headers.iterator();

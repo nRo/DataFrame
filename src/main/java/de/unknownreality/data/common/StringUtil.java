@@ -12,8 +12,13 @@ public class StringUtil {
         return quoteChar+input.replace(quoteChar.toString(),"\\"+quoteChar)+quoteChar;
     }
 
-    public static String[] splitQuoted(String input,Character split) {
+    public static String[] splitQuoted(String input, Character split){
         List<String> parts = new ArrayList<>();
+        splitQuoted(input,split, parts);
+        String[] result = new String[parts.size()];
+        return parts.toArray(result);
+    }
+    public static void splitQuoted(String input,Character split, List<String> parts) {
         boolean inQuotation = false;
         boolean inDoubleQuotation = false;
         boolean escapeNext = false;
@@ -55,7 +60,8 @@ public class StringUtil {
                     p = new String();
                 }
                 else{
-                    p = new String(chars,currentStart,length).trim();
+                    //p = new String(chars,currentStart,length).trim();
+                    p = input.substring(currentStart,currentStart+length);
                 }
                 parts.add(p);
                 currentStart = i + 1;
@@ -63,10 +69,10 @@ public class StringUtil {
             }
         }
         if (currentStart < chars.length) {
-            p = new String(chars,currentStart,chars.length - currentStart).trim();
+            //p = new String(chars,currentStart,chars.length - currentStart).trim();
+            p = input.substring(currentStart);
             parts.add(p);
         }
-        String[] result = new String[parts.size()];
-        return parts.toArray(result);
+
     }
 }

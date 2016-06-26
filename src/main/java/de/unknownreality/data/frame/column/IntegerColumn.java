@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by Alex on 09.03.2016.
  */
-public class IntegerColumn extends BasicColumn<Integer> implements NumberColumn<Integer> {
+public class IntegerColumn extends NumberColumn<Integer> {
     private static Logger log = LoggerFactory.getLogger(IntegerColumn.class);
 
     public IntegerColumn() {
@@ -277,7 +277,7 @@ public class IntegerColumn extends BasicColumn<Integer> implements NumberColumn<
     @Override
     public IntegerColumn copy() {
         Integer[] copyValues = new Integer[size()];
-        System.arraycopy(getValues(), 0, copyValues, 0, size());
+        toArray(copyValues);
         return new IntegerColumn(getName(), copyValues);
     }
 

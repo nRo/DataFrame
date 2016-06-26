@@ -7,10 +7,9 @@ import java.util.*;
 /**
  * Created by Alex on 15.03.2016.
  */
-public class BasicHeader implements Header<String> {
+public  class BasicHeader implements Header<String> {
     private Map<String,Integer> headerMap = new HashMap<>();
     private List<String> headers = new ArrayList<>();
-
     public int size(){
         return headers.size();
     }
@@ -32,7 +31,9 @@ public class BasicHeader implements Header<String> {
 
     public int getIndex(String name){
         Integer index = headerMap.get(name);
-        index = index == null ? -1 : index;
+        if(index == null){
+            throw new IllegalArgumentException(String.format("header not found %s",name));
+        }
         return index;
     }
 

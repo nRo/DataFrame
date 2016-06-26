@@ -6,17 +6,17 @@ import java.io.File;
  * Created by Alex on 09.03.2016.
  */
 public class CSVWriterBuilder {
-    private String separator = ";";
+    private char separator = ';';
     private String headerPrefix = null;
     private boolean containsHeader = true;
-
+    private boolean gzip = false;
 
     public static CSVWriterBuilder create() {
         return new CSVWriterBuilder();
     }
 
 
-    public CSVWriterBuilder withSeparator(String separator) {
+    public CSVWriterBuilder withSeparator(char separator) {
         this.separator = separator;
         return this;
     }
@@ -26,12 +26,19 @@ public class CSVWriterBuilder {
         return this;
     }
 
+
     public CSVWriterBuilder withHeaderPrefix(String headerPrefix) {
         this.headerPrefix = headerPrefix;
         return this;
     }
 
-    public String getSeparator() {
+    public CSVWriterBuilder useGzip(boolean gzip) {
+        this.gzip = gzip;
+        return this;
+    }
+
+
+    public char getSeparator() {
         return separator;
     }
 
@@ -43,9 +50,12 @@ public class CSVWriterBuilder {
         return containsHeader;
     }
 
+    public boolean isGzip() {
+        return gzip;
+    }
 
     public CSVWriter build() {
-        return new CSVWriter(getSeparator(), isContainsHeader(), getHeaderPrefix());
+        return new CSVWriter(getSeparator(), isContainsHeader(), getHeaderPrefix(),isGzip());
     }
 
 

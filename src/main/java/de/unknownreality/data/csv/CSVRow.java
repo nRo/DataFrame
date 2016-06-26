@@ -52,7 +52,7 @@ public class CSVRow implements Iterable<String>,Row<String> {
         if(index == -1){
             throw new IllegalArgumentException(String.format("header name not found '%s'",headerName));
         }
-        return get(index);
+        return values[index];
     }
 
     @Override
@@ -169,6 +169,9 @@ public class CSVRow implements Iterable<String>,Row<String> {
             public String next() {
                 return values[index++];
             }
+
+            @Override
+            public void remove(){};
         };
     }
 

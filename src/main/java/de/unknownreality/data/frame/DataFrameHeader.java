@@ -1,8 +1,6 @@
 package de.unknownreality.data.frame;
 
 import de.unknownreality.data.common.BasicHeader;
-import de.unknownreality.data.common.Header;
-import de.unknownreality.data.frame.column.DataColumn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,16 +14,16 @@ public class DataFrameHeader extends BasicHeader {
     private Map<String,Integer> headerMap = new HashMap<>();
     private List<String> headers = new ArrayList<>();
     private Map<String,Class<? extends Comparable>> typesMap = new HashMap<>();
-    private Map<String,Class<? extends DataColumn>> colTypeMap = new HashMap<>();
+    private Map<String,Class<? extends DataFrameColumn>> colTypeMap = new HashMap<>();
 
     public int size(){
         return headers.size();
     }
 
-    public DataFrameHeader add(DataColumn column){
+    public DataFrameHeader add(DataFrameColumn column){
         return add(column.getName(),column.getClass(),column.getType());
     }
-    public DataFrameHeader add(String name, Class<? extends DataColumn> colClass, Class<? extends Comparable> type){
+    public DataFrameHeader add(String name, Class<? extends DataFrameColumn> colClass, Class<? extends Comparable> type){
         int index = headers.size();
         headers.add(name);
         headerMap.put(name,index);
@@ -33,6 +31,8 @@ public class DataFrameHeader extends BasicHeader {
         colTypeMap.put(name,colClass);
         return this;
     }
+
+
 
     public void remove(String name){
         boolean fix = false;
@@ -59,7 +59,7 @@ public class DataFrameHeader extends BasicHeader {
                 typesMap.remove(oldName);
                 typesMap.put(newName,type);
 
-                Class<? extends DataColumn> colType = colTypeMap.get(oldName);
+                Class<? extends DataFrameColumn> colType = colTypeMap.get(oldName);
                 colTypeMap.remove(oldName);
                 colTypeMap.put(newName,colType);
 
@@ -94,11 +94,11 @@ public class DataFrameHeader extends BasicHeader {
         return true;
     }
 
-    public Class<? extends DataColumn> getColumnType(String name){
+    public Class<? extends DataFrameColumn> getColumnType(String name){
         return colTypeMap.get(name);
     }
 
-    public Class<? extends DataColumn> getColumnType(int index){
+    public Class<? extends DataFrameColumn> getColumnType(int index){
         return colTypeMap.get(get(index));
     }
 
@@ -134,6 +134,7 @@ public class DataFrameHeader extends BasicHeader {
         index = index == null ? -1 : index;
         return index;
     }
+
 
     public DataFrameHeader copy(){
         DataFrameHeader copy = new DataFrameHeader();
