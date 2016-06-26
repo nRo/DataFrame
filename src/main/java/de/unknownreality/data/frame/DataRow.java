@@ -25,7 +25,7 @@ public class DataRow implements Row<Comparable> {
         if (index == -1) {
             throw new IllegalArgumentException(String.format("header name not found '%s'", headerName));
         }
-        return get(index);
+        return this.values[index];
     }
 
     public Comparable get(int index) {
@@ -39,6 +39,10 @@ public class DataRow implements Row<Comparable> {
         } catch (Exception e) {
             throw new IllegalArgumentException("no double value in col " + index + " (" + value + ")");
         }
+    }
+
+    public Comparable[] getValues() {
+        return values;
     }
 
     public String getString(int index) {

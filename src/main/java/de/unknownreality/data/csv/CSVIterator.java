@@ -1,14 +1,10 @@
 package de.unknownreality.data.csv;
 
-import de.unknownreality.data.common.BasicHeader;
 import de.unknownreality.data.common.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.Iterator;
 
 public class CSVIterator implements Iterator<CSVRow>{
@@ -16,25 +12,30 @@ public class CSVIterator implements Iterator<CSVRow>{
 
     private BufferedReader reader;
     private CSVRow next;
-    private boolean skip;
     private int lineNumber = 0;
     private Character separator;
     private int cols = -1;
     private CSVHeader header;
-    private CSVRow firstRow;
-
-    public CSVIterator(InputStream stream, CSVHeader header, Character separator, boolean skipFirst) {
+    private int skip;
+    private String[] ignorePrefixes;
+    public CSVIterator(InputStream stream, CSVHeader header, Character separator,String encoding,String[] ignorePrefixes, int skip) {
         this.reader = new BufferedReader(new InputStreamReader(stream));
-        this.skip = skipFirst;
+        this.skip = skip;
         this.separator = separator;
         this.header = header;
-        if (skip) {
-            skip = false;
-            firstRow = getNext();
-            next = getNext();
-        } else {
-            next = getNext();
-            firstRow = next;
+        this.ignorePrefixes = ignorePrefixes;
+        skip(skip);
+        next = getNext();
+    }
+
+    public void skip(int rows){
+        for(int i = 0; i < rows;i++){
+            try {
+                reader.readLine();
+            } catch (IOException e) {
+                log.error("error reading file:{}", e);
+                close();
+            }
         }
     }
 
@@ -46,21 +47,10 @@ public class CSVIterator implements Iterator<CSVRow>{
         }
     }
 
-    public CSVRow getFirstRow() {
-        return firstRow;
-    }
 
-    public void setSkip(boolean skip) {
-        this.skip = skip;
-    }
 
     private CSVRow getNext() {
         try {
-            if (skip) {
-                lineNumber++;
-                reader.readLine();
-                skip = false;
-            }
             lineNumber++;
             String line = reader.readLine();
             while(line != null && "".equals(line.trim())){
@@ -69,7 +59,11 @@ public class CSVIterator implements Iterator<CSVRow>{
             if (line == null) {
                 return null;
             }
-
+            for(String prefix : ignorePrefixes){
+                if(prefix != null && !"".equals(prefix) && line.startsWith(prefix)){
+                    return getNext();
+                }
+            }
             String[] values = StringUtil.splitQuoted(line,separator);
             if (cols == -1) {
                 cols = values.length;

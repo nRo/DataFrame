@@ -1,11 +1,11 @@
 package de.unknownreality.data.frame;
 
 import de.unknownreality.data.common.DataContainer;
-import de.unknownreality.data.common.RowIterator;
 import de.unknownreality.data.frame.column.*;
 import de.unknownreality.data.frame.filter.FilterPredicate;
 import de.unknownreality.data.frame.group.DataFrameGroupUtil;
 import de.unknownreality.data.frame.group.DataGrouping;
+import de.unknownreality.data.frame.index.Indices;
 import de.unknownreality.data.frame.join.DataFrameJoinUtil;
 import de.unknownreality.data.frame.join.JoinColumn;
 import de.unknownreality.data.frame.join.JoinedDataFrame;
@@ -14,10 +14,6 @@ import de.unknownreality.data.frame.sort.SortColumn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -25,13 +21,12 @@ import java.util.*;
  */
 public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
     private static Logger log = LoggerFactory.getLogger(DataFrame.class);
+    public static final String PRIMARY_INDEX_NAME = "primaryKey";
     private int size;
-    private Map<String, DataColumn> columnsMap = new LinkedHashMap<>();
-    private List<DataColumn> columnList = new ArrayList<>();
+    private Map<String, DataFrameColumn> columnsMap = new LinkedHashMap<>();
+    private LinkedHashSet<DataFrameColumn> columnList = new LinkedHashSet<>();
     private DataFrameHeader header = new DataFrameHeader();
-    private Map<Comparable, Integer> primaryKeyMap = new HashMap<>();
-    private DataColumn primaryKeyColumn = null;
-
+    private Indices indices = new Indices(this);
     public DataFrame() {
 
     }
@@ -40,24 +35,26 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
         set(header, rows);
     }
 
-    public DataFrame setPrimaryKeyColumn(String colName) {
-        return setPrimaryKeyColumn(getColumn(colName));
+    public DataFrame setPrimaryKeyColumn(String... colNames) {
+        return addIndex(PRIMARY_INDEX_NAME,colNames);
     }
 
-    public DataFrame setPrimaryKeyColumn(DataColumn col) {
-        primaryKeyMap.clear();
-        primaryKeyColumn = col;
-        for (DataRow row : this) {
-            Comparable value = row.get(primaryKeyColumn.getName());
-            if (primaryKeyMap.put(value, row.getIndex()) != null) {
-                throw new IllegalArgumentException(String.format("error setting primaryKey: dublicated key found '%s'", value.toString()));
-            }
-        }
+    public DataFrame setPrimaryKeyColumn(DataFrameColumn... cols) {
+        return addIndex(PRIMARY_INDEX_NAME,cols);
+    }
+
+    public DataFrame removePrimaryKey() {
+        indices.removeIndex(PRIMARY_INDEX_NAME);
+        return this;
+    }
+
+    public DataFrame removeIndex(String name){
+        indices.removeIndex(name);
         return this;
     }
 
     public DataFrame renameColumn(String name, String newName) {
-        DataColumn column = columnsMap.get(name);
+        DataFrameColumn column = columnsMap.get(name);
         if (column == null) {
             return this;
         }
@@ -68,43 +65,83 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
         return this;
     }
 
-    public DataFrame addColumn(String name, DataColumn column) {
-        if (columnList.isEmpty()) {
-            this.size = column.size();
-        } else {
+    public DataFrame addColumn(String name, DataFrameColumn column) {
+
+        if (!columnList.isEmpty()) {
             if (column.size() != size) {
                 throw new IllegalArgumentException(String.format("column lengths must be equal"));
             }
         }
+        columnList.add(column);
+        if(column.getDataFrame() != null && column.getDataFrame() != this){
+            throw new IllegalArgumentException(String.format("column can not be added to multiple dataframes. use column.copy() first"));
+        }
+        if(columnList.size() == 1){
+            this.size = column.size();
+        }
+        column.setDataFrame(this);
         header.add(name, column.getClass(), column.getType());
         columnsMap.put(name, column);
-        columnList.add(column);
         return this;
     }
 
-    public DataFrame addColumn(DataColumn column) {
-        if (columnList.isEmpty()) {
-            this.size = column.size();
-        } else {
-            if (column.size() != size) {
-                throw new IllegalArgumentException(String.format("column lengths must be equal"));
-            }
+    public DataFrame addColumn(DataFrameColumn column) {
+        return addColumn(column.getName(),column);
+    }
+
+
+
+    public <T extends Comparable<T>> DataFrame addColumn(Class<T> type, String name){
+        return addColumn(type,name,ColumnConverter.create());
+    }
+
+
+    public <T extends Comparable<T>> DataFrame addColumn(Class<T> type, String name, ColumnConverter columnConverter){
+        return addColumn(type,name,columnConverter,null);
+    }
+
+    public <T extends Comparable<T>> DataFrame addColumn(Class<T> type, String name, ColumnConverter columnConverter, ColumnAppender<T> appender) {
+        Class<? extends DataFrameColumn<T>> columnType = columnConverter.getColumnType(type);
+        if(columnType == null){
+            throw new IllegalArgumentException(String.format("no  column type found for %s",type.getName()));
         }
-        header.add(column);
-        columnsMap.put(column.getName(), column);
-        columnList.add(column);
+
+        return addColumn(columnType,name,appender);
+    }
+
+    public <I extends Comparable<I>, T extends DataFrameColumn<I>> DataFrame addColumn(Class<T> cl, String name, ColumnAppender<I> appender) {
+        try {
+            T col = cl.newInstance();
+            col.setName(name);
+            if(appender != null){
+                for (DataRow row : this) {
+                    I val = appender.createRowValue(row);
+                    if (val == null || val == Values.NA) {
+                        col.appendNA();
+                    } else {
+                        col.append(val);
+                    }
+                }
+            }
+            addColumn(col);
+        } catch (InstantiationException e) {
+            log.error("error creating instance of column [{}], empty constructor required", cl, e);
+        } catch (IllegalAccessException e) {
+            log.error("error creating instance of column [{}], empty constructor required", cl, e);
+        }
+        ;
         return this;
     }
 
-    public DataFrame addColumns(Collection<DataColumn> columns) {
-        for (DataColumn column : columns) {
+    public DataFrame addColumns(Collection<DataFrameColumn> columns) {
+        for (DataFrameColumn column : columns) {
             addColumn(column);
         }
         return this;
     }
 
-    public DataFrame addColumns(DataColumn... columns) {
-        for (DataColumn column : columns) {
+    public DataFrame addColumns(DataFrameColumn... columns) {
+        for (DataFrameColumn column : columns) {
             addColumn(column);
         }
         return this;
@@ -115,7 +152,7 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
             throw new IllegalArgumentException(String.format("value for each column required"));
         }
         int i = 0;
-        for (DataColumn column : columnList) {
+        for (DataFrameColumn column : columnList) {
             if (values[i] != null && !column.getType().isInstance(values[i])) {
                 throw new IllegalArgumentException(
                         String.format("value %i has wrong type (%s != %s)", i,
@@ -125,46 +162,41 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
             i++;
         }
         i = 0;
-        for (DataColumn column : columnList) {
+        for (DataFrameColumn column : columnList) {
+            column.startDataFrameAppend();
             Comparable value = values[i];
             if (value == null) {
                 column.appendNA();
             } else {
                 column.append(value);
             }
+            column.endDataFrameAppend();
             i++;
-            if (primaryKeyColumn != null && column == primaryKeyColumn) {
-                if (primaryKeyMap.put(value, size) != null) {
-                    throw new IllegalArgumentException(String.format("error setting primaryKey: dublicated key found '%s'", value.toString()));
-                }
-            }
         }
         size++;
+        indices.update(getRow(size-1));
     }
 
     public void append(DataRow row) {
         for (String h : header) {
-            DataColumn column = columnsMap.get(h);
+            DataFrameColumn column = columnsMap.get(h);
+            column.startDataFrameAppend();
             if (row.isNA(h)) {
                 column.appendNA();
             } else {
                 column.append(row.get(h));
             }
-            if (primaryKeyColumn != null && column == primaryKeyColumn) {
-                Comparable value = row.get(h);
-                if (primaryKeyMap.put(value, size) != null) {
-                    throw new IllegalArgumentException(String.format("error setting primaryKey: dublicated key found '%s'", value.toString()));
-                }
-            }
+            column.endDataFrameAppend();
+
         }
         this.size++;
+        indices.update(getRow(size-1));
     }
 
     public void set(Collection<DataRow> rows) {
         this.size = 0;
-        this.primaryKeyMap.clear();
-
-        for (DataColumn column : columnsMap.values()) {
+        this.indices.clearValues();
+        for (DataFrameColumn column : columnsMap.values()) {
             column.clear();
         }
         for (DataRow row : rows) {
@@ -172,26 +204,23 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
         }
     }
 
-    private void set(DataFrameHeader header, Collection<DataRow> rows, DataColumn primaryKeyColumn) {
+    private void set(DataFrameHeader header, Collection<DataRow> rows,Indices indices) {
         this.header = header;
         this.columnsMap.clear();
         this.columnList.clear();
-        this.primaryKeyMap.clear();
-        this.primaryKeyColumn = null;
         for (String h : header) {
             try {
-                DataColumn instance = header.getColumnType(h).newInstance();
+                DataFrameColumn instance = header.getColumnType(h).newInstance();
                 columnsMap.put(h, instance);
                 columnList.add(instance);
-                if (primaryKeyColumn != null && h.equals(primaryKeyColumn.getName())) {
-                    this.primaryKeyColumn = instance;
-                }
+
             } catch (InstantiationException e) {
                 log.error("error creating column instance", e);
             } catch (IllegalAccessException e) {
                 log.error("error creating column instance", e);
             }
         }
+        indices.copyTo(this);
         set(rows);
     }
 
@@ -199,11 +228,10 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
         this.header = header;
         this.columnsMap.clear();
         this.columnList.clear();
-        this.primaryKeyColumn = null;
-        this.primaryKeyMap.clear();
+        this.indices.clearValues();
         for (String h : header) {
             try {
-                DataColumn instance = header.getColumnType(h).newInstance();
+                DataFrameColumn instance = header.getColumnType(h).newInstance();
                 columnsMap.put(h, instance);
                 columnList.add(instance);
             } catch (InstantiationException e) {
@@ -214,18 +242,18 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
         }
         set(rows);
     }
-
     public DataFrame removeColumn(String header) {
-        DataColumn column = getColumn(header);
+        DataFrameColumn column = getColumn(header);
         if (column == null) {
             log.error("error column not found '" + header + "'");
             return this;
         }
-        if (column == primaryKeyColumn) {
-            primaryKeyColumn = null;
-            primaryKeyMap.clear();
-        }
-        this.header.remove(header);
+        return removeColumn(column);
+    }
+    public DataFrame removeColumn( DataFrameColumn column) {
+        column.setDataFrame(null);
+        this.header.remove(column.getName());
+        this.indices.removeColumn(column);
         this.columnsMap.remove(header);
         this.columnList.remove(column);
         return this;
@@ -235,27 +263,6 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
         this.header = header;
     }
 
-    public <I extends Comparable<I>, T extends DataColumn<I>> DataFrame addColumn(Class<T> cl, String name, ColumnAppender<I> appender) {
-        try {
-            T col = cl.newInstance();
-            col.setName(name);
-            for (DataRow row : this) {
-                I val = appender.createRowValue(row);
-                if (val == null || val == Values.NA) {
-                    col.appendNA();
-                } else {
-                    col.append(val);
-                }
-            }
-            addColumn(col);
-        } catch (InstantiationException e) {
-            log.error("error creating instance of column [{}], empty Constructor required", cl, e);
-        } catch (IllegalAccessException e) {
-            log.error("error creating instance of column [{}], empty Constructor required", cl, e);
-        }
-        ;
-        return this;
-    }
 
     public DataFrame sort(SortColumn... columns) {
         List<DataRow> rows = getRows(0, size);
@@ -288,7 +295,6 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
 
     public DataRow findFirst(String colName, Comparable value) {
         return findFirst(FilterPredicate.eq(colName, value));
-
     }
 
     public DataRow findFirst(FilterPredicate predicate) {
@@ -301,23 +307,19 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
     }
 
     public DataRow findByPrimaryKey(Comparable key) {
-        Integer rowIndex = primaryKeyMap.get(key);
-        if (rowIndex == null) {
-            return null;
-        }
-        return getRow(rowIndex);
+       return findByIndex(PRIMARY_INDEX_NAME,key);
     }
 
 
     public DataFrame filter(FilterPredicate predicate) {
-        set(header, findRows(predicate), primaryKeyColumn);
+        set(findRows(predicate));
         return this;
     }
 
     public DataFrame find(FilterPredicate predicate) {
         List<DataRow> rows = findRows(predicate);
         DataFrame df = new DataFrame();
-        df.set(header.copy(), rows, primaryKeyColumn);
+        df.set(header.copy(), rows, indices);
         return df;
     }
 
@@ -333,12 +335,23 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
 
 
     public DataFrame reverse() {
-        for (DataColumn col : columnList) {
+        for (DataFrameColumn col : columnList) {
             col.reverse();
         }
-        if (primaryKeyColumn != null) {
-            setPrimaryKeyColumn(primaryKeyColumn);
+        return this;
+    }
+
+    public DataFrame addIndex(String indexName,String... columnNames){
+        DataFrameColumn[] columns = new DataFrameColumn[columnNames.length];
+        for(int i  = 0; i < columns.length;i++){
+            columns[i] = getColumn(columnNames[i]);
         }
+
+        return addIndex(indexName,columns);
+    }
+
+    public DataFrame addIndex(String indexName,DataFrameColumn... columns){
+        indices.addIndex(indexName, columns);
         return this;
     }
 
@@ -412,7 +425,7 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
         }
         Comparable[] values = new Comparable[columnList.size()];
         int j = 0;
-        for (DataColumn column : columnList) {
+        for (DataFrameColumn column : columnList) {
             if (column.isNA(i)) {
                 values[j++] = Values.NA;
             } else {
@@ -426,12 +439,12 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
         return new ArrayList<>(columnsMap.keySet());
     }
 
-    public <T extends Comparable<T>> DataColumn<T> getColumn(String name) {
+    public <T extends Comparable<T>> DataFrameColumn<T> getColumn(String name) {
         return columnsMap.get(name);
     }
 
-    public <T extends DataColumn> T getColumn(String name, Class<T> cl) {
-        DataColumn column = columnsMap.get(name);
+    public <T extends DataFrameColumn> T getColumn(String name, Class<T> cl) {
+        DataFrameColumn column = columnsMap.get(name);
         if (column == null) {
             throw new IllegalArgumentException(String.format("column '%s' not found", name));
         }
@@ -520,16 +533,41 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
     public DataFrame copy() {
         List<DataRow> rows = getRows(0, size);
         DataFrame copy = new DataFrame();
-        copy.set(header.copy(), rows, primaryKeyColumn);
-
+        copy.set(header.copy(), rows,indices);
         return copy;
     }
 
+    public boolean containsColumn(DataFrameColumn column){
+        return this.columnList.contains(column);
+    }
+
+
+    protected void notifyColumnValueChanged(DataFrameColumn column, int index, Comparable value){
+        if(indices.isIndexColumn(column)){
+            indices.updateValue(column,getRow(index));
+        }
+    }
+    protected void notifyColumnChanged(DataFrameColumn column){
+        if(indices.isIndexColumn(column)){
+            indices.updateColumn(column);
+        }
+    }
+
+    public boolean isIndexColumn(DataFrameColumn column){
+        return indices.isIndexColumn(column);
+    }
+
+    public DataRow findByIndex(String name, Comparable... values){
+        int i = indices.find(name,values);
+        if(i >= 0){
+            return getRow(i);
+        }
+        return null;
+    }
     @Override
     public Iterator<DataRow> iterator() {
         return new Iterator<DataRow>() {
             int index = 0;
-
             @Override
             public boolean hasNext() {
                 return index < size;

@@ -3,6 +3,7 @@ package de.unknownreality.data.frame.column;
 
 import de.unknownreality.data.common.parser.Parser;
 import de.unknownreality.data.common.parser.ParserUtil;
+import de.unknownreality.data.frame.DataFrameColumn;
 import de.unknownreality.data.frame.MapFunction;
 
 import java.util.*;
@@ -10,49 +11,39 @@ import java.util.*;
 /**
  * Created by Alex on 09.03.2016.
  */
-public class BooleanColumn implements DataColumn<Boolean> {
+public class BooleanColumn extends DataFrameColumn<Boolean> {
     private int size = 0;
 
 
-    private String name;
-
     private BitSet bitSet = new BitSet();
 
-    public BooleanColumn and(BooleanColumn other){
+    public BooleanColumn and(BooleanColumn other) {
         bitSet.and(other.bitSet);
         return this;
     }
 
-    public BooleanColumn andNot(BooleanColumn other){
+    public BooleanColumn andNot(BooleanColumn other) {
         bitSet.andNot(other.bitSet);
         return this;
     }
 
-    public BooleanColumn or(BooleanColumn other){
+    public BooleanColumn or(BooleanColumn other) {
         bitSet.or(other.bitSet);
         return this;
     }
 
-    public BooleanColumn xor(BooleanColumn other){
+    public BooleanColumn xor(BooleanColumn other) {
         bitSet.xor(other.bitSet);
         return this;
     }
 
-    public BooleanColumn flip(){
-        bitSet.flip(0,size());
+    public BooleanColumn flip() {
+        bitSet.flip(0, size());
         return this;
-    }
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public void setName(String name) {
-        this.name = name;
     }
 
     private Parser parser = ParserUtil.findParserOrNull(Boolean.class);
+
     @Override
     public Parser<Boolean> getParser() {
         return parser;
@@ -66,15 +57,16 @@ public class BooleanColumn implements DataColumn<Boolean> {
 
     @Override
     public BooleanColumn set(int index, Boolean value) {
-        bitSet.set(index,value);
+        bitSet.set(index, value);
         return this;
     }
 
     @Override
-    public DataColumn<Boolean> map(MapFunction<Boolean> dataFunction) {
+    public DataFrameColumn<Boolean> map(MapFunction<Boolean> dataFunction) {
         for (int i = 0; i < size(); i++) {
-            bitSet.set(i,dataFunction.map(bitSet.get(i)));
+            bitSet.set(i, dataFunction.map(bitSet.get(i)));
         }
+        notifyDataFrameColumnChanged();
         return this;
     }
 
@@ -82,30 +74,32 @@ public class BooleanColumn implements DataColumn<Boolean> {
     public void reverse() {
         for (int i = 0; i < size() / 2; i++) {
             Boolean temp = bitSet.get(i);
-            bitSet.set(i,bitSet.get(size - i - 1));
-            bitSet.set(size() - i - 1,temp);
+            bitSet.set(i, bitSet.get(size - i - 1));
+            bitSet.set(size() - i - 1, temp);
         }
+        notifyDataFrameColumnChanged();
     }
 
-    public BooleanColumn(String name){
+    public BooleanColumn(String name) {
         this.size = 0;
-        this.name = name;
+        setName(name);
     }
 
-    public BooleanColumn(){
+    public BooleanColumn() {
         this(null);
     }
 
     public BooleanColumn(String name, Boolean[] values) {
-        for(int i = 0; i < values.length;i++){
-            bitSet.set(i,values[i]);
+        for (int i = 0; i < values.length; i++) {
+            bitSet.set(i, values[i]);
         }
-        this.name = name;
+        setName(name);
         size = values.length;
     }
+
     public BooleanColumn(String name, BitSet values) {
         this.bitSet = bitSet;
-        this.name = name;
+        setName(name);
         size = 0;
     }
 
@@ -115,7 +109,7 @@ public class BooleanColumn implements DataColumn<Boolean> {
     }
 
     @Override
-    public DataColumn<Boolean> copy() {
+    public DataFrameColumn<Boolean> copy() {
         return null;
     }
 
@@ -130,10 +124,10 @@ public class BooleanColumn implements DataColumn<Boolean> {
 
     @Override
     public boolean contains(Object o) {
-        if(!(o instanceof Boolean)){
+        if (!(o instanceof Boolean)) {
             return false;
         }
-        return ((Boolean)o) ? !bitSet.isEmpty() : bitSet.isEmpty();
+        return ((Boolean) o) ? !bitSet.isEmpty() : bitSet.isEmpty();
     }
 
 
@@ -151,13 +145,19 @@ public class BooleanColumn implements DataColumn<Boolean> {
             public Boolean next() {
                 return bitSet.get(index++);
             }
+
+            @Override
+            public void remove() {
+            }
+
+            ;
         };
     }
 
     @Override
     public Object[] toArray() {
-        Boolean[] array =new Boolean[size()];
-        for(int i = 0; i < array.length;i++){
+        Boolean[] array = new Boolean[size()];
+        for (int i = 0; i < array.length; i++) {
             array[i] = bitSet.get(i);
         }
         return array;
@@ -174,18 +174,18 @@ public class BooleanColumn implements DataColumn<Boolean> {
     }
 
 
-
     @Override
     public boolean append(Boolean t) {
-        bitSet.set(size++,t);
+        validateAppend();
+        bitSet.set(size++, t);
         return true;
     }
 
     @Override
     public boolean containsAll(Collection<?> c) {
         Set<Object> set = new HashSet<>(c);
-        for(Object o : set){
-            if(!contains(o)){
+        for (Object o : set) {
+            if (!contains(o)) {
                 return false;
             }
         }
@@ -209,13 +209,17 @@ public class BooleanColumn implements DataColumn<Boolean> {
 
     @Override
     public void setNA(int index) {
-        set(index,false);
+        set(index, false);
     }
 
     @Override
     public void clear() {
         bitSet.clear();
         size = 0;
+    }
+
+    public Boolean[] getValues() {
+        return toArray(new Boolean[size()]);
     }
 
 }

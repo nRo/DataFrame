@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by Alex on 09.03.2016.
  */
-public class FloatColumn extends BasicColumn<Float> implements NumberColumn<Float> {
+public class FloatColumn extends  NumberColumn<Float> {
     private static Logger log = LoggerFactory.getLogger(FloatColumn.class);
 
     public FloatColumn() {
@@ -276,7 +276,7 @@ public class FloatColumn extends BasicColumn<Float> implements NumberColumn<Floa
     @Override
     public FloatColumn copy() {
         Float[] copyValues = new Float[size()];
-        System.arraycopy(getValues(), 0, copyValues, 0, size());
+        toArray(copyValues);
         return new FloatColumn(getName(), copyValues);
     }
 

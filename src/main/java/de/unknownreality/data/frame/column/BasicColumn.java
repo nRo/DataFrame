@@ -1,8 +1,10 @@
 package de.unknownreality.data.frame.column;
 
 
+import de.unknownreality.data.frame.DataFrameColumn;
 import de.unknownreality.data.frame.MapFunction;
 import de.unknownreality.data.frame.Values;
+import de.unknownreality.data.frame.index.Index;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -10,55 +12,46 @@ import java.util.*;
 /**
  * Created by Alex on 09.03.2016.
  */
-public abstract class BasicColumn<T extends Comparable<T>> implements DataColumn<T>{
+public abstract class BasicColumn<T extends Comparable<T>> extends DataFrameColumn<T> {
     private static double GROW_FACTOR = 1.6d;
     public static final int INIT_SIZE = 128;
 
     private int size = 0;
 
-
-    private String name;
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public void sort(Comparator<T> comparator) {
         Arrays.sort(values,0,size(), comparator);
+        notifyDataFrameColumnChanged();
     }
 
     public void sort() {
         Arrays.sort(values,0,size());
+        notifyDataFrameColumnChanged();
     }
 
     @Override
-    public DataColumn<T> set(int index, T value) {
+    public final DataFrameColumn<T> set(int index, T value) {
         if(value == Values.NA){
             appendNA();
             return this;
         }
         values[index] = value;
+        notifyDataFrameValueChanged(index);
         return this;
     }
 
     @Override
-    public DataColumn<T> map(MapFunction<T> dataFunction) {
+    public DataFrameColumn<T> map(MapFunction<T> dataFunction) {
         for (int i = 0; i < size(); i++) {
             if(isNA(i)){
                 continue;
             }
             values[i] = dataFunction.map(values[i]);
         }
+        notifyDataFrameColumnChanged();
         return this;
     }
 
-    private T[] values;
+    protected T[] values;
 
     @Override
     public void reverse() {
@@ -67,11 +60,13 @@ public abstract class BasicColumn<T extends Comparable<T>> implements DataColumn
             values[i] = values[size() - i - 1];
             values[size() - i - 1] = temp;
         }
+        notifyDataFrameColumnChanged();
     }
+
 
     public BasicColumn(String name){
         this.size = 0;
-        this.name = name;
+        setName(name);
         values = (T[]) Array.newInstance(getType(), INIT_SIZE);
     }
 
@@ -81,7 +76,7 @@ public abstract class BasicColumn<T extends Comparable<T>> implements DataColumn
 
     public BasicColumn(String name, T[] values) {
         this.values = values;
-        this.name = name;
+        setName(name);
         size = values.length;
     }
 
@@ -143,7 +138,8 @@ public abstract class BasicColumn<T extends Comparable<T>> implements DataColumn
     }
 
     @Override
-    public boolean append(T t) {
+    public final boolean append(T t) {
+        validateAppend();
         if(size == values.length - 1){
             values = Arrays.copyOf(values, (int)((double)values.length * GROW_FACTOR));
         }
@@ -163,7 +159,6 @@ public abstract class BasicColumn<T extends Comparable<T>> implements DataColumn
 
     @Override
     public void setNA(int index) {
-
         values[index] = null;
     }
 
@@ -185,10 +180,6 @@ public abstract class BasicColumn<T extends Comparable<T>> implements DataColumn
     public void clear() {
         values = (T[]) Array.newInstance(getType(), INIT_SIZE);
         size = 0;
-    }
-
-    public T[] getValues() {
-        return values;
     }
 
 }

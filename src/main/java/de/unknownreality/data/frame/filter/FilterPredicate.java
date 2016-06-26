@@ -2,10 +2,7 @@ package de.unknownreality.data.frame.filter;
 
 import de.unknownreality.data.common.Row;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -192,13 +189,21 @@ public abstract class FilterPredicate {
         return new ComparePredicate(name, ComparePredicate.Operation.LE, value);
     }
 
-    public static FilterPredicate in(final String name, final Object... values) {
+    public static FilterPredicate in(final String name, final Object[] values) {
+        List<String> test = new ArrayList<>();
+        Collections.sort(test, new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                return o1.compareTo(o2);
+            }
+        });
         return in(name, Arrays.asList(values));
     }
 
-    public static FilterPredicate in(final String name, final List<Object> values) {
-        return in(name,new HashSet<Object>(values));
+    public static FilterPredicate in(final String name, final Collection<Object> values) {
+        return in(name,new HashSet<>(values));
     }
+
     public static FilterPredicate in(final String name, final Set<Object> values) {
         return new FilterPredicate() {
             @Override

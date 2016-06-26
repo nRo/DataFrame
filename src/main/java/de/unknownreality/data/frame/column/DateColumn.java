@@ -12,6 +12,10 @@ import java.util.Date;
  */
 public class DateColumn extends BasicColumn<Date> {
     private DateFormat dateFormat;
+    public DateColumn(){
+        super();
+        this.dateFormat = DateFormat.getDateInstance();
+    }
     public DateColumn(DateFormat dateFormat){
         super();
         this.dateFormat = dateFormat;
@@ -44,7 +48,7 @@ public class DateColumn extends BasicColumn<Date> {
     @Override
     public DateColumn copy() {
         Date[] copyValues = new Date[size()];
-        System.arraycopy(getValues(),0,copyValues,0,getValues().length);
+        toArray(copyValues);
         return new DateColumn(dateFormat,getName(),copyValues);
     }
 }

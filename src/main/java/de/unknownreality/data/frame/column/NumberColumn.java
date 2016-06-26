@@ -1,34 +1,52 @@
 package de.unknownreality.data.frame.column;
 
+import de.unknownreality.data.frame.DataFrameColumn;
+
+import java.lang.reflect.Array;
+
 /**
  * Created by Alex on 11.03.2016.
  */
-public interface NumberColumn<T extends Number & Comparable<T>> extends DataColumn<T> {
-    T median();
+public abstract class NumberColumn<T extends Number & Comparable<T>> extends BasicColumn<T> {
+    public abstract  T median();
 
-    T get(int index);
+    public NumberColumn(String name){
+       super(name);
+    }
 
-    NumberColumn<T> add(NumberColumn column);
+    public NumberColumn(){
+        super(null);
+    }
 
-    NumberColumn<T> subtract(NumberColumn column);
+    public NumberColumn(String name, T[] values) {
+        super(name,values);
+    }
+    @Override
+    public T get(int index){
+        return super.values[index];
+    }
 
-    NumberColumn<T> multiply(NumberColumn column);
+    public abstract NumberColumn<T> add(NumberColumn column);
 
-    NumberColumn<T> divide(NumberColumn column);
+    public abstract NumberColumn<T> subtract(NumberColumn column);
 
-    NumberColumn<T> add(Number value);
+    public abstract NumberColumn<T> multiply(NumberColumn column);
 
-    NumberColumn<T> subtract(Number value);
+    public abstract NumberColumn<T> divide(NumberColumn column);
 
-    NumberColumn<T> multiply(Number value);
+    public abstract NumberColumn<T> add(Number value);
 
-    NumberColumn<T> divide(Number value);
+    public abstract NumberColumn<T> subtract(Number value);
 
-    Double mean();
+    public abstract NumberColumn<T> multiply(Number value);
 
-    T min();
+    public abstract NumberColumn<T> divide(Number value);
 
-    T max();
+    public abstract Double mean();
 
-    T sum();
+    public abstract T min();
+
+    public abstract T max();
+
+    public abstract T sum();
 }

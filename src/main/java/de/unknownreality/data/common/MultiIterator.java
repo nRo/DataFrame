@@ -20,6 +20,10 @@ public class MultiIterator<T> implements Iterator<T[]>, Iterable<T[]> {
         return new MultiIterator<>(itsArray,cl);
     }
 
+    @Override
+    public void remove() {
+
+    }
 
     private Iterator<T>[] iterators;
     private T[] next;
