@@ -18,7 +18,7 @@ public class DataFrameLoader {
     private static Logger logger = LoggerFactory.getLogger(DataFrameLoader.class);
 
 
-    public static DataFrame load(File file){
+    public static DataFrame load(File file) throws DataFrameLoaderException{
         File dataFile;
         File metaFile;
         String ext = "." + DataFrameMeta.META_FILE_EXTENSION;
@@ -35,42 +35,49 @@ public class DataFrameLoader {
         return load(dataFile,metaFile);
     }
 
-    public static DataFrame load(File file, File metaFile){
+    public static DataFrame load(File file, File metaFile) throws DataFrameLoaderException{
         if(!file.exists()){
-            logger.error(String.format("file not found %s",file.getAbsolutePath()));
-            return null;
+            throw new DataFrameLoaderException(String.format("file not found %s",file.getAbsolutePath()));
         }
         if(!metaFile.exists()){
-            logger.error(String.format("meta file not found %s",metaFile.getAbsolutePath()));
-            return null;
+            throw new DataFrameLoaderException(String.format("meta file not found %s",metaFile.getAbsolutePath()));
+
         }
         DataFrameMeta dataFrameMeta;
         try{
             dataFrameMeta = DataFrameMetaReader.read(metaFile);
         }
         catch (DataFrameMetaReader.DataFrameMetaReaderException ex){
-            logger.error("error creating meta file",ex);
-            return null;
+            throw new DataFrameLoaderException("error reading meta file",ex);
         }
 
         ReaderBuilder readerBuilder;
         try{
             readerBuilder = dataFrameMeta.getReaderBuilderClass().newInstance();
         }
-        catch (InstantiationException e) {
-            logger.error("error creating readerBuilder instance",e);
-            return null;
-        } catch (IllegalAccessException e) {
-            logger.error("error creating readerBuilder instance",e);
-            return null;
+        catch (Exception e) {
+            throw new DataFrameLoaderException("error creating readerBuilder instance",e);
         }
         try{
             readerBuilder.loadAttributes(dataFrameMeta.getAttributes());
         }
         catch (Exception e){
-            logger.error("error loading readerBuilder attributes",e);
-            return null;
+            throw new DataFrameLoaderException("error loading readerBuilder attributes",e);
         }
+        LinkedHashMap<String,DataFrameColumn> columns = createColumns(dataFrameMeta);
+        DataContainer fileContainer = readerBuilder.fromFile(file);
+        int i = 0;
+        LinkedHashMap<String,DataFrameColumn> convertedColumns = new LinkedHashMap<>();
+        for(Map.Entry<String,DataFrameColumn> entry : columns.entrySet()){
+            if(i == fileContainer.getHeader().size()){
+                throw new DataFrameLoaderException("columns count not matching meta file");
+            }
+            convertedColumns.put(fileContainer.getHeader().get(i).toString(),entry.getValue());
+        }
+        return DataFrameConverter.fromDataContainer(fileContainer,convertedColumns);
+    }
+
+    public static LinkedHashMap<String,DataFrameColumn> createColumns(DataFrameMeta dataFrameMeta) throws DataFrameLoaderException{
         LinkedHashMap<String,DataFrameColumn> columns = new LinkedHashMap<>();
         for(Map.Entry<String,Class<? extends DataFrameColumn>> entry : dataFrameMeta.getColumns().entrySet()){
             String name = entry.getKey();
@@ -79,21 +86,14 @@ public class DataFrameLoader {
             try{
                 column = columnType.newInstance();
             }
-            catch (InstantiationException e) {
-                logger.error("error creating column instance",e);
-                return null;
-            } catch (IllegalAccessException e) {
-                logger.error("error creating column instance",e);
-                return null;
+            catch (Exception e) {
+                throw new DataFrameLoaderException("error creating column instance",e);
             }
             column.setName(name);
             columns.put(name,column);
         }
-        DataContainer fileContainer = readerBuilder.fromFile(file);
-        return DataFrameConverter.fromDataContainer(fileContainer,columns);
+        return columns;
     }
-
-
 
 
 
@@ -103,6 +103,10 @@ public class DataFrameLoader {
         public DataFrameLoaderException(String message)
         {
             super(message);
+        }
+        public DataFrameLoaderException(String message,Throwable throwable)
+        {
+            super(message,throwable);
         }
     }
 }

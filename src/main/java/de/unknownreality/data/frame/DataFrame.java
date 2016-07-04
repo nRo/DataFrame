@@ -232,8 +232,8 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
         for (String h : header) {
             try {
                 DataFrameColumn instance = header.getColumnType(h).newInstance();
-                columnsMap.put(h, instance);
-                columnList.add(instance);
+                instance.setName(h);
+                addColumn(instance);
             } catch (InstantiationException e) {
                 log.error("error creating column instance", e);
             } catch (IllegalAccessException e) {
@@ -420,6 +420,10 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
 
 
     public DataRow getRow(int i) {
+        return new DataRow(header, getRowValues(i), i);
+    }
+
+    public Comparable[] getRowValues(int i){
         if (i >= size) {
             throw new IllegalArgumentException(String.format("index out of bounds"));
         }
@@ -432,7 +436,7 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
                 values[j++] = column.get(i);
             }
         }
-        return new DataRow(header, values, i);
+        return values;
     }
 
     public Collection<String> getColumnNames() {
@@ -564,6 +568,15 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
         }
         return null;
     }
+
+    public Collection<DataFrameColumn> getColumns() {
+        return columnList;
+    }
+
+    protected Indices getIndices() {
+        return indices;
+    }
+
     @Override
     public Iterator<DataRow> iterator() {
         return new Iterator<DataRow>() {
