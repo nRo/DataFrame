@@ -22,7 +22,8 @@ public class DataFrameConverter {
         int[] colIndices = new int[columns.size()];
         int i = 0;
         for(String h : columns.keySet()){
-            colIndices[i++] = reader.getHeader().getIndex(h);
+            colIndices[i] = reader.getHeader().getIndex(h);
+            i++;
         }
         for(Row row : reader){
             i = 0;
