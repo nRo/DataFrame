@@ -62,9 +62,9 @@ public class BooleanColumn extends DataFrameColumn<Boolean> {
     }
 
     @Override
-    public DataFrameColumn<Boolean> map(MapFunction<Boolean> dataFunction) {
+    public DataFrameColumn<Boolean> map(MapFunction<Boolean> mapFunction) {
         for (int i = 0; i < size(); i++) {
-            bitSet.set(i, dataFunction.map(bitSet.get(i)));
+            bitSet.set(i, mapFunction.map(bitSet.get(i)));
         }
         notifyDataFrameColumnChanged();
         return this;
