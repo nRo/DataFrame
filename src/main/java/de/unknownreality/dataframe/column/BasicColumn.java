@@ -17,16 +17,27 @@ public abstract class BasicColumn<T extends Comparable<T>> extends DataFrameColu
 
     private int size = 0;
 
+
+    /**
+     * Sorts values in the column using a provided comparator
+     * @param comparator the comparator used to sort the column values
+     */
     public void sort(Comparator<T> comparator) {
         Arrays.sort(values,0,size(), comparator);
         notifyDataFrameColumnChanged();
     }
 
+    /**
+     * Sorts the column values by their {@linkplain Comparable natural ordering}
+     */
     public void sort() {
         Arrays.sort(values,0,size());
         notifyDataFrameColumnChanged();
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public final DataFrameColumn<T> set(int index, T value) {
         if(value == Values.NA){
@@ -38,13 +49,16 @@ public abstract class BasicColumn<T extends Comparable<T>> extends DataFrameColu
         return this;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
-    public DataFrameColumn<T> map(MapFunction<T> dataFunction) {
+    public DataFrameColumn<T> map(MapFunction<T> mapFunction) {
         for (int i = 0; i < size(); i++) {
             if(isNA(i)){
                 continue;
             }
-            values[i] = dataFunction.map(values[i]);
+            values[i] = mapFunction.map(values[i]);
         }
         notifyDataFrameColumnChanged();
         return this;
