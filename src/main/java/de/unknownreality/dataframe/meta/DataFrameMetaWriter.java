@@ -18,10 +18,10 @@ import java.io.File;
  * Created by Alex on 07.06.2016.
  */
 public class DataFrameMetaWriter {
-    private static Logger logger = LoggerFactory.getLogger(DataFrameMetaWriter.class);
+    private static final Logger logger = LoggerFactory.getLogger(DataFrameMetaWriter.class);
 
-    public static void write(DataFrameMeta metaFile, File file){
-        try{
+    public static void write(DataFrameMeta metaFile, File file) {
+        try {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
             Document doc = docBuilder.newDocument();
@@ -35,7 +35,7 @@ public class DataFrameMetaWriter {
             attr.setValue(metaFile.getReaderBuilderClass().getCanonicalName());
             readerBuilder.setAttributeNode(attr);
 
-            for(String attrName : metaFile.getAttributes().keySet()){
+            for (String attrName : metaFile.getAttributes().keySet()) {
                 Element readerAttribute = doc.createElement("readerAttribute");
                 Attr name = doc.createAttribute("name");
                 name.setValue(attrName);
@@ -50,7 +50,7 @@ public class DataFrameMetaWriter {
             Element columns = doc.createElement("columns");
             rootElement.appendChild(columns);
 
-            for(String colName : metaFile.getColumns().keySet()){
+            for (String colName : metaFile.getColumns().keySet()) {
                 Element colAttribute = doc.createElement("column");
                 Attr name = doc.createAttribute("name");
                 name.setValue(colName);
@@ -65,15 +65,14 @@ public class DataFrameMetaWriter {
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
             DOMSource source = new DOMSource(doc);
-            if(!file.getParentFile().isDirectory()){
+            if (!file.getParentFile().isDirectory()) {
                 file.getParentFile().mkdirs();
             }
             StreamResult result = new StreamResult(file);
             transformer.transform(source, result);
 
-        }
-        catch (Exception e){
-            logger.error("error writing dataframe meta file",e);
+        } catch (Exception e) {
+            logger.error("error writing data frame meta file", e);
         }
     }
 }

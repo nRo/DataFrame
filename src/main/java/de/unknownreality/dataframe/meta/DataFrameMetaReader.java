@@ -31,12 +31,13 @@ public class DataFrameMetaReader {
         return parseChildClass(rbClassString, ReaderBuilder.class);
     }
 
+    @SuppressWarnings("unchecked")
     private static <T> Class<? extends T> parseChildClass(String clName, Class<T> parentType) throws DataFrameMetaReaderException {
         Class<?> cl;
         try {
             cl = Class.forName(clName);
-        } catch (ClassNotFoundException cnfex) {
-            throw new DataFrameMetaReaderException(String.format("class not found: %s", clName));
+        } catch (ClassNotFoundException e) {
+            throw new DataFrameMetaReaderException(String.format("class not found: %s", clName, e));
         }
         if (!parentType.isAssignableFrom(cl)) {
             throw new DataFrameMetaReaderException(String.format("%s does not extend %s",
@@ -84,7 +85,7 @@ public class DataFrameMetaReader {
                     throw new DataFrameMetaReaderException("no column type attribute found");
                 }
                 Class<? extends DataFrameColumn> cl = parseChildClass(type, DataFrameColumn.class);
-                columnsMap.put(name,cl);
+                columnsMap.put(name, cl);
             } else {
                 throw new DataFrameMetaReaderException("error parsing column element");
             }
@@ -99,16 +100,14 @@ public class DataFrameMetaReader {
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
             doc = docBuilder.parse(file);
             doc.getDocumentElement().normalize();
-        } catch (SAXException e) {
-            throw new DataFrameMetaReaderException("error parsing dataFrameMeta file ",e);
-        } catch (ParserConfigurationException e) {
-            throw new DataFrameMetaReaderException("error parsing dataFrameMeta file ",e);
+        } catch (SAXException | ParserConfigurationException e) {
+            throw new DataFrameMetaReaderException("error parsing dataFrameMeta file ", e);
         } catch (IOException e) {
-            throw new DataFrameMetaReaderException("error reading dataFrameMeta file ",e);
+            throw new DataFrameMetaReaderException("error reading dataFrameMeta file ", e);
         }
         Class<? extends ReaderBuilder> readerBuilderClass;
         Map<String, String> readerBuilderAttributes;
-        LinkedHashMap<String, Class<? extends DataFrameColumn>> columns = new LinkedHashMap<>();
+        LinkedHashMap<String, Class<? extends DataFrameColumn>> columns;
 
         NodeList readBuilderElements = doc.getElementsByTagName("readerBuilder");
         if (readBuilderElements.getLength() == 0) {

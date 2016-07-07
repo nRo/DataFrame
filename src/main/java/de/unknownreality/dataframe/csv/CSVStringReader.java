@@ -9,29 +9,48 @@ import java.nio.charset.StandardCharsets;
 /**
  * Created by Alex on 12.03.2016.
  */
-public class CSVStringReader extends  CSVReader{
+public class CSVStringReader extends CSVReader {
     private static Logger log = LoggerFactory.getLogger(CSVStringReader.class);
-    private String content;
-    private String encoding = "UTF-8";
+    private final String content;
     private int skip = 0;
-    public CSVStringReader(String content, Character separator, boolean containsHeader,String headerPrefix,String[] ignorePrefixes){
-        super(separator,containsHeader,headerPrefix,ignorePrefixes);
+
+    /**
+     * Creates a CSVFileReader
+     *
+     * @param content        csv string content
+     * @param separator      csv column separator
+     * @param containsHeader specifies whether file contains header row
+     * @param headerPrefix   specifies the prefix of the header row
+     * @param ignorePrefixes array of prefixes for lines that should be ignored
+     */
+    public CSVStringReader(String content, Character separator, boolean containsHeader, String headerPrefix, String[] ignorePrefixes) {
+        super(separator, containsHeader, headerPrefix, ignorePrefixes);
         this.content = content;
         initHeader();
-        if(containsHeader){
+        if (containsHeader) {
             skip++;
         }
 
     }
 
+    /**
+     * Returns the string content of this csv string reader
+     *
+     * @return csv content
+     */
     public String getContent() {
         return content;
     }
 
+    /**
+     * Returns a {@link CSVIterator} for this string readers
+     *
+     * @return csv iterator
+     */
     @Override
     public CSVIterator iterator() {
 
         return new CSVIterator(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8))
-                ,getHeader(),getSeparator(),encoding, getIgnorePrefixes(),skip);
+                , getHeader(), getSeparator(), getIgnorePrefixes(), skip);
     }
 }

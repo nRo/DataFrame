@@ -7,14 +7,15 @@ import java.util.regex.Pattern;
 /**
  * Created by Alex on 09.03.2016.
  */
-public class MatchPredicate extends FilterPredicate{
-    private Pattern pattern;
-    private String headerName;
+public class MatchPredicate extends FilterPredicate {
+    private final Pattern pattern;
+    private final String headerName;
 
-    public MatchPredicate(String headerName, String patternString){
-        this(headerName,Pattern.compile(patternString));
+    public MatchPredicate(String headerName, String patternString) {
+        this(headerName, Pattern.compile(patternString));
     }
-    public MatchPredicate(String headerName, Pattern pattern){
+
+    public MatchPredicate(String headerName, Pattern pattern) {
         this.headerName = headerName;
         this.pattern = pattern;
     }
@@ -28,6 +29,6 @@ public class MatchPredicate extends FilterPredicate{
 
     @Override
     public String toString() {
-        return headerName+" =~ /"+pattern.toString()+"/";
+        return headerName + " =~ /" + pattern.toString() + "/";
     }
 }

@@ -58,10 +58,8 @@ public class DataFrameJoinUtil {
         DataGrouping joinedGroups = dfB.groupBy(groupColumns);
         for (DataRow row : dfA) {
             setGroupValuesA(groupValues, row, joinColumns);
-            DataGroup group = joinedGroups.findByGroupValues(groupValues);
-            if (group == null) {
-                continue;
-            } else {
+            DataGroup group = joinedGroups.findByGroupValues((Object[]) groupValues);
+            if (group != null) {
                 for (DataRow rowB : group) {
                     Comparable[] joinedRowValues = new Comparable[joinHeader.size()];
                     fillValues(dfA, row, joinInfo, joinedRowValues);
@@ -92,7 +90,7 @@ public class DataFrameJoinUtil {
             } else {
                 setGroupValuesB(groupValues, row, joinColumns);
             }
-            DataGroup group = joinedGroups.findByGroupValues(groupValues);
+            DataGroup group = joinedGroups.findByGroupValues((Object[]) groupValues);
             if (group == null) {
                 Comparable[] joinedRowValues = new Comparable[joinHeader.size()];
                 fillValues(dfA, row, joinInfo, joinedRowValues);

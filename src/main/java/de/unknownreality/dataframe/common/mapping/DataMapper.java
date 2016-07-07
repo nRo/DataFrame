@@ -7,39 +7,72 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Alex on 08.03.2016.
  */
-public class DataMapper<T> {
-    private static Logger log = LoggerFactory.getLogger(DataMapper.class);
-    private DataContainer<? extends Header,? extends Row> reader;
+public class DataMapper<T> implements Iterable<T> {
+    private static final Logger log = LoggerFactory.getLogger(DataMapper.class);
+    private final DataContainer<? extends Header, ? extends Row> reader;
     private FieldColumn[] columns;
-    private Map<Integer,FieldColumn> columnMap = new HashMap<>();
-    private Class<T> cl;
-    private DataMapper(DataContainer<? extends Header,? extends Row> reader, Class<T> cl){
-            this.reader = reader;
-            this.cl = cl;
+    private Map<Integer, FieldColumn> columnMap = new HashMap<>();
+    private final Class<T> cl;
+
+    private DataMapper(DataContainer<? extends Header, ? extends Row> reader, Class<T> cl) {
+        this.reader = reader;
+        this.cl = cl;
     }
 
-    public static <T> List<T> map(DataContainer<? extends Header,? extends Row> reader,Class<T> cl){
-        DataMapper<T> mapper = new DataMapper<>(reader,cl);
+    /**
+     * Maps a {@link DataContainer} to a list
+     * The specified type of entities in the list must have {@link MappedColumn} annotated fields.
+     *
+     * @param reader the data container
+     * @param cl     class of mapped entities
+     * @param <T>    type if mapped entities
+     * @return List of mapped entities
+     */
+    public static <T> List<T> map(DataContainer<? extends Header, ? extends Row> reader, Class<T> cl) {
+        DataMapper<T> mapper = new DataMapper<>(reader, cl);
         return mapper.map();
     }
 
+    /**
+     * Returns an iterator over mapped entities from the data container
+     * The specified type of entities must have {@link MappedColumn} annotated fields.
+     *
+     * @param reader the data container
+     * @param cl     class of mapped entities
+     * @param <T>    type if mapped entities
+     * @return iterator over mapped entities
+     */
+    public static <T> Iterator<T> mapEach(DataContainer<? extends Header, ? extends Row> reader, Class<T> cl) {
+        DataMapper<T> mapper = new DataMapper<>(reader, cl);
+        return mapper.iterator();
+    }
 
-    public List<T> map(){
+
+    /**
+     * Maps the dataContainer to a list
+     *
+     * @return List of mapped entities
+     */
+    public List<T> map() {
         List<T> result = new ArrayList<>();
         initFields(reader.getHeader());
-        for(Row row : reader){
+        for (Row row : reader) {
             result.add(processRow(row));
         }
         return result;
     }
+
+
+    /**
+     * Maps the fields from a header to {@link FieldColumn FieldColumns}
+     *
+     * @param header header of the data container
+     */
     private void initFields(Header header) {
 
         List<FieldColumn> fieldColumnList = new ArrayList<>();
@@ -61,7 +94,7 @@ public class DataMapper<T> {
                 if (isValid(name, header)) {
                     headerName = name;
                 } else {
-                    log.error("{} not found in file",annotation.toString());
+                    log.error("{} not found in file", annotation.toString());
                     continue;
                 }
             }
@@ -72,23 +105,62 @@ public class DataMapper<T> {
         fieldColumnList.toArray(columns);
     }
 
-    private boolean isValid(Object headerName, Header header){
+    /**
+     * Returns true of the header name is not empty and the header contains this name
+     *
+     * @param headerName column header name
+     * @param header     header object
+     * @return <tt>true</tt> header contains name
+     */
+    @SuppressWarnings("unchecked")
+    private boolean isValid(Object headerName, Header header) {
         return !"".equals(headerName) && header.contains(headerName);
     }
 
 
-    private T processRow(Row row){
+    /**
+     * Reads a row from the data container and maps it to an entity
+     *
+     * @param row row from the data container
+     * @return mapped entity
+     */
+    private <R extends Row> T processRow(R row) {
         T obj = null;
         try {
             obj = cl.newInstance();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
-        for(FieldColumn fieldColumn : columns){
-            fieldColumn.set(row,obj);
+        for (FieldColumn fieldColumn : columns) {
+            fieldColumn.set(row, obj);
         }
         return obj;
+    }
+
+    /**
+     * Returns an iterator that wraps the row iterator from the data container
+     *
+     * @return iterator over mapped entities
+     */
+    @Override
+    public Iterator<T> iterator() {
+        return new Iterator<T>() {
+            final Iterator<? extends Row> rowIterator = reader.iterator();
+
+            @Override
+            public boolean hasNext() {
+                return rowIterator.hasNext();
+            }
+
+            @Override
+            public void remove() {
+
+            }
+
+            @Override
+            public T next() {
+                return processRow(rowIterator.next());
+            }
+        };
     }
 }

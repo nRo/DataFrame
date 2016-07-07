@@ -5,17 +5,18 @@ import de.unknownreality.dataframe.DataFrame;
 /**
  * Created by Alex on 10.03.2016.
  */
-public class DataGroup extends DataFrame{
+public class DataGroup extends DataFrame {
     private GroupHeader groupHeader;
     private GroupValues groupValues;
-    public DataGroup(String[] columns,Comparable[] values){
-        if(columns.length != values.length){
+
+    public DataGroup(String[] columns, Comparable[] values) {
+        if (columns.length != values.length) {
             throw new IllegalArgumentException("column and values must have same length");
         }
         groupHeader = new GroupHeader(columns);
-        Comparable[] gvals = new Comparable[values.length];
-        System.arraycopy(values,0,gvals,0,values.length);
-        this.groupValues = new GroupValues(gvals,groupHeader);
+        Comparable[] groupVals = new Comparable[values.length];
+        System.arraycopy(values, 0, groupVals, 0, values.length);
+        this.groupValues = new GroupValues(groupVals, groupHeader);
     }
 
 
@@ -27,12 +28,12 @@ public class DataGroup extends DataFrame{
         return groupValues;
     }
 
-    public String getGroupDescription(){
+    public String getGroupDescription() {
         StringBuilder sb = new StringBuilder();
         int i = 0;
-        for(String h : groupHeader){
+        for (String h : groupHeader) {
             sb.append(h).append("=").append(groupValues.get(h));
-            if(i++ < groupHeader.size() - 1){
+            if (i++ < groupHeader.size() - 1) {
                 sb.append(", ");
             }
         }
