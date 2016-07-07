@@ -1,8 +1,11 @@
 package de.unknownreality.dataframe.frame;
 
+import de.unknownreality.dataframe.DataFrame;
+import de.unknownreality.dataframe.DataRow;
+import de.unknownreality.dataframe.Values;
 import de.unknownreality.dataframe.csv.CSVReader;
 import de.unknownreality.dataframe.csv.CSVReaderBuilder;
-import de.unknownreality.dataframe.frame.column.*;
+import de.unknownreality.dataframe.column.*;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;

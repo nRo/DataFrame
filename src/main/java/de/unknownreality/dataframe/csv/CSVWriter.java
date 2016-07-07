@@ -4,9 +4,9 @@ import de.unknownreality.dataframe.common.DataContainer;
 import de.unknownreality.dataframe.common.DataWriter;
 import de.unknownreality.dataframe.common.Header;
 import de.unknownreality.dataframe.common.Row;
-import de.unknownreality.dataframe.frame.DataFrame;
-import de.unknownreality.dataframe.frame.meta.DataFrameMeta;
-import de.unknownreality.dataframe.frame.meta.DataFrameMetaWriter;
+import de.unknownreality.dataframe.DataFrame;
+import de.unknownreality.dataframe.meta.DataFrameMeta;
+import de.unknownreality.dataframe.meta.DataFrameMetaWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

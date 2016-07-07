@@ -79,13 +79,13 @@
     <distributionManagement>
         <repository>
             <id>central</id>
-            <name>maven.unknownreality.de-releases</name>
-            <url>http://maven.unknownreality.de/artifactory/libs-release-local</url>
+            <name>maven.unknownreality.de-public-releases</name>
+            <url>http://maven.unknownreality.de/artifactory/public-release</url>
         </repository>
         <snapshotRepository>
             <id>snapshots</id>
-            <name>maven.unknownreality.de-snapshots</name>
-            <url>http://maven.unknownreality.de/artifactory/libs-snapshot-local</url>
+            <name>maven.unknownreality.de-public-snapshots</name>
+            <url>http://maven.unknownreality.de/artifactory/public-snapshot</url>
         </snapshotRepository>
     </distributionManagement>
 

@@ -3,7 +3,7 @@ package de.unknownreality.dataframe.csv;
 import de.unknownreality.dataframe.common.DataContainer;
 import de.unknownreality.dataframe.common.mapping.*;
 
-import de.unknownreality.dataframe.frame.DataFrameBuilder;
+import de.unknownreality.dataframe.DataFrameBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

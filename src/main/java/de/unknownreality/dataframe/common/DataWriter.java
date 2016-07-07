@@ -1,6 +1,6 @@
 package de.unknownreality.dataframe.common;
 
-import de.unknownreality.dataframe.frame.DataFrame;
+import de.unknownreality.dataframe.DataFrame;
 
 import java.io.File;
 import java.util.Map;
