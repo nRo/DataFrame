@@ -1,48 +1,348 @@
 package de.unknownreality.dataframe.column;
 
+import de.unknownreality.dataframe.common.NumberUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Arrays;
+
 /**
  * Created by Alex on 11.03.2016.
  */
-public abstract class NumberColumn<T extends Number & Comparable<T>> extends BasicColumn<T> {
-    public abstract  T median();
+public abstract class NumberColumn<T extends Number & Comparable<T>, C extends NumberColumn<T, C>> extends BasicColumn<T, C> {
+    private static final Logger log = LoggerFactory.getLogger(NumberColumn.class);
 
-    public NumberColumn(String name){
-       super(name);
+    public NumberColumn(String name) {
+        super(name);
     }
 
-    public NumberColumn(){
+    public NumberColumn() {
         super(null);
     }
 
     public NumberColumn(String name, T[] values) {
-        super(name,values);
+        super(name, values);
     }
+
     @Override
-    public T get(int index){
+    public T get(int index) {
         return super.values[index];
     }
 
-    public abstract NumberColumn<T> add(NumberColumn column);
 
-    public abstract NumberColumn<T> subtract(NumberColumn column);
+    /**
+     * Returns the median of all values in this column
+     *
+     * @return median of all values
+     */
+    public T median() {
+        Comparable[] array = toArray();
+        Arrays.sort(array);
+        return NumberUtil.convert((Number) array[size() / 2], getType());
+    }
 
-    public abstract NumberColumn<T> multiply(NumberColumn column);
 
-    public abstract NumberColumn<T> divide(NumberColumn column);
+    /**
+     * Returns the mean of all values in this column
+     *
+     * @return mean of all values
+     */
+    public Double mean() {
+        int naCount = 0;
+        Double sum = 0d;
+        int count = 0;
+        int size = size();
+        for (int i = 0; i < size; i++) {
+            if (isNA(i)) {
+                naCount++;
+                continue;
+            }
+            count++;
+            sum += get(i).doubleValue();
+        }
+        if (naCount > 0) {
+            log.warn("mean() ignored {} NA", naCount);
+        }
+        return sum / count;
+    }
 
-    public abstract NumberColumn<T> add(Number value);
+    /**
+     * Returns the minimum of all values in this column
+     *
+     * @return minimum of all values
+     */
+    public T min() {
+        Double min = Double.MAX_VALUE;
+        int naCount = 0;
+        int size = size();
+        for (int i = 0; i < size; i++) {
+            if (isNA(i)) {
+                naCount++;
+                continue;
+            }
+            min = Math.min(min, get(i).doubleValue());
+        }
+        if (naCount > 0) {
+            log.warn("min() ignored {} NA", naCount);
+        }
+        return NumberUtil.convert(min, getType());
+    }
 
-    public abstract NumberColumn<T> subtract(Number value);
+    /**
+     * Returns the maximum of all values in this column
+     *
+     * @return maximum of all values
+     */
+    public T max() {
+        double max = Double.NEGATIVE_INFINITY;
+        int naCount = 0;
+        long sum = 0;
+        int size = size();
+        for (int i = 0; i < size; i++) {
+            if (isNA(i)) {
+                naCount++;
+                continue;
+            }
+            max = Math.max(max, get(i).doubleValue());
+        }
+        if (naCount > 0) {
+            log.warn("max() ignored {} NA", naCount);
+        }
+        return NumberUtil.convert(max, getType());
+    }
 
-    public abstract NumberColumn<T> multiply(Number value);
+    /**
+     * Returns the sum of all values in this column
+     *
+     * @return sum of all values
+     */
+    public T sum() {
+        int naCount = 0;
+        double sum = 0;
+        int size = size();
+        for (int i = 0; i < size; i++) {
+            if (isNA(i)) {
+                naCount++;
+                continue;
+            }
+            sum += get(i).doubleValue();
+        }
+        if (naCount > 0) {
+            log.warn("sum() ignored {} NA", naCount);
+        }
+        return NumberUtil.convert(sum, getType());
+    }
 
-    public abstract NumberColumn<T> divide(Number value);
 
-    public abstract Double mean();
+    /**
+     * Adds the values of another {@link NumberColumn} to the values in this column.
+     * {@code column[index] += otherColumn[index]}
+     * <p>Calls {@link #notifyDataFrameValueChanged(int)} to ensure data frame index consistency</p>
+     *
+     * @param column column containing the values that are added
+     * @return <tt>self</tt> for method chaining
+     */
+    public C add(NumberColumn column) {
+        int naCount = 0;
+        int size = size();
+        for (int i = 0; i < size; i++) {
+            if (!isNA(i) && !column.isNA(i)) {
+                doSet(i, NumberUtil.add(get(i), column.get(i), getType()));
+            } else {
+                naCount++;
+            }
+        }
+        if (naCount > 0) {
+            log.warn("add() ignored {} NA", naCount);
+        }
+        notifyDataFrameColumnChanged();
+        return getThis();
+    }
 
-    public abstract T min();
 
-    public abstract T max();
+    /**
+     * Subtracts the values of another {@link NumberColumn} from the values in this column.
+     * {@code column[index] -= otherColumn[index]}
+     * <p>Calls {@link #notifyDataFrameValueChanged(int)} to ensure data frame index consistency</p>
+     *
+     * @param column column containing the values that are subtracted
+     * @return <tt>self</tt> for method chaining
+     */
+    public C subtract(NumberColumn column) {
+        if (column.size() != size()) {
+            throw new IllegalArgumentException("'divide' required column of same size");
+        }
+        int naCount = 0;
+        int size = size();
+        for (int i = 0; i < size; i++) {
+            if (!isNA(i) && !column.isNA(i)) {
+                doSet(i, NumberUtil.subtract(get(i), column.get(i), getType()));
+            } else {
+                naCount++;
+            }
+        }
+        if (naCount > 0) {
+            log.warn("subtract() ignored {} NA", naCount);
+        }
+        notifyDataFrameColumnChanged();
+        return getThis();
+    }
 
-    public abstract T sum();
+    /**
+     * Multiplies the values of another {@link NumberColumn} to the values in this column.
+     * {@code column[index] *= otherColumn[index]}
+     * <p>Calls {@link #notifyDataFrameValueChanged(int)} to ensure data frame index consistency</p>
+     *
+     * @param column column containing the values that are multiplied
+     * @return <tt>self</tt> for method chaining
+     */
+    public C multiply(NumberColumn column) {
+        if (column.size() != size()) {
+            throw new IllegalArgumentException("'divide' required column of same size");
+        }
+        int naCount = 0;
+        int size = size();
+        for (int i = 0; i < size; i++) {
+            if (!isNA(i) && !column.isNA(i)) {
+                doSet(i, NumberUtil.multiply(get(i), column.get(i), getType()));
+            } else {
+                naCount++;
+            }
+        }
+        if (naCount > 0) {
+            log.warn("multiply() ignored {} NA", naCount);
+        }
+        notifyDataFrameColumnChanged();
+        return getThis();
+    }
+
+    /**
+     * Divides the values of this column by the values of another {@link NumberColumn}.
+     * {@code column[index] /= otherColumn[index]}
+     * <p>Calls {@link #notifyDataFrameValueChanged(int)} to ensure data frame index consistency</p>
+     *
+     * @param column column containing the values that are divided
+     * @return <tt>self</tt> for method chaining
+     */
+    public C divide(NumberColumn column) {
+        if (column.size() != size()) {
+            throw new IllegalArgumentException("'divide' required column of same size");
+        }
+        int naCount = 0;
+        int size = size();
+        for (int i = 0; i < size; i++) {
+            if (!isNA(i) && !column.isNA(i)) {
+                doSet(i, NumberUtil.divide(get(i), column.get(i), getType()));
+            } else {
+                naCount++;
+            }
+        }
+        if (naCount > 0) {
+            log.warn("divide() ignored {} NA", naCount);
+        }
+        notifyDataFrameColumnChanged();
+        return getThis();
+    }
+
+
+    /**
+     * Adds a {@link Number} to the values in this column.
+     * {@code column[index] += number}
+     * <p>Calls {@link #notifyDataFrameValueChanged(int)} to ensure data frame index consistency</p>
+     *
+     * @param value value added to all values in this column
+     * @return <tt>self</tt> for method chaining
+     */
+    public C add(Number value) {
+        int naCount = 0;
+        int size = size();
+        for (int i = 0; i < size; i++) {
+            if (!isNA(i) && value != null) {
+                doSet(i, NumberUtil.add(get(i), value, getType()));
+            } else {
+                naCount++;
+            }
+        }
+        if (naCount > 0) {
+            log.warn("add() ignored {} NA", naCount);
+        }
+        notifyDataFrameColumnChanged();
+        return getThis();
+    }
+
+    /**
+     * Subtracts a {@link Number} to the values in this column.
+     * {@code column[index] -= number}
+     * <p>Calls {@link #notifyDataFrameValueChanged(int)} to ensure data frame index consistency</p>
+     *
+     * @param value value subtracted from all values in this column
+     * @return <tt>self</tt> for method chaining
+     */
+    public C subtract(Number value) {
+        int naCount = 0;
+        int size = size();
+        for (int i = 0; i < size; i++) {
+            if (!isNA(i) && value != null) {
+                doSet(i, NumberUtil.subtract(get(i), value, getType()));
+            } else {
+                naCount++;
+            }
+        }
+        if (naCount > 0) {
+            log.warn("subtract() ignored {} NA", naCount);
+        }
+        notifyDataFrameColumnChanged();
+        return getThis();
+    }
+
+
+    /**
+     * Multiplies a {@link Number} to the values in this column.
+     * {@code column[index] *= number}
+     * <p>Calls {@link #notifyDataFrameValueChanged(int)} to ensure data frame index consistency</p>
+     *
+     * @param value value multiplied to all values in this column
+     * @return <tt>self</tt> for method chaining
+     */
+    public C multiply(Number value) {
+        int naCount = 0;
+        int size = size();
+        for (int i = 0; i < size; i++) {
+            if (!isNA(i) && value != null) {
+                doSet(i, NumberUtil.multiply(get(i), value, getType()));
+            } else {
+                naCount++;
+            }
+        }
+        if (naCount > 0) {
+            log.warn("multiply() ignored {} NA", naCount);
+        }
+        notifyDataFrameColumnChanged();
+        return getThis();
+    }
+
+    /**
+     * Divides all values in this column by a {@link Number}.
+     * {@code column[index] /= number}
+     * <p>Calls {@link #notifyDataFrameValueChanged(int)} to ensure data frame index consistency</p>
+     *
+     * @param value the value all values in this column are divided by
+     * @return <tt>self</tt> for method chaining
+     */
+    public C divide(Number value) {
+        int naCount = 0;
+        int size = size();
+        for (int i = 0; i < size; i++) {
+            if (!isNA(i) && value != null) {
+                doSet(i, NumberUtil.divide(get(i), value, getType()));
+            } else {
+                naCount++;
+            }
+        }
+        if (naCount > 0) {
+            log.warn("divide() ignored {} NA", naCount);
+        }
+        notifyDataFrameColumnChanged();
+        return getThis();
+    }
 }

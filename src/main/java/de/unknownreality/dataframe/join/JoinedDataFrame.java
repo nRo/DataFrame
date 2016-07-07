@@ -6,9 +6,9 @@ import de.unknownreality.dataframe.DataFrame;
  * Created by Alex on 13.03.2016.
  */
 public class JoinedDataFrame extends DataFrame {
-   private JoinInfo joinInfo;
+    private final JoinInfo joinInfo;
 
-    public JoinedDataFrame(JoinInfo info){
+    public JoinedDataFrame(JoinInfo info) {
         this.joinInfo = info;
     }
 

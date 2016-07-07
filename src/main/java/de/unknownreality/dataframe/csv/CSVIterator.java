@@ -7,20 +7,28 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.util.Iterator;
 
-public class CSVIterator implements Iterator<CSVRow>{
-    private static Logger log = LoggerFactory.getLogger(CSVIterator.class);
+public class CSVIterator implements Iterator<CSVRow> {
+    private static final Logger log = LoggerFactory.getLogger(CSVIterator.class);
 
-    private BufferedReader reader;
+    private final BufferedReader reader;
     private CSVRow next;
     private int lineNumber = 0;
-    private Character separator;
+    private final Character separator;
     private int cols = -1;
-    private CSVHeader header;
-    private int skip;
-    private String[] ignorePrefixes;
-    public CSVIterator(InputStream stream, CSVHeader header, Character separator,String encoding,String[] ignorePrefixes, int skip) {
+    private final CSVHeader header;
+    private final String[] ignorePrefixes;
+
+    /**
+     * Creates a CSVIterator
+     *
+     * @param stream         stream of csv content
+     * @param header         csv header
+     * @param separator      csv column separator
+     * @param ignorePrefixes array of prefixes for lines that should be ignored
+     * @param skip           number of skipped lines at the start
+     */
+    public CSVIterator(InputStream stream, CSVHeader header, Character separator, String[] ignorePrefixes, int skip) {
         this.reader = new BufferedReader(new InputStreamReader(stream));
-        this.skip = skip;
         this.separator = separator;
         this.header = header;
         this.ignorePrefixes = ignorePrefixes;
@@ -28,8 +36,13 @@ public class CSVIterator implements Iterator<CSVRow>{
         next = getNext();
     }
 
-    public void skip(int rows){
-        for(int i = 0; i < rows;i++){
+    /**
+     * skips rows
+     *
+     * @param rows number of rows to be skipped
+     */
+    public void skip(int rows) {
+        for (int i = 0; i < rows; i++) {
             try {
                 reader.readLine();
             } catch (IOException e) {
@@ -39,6 +52,9 @@ public class CSVIterator implements Iterator<CSVRow>{
         }
     }
 
+    /**
+     * closes this iterator
+     */
     public void close() {
         try {
             reader.close();
@@ -48,23 +64,27 @@ public class CSVIterator implements Iterator<CSVRow>{
     }
 
 
-
+    /**
+     * Reads the csv input stream and returns a csv row
+     *
+     * @return next csv row
+     */
     private CSVRow getNext() {
         try {
             lineNumber++;
             String line = reader.readLine();
-            while(line != null && "".equals(line.trim())){
+            while (line != null && "".equals(line.trim())) {
                 line = reader.readLine();
             }
             if (line == null) {
                 return null;
             }
-            for(String prefix : ignorePrefixes){
-                if(prefix != null && !"".equals(prefix) && line.startsWith(prefix)){
+            for (String prefix : ignorePrefixes) {
+                if (prefix != null && !"".equals(prefix) && line.startsWith(prefix)) {
                     return getNext();
                 }
             }
-            String[] values = StringUtil.splitQuoted(line,separator);
+            String[] values = StringUtil.splitQuoted(line, separator);
             if (cols == -1) {
                 cols = values.length;
             } else {
@@ -72,8 +92,8 @@ public class CSVIterator implements Iterator<CSVRow>{
                     throw new CSVException(String.format("unequal number of column %d != %d in line %d", values.length, cols, lineNumber));
                 }
             }
-           // for (int i = 0; i < cols; i++) {
-                //values[i] = values[i].trim();
+            // for (int i = 0; i < cols; i++) {
+            //values[i] = values[i].trim();
             //}
             return new CSVRow(header, values, lineNumber, separator);
 
@@ -87,11 +107,21 @@ public class CSVIterator implements Iterator<CSVRow>{
         return null;
     }
 
-
+    /**
+     * Returns true if last row is not reached yet
+     *
+     * @return true if next row exists
+     */
     public boolean hasNext() {
         return next != null;
     }
 
+    /**
+     * Returns the next csv row.
+     * If last row is reached this iterator closes automatically.
+     *
+     * @return next csv row
+     */
     public CSVRow next() {
         CSVRow row = next;
         next = getNext();
@@ -101,8 +131,11 @@ public class CSVIterator implements Iterator<CSVRow>{
         return row;
     }
 
+    /**
+     * Remove is not supported
+     */
     @Override
     public void remove() {
-
+        throw new UnsupportedOperationException("remove not supported by CSV Iterators");
     }
 }

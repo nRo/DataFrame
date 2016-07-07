@@ -16,19 +16,19 @@ public class DataFrameMeta {
     public static final String META_FILE_EXTENSION = "dfm";
 
     private Class<? extends ReaderBuilder> readerBuilderClass;
-    private Map<String,String> attributes = new HashMap<>();
-    private LinkedHashMap<String,Class<? extends DataFrameColumn>> columns = new LinkedHashMap<>();
+    private Map<String, String> attributes = new HashMap<>();
+    private LinkedHashMap<String, Class<? extends DataFrameColumn>> columns = new LinkedHashMap<>();
 
-    public static DataFrameMeta create(DataFrame dataFrame, Class<? extends ReaderBuilder> readerBuilderClass, DataWriter dataWriterBuilder){
-        return create(dataFrame,readerBuilderClass,dataWriterBuilder.getAttributes());
+    public static DataFrameMeta create(DataFrame dataFrame, Class<? extends ReaderBuilder> readerBuilderClass, DataWriter dataWriterBuilder) {
+        return create(dataFrame, readerBuilderClass, dataWriterBuilder.getAttributes());
     }
 
-    public static DataFrameMeta create(DataFrame dataFrame, Class<? extends ReaderBuilder> readerBuilderClass, Map<String,String> writerAttributes){
+    public static DataFrameMeta create(DataFrame dataFrame, Class<? extends ReaderBuilder> readerBuilderClass, Map<String, String> writerAttributes) {
         DataFrameMeta dataFrameMetaFile = new DataFrameMeta();
         dataFrameMetaFile.readerBuilderClass = readerBuilderClass;
         dataFrameMetaFile.attributes = writerAttributes;
-        for(String header : dataFrame.getHeader()){
-            dataFrameMetaFile.columns.put(header,dataFrame.getHeader().getColumnType(header));
+        for (String header : dataFrame.getHeader()) {
+            dataFrameMetaFile.columns.put(header, dataFrame.getHeader().getColumnType(header));
         }
         return dataFrameMetaFile;
     }
@@ -45,12 +45,12 @@ public class DataFrameMeta {
         return attributes;
     }
 
-    public DataFrameMeta(){
+    public DataFrameMeta() {
 
     }
 
-    public DataFrameMeta(LinkedHashMap<String,Class<? extends DataFrameColumn>> columns,
-                         Class<? extends ReaderBuilder> readerBuilderClass, Map<String,String> attributes){
+    public DataFrameMeta(LinkedHashMap<String, Class<? extends DataFrameColumn>> columns,
+                         Class<? extends ReaderBuilder> readerBuilderClass, Map<String, String> attributes) {
         this.columns = columns;
         this.readerBuilderClass = readerBuilderClass;
         this.attributes = attributes;

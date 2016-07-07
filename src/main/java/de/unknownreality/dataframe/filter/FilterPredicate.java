@@ -25,7 +25,7 @@ public abstract class FilterPredicate {
         return FilterPredicate.xor(this, p);
     }
 
-    public FilterPredicate neg(){
+    public FilterPredicate neg() {
         return FilterPredicate.not(this);
     }
 
@@ -36,33 +36,38 @@ public abstract class FilterPredicate {
             public boolean valid(Row row) {
                 return !filterPredicate.valid(row);
             }
+
             @Override
             public String toString() {
-                return "!("+filterPredicate.toString()+")";
+                return "!(" + filterPredicate.toString() + ")";
             }
         };
     }
+
     public static FilterPredicate ne(final FilterPredicate p1, final FilterPredicate p2) {
         return new FilterPredicate() {
             @Override
             public boolean valid(Row value) {
                 return p1.valid(value) != p2.valid(value);
             }
+
             @Override
             public String toString() {
-                return "("+p1.toString()+") != ("+p2.toString()+")";
+                return "(" + p1.toString() + ") != (" + p2.toString() + ")";
             }
         };
     }
+
     public static <T> FilterPredicate eq(final FilterPredicate p1, final FilterPredicate p2) {
         return new FilterPredicate() {
             @Override
             public boolean valid(Row row) {
                 return p1.valid(row) == p2.valid(row);
             }
+
             @Override
             public String toString() {
-                return "("+p1.toString()+") == ("+p2.toString()+")";
+                return "(" + p1.toString() + ") == (" + p2.toString() + ")";
             }
         };
     }
@@ -72,8 +77,8 @@ public abstract class FilterPredicate {
         return new FilterPredicate() {
             @Override
             public boolean valid(Row row) {
-                for(FilterPredicate predicate : predicates){
-                    if(!predicate.valid(row)){
+                for (FilterPredicate predicate : predicates) {
+                    if (!predicate.valid(row)) {
                         return false;
                     }
                 }
@@ -82,10 +87,10 @@ public abstract class FilterPredicate {
 
             @Override
             public String toString() {
-                StringBuilder sb  = new StringBuilder();
-                for(int i = 0; i < predicates.length;i++){
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < predicates.length; i++) {
                     sb.append("(").append(predicates[i]).append(")");
-                    if(i < predicates.length - 1){
+                    if (i < predicates.length - 1) {
                         sb.append(" AND ");
                     }
                 }
@@ -98,8 +103,8 @@ public abstract class FilterPredicate {
         return new FilterPredicate() {
             @Override
             public boolean valid(Row row) {
-                for(FilterPredicate predicate : predicates){
-                    if(predicate.valid(row)){
+                for (FilterPredicate predicate : predicates) {
+                    if (predicate.valid(row)) {
                         return true;
                     }
                 }
@@ -108,10 +113,10 @@ public abstract class FilterPredicate {
 
             @Override
             public String toString() {
-                StringBuilder sb  = new StringBuilder();
-                for(int i = 0; i < predicates.length;i++){
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < predicates.length; i++) {
                     sb.append("(").append(predicates[i]).append(")");
-                    if(i < predicates.length - 1){
+                    if (i < predicates.length - 1) {
                         sb.append(" OR ");
                     }
                 }
@@ -126,9 +131,10 @@ public abstract class FilterPredicate {
             public boolean valid(Row row) {
                 return p1.valid(row) && p2.valid(row);
             }
+
             @Override
             public String toString() {
-                return "("+p1.toString()+") AND ("+p2.toString()+")";
+                return "(" + p1.toString() + ") AND (" + p2.toString() + ")";
             }
         };
     }
@@ -142,7 +148,7 @@ public abstract class FilterPredicate {
 
             @Override
             public String toString() {
-                return "("+p1.toString()+") OR ("+p2.toString()+")";
+                return "(" + p1.toString() + ") OR (" + p2.toString() + ")";
             }
         };
     }
@@ -158,7 +164,7 @@ public abstract class FilterPredicate {
 
             @Override
             public String toString() {
-                return "("+p1.toString()+") XOR ("+p2.toString()+")";
+                return "(" + p1.toString() + ") XOR (" + p2.toString() + ")";
             }
         };
     }
@@ -201,7 +207,7 @@ public abstract class FilterPredicate {
     }
 
     public static FilterPredicate in(final String name, final Collection<Object> values) {
-        return in(name,new HashSet<>(values));
+        return in(name, new HashSet<>(values));
     }
 
     public static FilterPredicate in(final String name, final Set<Object> values) {
@@ -213,18 +219,21 @@ public abstract class FilterPredicate {
 
             @Override
             public String toString() {
-                return name +" in " + values.toString();
+                return name + " in " + values.toString();
             }
         };
     }
-    public static FilterPredicate btwn(final String name, Object low, Object high){
-        return FilterPredicate.and(FilterPredicate.gt(name,low),FilterPredicate.lt(name,high));
+
+    public static FilterPredicate btwn(final String name, Object low, Object high) {
+        return FilterPredicate.and(FilterPredicate.gt(name, low), FilterPredicate.lt(name, high));
     }
-    public static FilterPredicate matches(final String name, Pattern pattern){
-        return new MatchPredicate(name,pattern);
+
+    public static FilterPredicate matches(final String name, Pattern pattern) {
+        return new MatchPredicate(name, pattern);
     }
-    public static FilterPredicate matches(final String name, String patternString){
-        return new MatchPredicate(name,patternString);
+
+    public static FilterPredicate matches(final String name, String patternString) {
+        return new MatchPredicate(name, patternString);
     }
 
 }

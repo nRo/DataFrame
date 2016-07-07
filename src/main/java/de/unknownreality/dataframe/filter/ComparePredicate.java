@@ -5,12 +5,13 @@ import de.unknownreality.dataframe.common.Row;
 /**
  * Created by Alex on 09.03.2016.
  */
-public class ComparePredicate extends FilterPredicate{
-    enum Operation{
-        GT(">"),GE(">="),LT("<"),LE("<="),EQ("=="),NE("!=");
+public class ComparePredicate extends FilterPredicate {
+    enum Operation {
+        GT(">"), GE(">="), LT("<"), LE("<="), EQ("=="), NE("!=");
 
-        private String str;
-        Operation(String str){
+        private final String str;
+
+        Operation(String str) {
             this.str = str;
         }
 
@@ -19,37 +20,36 @@ public class ComparePredicate extends FilterPredicate{
             return str;
         }
     }
-    private String headerName;
-    private Object value;
-    private Operation operation;
 
-    public ComparePredicate(String headerName,Operation op, Object value){
+    private final String headerName;
+    private final Object value;
+    private final Operation operation;
+
+    public ComparePredicate(String headerName, Operation op, Object value) {
         this.headerName = headerName;
         this.operation = op;
         this.value = value;
     }
+
+    @SuppressWarnings("unchecked")
     @Override
     public boolean valid(Row row) {
         Object v = row.get(headerName);
-        if(operation == Operation.EQ && v.equals(value)){
+        if (operation == Operation.EQ && v.equals(value)) {
             return true;
         }
         boolean numberCompare = (v instanceof Number && value instanceof Number);
-        if(!v.getClass().equals(value.getClass()) && !numberCompare){
-            if(operation == Operation.NE){
-                return true;
-            }
-            return false;
+        if (!v.getClass().equals(value.getClass()) && !numberCompare) {
+            return operation == Operation.NE;
         }
         int c = 0;
-        if(numberCompare){
+        if (numberCompare) {
             //could be better to convert to BigDecimal for comparison
-            c = Double.compare(Number.class.cast(v).doubleValue(),Number.class.cast(value).doubleValue());
+            c = Double.compare(Number.class.cast(v).doubleValue(), Number.class.cast(value).doubleValue());
+        } else if (v instanceof Comparable && value instanceof Comparable) {
+            c = ((Comparable) v).compareTo(value);
         }
-        else if(v instanceof Comparable && value instanceof Comparable){
-            c = ((Comparable)v).compareTo(value);
-        }
-        switch (operation){
+        switch (operation) {
             case GT:
                 return c > 0;
             case GE:
@@ -68,6 +68,6 @@ public class ComparePredicate extends FilterPredicate{
 
     @Override
     public String toString() {
-        return headerName+" "+operation+" "+value;
+        return headerName + " " + operation + " " + value;
     }
 }

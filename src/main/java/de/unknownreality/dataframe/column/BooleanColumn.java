@@ -11,7 +11,7 @@ import java.util.*;
 /**
  * Created by Alex on 09.03.2016.
  */
-public class BooleanColumn extends DataFrameColumn<Boolean> {
+public class BooleanColumn extends DataFrameColumn<Boolean, BooleanColumn> {
     private int size = 0;
 
 
@@ -42,7 +42,22 @@ public class BooleanColumn extends DataFrameColumn<Boolean> {
         return this;
     }
 
-    private Parser parser = ParserUtil.findParserOrNull(Boolean.class);
+    @Override
+    protected BooleanColumn getThis() {
+        return null;
+    }
+
+    private final Parser<Boolean> parser = ParserUtil.findParserOrNull(Boolean.class);
+
+    @Override
+    protected void doSort(Comparator<Boolean> comparator) {
+
+    }
+
+    @Override
+    protected void doSort() {
+
+    }
 
     @Override
     public Parser<Boolean> getParser() {
@@ -56,22 +71,20 @@ public class BooleanColumn extends DataFrameColumn<Boolean> {
 
 
     @Override
-    public BooleanColumn set(int index, Boolean value) {
+    protected void doSet(int index, Boolean value) {
         bitSet.set(index, value);
-        return this;
     }
 
     @Override
-    public DataFrameColumn<Boolean> map(MapFunction<Boolean> mapFunction) {
+    public void doMap(MapFunction<Boolean> mapFunction) {
         for (int i = 0; i < size(); i++) {
             bitSet.set(i, mapFunction.map(bitSet.get(i)));
         }
         notifyDataFrameColumnChanged();
-        return this;
     }
 
     @Override
-    public void reverse() {
+    public void doReverse() {
         for (int i = 0; i < size() / 2; i++) {
             Boolean temp = bitSet.get(i);
             bitSet.set(i, bitSet.get(size - i - 1));
@@ -98,7 +111,7 @@ public class BooleanColumn extends DataFrameColumn<Boolean> {
     }
 
     public BooleanColumn(String name, BitSet values) {
-        this.bitSet = bitSet;
+        this.bitSet = values;
         setName(name);
         size = 0;
     }
@@ -109,7 +122,7 @@ public class BooleanColumn extends DataFrameColumn<Boolean> {
     }
 
     @Override
-    public DataFrameColumn<Boolean> copy() {
+    public BooleanColumn copy() {
         return null;
     }
 
@@ -124,10 +137,7 @@ public class BooleanColumn extends DataFrameColumn<Boolean> {
 
     @Override
     public boolean contains(Object o) {
-        if (!(o instanceof Boolean)) {
-            return false;
-        }
-        return ((Boolean) o) ? !bitSet.isEmpty() : bitSet.isEmpty();
+        return o instanceof Boolean && ((Boolean) o) != bitSet.isEmpty();
     }
 
 
@@ -150,12 +160,11 @@ public class BooleanColumn extends DataFrameColumn<Boolean> {
             public void remove() {
             }
 
-            ;
         };
     }
 
     @Override
-    public Object[] toArray() {
+    public Boolean[] toArray() {
         Boolean[] array = new Boolean[size()];
         for (int i = 0; i < array.length; i++) {
             array[i] = bitSet.get(i);
@@ -163,10 +172,11 @@ public class BooleanColumn extends DataFrameColumn<Boolean> {
         return array;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public <T1> T1[] toArray(T1[] a) {
+    public Boolean[] toArray(Boolean[] a) {
         if (a.length < size())
-            return (T1[]) Arrays.copyOf(toArray(), size(), a.getClass());
+            return (Boolean[]) Arrays.copyOf(toArray(), size(), a.getClass());
         System.arraycopy(toArray(), 0, a, 0, size());
         if (a.length > size())
             a[size()] = null;
@@ -175,8 +185,7 @@ public class BooleanColumn extends DataFrameColumn<Boolean> {
 
 
     @Override
-    public boolean append(Boolean t) {
-        validateAppend();
+    protected boolean doAppend(Boolean t) {
         bitSet.set(size++, t);
         return true;
     }
@@ -193,13 +202,13 @@ public class BooleanColumn extends DataFrameColumn<Boolean> {
     }
 
     @Override
-    public boolean appendAll(Collection<Boolean> c) {
-        throw new UnsupportedOperationException("appendAll is not supported by dataframe column");
+    protected boolean doAppendAll(Collection<? extends Boolean> c) {
+        throw new UnsupportedOperationException("doAppendAll is not supported by data frame column");
     }
 
     @Override
-    public void appendNA() {
-        append(false);
+    protected boolean doAppendNA() {
+        return doAppend(false);
     }
 
     @Override
@@ -208,8 +217,8 @@ public class BooleanColumn extends DataFrameColumn<Boolean> {
     }
 
     @Override
-    public void setNA(int index) {
-        set(index, false);
+    protected void doSetNA(int index) {
+        doSet(index, false);
     }
 
     @Override

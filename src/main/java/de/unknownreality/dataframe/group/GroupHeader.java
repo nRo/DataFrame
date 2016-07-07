@@ -8,14 +8,16 @@ import java.util.*;
  * Created by Alex on 11.03.2016.
  */
 public class GroupHeader implements Header<String> {
-    private Map<String,Integer> headerMap = new HashMap<>();
-    private List<String> headers = new ArrayList<>();
-    public GroupHeader(String... columns){
-        for(int i = 0; i< columns.length;i++){
+    private final Map<String, Integer> headerMap = new HashMap<>();
+    private final List<String> headers = new ArrayList<>();
+
+    public GroupHeader(String... columns) {
+        for (int i = 0; i < columns.length; i++) {
             headers.add(columns[i]);
-            headerMap.put(columns[i],i);
+            headerMap.put(columns[i], i);
         }
     }
+
     @Override
     public int size() {
         return headers.size();
@@ -23,8 +25,8 @@ public class GroupHeader implements Header<String> {
 
     @Override
     public String get(int index) {
-        if(index >= headers.size()){
-            throw new IllegalArgumentException(String.format("header index out of bounds %d > %d",index,(headers.size()-1)));
+        if (index >= headers.size()) {
+            throw new IllegalArgumentException(String.format("header index out of bounds %d > %d", index, (headers.size() - 1)));
         }
         return headers.get(index);
     }
