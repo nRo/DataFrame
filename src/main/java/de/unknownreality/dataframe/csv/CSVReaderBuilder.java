@@ -117,6 +117,33 @@ public class CSVReaderBuilder implements ReaderBuilder<CSVHeader, CSVRow> {
     }
 
     /**
+     * Creates a {@link CSVReader} for a specified resource.
+     * The provided {@link ClassLoader} is used to load the resource.
+     *
+     * @param resourcePath path to csv resource
+     * @param classLoader {@link ClassLoader} used to load the resource
+     * @return
+     */
+    public CSVReader loadResource(String resourcePath,ClassLoader classLoader) {
+        String[] ignorePrefixesArray = new String[this.ignorePrefixes.size()];
+        this.ignorePrefixes.toArray(ignorePrefixesArray);
+        return new CSVResourceReader(resourcePath,classLoader, getSeparator(), isContainsHeader(), getHeaderPrefix(), ignorePrefixesArray);
+    }
+
+    /**
+     * Creates a {@link CSVReader} for a specified resource.
+     * The {@link ClassLoader} of {@link CSVResourceReader} is used to load the resource.
+     *
+     * @param resourcePath path to csv resource
+     * @return
+     */
+    public CSVReader loadResource(String resourcePath) {
+        String[] ignorePrefixesArray = new String[this.ignorePrefixes.size()];
+        this.ignorePrefixes.toArray(ignorePrefixesArray);
+        return new CSVResourceReader(resourcePath, getSeparator(), isContainsHeader(), getHeaderPrefix(), ignorePrefixesArray);
+    }
+
+    /**
      * Sets all attributes using a map
      * <p>"separator" = csv column separator</p>
      * <p>"headerPrefix" = header line prefix</p>

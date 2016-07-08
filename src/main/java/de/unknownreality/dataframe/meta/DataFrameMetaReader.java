@@ -10,11 +10,8 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
 /**
  * Created by Alex on 07.06.2016.
@@ -22,6 +19,30 @@ import java.util.Map;
 public class DataFrameMetaReader {
     private static Logger logger = LoggerFactory.getLogger(DataFrameMetaReader.class);
 
+    /**
+     * Map containing legacy package names.
+     * This map is used to rename Reader and Column classes in an old Meta file.
+     */
+    private static final Map<String,String> LEGACY_PACKAGES = new TreeMap<>(new Comparator<String>() {
+        @Override
+        public int compare(String o1, String o2) {
+            return -Integer.compare(o1.length(),o2.length());
+        }
+    });
+    static{
+        LEGACY_PACKAGES.put("de.unknownreality.data.","de.unknownreality.dataframe.");
+        LEGACY_PACKAGES.put("de.unknownreality.data.frame.","de.unknownreality.dataframe.");
+    }
+
+    private static String remapLegacyPackages(String className){
+        for(String legacyPackage : LEGACY_PACKAGES.keySet()){
+            if(className.contains(legacyPackage)){
+                className = className.replace(legacyPackage,LEGACY_PACKAGES.get(legacyPackage));
+                logger.warn("old package name found '{}'",legacyPackage);
+            }
+        }
+        return className;
+    }
 
     private static Class<? extends ReaderBuilder> findReaderBuilderClass(Element readerBuilder) throws DataFrameMetaReaderException {
         String rbClassString = readerBuilder.getAttribute("class");
@@ -33,6 +54,7 @@ public class DataFrameMetaReader {
 
     @SuppressWarnings("unchecked")
     private static <T> Class<? extends T> parseChildClass(String clName, Class<T> parentType) throws DataFrameMetaReaderException {
+        clName = remapLegacyPackages(clName);
         Class<?> cl;
         try {
             cl = Class.forName(clName);
@@ -93,12 +115,20 @@ public class DataFrameMetaReader {
         return columnsMap;
     }
 
+
     public static DataFrameMeta read(File file) throws DataFrameMetaReaderException {
+        try {
+            return read(new FileInputStream(file));
+        } catch (FileNotFoundException e) {
+            throw new DataFrameMetaReaderException("error reading the meta file",e);
+        }
+    }
+    public static DataFrameMeta read(InputStream is) throws DataFrameMetaReaderException {
         Document doc;
         try {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-            doc = docBuilder.parse(file);
+            doc = docBuilder.parse(is);
             doc.getDocumentElement().normalize();
         } catch (SAXException | ParserConfigurationException e) {
             throw new DataFrameMetaReaderException("error parsing dataFrameMeta file ", e);
