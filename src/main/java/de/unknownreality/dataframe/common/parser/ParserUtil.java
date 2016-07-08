@@ -99,7 +99,7 @@ public class ParserUtil {
      * @param x   String to parse
      * @param <T> type of array class
      * @return parsed array object
-     * @throws ParseException
+     * @throws ParseException thrown if the string can not be parsed
      */
     private static <T> T parseArray(Class<T> cl, String x) throws ParseException {
         Parser p = getParserMap().get(cl.getComponentType());
@@ -120,7 +120,7 @@ public class ParserUtil {
      * @param x   String to parse
      * @param <T> type of the returned object
      * @return parsed object
-     * @throws ParseException
+     * @throws ParseException thrown if the string can not be parsed
      * @throws ParserNotFoundException thrown if no parser is found for the object type
      */
     @SuppressWarnings("unchecked")

@@ -203,7 +203,10 @@ public class BooleanColumn extends DataFrameColumn<Boolean, BooleanColumn> {
 
     @Override
     protected boolean doAppendAll(Collection<? extends Boolean> c) {
-        throw new UnsupportedOperationException("doAppendAll is not supported by data frame column");
+        for(Boolean b : c){
+            bitSet.set(size++,b);
+        }
+        return true;
     }
 
     @Override

@@ -17,8 +17,7 @@ public abstract class CSVReader implements DataContainer<CSVHeader, CSVRow> {
     private static final Logger log = LoggerFactory.getLogger(CSVReader.class);
     private String headerPrefix = "#";
     private final Character separator;
-    private File file;
-    private final CSVHeader header = null;
+    private final CSVHeader header = new CSVHeader();
     private boolean containsHeader;
     private final String[] ignorePrefixes;
 
@@ -70,9 +69,6 @@ public abstract class CSVReader implements DataContainer<CSVHeader, CSVRow> {
      * @return csv header
      */
     public CSVHeader getHeader() {
-        if (header == null) {
-            initHeader();
-        }
         return header;
     }
 
@@ -116,7 +112,7 @@ public abstract class CSVReader implements DataContainer<CSVHeader, CSVRow> {
             iterator.close();
 
         } catch (CSVException e) {
-            log.error("error reading file: {}", file, e);
+            log.error("error creating csv header", e);
 
         }
     }

@@ -21,8 +21,6 @@ public class ColumnConverter {
         DEFAULT_COLUMN_TYPES.put(Boolean.class, BooleanColumn.class);
         DEFAULT_COLUMN_TYPES.put(Short.class, ShortColumn.class);
         DEFAULT_COLUMN_TYPES.put(Byte.class, ByteColumn.class);
-
-
     }
 
 

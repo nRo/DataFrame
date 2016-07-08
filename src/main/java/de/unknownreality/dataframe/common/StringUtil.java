@@ -38,8 +38,8 @@ public class StringUtil {
     /**
      * Split an input string at a specified split-character  into several parts.
      * <tt>"</tt> and <tt>'</tt> are considered during the process.
-     * <p><code>"testA    testB   testB" -> [testA,testB,testC]</code></p>
-     * <p><code>"'testA    testB'   testB" -> [testA    testB,testC]</code></p>
+     * <p><code>"testA    testB   testB" -&gt; [testA,testB,testC]</code></p>
+     * <p><code>"'testA    testB'   testB" -&gt; [testA    testB,testC]</code></p>
      *
      * @param input input string
      * @param split char used to split
