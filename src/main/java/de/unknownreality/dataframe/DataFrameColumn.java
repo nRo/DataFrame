@@ -131,7 +131,7 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
 
     /**
      * {@linkplain MapFunction A map function} is applied to the values in this column.
-     * {@link MapFunction<T>#map(T)} is called for each value.
+     * {@link MapFunction#map(Object)} is called for each value.
      * <p>Calls{@link #notifyDataFrameColumnChanged()} to ensure data frame index consistency</p>
      *
      * @param mapFunction The function applied to each value
@@ -151,6 +151,7 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
     /**
      * Reverses the order of the column values
      * <p>Calls{@link #notifyDataFrameColumnChanged()} to ensure data frame index consistency</p>
+     * @return <tt>self</tt> for method chaining
      */
     public final C reverse() {
         doReverse();
@@ -291,6 +292,7 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
      * Used by {@link #appendNA()} to append NA at the end of this column.
      *
      * @see #appendNA()
+     * @return <tt>true</tt> if value was appended successfully
      */
     protected abstract boolean doAppendNA();
 
@@ -298,6 +300,7 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
     /**
      * Appends a {@link Values#NA NA value} to the end of this column.
      * <p>Calls {@link #validateAppend()} to ensure data frame index consistency</p>
+     * @return <tt>true</tt> if value was appended successfully
      */
     public final boolean appendNA() {
         try {
