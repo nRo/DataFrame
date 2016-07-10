@@ -1,3 +1,25 @@
+/*
+ * Copyright (c) 2016 Alexander Grün
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package de.unknownreality.dataframe;
 
 import de.unknownreality.dataframe.common.DataContainer;
@@ -17,7 +39,14 @@ import java.util.Map;
 public class DataFrameLoader {
     private static Logger logger = LoggerFactory.getLogger(DataFrameLoader.class);
 
-
+    /**
+     * Loads a data frame from a file.
+     * The matching data frame meta file must be present.
+     * <code>file+'.dfm'</code>
+     * @param file data frame file
+     * @return loaded data frame
+     * @throws DataFrameLoaderException thrown if the data frame can not be loaded
+     */
     public static DataFrame load(File file) throws DataFrameLoaderException {
         File dataFile;
         File metaFile;
@@ -34,6 +63,14 @@ public class DataFrameLoader {
         return load(dataFile, metaFile);
     }
 
+    /**
+     * Loads a data frame from a file and the corresponding meta file.
+
+     * @param file data frame file
+     * @param metaFile data frame meta file
+     * @return loaded data frame
+     * @throws DataFrameLoaderException thrown if the data frame can not be loaded
+     */
     public static DataFrame load(File file, File metaFile) throws DataFrameLoaderException {
         if (!file.exists()) {
             throw new DataFrameLoaderException(String.format("file not found %s", file.getAbsolutePath()));
@@ -73,6 +110,12 @@ public class DataFrameLoader {
         return DataFrameConverter.fromDataContainer(fileContainer, convertedColumns);
     }
 
+    /**
+     * Creates the columns from a data frame meta information
+     * @param dataFrameMeta meta information
+     * @return data frame columns
+     * @throws DataFrameLoaderException thrown if the columns can not be created
+     */
     public static LinkedHashMap<String, DataFrameColumn> createColumns(DataFrameMeta dataFrameMeta) throws DataFrameLoaderException {
         LinkedHashMap<String, DataFrameColumn> columns = new LinkedHashMap<>();
         for (Map.Entry<String, Class<? extends DataFrameColumn>> entry : dataFrameMeta.getColumns().entrySet()) {

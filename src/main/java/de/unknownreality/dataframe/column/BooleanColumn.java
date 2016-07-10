@@ -1,10 +1,32 @@
+/*
+ * Copyright (c) 2016 Alexander Grün
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package de.unknownreality.dataframe.column;
 
 
-import de.unknownreality.dataframe.common.parser.Parser;
-import de.unknownreality.dataframe.common.parser.ParserUtil;
 import de.unknownreality.dataframe.DataFrameColumn;
 import de.unknownreality.dataframe.MapFunction;
+import de.unknownreality.dataframe.common.parser.Parser;
+import de.unknownreality.dataframe.common.parser.ParserUtil;
 
 import java.util.*;
 
@@ -136,8 +158,8 @@ public class BooleanColumn extends DataFrameColumn<Boolean, BooleanColumn> {
     }
 
     @Override
-    public boolean contains(Object o) {
-        return o instanceof Boolean && ((Boolean) o) != bitSet.isEmpty();
+    public boolean contains(Boolean o) {
+        return o != bitSet.isEmpty();
     }
 
 
@@ -176,7 +198,7 @@ public class BooleanColumn extends DataFrameColumn<Boolean, BooleanColumn> {
     @Override
     public Boolean[] toArray(Boolean[] a) {
         if (a.length < size())
-            return (Boolean[]) Arrays.copyOf(toArray(), size(), a.getClass());
+            return Arrays.copyOf(toArray(), size(), a.getClass());
         System.arraycopy(toArray(), 0, a, 0, size());
         if (a.length > size())
             a[size()] = null;
@@ -192,19 +214,14 @@ public class BooleanColumn extends DataFrameColumn<Boolean, BooleanColumn> {
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        Set<Object> set = new HashSet<>(c);
-        for (Object o : set) {
-            if (!contains(o)) {
-                return false;
-            }
-        }
+        //TODO
         return true;
     }
 
     @Override
     protected boolean doAppendAll(Collection<? extends Boolean> c) {
-        for(Boolean b : c){
-            bitSet.set(size++,b);
+        for (Boolean b : c) {
+            bitSet.set(size++, b);
         }
         return true;
     }
