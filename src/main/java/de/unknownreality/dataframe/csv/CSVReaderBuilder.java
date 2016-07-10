@@ -144,7 +144,7 @@ public class CSVReaderBuilder implements ReaderBuilder<CSVHeader, CSVRow> {
      *
      * @param resourcePath path to csv resource
      * @param classLoader  {@link ClassLoader} used to load the resource
-     * @return
+     * @return csv reader for resource
      */
     public CSVReader loadResource(String resourcePath, ClassLoader classLoader) {
         String[] ignorePrefixesArray = new String[this.ignorePrefixes.size()];
@@ -157,7 +157,7 @@ public class CSVReaderBuilder implements ReaderBuilder<CSVHeader, CSVRow> {
      * The {@link ClassLoader} of {@link CSVResourceReader} is used to load the resource.
      *
      * @param resourcePath path to csv resource
-     * @return
+     * @return csv reader for resource
      */
     public CSVReader loadResource(String resourcePath) {
         String[] ignorePrefixesArray = new String[this.ignorePrefixes.size()];

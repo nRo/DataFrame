@@ -194,7 +194,7 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
      * @param appender        column appender (value generator)
      * @param <T>             type of column values
      * @param <C>             type of created column
-     * @return
+     * @return <tt>self</tt> for method chaining
      * @see #addColumn(Class, String, ColumnAppender)
      */
     public <T extends Comparable<T>, C extends DataFrameColumn<T, C>> DataFrame addColumn(Class<T> type, String name, ColumnConverter columnConverter, ColumnAppender<T> appender) {
@@ -281,7 +281,7 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
      * <p>There must be <b>exactly one value for each column</b>.</p>
      * <p><b>The object types have to match the column types</b>.</p>
      * If the wrong number of values or a wrong type is found a {@link DataFrameRuntimeException} is thrown.
-     * <p>
+     *
      * <p>If the data frame contains:<br>
      * <code>StringColumn,DoubleColumn,IntegerColumn</code><br>
      * The only correct call to this method is:<br>

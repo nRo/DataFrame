@@ -34,25 +34,25 @@ public class ComparePredicate extends FilterPredicate {
     public enum Operation {
         /**
          * greater than
-         * <p><code>row column value > comparison value</code></p>
+         * <p><code>row column value &gt; comparison value</code></p>
          */
         GT(">"),
 
         /**
          * greater or equal
-         * <p><code>row column value >= comparison value</code></p>
+         * <p><code>row column value &gt;= comparison value</code></p>
          */
         GE(">="),
 
         /**
          * lower than
-         * <p><code>row column value < comparison value</code></p>
+         * <p><code>row column value &lt; comparison value</code></p>
          */
         LT("<"),
 
         /**
          * lower or equal
-         * <p><code>row column value <= comparison value</code></p>
+         * <p><code>row column value &lt;= comparison value</code></p>
          */
         LE("<="),
 

@@ -93,7 +93,7 @@ public class DataFrameMeta {
     /**
      * Returns the attributes from the data writer used to write the data frame
      *
-     * @return
+     * @return attribute map for reader builder
      */
     public Map<String, String> getAttributes() {
         return attributes;
