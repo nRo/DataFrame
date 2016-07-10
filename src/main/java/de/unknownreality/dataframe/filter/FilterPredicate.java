@@ -145,7 +145,7 @@ public abstract class FilterPredicate {
      * @param p2 second input predicate
      * @return <tt>true</tt> if both input predicates return either <tt>true</tt> or <tt>false</tt>
      */
-    public static <T> FilterPredicate eq(final FilterPredicate p1, final FilterPredicate p2) {
+    public static FilterPredicate eq(final FilterPredicate p1, final FilterPredicate p2) {
         return new FilterPredicate() {
             @Override
             public boolean valid(Row row) {
@@ -162,7 +162,7 @@ public abstract class FilterPredicate {
 
     /**
      * Returns <tt>true</tt> if all input predicates return <tt>true</tt>.
-     * <code>return p1.valid(row) && p2.valid(row) && ... && pn.valid(row)</code>
+     * <code>return p1.valid(row) AND p2.valid(row) AND ... AND pn.valid(row)</code>
      *
      * @param predicates input predicates
      * @return <tt>true</tt> if all input predicates return  <tt>true</tt>
@@ -195,7 +195,7 @@ public abstract class FilterPredicate {
 
     /**
      * Returns <tt>true</tt> if at least one input predicate returns <tt>true</tt>.
-     * <code>return p1.valid(row) || p2.valid(row) || ... || pn.valid(row)</code>
+     * <code>return p1.valid(row) OR p2.valid(row) OR ... OR pn.valid(row)</code>
      *
      * @param predicates input predicates
      * @return <tt>true</tt> if at least one input predicate returns <tt>true</tt>
@@ -229,7 +229,7 @@ public abstract class FilterPredicate {
 
     /**
      * Returns <tt>true</tt> if both input predicates return <tt>true</tt>.
-     * <code>return p1.valid(row) && p2.valid(row)</code>
+     * <code>return p1.valid(row) AND p2.valid(row)</code>
      *
      * @param p1 first input predicate
      * @param p2 second input predicate
@@ -251,7 +251,7 @@ public abstract class FilterPredicate {
 
     /**
      * Returns <tt>true</tt> if at least one input predicate returns <tt>true</tt>.
-     * <code>return p1.valid(row) || p2.valid(row)</code>
+     * <code>return p1.valid(row) OR p2.valid(row)</code>
      *
      * @param p1 first input predicate
      * @param p2 second input predicate
@@ -273,7 +273,7 @@ public abstract class FilterPredicate {
 
     /**
      * Returns <tt>true</tt> if one input predicate returns <tt>true</tt> and the other predicate returns <tt>false</tt>.
-     * <code>return p1.valid(row) || p2.valid(row)</code>
+     * <code>return p1.valid(row) OR p2.valid(row)</code>
      *
      * @param p1 first input predicate
      * @param p2 second input predicate
@@ -370,9 +370,12 @@ public abstract class FilterPredicate {
     }
 
     /**
-     * @param name
-     * @param values
-     * @return
+     * Returns a predicate that checks whether the row column value is contained in an array of comparison values.
+     * <p><code>comparison_values.contains(row.getValue(name))</code></p>
+     *
+     * @param name   row column name
+     * @param values values for comparison
+     * @return <tt>'in'</tt> predicate.
      */
     public static FilterPredicate in(final String name, final Object[] values) {
         List<String> test = new ArrayList<>();
@@ -385,6 +388,14 @@ public abstract class FilterPredicate {
         return in(name, Arrays.asList(values));
     }
 
+    /**
+     * Returns a predicate that checks whether the row column value is contained in a collection of comparison values.
+     * <p><code>comparison_values.contains(row.getValue(name))</code></p>
+     *
+     * @param name   row column name
+     * @param values values for comparison
+     * @return <tt>'in'</tt> predicate.
+     */
     public static FilterPredicate in(final String name, final Collection<Object> values) {
         return in(name, new HashSet<>(values));
     }
@@ -413,7 +424,7 @@ public abstract class FilterPredicate {
 
     /**
      * Returns a predicate that checks whether the row column value is between two comparison values.
-     * <p><code>row.get(name) > low && row.get(name) < high</code></p>
+     * <p><code>row.get(name) &gt; low AND row.get(name) &lt; high</code></p>
      *
      * @param name row column name
      * @param low  low value

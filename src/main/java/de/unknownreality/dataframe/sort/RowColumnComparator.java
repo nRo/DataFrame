@@ -35,7 +35,7 @@ public class RowColumnComparator implements Comparator<DataRow> {
     /**
      * Creates a comparator using sort columns
      *
-     * @param sortColumns
+     * @param sortColumns sort columns
      */
     public RowColumnComparator(SortColumn[] sortColumns) {
         this.sortColumns = sortColumns;

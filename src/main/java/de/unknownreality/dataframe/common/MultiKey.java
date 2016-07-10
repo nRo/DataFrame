@@ -92,7 +92,7 @@ public class MultiKey {
     /**
      * Returns a string representing this key.
      *
-     * @return
+     * @return string representation
      */
     @Override
     public String toString() {

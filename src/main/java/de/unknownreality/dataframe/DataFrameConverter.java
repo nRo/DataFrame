@@ -47,7 +47,7 @@ public class DataFrameConverter {
      *
      * @param reader parent data container
      * @param columns column information map
-     * @return
+     * @return created data frame
      */
     @SuppressWarnings("unchecked")
     public static DataFrame fromDataContainer(DataContainer<?, ?> reader, LinkedHashMap<String, DataFrameColumn> columns) {
