@@ -106,6 +106,7 @@ public class DataFrameLoader {
                 throw new DataFrameLoaderException("columns count not matching meta file");
             }
             convertedColumns.put(fileContainer.getHeader().get(i).toString(), entry.getValue());
+            i++;
         }
         return DataFrameConverter.fromDataContainer(fileContainer, convertedColumns);
     }
