@@ -1,3 +1,25 @@
+/*
+ * Copyright (c) 2016 Alexander Grün
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package de.unknownreality.dataframe;
 
 import de.unknownreality.dataframe.column.*;
@@ -26,10 +48,18 @@ public class ColumnConverter {
 
     private final Map<Class<?>, Class<? extends DataFrameColumn>> columnTypesMap = new HashMap<>();
 
-    private ColumnConverter(Map<Class<?>, Class<? extends DataFrameColumn>> typesMap) {
-        this.columnTypesMap.putAll(typesMap);
+    private ColumnConverter() {
+        this.columnTypesMap.putAll(ColumnConverter.DEFAULT_COLUMN_TYPES);
     }
 
+    /**
+     * Returns a data frame column for a provided column value type
+     *
+     * @param type column value class
+     * @param <T>  column type
+     * @param <C>  value type
+     * @return column matching the value type
+     */
     @SuppressWarnings("unchecked")
     public <T extends Comparable<T>, C extends DataFrameColumn<T, C>> Class<C> getColumnType(Class<T> type) {
         Class<? extends DataFrameColumn> columnType = columnTypesMap.get(type);
@@ -39,14 +69,28 @@ public class ColumnConverter {
         return (Class<C>) columnType;
     }
 
+    /**
+     * Adds a new column type for a column value type
+     *
+     * @param type       column value class
+     * @param columnType column class
+     * @param <T>        column value type
+     * @param <C>        column type
+     * @return <tt>self</tt> for method chaining
+     */
     public <T extends Comparable<T>, C extends DataFrameColumn<T, C>> ColumnConverter addType(Class<T> type, Class<C> columnType) {
         columnTypesMap.put(type, columnType);
         return this;
     }
 
 
+    /**
+     * Creates a column converter instance including the default column types
+     *
+     * @return column converter
+     */
     public static ColumnConverter create() {
-        return new ColumnConverter(DEFAULT_COLUMN_TYPES);
+        return new ColumnConverter();
     }
 
 
