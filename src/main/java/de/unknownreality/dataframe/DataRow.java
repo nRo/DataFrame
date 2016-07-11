@@ -30,10 +30,10 @@ import de.unknownreality.dataframe.common.Row;
  */
 public class DataRow implements Row<Comparable> {
     private final Comparable[] values;
-    private final Header<String> header;
+    private final DataFrameHeader header;
     private final int index;
 
-    public DataRow(Header<String> header, Comparable[] values, int index) {
+    public DataRow(DataFrameHeader header, Comparable[] values, int index) {
         this.header = header;
         this.values = values;
         this.index = index;
@@ -309,6 +309,44 @@ public class DataRow implements Row<Comparable> {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    /**
+     * Sets a new value.
+     * Throws a {@link DataFrameRuntimeException} if the provided column is not found
+     * or if the value is not compatible with the respective column
+     *
+     * @param headerName column header name
+     * @param value      new value
+     */
+    public void set(String headerName, Comparable value) {
+        if (!header.contains(headerName)) {
+            throw new DataFrameRuntimeException(String.format("header name not found '%s'", headerName));
+        }
+        Class<? extends Comparable> type = header.getType(headerName);
+        if (!type.isAssignableFrom(value.getClass())) {
+            throw new DataFrameRuntimeException(String.format("the value (%s) is not compatible with this column (%s)", value.getClass(), type));
+        }
+        values[header.getIndex(headerName)] = value;
+    }
+
+    /**
+     * Sets a new value.
+     * Throws a {@link DataFrameRuntimeException} if the provided column is not found
+     * or if the value is not compatible with the respective column
+     *
+     * @param index column index
+     * @param value new value
+     */
+    public void set(int index, Comparable value) {
+        if (header.size() <= index || index < 0) {
+            throw new DataFrameRuntimeException(String.format("invalid column index '%d'", index));
+        }
+        Class<? extends Comparable> type = header.getType(index);
+        if (!type.isAssignableFrom(value.getClass())) {
+            throw new DataFrameRuntimeException(String.format("the value (%s) is not compatible with this column (%s)", value.getClass(), type));
+        }
+        values[index] = value;
     }
 
     @Override

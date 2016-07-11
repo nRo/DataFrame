@@ -281,7 +281,7 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
      * <p>There must be <b>exactly one value for each column</b>.</p>
      * <p><b>The object types have to match the column types</b>.</p>
      * If the wrong number of values or a wrong type is found a {@link DataFrameRuntimeException} is thrown.
-     *
+     * <p>
      * <p>If the data frame contains:<br>
      * <code>StringColumn,DoubleColumn,IntegerColumn</code><br>
      * The only correct call to this method is:<br>
@@ -345,6 +345,25 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
         }
         this.size++;
         indices.update(getRow(size - 1));
+        return this;
+    }
+
+    /**
+     * Persists the updated values of a data row.
+     * <tt>null</tt> values are ignored. Use {@link Values#NA NA} instead-
+     *
+     * @param dataRow data row with updated values
+     * @return <tt>self</tt> for method chaining
+     */
+    public DataFrame update(DataRow dataRow) {
+        for (String h : header) {
+            DataFrameColumn column = getColumn(h);
+            Comparable newValue = dataRow.get(h);
+            if (newValue == null) {
+                continue;
+            }
+            column.set(dataRow.getIndex(), newValue);
+        }
         return this;
     }
 
@@ -1133,6 +1152,7 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
 
     /**
      * Returns <tt>true</tt> if the input column is part of at least one index
+     *
      * @param column input column
      * @return <tt>true</tt> if column is part of index
      */
@@ -1142,7 +1162,8 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
 
     /**
      * Finds a data row using an index and the corresponding index values
-     * @param name name of index
+     *
+     * @param name   name of index
      * @param values index values
      * @return found row
      */
@@ -1156,6 +1177,7 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
 
     /**
      * Returns a collection of all columns in this data frame
+     *
      * @return collection of columns
      */
     public Collection<DataFrameColumn> getColumns() {
@@ -1164,6 +1186,7 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
 
     /**
      * Returns the indices of this data frame
+     *
      * @return data frame indices
      */
     protected Indices getIndices() {
@@ -1179,6 +1202,7 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
     /**
      * Returns an iterator over the rows in this data frame.
      * {@link Iterator#remove()} is not supported.
+     *
      * @return row iterator
      */
     @Override
