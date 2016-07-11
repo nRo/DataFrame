@@ -88,6 +88,12 @@ public class DataFrameTest {
             i++;
         }
 
+        DataRow row = df.getRow(1);
+        row.set("A",999);
+        df.update(row);
+
+        Assert.assertEquals(new Integer(999),df.getRow(1).getInteger("A"));
+
     }
 
     @Test
