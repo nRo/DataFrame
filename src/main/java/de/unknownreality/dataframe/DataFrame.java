@@ -362,7 +362,11 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
             if (newValue == null) {
                 continue;
             }
-            column.set(dataRow.getIndex(), newValue);
+            if (newValue == Values.NA) {
+                column.setNA(dataRow.getIndex());
+            } else {
+                column.set(dataRow.getIndex(), newValue);
+            }
         }
         return this;
     }
