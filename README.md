@@ -27,7 +27,7 @@ Add this to you pom.xml
 
 Build
 -----
-To build library from sources:
+To build the library from sources:
 
 1) Clone github repository
 
