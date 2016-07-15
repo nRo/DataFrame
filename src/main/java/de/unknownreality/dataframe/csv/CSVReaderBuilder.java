@@ -27,6 +27,7 @@ import de.unknownreality.dataframe.common.ReaderBuilder;
 import de.unknownreality.dataframe.common.parser.ParserUtil;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -126,6 +127,7 @@ public class CSVReaderBuilder implements ReaderBuilder<CSVHeader, CSVRow> {
         return new CSVFileReader(file, getSeparator(), isContainsHeader(), getHeaderPrefix(), ignorePrefixesArray);
     }
 
+
     /**
      * Creates a {@link CSVReader} for the specified csv content string
      *
@@ -196,4 +198,15 @@ public class CSVReaderBuilder implements ReaderBuilder<CSVHeader, CSVRow> {
     public DataContainer<CSVHeader, CSVRow> fromString(String content) {
         return load(content);
     }
+
+
+
+    /**
+     * @see #loadResource(String, ClassLoader)
+     */
+    @Override
+    public DataContainer<CSVHeader, CSVRow> fromResource(String content, ClassLoader classLoader) {
+        return loadResource(content,classLoader);
+    }
+
 }
