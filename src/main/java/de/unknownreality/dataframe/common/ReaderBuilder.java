@@ -23,6 +23,7 @@
 package de.unknownreality.dataframe.common;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.Map;
 
 /**
@@ -53,4 +54,14 @@ public interface ReaderBuilder<H extends Header, R extends Row> {
      * @return created data container
      */
     DataContainer<H, R> fromString(String content);
+
+    /**
+     * Creates a data container from a resoruce
+     * @param content resource path
+     * @param classLoader class loader
+     * @return created data container
+     */
+    DataContainer<H, R> fromResource(String content,ClassLoader classLoader);
+
+
 }

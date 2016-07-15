@@ -24,12 +24,16 @@ package de.unknownreality.dataframe;
 
 import de.unknownreality.dataframe.common.DataContainer;
 import de.unknownreality.dataframe.common.ReaderBuilder;
+import de.unknownreality.dataframe.filter.FilterPredicate;
 import de.unknownreality.dataframe.meta.DataFrameMeta;
 import de.unknownreality.dataframe.meta.DataFrameMetaReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -42,12 +46,15 @@ public class DataFrameLoader {
     /**
      * Loads a data frame from a file.
      * The matching data frame meta file must be present.
+     * Only rows validated by the filter are appended to the resulting data frame
      * <code>file+'.dfm'</code>
-     * @param file data frame file
+     *
+     * @param file            data frame file
+     * @param filterPredicate row filter
      * @return loaded data frame
-     * @throws DataFrameLoaderException thrown if the data frame can not be loaded
+     * @throws DataFrameException thrown if the data frame can not be loaded
      */
-    public static DataFrame load(File file) throws DataFrameLoaderException {
+    public static DataFrame load(File file, FilterPredicate filterPredicate) throws DataFrameException {
         File dataFile;
         File metaFile;
         String ext = "." + DataFrameMeta.META_FILE_EXTENSION;
@@ -60,64 +67,141 @@ public class DataFrameLoader {
             dataFile = file;
             metaFile = new File(filePath + ext);
         }
-        return load(dataFile, metaFile);
+        return load(dataFile, metaFile, filterPredicate);
+    }
+
+    /**
+     * Loads a data frame from a file.
+     * The matching data frame meta file must be present.
+     * <code>file+'.dfm'</code>
+     *
+     * @param file data frame file
+     * @return loaded data frame
+     * @throws DataFrameException thrown if the data frame can not be loaded
+     */
+    public static DataFrame load(File file) throws DataFrameException {
+        return load(file, FilterPredicate.EMPTY);
     }
 
     /**
      * Loads a data frame from a file and the corresponding meta file.
-
-     * @param file data frame file
-     * @param metaFile data frame meta file
+     * Only rows validated by the filter are appended to the resulting data frame
+     *
+     * @param file            data frame file
+     * @param metaFile        data frame meta file
+     * @param filterPredicate row filter
      * @return loaded data frame
-     * @throws DataFrameLoaderException thrown if the data frame can not be loaded
+     * @throws DataFrameException thrown if the data frame can not be loaded
      */
-    public static DataFrame load(File file, File metaFile) throws DataFrameLoaderException {
+
+    public static DataFrame load(File file, File metaFile, FilterPredicate filterPredicate) throws DataFrameException {
         if (!file.exists()) {
-            throw new DataFrameLoaderException(String.format("file not found %s", file.getAbsolutePath()));
+            throw new DataFrameException(String.format("file not found %s", file.getAbsolutePath()));
         }
         if (!metaFile.exists()) {
-            throw new DataFrameLoaderException(String.format("meta file not found %s", metaFile.getAbsolutePath()));
+            throw new DataFrameException(String.format("meta file not found %s", metaFile.getAbsolutePath()));
+        }
 
-        }
         DataFrameMeta dataFrameMeta;
-        try {
-            dataFrameMeta = DataFrameMetaReader.read(metaFile);
-        } catch (DataFrameMetaReader.DataFrameMetaReaderException ex) {
-            throw new DataFrameLoaderException("error reading meta file", ex);
-        }
+        dataFrameMeta = DataFrameMetaReader.read(metaFile);
 
         ReaderBuilder readerBuilder;
         try {
             readerBuilder = dataFrameMeta.getReaderBuilderClass().newInstance();
         } catch (Exception e) {
-            throw new DataFrameLoaderException("error creating readerBuilder instance", e);
+            throw new DataFrameException("error creating readerBuilder instance", e);
         }
         try {
             readerBuilder.loadAttributes(dataFrameMeta.getAttributes());
         } catch (Exception e) {
-            throw new DataFrameLoaderException("error loading readerBuilder attributes", e);
+            throw new DataFrameException("error loading readerBuilder attributes", e);
         }
         LinkedHashMap<String, DataFrameColumn> columns = createColumns(dataFrameMeta);
         DataContainer fileContainer = readerBuilder.fromFile(file);
+        LinkedHashMap<String, DataFrameColumn> convertedColumns = convertColumns(columns, fileContainer);
+        return DataFrameConverter.fromDataContainer(fileContainer, convertedColumns, filterPredicate);
+    }
+
+    /**
+     * Loads a data frame from a file and the corresponding meta file.
+     *
+     * @param file     data frame file
+     * @param metaFile data frame meta file
+     * @return loaded data frame
+     * @throws DataFrameException thrown if the data frame can not be loaded
+     */
+    public static DataFrame load(File file, File metaFile) throws DataFrameException {
+        return load(file, metaFile, FilterPredicate.EMPTY);
+    }
+
+    /**
+     * Loads a data frame from a resource and the corresponding meta resource.
+     * Only rows validated by the filter are appended to the resulting data frame
+     *
+     * @param path            path to data frame resource
+     * @param metaPath        path to  meta file resoure
+     * @param classLoader     class loader for the resource
+     * @param filterPredicate row filter
+     * @return loaded data frame
+     * @throws DataFrameException thrown if the data frame can not be loaded
+     */
+
+    public static DataFrame loadResource(String path, String metaPath, ClassLoader classLoader, FilterPredicate filterPredicate) throws DataFrameException {
+
+        DataFrameMeta dataFrameMeta;
+        dataFrameMeta = DataFrameMetaReader.read(classLoader.getResourceAsStream(metaPath));
+
+        ReaderBuilder readerBuilder;
+        try {
+            readerBuilder = dataFrameMeta.getReaderBuilderClass().newInstance();
+        } catch (Exception e) {
+            throw new DataFrameException("error creating readerBuilder instance", e);
+        }
+        try {
+            readerBuilder.loadAttributes(dataFrameMeta.getAttributes());
+        } catch (Exception e) {
+            throw new DataFrameException("error loading readerBuilder attributes", e);
+        }
+        LinkedHashMap<String, DataFrameColumn> columns = createColumns(dataFrameMeta);
+        DataContainer fileContainer = readerBuilder.fromResource(path, classLoader);
+        LinkedHashMap<String, DataFrameColumn> convertedColumns = convertColumns(columns, fileContainer);
+        return DataFrameConverter.fromDataContainer(fileContainer, convertedColumns, filterPredicate);
+    }
+
+    /**
+     * Loads a data frame from a resource and the corresponding meta resource.
+     *
+     * @param path        path to data frame resource
+     * @param metaPath    path to  meta file resoure
+     * @param classLoader class loader for the resource
+     * @return loaded data frame
+     * @throws DataFrameException thrown if the data frame can not be loaded
+     */
+    public static DataFrame loadResource(String path, String metaPath, ClassLoader classLoader) throws DataFrameException {
+        return loadResource(path, metaPath, classLoader, FilterPredicate.EMPTY);
+    }
+
+    private static LinkedHashMap<String, DataFrameColumn> convertColumns(LinkedHashMap<String, DataFrameColumn> columns, DataContainer fileContainer) throws DataFrameException {
         int i = 0;
         LinkedHashMap<String, DataFrameColumn> convertedColumns = new LinkedHashMap<>();
         for (Map.Entry<String, DataFrameColumn> entry : columns.entrySet()) {
             if (i == fileContainer.getHeader().size()) {
-                throw new DataFrameLoaderException("columns count not matching meta file");
+                throw new DataFrameException("columns count not matching meta file");
             }
             convertedColumns.put(fileContainer.getHeader().get(i).toString(), entry.getValue());
             i++;
         }
-        return DataFrameConverter.fromDataContainer(fileContainer, convertedColumns);
+        return convertedColumns;
     }
 
     /**
      * Creates the columns from a data frame meta information
+     *
      * @param dataFrameMeta meta information
      * @return data frame columns
-     * @throws DataFrameLoaderException thrown if the columns can not be created
+     * @throws DataFrameException thrown if the columns can not be created
      */
-    public static LinkedHashMap<String, DataFrameColumn> createColumns(DataFrameMeta dataFrameMeta) throws DataFrameLoaderException {
+    public static LinkedHashMap<String, DataFrameColumn> createColumns(DataFrameMeta dataFrameMeta) throws DataFrameException {
         LinkedHashMap<String, DataFrameColumn> columns = new LinkedHashMap<>();
         for (Map.Entry<String, Class<? extends DataFrameColumn>> entry : dataFrameMeta.getColumns().entrySet()) {
             String name = entry.getKey();
@@ -126,7 +210,7 @@ public class DataFrameLoader {
             try {
                 column = columnType.newInstance();
             } catch (Exception e) {
-                throw new DataFrameLoaderException("error creating column instance", e);
+                throw new DataFrameException("error creating column instance", e);
             }
             column.setName(name);
             columns.put(name, column);
@@ -135,14 +219,4 @@ public class DataFrameLoader {
     }
 
 
-    public static class DataFrameLoaderException extends DataFrameException {
-
-        public DataFrameLoaderException(String message) {
-            super(message);
-        }
-
-        public DataFrameLoaderException(String message, Throwable throwable) {
-            super(message, throwable);
-        }
-    }
 }

@@ -32,6 +32,8 @@ import java.util.regex.Pattern;
  */
 public abstract class FilterPredicate {
 
+    public static FilterPredicate EMPTY = empty();
+
     /**
      * Returns <tt>true</tt> if the row is valid for this predicate
      *
@@ -48,6 +50,23 @@ public abstract class FilterPredicate {
 
     public abstract String toString();
 
+    /**
+     * Creates an <tt>empty</tt> predicate. Always returns <tt>true</tt>.
+     * @return empty predicate
+     */
+    public static FilterPredicate empty(){
+        return new FilterPredicate() {
+            @Override
+            public boolean valid(Row row) {
+                return true;
+            }
+
+            @Override
+            public String toString() {
+                return "";
+            }
+        };
+    }
 
     /**
      * Creates a new <tt>AND</tt> predicate using this predicate and an input predicate

@@ -149,6 +149,16 @@ public abstract class BasicColumn<T extends Comparable<T>, C extends BasicColumn
         };
     }
 
+    /**
+     * Returns a set containing all values in this column
+     * @return set of values in this column
+     */
+    public Set<T> uniq(){
+        Set<T> uniq = new HashSet<>(Arrays.asList(values));
+        uniq.remove(null);
+        return uniq;
+    }
+
 
     @Override
     public Comparable[] toArray() {

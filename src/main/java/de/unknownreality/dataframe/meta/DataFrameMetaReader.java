@@ -23,6 +23,7 @@
 package de.unknownreality.dataframe.meta;
 
 import de.unknownreality.dataframe.DataFrameColumn;
+import de.unknownreality.dataframe.DataFrameException;
 import de.unknownreality.dataframe.common.ReaderBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,12 +82,12 @@ public class DataFrameMetaReader {
      *
      * @param readerBuilder reader builder xml element
      * @return reader builder class
-     * @throws DataFrameMetaReaderException thrown if the reader builder class can not be found
+     * @throws DataFrameException thrown if the reader builder class can not be found
      */
-    private static Class<? extends ReaderBuilder> findReaderBuilderClass(Element readerBuilder) throws DataFrameMetaReaderException {
+    private static Class<? extends ReaderBuilder> findReaderBuilderClass(Element readerBuilder) throws DataFrameException {
         String rbClassString = readerBuilder.getAttribute("class");
         if (rbClassString == null) {
-            throw new DataFrameMetaReaderException("no readerBuilder class attribute found");
+            throw new DataFrameException("no readerBuilder class attribute found");
         }
         return parseChildClass(rbClassString, ReaderBuilder.class);
     }
@@ -98,19 +99,19 @@ public class DataFrameMetaReader {
      * @param parentType parent class
      * @param <T>        type of parent
      * @return child class
-     * @throws DataFrameMetaReaderException thrown if the  class can not be found or is no child from the parent class
+     * @throws DataFrameException thrown if the  class can not be found or is no child from the parent class
      */
     @SuppressWarnings("unchecked")
-    private static <T> Class<? extends T> parseChildClass(String clName, Class<T> parentType) throws DataFrameMetaReaderException {
+    private static <T> Class<? extends T> parseChildClass(String clName, Class<T> parentType) throws DataFrameException {
         clName = remapLegacyPackages(clName);
         Class<?> cl;
         try {
             cl = Class.forName(clName);
         } catch (ClassNotFoundException e) {
-            throw new DataFrameMetaReaderException(String.format("class not found: %s", clName), e);
+            throw new DataFrameException(String.format("class not found: %s", clName), e);
         }
         if (!parentType.isAssignableFrom(cl)) {
-            throw new DataFrameMetaReaderException(String.format("%s does not extend %s",
+            throw new DataFrameException(String.format("%s does not extend %s",
                     clName, parentType.getCanonicalName()));
         }
         return (Class<? extends T>) cl;
@@ -121,9 +122,9 @@ public class DataFrameMetaReader {
      *
      * @param readerBuilder xml element
      * @return attributes map
-     * @throws DataFrameMetaReaderException thrown if the attributes can not be parsed
+     * @throws DataFrameException thrown if the attributes can not be parsed
      */
-    private static Map<String, String> findReaderBuilderAttributes(Element readerBuilder) throws DataFrameMetaReaderException {
+    private static Map<String, String> findReaderBuilderAttributes(Element readerBuilder) throws DataFrameException {
         Map<String, String> readerBuilderAttributes = new HashMap<>();
         NodeList attributes = readerBuilder.getElementsByTagName("readerAttribute");
         for (int i = 0; i < attributes.getLength(); i++) {
@@ -132,15 +133,15 @@ public class DataFrameMetaReader {
                 Element attribute = (Element) attributeNode;
                 String name = attribute.getAttribute("name");
                 if (name == null) {
-                    throw new DataFrameMetaReaderException("no readerAttribute name attribute found");
+                    throw new DataFrameException("no readerAttribute name attribute found");
                 }
                 String value = attribute.getAttribute("value");
                 if (value == null) {
-                    throw new DataFrameMetaReaderException("no readerAttribute value attribute found");
+                    throw new DataFrameException("no readerAttribute value attribute found");
                 }
                 readerBuilderAttributes.put(name, value);
             } else {
-                throw new DataFrameMetaReaderException("error parsing attributeElement element");
+                throw new DataFrameException("error parsing attributeElement element");
             }
         }
         return readerBuilderAttributes;
@@ -151,9 +152,9 @@ public class DataFrameMetaReader {
      *
      * @param columns columns xml element
      * @return columns map
-     * @throws DataFrameMetaReaderException thrown of the columns can not be parsed
+     * @throws DataFrameException thrown of the columns can not be parsed
      */
-    private static LinkedHashMap<String, Class<? extends DataFrameColumn>> findColumns(Element columns) throws DataFrameMetaReaderException {
+    private static LinkedHashMap<String, Class<? extends DataFrameColumn>> findColumns(Element columns) throws DataFrameException {
         LinkedHashMap<String, Class<? extends DataFrameColumn>> columnsMap = new LinkedHashMap<>();
         NodeList columnNodes = columns.getElementsByTagName("column");
         for (int i = 0; i < columnNodes.getLength(); i++) {
@@ -162,16 +163,16 @@ public class DataFrameMetaReader {
                 Element column = (Element) columnNode;
                 String name = column.getAttribute("name");
                 if (name == null) {
-                    throw new DataFrameMetaReaderException("no column name attribute found");
+                    throw new DataFrameException("no column name attribute found");
                 }
                 String type = column.getAttribute("type");
                 if (type == null) {
-                    throw new DataFrameMetaReaderException("no column type attribute found");
+                    throw new DataFrameException("no column type attribute found");
                 }
                 Class<? extends DataFrameColumn> cl = parseChildClass(type, DataFrameColumn.class);
                 columnsMap.put(name, cl);
             } else {
-                throw new DataFrameMetaReaderException("error parsing column element");
+                throw new DataFrameException("error parsing column element");
             }
         }
         return columnsMap;
@@ -183,13 +184,13 @@ public class DataFrameMetaReader {
      *
      * @param file input file
      * @return data frame meta
-     * @throws DataFrameMetaReaderException thrown if the file can not be converted to a data frame meta
+     * @throws DataFrameException thrown if the file can not be converted to a data frame meta
      */
-    public static DataFrameMeta read(File file) throws DataFrameMetaReaderException {
+    public static DataFrameMeta read(File file) throws DataFrameException {
         try {
             return read(new FileInputStream(file));
         } catch (FileNotFoundException e) {
-            throw new DataFrameMetaReaderException("error reading the meta file", e);
+            throw new DataFrameException("error reading the meta file", e);
         }
     }
 
@@ -198,9 +199,9 @@ public class DataFrameMetaReader {
      *
      * @param is input stream
      * @return data frame meta
-     * @throws DataFrameMetaReaderException thrown if the input stream can not be converted to a data frame meta
+     * @throws DataFrameException thrown if the input stream can not be converted to a data frame meta
      */
-    public static DataFrameMeta read(InputStream is) throws DataFrameMetaReaderException {
+    public static DataFrameMeta read(InputStream is) throws DataFrameException {
         Document doc;
         try {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -208,9 +209,9 @@ public class DataFrameMetaReader {
             doc = docBuilder.parse(is);
             doc.getDocumentElement().normalize();
         } catch (SAXException | ParserConfigurationException e) {
-            throw new DataFrameMetaReaderException("error parsing dataFrameMeta file ", e);
+            throw new DataFrameException("error parsing dataFrameMeta file ", e);
         } catch (IOException e) {
-            throw new DataFrameMetaReaderException("error reading dataFrameMeta file ", e);
+            throw new DataFrameException("error reading dataFrameMeta file ", e);
         }
         Class<? extends ReaderBuilder> readerBuilderClass;
         Map<String, String> readerBuilderAttributes;
@@ -218,10 +219,10 @@ public class DataFrameMetaReader {
 
         NodeList readBuilderElements = doc.getElementsByTagName("readerBuilder");
         if (readBuilderElements.getLength() == 0) {
-            throw new DataFrameMetaReaderException("no readerBuilder element found");
+            throw new DataFrameException("no readerBuilder element found");
         }
         if (readBuilderElements.getLength() > 1) {
-            throw new DataFrameMetaReaderException("multiple readerBuilder elements found");
+            throw new DataFrameException("multiple readerBuilder elements found");
         }
 
         Node readerBuilderNode = readBuilderElements.item(0);
@@ -230,37 +231,25 @@ public class DataFrameMetaReader {
             readerBuilderClass = findReaderBuilderClass(readerBuilder);
             readerBuilderAttributes = findReaderBuilderAttributes(readerBuilder);
         } else {
-            throw new DataFrameMetaReaderException("error parsing readerBuilder element");
+            throw new DataFrameException("error parsing readerBuilder element");
         }
 
         NodeList columnsElements = doc.getElementsByTagName("columns");
         if (columnsElements.getLength() == 0) {
-            throw new DataFrameMetaReaderException("no columns element found");
+            throw new DataFrameException("no columns element found");
         }
         if (columnsElements.getLength() > 1) {
-            throw new DataFrameMetaReaderException("multiple columns elements found");
+            throw new DataFrameException("multiple columns elements found");
         }
         Node columnsNode = columnsElements.item(0);
         if (columnsNode.getNodeType() == Node.ELEMENT_NODE) {
             Element columnsElement = (Element) columnsNode;
             columns = findColumns(columnsElement);
         } else {
-            throw new DataFrameMetaReaderException("error parsing columns element");
+            throw new DataFrameException("error parsing columns element");
         }
         return new DataFrameMeta(columns, readerBuilderClass, readerBuilderAttributes);
 
     }
 
-    public static class DataFrameMetaReaderException extends Exception {
-        public DataFrameMetaReaderException() {
-        }
-
-        public DataFrameMetaReaderException(String message) {
-            super(message);
-        }
-
-        public DataFrameMetaReaderException(String message, Exception parent) {
-            super(message, parent);
-        }
-    }
 }

@@ -24,6 +24,7 @@ package de.unknownreality.dataframe;
 
 import de.unknownreality.dataframe.common.DataContainer;
 import de.unknownreality.dataframe.common.Row;
+import de.unknownreality.dataframe.filter.FilterPredicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,14 +44,16 @@ public class DataFrameConverter {
      * Converts a parent data container to a data frame.
      * The required column information is provided by a column information map.
      * Keys in this map are name of the column in the parent data container.
-     * Values are the corresponding data frame columns
+     * Values are the corresponding data frame columns.
+     * Only rows validated by the filter are appended to the resulting data frame
      *
-     * @param reader parent data container
-     * @param columns column information map
+     * @param reader          parent data container
+     * @param columns         column information map
+     * @param filterPredicate row filter
      * @return created data frame
      */
     @SuppressWarnings("unchecked")
-    public static DataFrame fromDataContainer(DataContainer<?, ?> reader, LinkedHashMap<String, DataFrameColumn> columns) {
+    public static DataFrame fromDataContainer(DataContainer<?, ?> reader, LinkedHashMap<String, DataFrameColumn> columns, FilterPredicate filterPredicate) {
         Map<String, Object> parserCache = new HashMap<>();
         int[] colIndices = new int[columns.size()];
         int i = 0;
@@ -58,17 +61,25 @@ public class DataFrameConverter {
             colIndices[i] = reader.getHeader().getIndex(h);
             i++;
         }
+        DataFrame dataFrame = new DataFrame();
+        for (DataFrameColumn column : columns.values()) {
+            dataFrame.addColumn(column);
+        }
         for (Row row : reader) {
-            i = 0;
+            i = -1;
+            Comparable[] rowValues = new Comparable[columns.size()];
             for (Map.Entry<String, DataFrameColumn> columnEntry : columns.entrySet()) {
-                String strVal = row.getString(colIndices[i++]);
+                i++;
+                String strVal = row.getString(colIndices[i]);
                 if (strVal == null || "".equals(strVal) || "null".equals(strVal)) {
-                    columnEntry.getValue().doAppendNA();
+                    rowValues[i] = Values.NA;
+                    //columnEntry.getValue().doAppendNA();
                     continue;
                 }
                 try {
                     if (Values.NA.isNA(strVal)) {
-                        columnEntry.getValue().doAppendNA();
+                        rowValues[i] = Values.NA;
+                        //columnEntry.getValue().doAppendNA();
                         continue;
                     }
                     Object o;
@@ -81,20 +92,39 @@ public class DataFrameConverter {
                         parserCache.put(object_ident, o);
                     }
                     if (o == null || !(o instanceof Comparable)) {
-                        columnEntry.getValue().doAppendNA();
+                        rowValues[i] = Values.NA;
+                        //columnEntry.getValue().doAppendNA();
                         continue;
                     }
-                    columnEntry.getValue().append(o);
+                    rowValues[i] = (Comparable)o;
+                    //columnEntry.getValue().append(o);
                 } catch (ParseException e) {
                     log.warn("error parsing value, NA added", e);
                     columnEntry.getValue().doAppendNA();
                 }
             }
+            DataRow dataRow = new DataRow(dataFrame.getHeader(),rowValues,dataFrame.size() - 1);
+            if(filterPredicate.valid(dataRow)){
+                dataFrame.append(dataRow);
+            }
         }
-        DataFrame dataFrame = new DataFrame();
-        for (DataFrameColumn column : columns.values()) {
-            dataFrame.addColumn(column);
-        }
+
         return dataFrame;
+    }
+
+
+    /**
+     * Converts a parent data container to a data frame.
+     * The required column information is provided by a column information map.
+     * Keys in this map are name of the column in the parent data container.
+     * Values are the corresponding data frame columns.
+     *
+     * @param reader          parent data container
+     * @param columns         column information map
+     * @return created data frame
+     */
+    @SuppressWarnings("unchecked")
+    public static DataFrame fromDataContainer(DataContainer<?, ?> reader, LinkedHashMap<String, DataFrameColumn> columns) {
+        return fromDataContainer(reader,columns,FilterPredicate.EMPTY);
     }
 }
