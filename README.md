@@ -1,21 +1,60 @@
 # Java DataFrame
 DataFrame Library for Java.
-## Features
-- create DataFrame from CSV files
-- different column types (DoubleColumn, IntegerColumn,...)
-- operations on columns
-  * map, median
-  * mean, max, min (Number columns)
-  * and, or, nor, xor (Boolean columns)
-- search in DataFrame with Predicates
-  * and, or, not, xor
-  * equals, gt, ge, lt, le, matches(regex)
-- sort by one or multiple columns
-- groupBy on one or multiple columns
-- join (left,right,inner) on one or multiple columns
+Install
+-------
+Add this to you pom.xml
+```xml
+<repositories>
+...
+    <repository>
+      <id>ur-release-repo</id>
+      <name>unknownreality release repo</name>
+      <url>http://maven.unknownreality.de/artifactory/public-release</url>
+    </repository>
+...
+</repositories>
 
-## Usage
-##create DataFrame
+<dependencies>
+...
+    <dependency>
+        <groupId>de.unknownreality</groupId>
+        <artifactId>dataframe</artifactId>
+        <version>0.5.1</version>
+    </dependency>
+...
+</dependencies>
+```
+
+Build
+-----
+To build library from sources:
+
+1) Clone github repository
+
+    $ git clone https://github.com/nRo/DataFrame.git
+
+2) Change to the created folder and run `mvn install`
+
+    $ cd DataFrame
+    $ mvn install
+
+3) Include it by adding the following to your project's `pom.xml`:
+
+```xml
+<dependencies>
+...
+    <dependency>
+        <groupId>de.unknownreality</groupId>
+        <artifactId>dataframe</artifactId>
+        <version>0.5.1-SNAPSHOT</version>
+    </dependency>
+...
+</dependencies>
+```
+
+Usage
+-----
+Load DataFrame from a CSV file.
 ```java
 File file = new File("person.csv");
 CSVReader reader = CSVReaderBuilder.create(file)
@@ -28,6 +67,7 @@ DataFrame users = reader.buildDataFrame()
         .addColumn(new IntegerColumn("person_id"))
         .addColumn(new StringColumn("first_name"))
         .addColumn(new StringColumn("last_name"))
+        .addColumn(new StringColumn("address"))
         .addColumn(new IntegerColumn("age"))
         .build();
         
@@ -37,12 +77,29 @@ for(DataRow row : users)
     System.out.println(row);
 }
 ```
-##Column operations
+Load DataFrame from a file and the corresponding meta file
+```java
+File meta = new File("person.csv.dfm");
+DataFrame dataFrame = DataFrameLoader.load(file,meta);
+```
+Use indices for fast row access.
+Indices must always be unique.
+```java
+
+//set the primary key of a data frame
+users.setPrimaryKeyColumn("person_id");
+DataRow firstUser = users.findByPrimaryKey(1)
+
+//add a multi-column index
+//Indices must be unique!
+users.addIndex("name-address","first_name", "last_name","address");
+DataRow user = users.findByIndex("name-address", "John", "Smith","Example-Street 15")
+```
+
+Perform operations on columns.
 ```java
 //max value of column "person_id"
 users.getIntegerColumn("age").max();
-
-
 
 DoubleColumn dc1 = ...;
 DoubleColumn dc2 = ...;
@@ -52,9 +109,16 @@ dc1.add(dc2);
 //multiply each value with 2
 dc1.multiply(2);
 
+//Use MapFunction to convert all values in a row
+dataFrame.getIntegerColumn("age").map(new MapFunction<Integer>() {
+    @Override
+    public Integer map(Integer value) {
+        return value + 2;
+    }
+});
 ```
 
-##Filter and find
+Filter and find rows using predicates.
 ```java
 //keep users with age between 18 and 60
 users.filter(FilterPredicate.btwn("age",18,60));
@@ -65,8 +129,10 @@ List<DataRow> rows = users.find(
               FilterPredicate.gt("age",18),
               FilterPredicate.eq("first_name","Max")
 ));
+
 ```
-##Sorting
+
+Sort rows by one or more columns.
 ```java
 //sort by column "person_id" (ascending)
 users.sort("person_id", SortColumn.Direction.Ascending);
@@ -78,7 +144,7 @@ users.sort(
 );
 ```
 
-##GroupBy
+Group dataframes using one or more columns.
 ```java
 
 //group by "age" and "first_name"
@@ -93,8 +159,17 @@ for(DataGroup group : grouping)
     }
 }
 ```
+Direct access to groups in a grouping.
+```java
 
-##Join
+//group by "age" and "first_name"
+DataGrouping grouping = users.groupBy("age","first_name");
+
+//Get all users that are called John and are 18 years old
+DataGroup group = grouping.findByGroupValues(18, "John");
+```
+
+Join two dataframes using one or more columns.
 ```java
 //join DataFrames users and visits by columns users.person_id == visits.person_id
 DataFrame visitors = users.joinLeft(visits,"person_id");

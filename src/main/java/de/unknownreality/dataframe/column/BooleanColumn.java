@@ -35,6 +35,7 @@ import java.util.*;
  */
 public class BooleanColumn extends BasicColumn<Boolean, BooleanColumn> {
 
+
     public BooleanColumn and(BooleanColumn other) {
         for(int i  = 0; i < Math.min(size(),other.size());i++){
             values[i] = values[i] && other.values[i];
