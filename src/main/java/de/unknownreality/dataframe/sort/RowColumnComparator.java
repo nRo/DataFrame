@@ -53,7 +53,8 @@ public class RowColumnComparator implements Comparator<DataRow> {
     @Override
     public int compare(DataRow r1, DataRow r2) {
         int c = 0;
-        for (SortColumn sortColumn : sortColumns) {
+        for (int i = 0; i <sortColumns.length;i++) {
+            SortColumn sortColumn = sortColumns[i];
             String name = sortColumn.getName();
             if (r1.isNA(name) && r2.isNA(name)) {
                 c = 0;
