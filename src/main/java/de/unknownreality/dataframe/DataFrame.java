@@ -699,7 +699,7 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
      */
     public DataFrame createSubset(int from, int to) {
         DataFrame newFrame = new DataFrame();
-        newFrame.set(header.copy(), getRows(from, to));
+        newFrame.set(header.copy(), getRows(from, to),indices);
         return newFrame;
     }
 
