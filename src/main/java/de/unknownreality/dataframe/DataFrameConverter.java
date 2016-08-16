@@ -54,6 +54,13 @@ public class DataFrameConverter {
      */
     @SuppressWarnings("unchecked")
     public static DataFrame fromDataContainer(DataContainer<?, ?> reader, LinkedHashMap<String, DataFrameColumn> columns, FilterPredicate filterPredicate) {
+        if(reader.getHeader().size() == 0){
+            DataFrame dataFrame = new DataFrame();
+            for(DataFrameColumn column : columns.values()){
+                dataFrame.addColumn(column);
+            }
+            return dataFrame;
+        }
         Map<String, Object> parserCache = new HashMap<>();
         int[] colIndices = new int[columns.size()];
         int i = 0;
@@ -73,13 +80,11 @@ public class DataFrameConverter {
                 String strVal = row.getString(colIndices[i]);
                 if (strVal == null || "".equals(strVal) || "null".equals(strVal)) {
                     rowValues[i] = Values.NA;
-                    //columnEntry.getValue().doAppendNA();
                     continue;
                 }
                 try {
                     if (Values.NA.isNA(strVal)) {
                         rowValues[i] = Values.NA;
-                        //columnEntry.getValue().doAppendNA();
                         continue;
                     }
                     Object o;
@@ -93,7 +98,6 @@ public class DataFrameConverter {
                     }
                     if (o == null || !(o instanceof Comparable)) {
                         rowValues[i] = Values.NA;
-                        //columnEntry.getValue().doAppendNA();
                         continue;
                     }
                     rowValues[i] = (Comparable)o;

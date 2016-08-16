@@ -183,6 +183,11 @@ public class DataFrameLoader {
 
     private static LinkedHashMap<String, DataFrameColumn> convertColumns(LinkedHashMap<String, DataFrameColumn> columns, DataContainer fileContainer) throws DataFrameException {
         int i = 0;
+
+        //Fix for empty data frames
+        if(fileContainer.getHeader().size() == 0){
+            return columns;
+        }
         LinkedHashMap<String, DataFrameColumn> convertedColumns = new LinkedHashMap<>();
         for (Map.Entry<String, DataFrameColumn> entry : columns.entrySet()) {
             if (i == fileContainer.getHeader().size()) {
