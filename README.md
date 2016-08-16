@@ -153,6 +153,7 @@ DataGrouping grouping = users.groupBy("age","first_name");
 //iterate through all found groups
 for(DataGroup group : grouping)
 {
+    //print the group description (group values)
     System.out.println(group.getGroupDescription());
     for(DataRow row : group){
         System.out.println(row);
