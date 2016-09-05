@@ -45,12 +45,14 @@ public class DataFrameTest {
 
     @Test
     public void testReader() {
-        String[] header = new String[]{"A", "B", "C", "D"};
+        String[] header = new String[]{"A", "B", "C", "D","E"};
         Integer[] col1 = new Integer[]{5, 3, 2, 4, 1};
         Double[] col2 = new Double[]{1d, 3d, 5d, 5d, 2d};
         String[] col3 = new String[]{"", "Y", "Y", "X", ""};
         Boolean[] col4 = new Boolean[]{false, false, true, false, true};
-        String csv = createCSV(header, col1, col2, col3, col4);
+        String[] col5 = new String[]{"0","1","2","3","4","5"};
+
+        String csv = createCSV(header, col1, col2, col3, col4, col5);
 
         CSVReader reader = CSVReaderBuilder.create()
                 .withHeaderPrefix("#")
@@ -62,6 +64,7 @@ public class DataFrameTest {
                 .addColumn(new DoubleColumn("B"))
                 .addColumn(new StringColumn("C"))
                 .addColumn(new BooleanColumn("D"))
+                .addColumn(new StringColumn("E"))
                 .build();
 
         Assert.assertEquals(header.length, df.getHeader().size());
@@ -81,6 +84,7 @@ public class DataFrameTest {
             Assert.assertEquals(col3[i].equals("") ? Values.NA : col3[i], row.get(header[2]));
             Assert.assertEquals(col4[i], row.get(header[3]));
 
+            Assert.assertEquals(i, row.toDouble("E").intValue());
             row.getInteger(0);
             row.getDouble(1);
             row.getString(2);
