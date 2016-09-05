@@ -150,6 +150,40 @@ public class DataRow implements Row<Comparable> {
 
     }
 
+    /**
+     * Returns the double value at a specified index.
+     * If no double value is found, the value is parsed to double
+     * If the value could not be parsed Double.NaN is returned
+     * @param index index of value
+     * @return double value
+     */
+    public Double toDouble(int index){
+        Double d;
+        Comparable v = get(index);
+        try{
+            return Number.class.cast(v).doubleValue();
+        }
+        catch (Exception e){
+            // try parsing now
+        }
+        try{
+            return Double.parseDouble(String.valueOf(v));
+        }
+        catch (Exception e){
+            return Double.NaN;
+        }
+    }
+
+    /**
+     * Returns the double value at a specified header position
+     * @see #toDouble(int)
+     * @param name header name
+     * @return double value
+     */
+    public Double toDouble(String name){
+        return toDouble(header.getIndex(name));
+    }
+
     @Override
     public Integer getInteger(int index) {
         Object value = get(index);
