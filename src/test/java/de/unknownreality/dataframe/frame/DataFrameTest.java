@@ -98,6 +98,7 @@ public class DataFrameTest {
 
         Assert.assertEquals(new Integer(999),df.getRow(1).getInteger("A"));
 
+        df.getColumn("A").sort();
     }
 
     @Test

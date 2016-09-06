@@ -58,7 +58,7 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
     }
 
     /**
-     * Used to transform a column into a dataframe
+     * Used to apply transformations on a column
      * @param transformer column transformer
      * @return resulting column
      */
@@ -104,6 +104,30 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
         doSort();
         notifyDataFrameColumnChanged();
         return getThis();
+    }
+
+    /**
+     * Returns the double value at a specified index.
+     * If no double value is found, the value is parsed to double
+     * If the value could not be parsed Double.NaN is returned
+     * @param index index of value
+     * @return double value
+     */
+    public Double toDouble(int index){
+        Double d;
+        Comparable v = get(index);
+        try{
+            return Number.class.cast(v).doubleValue();
+        }
+        catch (Exception e){
+            // try parsing now
+        }
+        try{
+            return Double.parseDouble(String.valueOf(v));
+        }
+        catch (Exception e){
+            return Double.NaN;
+        }
     }
 
     /**
