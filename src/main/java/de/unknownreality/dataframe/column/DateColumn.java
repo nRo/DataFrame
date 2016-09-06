@@ -57,7 +57,7 @@ public class DateColumn extends BasicColumn<Date, DateColumn> {
 
     @Override
     protected DateColumn getThis() {
-        return null;
+        return this;
     }
 
     @Override

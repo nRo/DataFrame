@@ -48,7 +48,7 @@ public class IntegerColumn extends NumberColumn<Integer, IntegerColumn> {
 
     @Override
     protected IntegerColumn getThis() {
-        return null;
+        return this;
     }
 
     @Override

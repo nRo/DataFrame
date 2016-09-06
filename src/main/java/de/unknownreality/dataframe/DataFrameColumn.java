@@ -23,6 +23,8 @@
 package de.unknownreality.dataframe;
 
 import de.unknownreality.dataframe.common.parser.Parser;
+import de.unknownreality.dataframe.transform.ColumnDataFrameTransform;
+import de.unknownreality.dataframe.transform.ColumnTransform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,12 +39,32 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
     private String name;
     private DataFrame dataFrame;
 
+
     /**
      * Used to return the right column type for
      *
      * @return <tt>self</tt>
      */
     protected abstract C getThis();
+
+    /**
+     * Used to apply transformations on a column
+     * @param transformer column transformer
+     * @param <R> type of resulting column
+     * @return resulting column
+     */
+    public <R extends DataFrameColumn<?,R>> R transform(ColumnTransform<C,R> transformer){
+        return transformer.transform(getThis());
+    }
+
+    /**
+     * Used to transform a column into a dataframe
+     * @param transformer column transformer
+     * @return resulting column
+     */
+    public DataFrame transform(ColumnDataFrameTransform<C> transformer){
+        return transformer.transform(getThis());
+    }
 
     /**
      * Used by {@link #sort(Comparator)} to sort the values in this column
