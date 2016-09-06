@@ -34,6 +34,7 @@ import de.unknownreality.dataframe.join.JoinUtil;
 import de.unknownreality.dataframe.join.JoinedDataFrame;
 import de.unknownreality.dataframe.sort.RowColumnComparator;
 import de.unknownreality.dataframe.sort.SortColumn;
+import de.unknownreality.dataframe.transform.DataFrameTransform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -614,6 +615,14 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
     }
 
 
+    /**
+     * Converts this dataframe into another dataframe using a specified transformer
+     * @param transformer the applied transformer
+     * @return resulting dataframe
+     */
+    public DataFrame transform(DataFrameTransform transformer){
+        return transformer.transform(this);
+    }
     /**
      * Finds a data row using the primary key
      *
