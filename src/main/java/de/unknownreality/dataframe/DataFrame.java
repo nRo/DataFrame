@@ -299,7 +299,7 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
         }
         int i = 0;
         for (DataFrameColumn column : columnList) {
-            if (values[i] != null && !column.getType().isInstance(values[i])) {
+            if (values[i] != null && !column.getType().isAssignableFrom(values[i].getClass())) {
                 throw new DataFrameRuntimeException(
                         String.format("value %d has wrong type (%s != %s)", i,
                                 values[i].getClass().getName(),
