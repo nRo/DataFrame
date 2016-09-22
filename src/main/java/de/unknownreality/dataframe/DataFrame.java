@@ -66,14 +66,19 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
         set(header, rows);
     }
 
+
     /**
      * Sets the primary key columns using column names
      *
      * @param colNames primary key columns
      * @return <tt>self</tt> for method chaining
      */
-    public DataFrame setPrimaryKeyColumn(String... colNames) {
-        return addIndex(PRIMARY_INDEX_NAME, colNames);
+    public DataFrame setPrimaryKey(String... colNames) {
+        DataFrameColumn[] columns = new DataFrameColumn[colNames.length];
+        for (int i = 0; i < columns.length; i++) {
+            columns[i] = getColumn(colNames[i]);
+        }
+        return setPrimaryKey( columns);
     }
 
     /**
@@ -82,8 +87,9 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
      * @param cols primary key columns
      * @return <tt>self</tt> for method chaining
      */
-    public DataFrame setPrimaryKeyColumn(DataFrameColumn... cols) {
-        return addIndex(PRIMARY_INDEX_NAME, cols);
+    public DataFrame setPrimaryKey(DataFrameColumn... cols) {
+        this.indices.setPrimaryKey(cols);
+        return this;
     }
 
     /**
@@ -623,6 +629,7 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
     public DataFrame transform(DataFrameTransform transformer){
         return transformer.transform(this);
     }
+
     /**
      * Finds a data row using the primary key
      *
@@ -630,7 +637,11 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
      * @return found data row
      */
     public DataRow findByPrimaryKey(Comparable... keyValues) {
-        return findByIndex(PRIMARY_INDEX_NAME, keyValues);
+        Integer index = this.indices.findByPrimaryKey(keyValues);
+        if(index == null || index < 0){
+            return null;
+        }
+        return getRow(index);
     }
 
     /**
@@ -1174,18 +1185,22 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
     }
 
     /**
-     * Finds a data row using an index and the corresponding index values
+     * Finds a data rows using an index and the corresponding index values
      *
      * @param name   name of index
      * @param values index values
-     * @return found row
+     * @return rows found
      */
-    public DataRow findByIndex(String name, Comparable... values) {
-        int i = indices.find(name, values);
-        if (i >= 0) {
-            return getRow(i);
+    public List<DataRow> findByIndex(String name, Comparable... values) {
+        Collection<Integer> rowIndices = indices.find(name, values);
+        if (!rowIndices.isEmpty()) {
+            List<DataRow> rows = new ArrayList<>();
+            for(Integer i : rowIndices){
+                rows.add(getRow(i));
+            }
+            return rows;
         }
-        return null;
+        return new ArrayList<>(0);
     }
 
     /**

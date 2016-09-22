@@ -23,6 +23,7 @@
 package de.unknownreality.dataframe.frame;
 
 import de.unknownreality.dataframe.DataFrame;
+import de.unknownreality.dataframe.DataRow;
 import de.unknownreality.dataframe.MapFunction;
 import de.unknownreality.dataframe.column.IntegerColumn;
 import de.unknownreality.dataframe.column.StringColumn;
@@ -31,6 +32,11 @@ import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Alex on 12.03.2016.
@@ -50,7 +56,7 @@ public class DataFrameIndexTest {
         3;B;5
         3;C;6
         4;A;7
-
+        3;A,8
          */
         DataFrame dataFrame = CSVReaderBuilder.create()
                 .containsHeader(true)
@@ -61,9 +67,9 @@ public class DataFrameIndexTest {
                 .addColumn(new IntegerColumn("ID"))
                 .addColumn(new StringColumn("NAME"))
                 .addColumn(new IntegerColumn("UID")).build();
-        Assert.assertEquals(7, dataFrame.size());
+        Assert.assertEquals(8, dataFrame.size());
 
-        dataFrame.setPrimaryKeyColumn("UID");
+        dataFrame.setPrimaryKey("UID");
 
         Assert.assertEquals(1, (int) dataFrame.findByPrimaryKey(1).getInteger("ID"));
         Assert.assertEquals("A", dataFrame.findByPrimaryKey(1).getString("NAME"));
@@ -76,20 +82,35 @@ public class DataFrameIndexTest {
 
         dataFrame.addIndex("ID_NAME", "ID", "NAME");
 
-        Assert.assertEquals(1, (int) dataFrame.findByIndex("ID_NAME", 1, "A").getInteger("UID"));
-        Assert.assertEquals(2, (int) dataFrame.findByIndex("ID_NAME", 1, "B").getInteger("UID"));
-        Assert.assertEquals(3, (int) dataFrame.findByIndex("ID_NAME", 2, "A").getInteger("UID"));
-        Assert.assertEquals(4, (int) dataFrame.findByIndex("ID_NAME", 3, "A").getInteger("UID"));
+        Assert.assertEquals(1, dataFrame.findByIndex("ID_NAME", 1, "A").size());
+        Assert.assertEquals(1, dataFrame.findByIndex("ID_NAME", 1, "B").size());
 
-        dataFrame.append(1, "D", 8);
-        dataFrame.append(2, "D", 9);
-        dataFrame.append(5, "A", 10);
+        Assert.assertEquals(1, (int) dataFrame.findByIndex("ID_NAME", 1, "A").iterator().next().getInteger("UID"));
+        Assert.assertEquals(2, (int) dataFrame.findByIndex("ID_NAME", 1, "B").iterator().next().getInteger("UID"));
+        Assert.assertEquals(3, (int) dataFrame.findByIndex("ID_NAME", 2, "A").iterator().next().getInteger("UID"));
 
-        Assert.assertEquals(1, (int) dataFrame.findByPrimaryKey(8).getInteger("ID"));
-        Assert.assertEquals("D", dataFrame.findByPrimaryKey(8).getString("NAME"));
+        List<DataRow> indexRows = dataFrame.findByIndex("ID_NAME",3,"A");
+        Assert.assertEquals(2,indexRows.size());
+        Set<Integer> expected = new HashSet<>();
+        expected.add(4);
+        expected.add(8);
+        Set<Integer> values = new HashSet<>();
+        for(DataRow row : indexRows){
+            values.add(row.getInteger("UID"));
+        }
+        Assert.assertEquals(expected,values);
 
-        Assert.assertEquals(5, (int) dataFrame.findByPrimaryKey(10).getInteger("ID"));
-        Assert.assertEquals("A", dataFrame.findByPrimaryKey(10).getString("NAME"));
+        dataFrame.append(1, "D", 9);
+        dataFrame.append(2, "D", 10);
+        dataFrame.append(5, "A", 11);
+        dataFrame.append(3, "A", 12);
+
+
+        Assert.assertEquals(1, (int) dataFrame.findByPrimaryKey(9).getInteger("ID"));
+        Assert.assertEquals("D", dataFrame.findByPrimaryKey(9).getString("NAME"));
+
+        Assert.assertEquals(5, (int) dataFrame.findByPrimaryKey(11).getInteger("ID"));
+        Assert.assertEquals("A", dataFrame.findByPrimaryKey(11).getString("NAME"));
 
         dataFrame.getIntegerColumn("ID").map(new MapFunction<Integer>() {
             @Override
@@ -98,19 +119,33 @@ public class DataFrameIndexTest {
             }
         });
 
-        Assert.assertEquals(3, (int) dataFrame.findByPrimaryKey(8).getInteger("ID"));
+        Assert.assertEquals(3, (int) dataFrame.findByPrimaryKey(9).getInteger("ID"));
 
 
-        Assert.assertEquals(1, (int) dataFrame.findByIndex("ID_NAME", 3, "A").getInteger("UID"));
-        Assert.assertEquals(2, (int) dataFrame.findByIndex("ID_NAME", 3, "B").getInteger("UID"));
-        Assert.assertEquals(3, (int) dataFrame.findByIndex("ID_NAME", 4, "A").getInteger("UID"));
-        Assert.assertEquals(4, (int) dataFrame.findByIndex("ID_NAME", 5, "A").getInteger("UID"));
+        Assert.assertEquals(1,  dataFrame.findByIndex("ID_NAME", 3, "B").size());
+        Assert.assertEquals(2, (int) dataFrame.findByIndex("ID_NAME", 3, "B").iterator().next().getInteger("UID"));
+        Assert.assertEquals(3, (int) dataFrame.findByIndex("ID_NAME", 4, "A").iterator().next().getInteger("UID"));
 
-        Assert.assertEquals(3, (int) dataFrame.findByPrimaryKey(8).getInteger("ID"));
-        Assert.assertEquals("D", dataFrame.findByPrimaryKey(8).getString("NAME"));
+        Assert.assertEquals(3, (int) dataFrame.findByPrimaryKey(9).getInteger("ID"));
+        Assert.assertEquals("D", dataFrame.findByPrimaryKey(9).getString("NAME"));
 
-        Assert.assertEquals(7, (int) dataFrame.findByPrimaryKey(10).getInteger("ID"));
-        Assert.assertEquals("A", dataFrame.findByPrimaryKey(10).getString("NAME"));
+        Assert.assertEquals(7, (int) dataFrame.findByPrimaryKey(11).getInteger("ID"));
+        Assert.assertEquals("A", dataFrame.findByPrimaryKey(11).getString("NAME"));
+
+        DataRow row = dataFrame.findByIndex("ID_NAME", 3, "B").iterator().next();
+        row.set("UID",999);
+        dataFrame.update(row);
+        Assert.assertEquals(999, (int) dataFrame.findByIndex("ID_NAME", 3, "B").iterator().next().getInteger("UID"));
+
+        expected.add(12);
+
+        indexRows = dataFrame.findByIndex("ID_NAME",5,"A");
+        Assert.assertEquals(3,indexRows.size());
+        values = new HashSet<>();
+        for(DataRow r : indexRows){
+            values.add(r.getInteger("UID"));
+        }
+        Assert.assertEquals(expected,values);
     }
 
 
