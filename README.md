@@ -19,7 +19,7 @@ Add this to you pom.xml
     <dependency>
         <groupId>de.unknownreality</groupId>
         <artifactId>dataframe</artifactId>
-        <version>0.5.1</version>
+        <version>0.6</version>
     </dependency>
 ...
 </dependencies>
@@ -46,7 +46,7 @@ To build the library from sources:
     <dependency>
         <groupId>de.unknownreality</groupId>
         <artifactId>dataframe</artifactId>
-        <version>0.5.1-SNAPSHOT</version>
+        <version>0.6-SNAPSHOT</version>
     </dependency>
 ...
 </dependencies>
@@ -87,13 +87,15 @@ Indices must always be unique.
 ```java
 
 //set the primary key of a data frame
-users.setPrimaryKeyColumn("person_id");
+users.setPrimaryKey("person_id");
 DataRow firstUser = users.findByPrimaryKey(1)
 
 //add a multi-column index
-//Indices must be unique!
-users.addIndex("name-address","first_name", "last_name","address");
-DataRow user = users.findByIndex("name-address", "John", "Smith","Example-Street 15")
+
+users.addIndex("name-address","last_name","address");
+
+//returns all users with the last name Smith in the Example-Street 15
+List<DataRow> user = users.findByIndex("name-address","Smith","Example-Street 15")
 ```
 
 Perform operations on columns.
