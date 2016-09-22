@@ -23,6 +23,7 @@
 package de.unknownreality.dataframe;
 
 import de.unknownreality.dataframe.common.DataContainer;
+import de.unknownreality.dataframe.filter.FilterPredicate;
 
 import java.util.LinkedHashMap;
 
@@ -32,7 +33,7 @@ import java.util.LinkedHashMap;
 public class DataFrameBuilder {
     private final LinkedHashMap<String, DataFrameColumn> columns = new LinkedHashMap<>();
     private final DataContainer<?, ?> dataContainer;
-
+    private FilterPredicate filterPredicate = FilterPredicate.EMPTY;
     private DataFrameBuilder(DataContainer dataContainer) {
         this.dataContainer = dataContainer;
     }
@@ -58,6 +59,11 @@ public class DataFrameBuilder {
         return this;
     }
 
+    public DataFrameBuilder withFilterPredicate(FilterPredicate predicate){
+        this.filterPredicate = predicate;
+        return this;
+    }
+
     /**
      * Adds a new column to the builder and defines the name of the column in the parent data container.
      *
@@ -70,6 +76,7 @@ public class DataFrameBuilder {
         return this;
     }
 
+
     /**
      * Builds the data frame using the parent data container and column information.
      *
@@ -77,7 +84,7 @@ public class DataFrameBuilder {
      * @see DataFrameConverter#fromDataContainer(DataContainer, LinkedHashMap)
      */
     public DataFrame build() {
-        return DataFrameConverter.fromDataContainer(dataContainer, columns);
+        return DataFrameConverter.fromDataContainer(dataContainer, columns,filterPredicate);
 
     }
 
