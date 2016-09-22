@@ -23,7 +23,6 @@
 package de.unknownreality.dataframe.frame;
 
 import de.unknownreality.dataframe.DataFrame;
-import de.unknownreality.dataframe.DataFrameColumn;
 import de.unknownreality.dataframe.DataRow;
 import de.unknownreality.dataframe.Values;
 import de.unknownreality.dataframe.column.*;
@@ -34,9 +33,6 @@ import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Alex on 12.03.2016.
@@ -72,7 +68,7 @@ public class DataFrameTransformTest {
         }
 
         counts = df.getColumn("B").transform(new CountTransformer(false));
-        counts.setPrimaryKeyColumn("B");
+        counts.setPrimaryKey("B");
         Assert.assertEquals(4,counts.size());
         Assert.assertEquals(2,(int)counts.findByPrimaryKey(2d).getInteger(CountTransformer.COUNTS_COLUMN));
         Assert.assertEquals(1,(int)counts.findByPrimaryKey(3d).getInteger(CountTransformer.COUNTS_COLUMN));
@@ -81,7 +77,7 @@ public class DataFrameTransformTest {
         Assert.assertEquals(1,(int)counts.findByPrimaryKey(Values.NA).getInteger(CountTransformer.COUNTS_COLUMN));
 
         counts = df.getColumn("C").transform(new CountTransformer(true));
-        counts.setPrimaryKeyColumn("C");
+        counts.setPrimaryKey("C");
         Assert.assertEquals(2,counts.size());
         Assert.assertEquals(3,(int)counts.findByPrimaryKey("X").getInteger(CountTransformer.COUNTS_COLUMN));
         Assert.assertEquals(1,(int)counts.findByPrimaryKey("Y").getInteger(CountTransformer.COUNTS_COLUMN));

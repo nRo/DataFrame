@@ -25,6 +25,7 @@ package de.unknownreality.dataframe.index;
 import de.unknownreality.dataframe.DataFrameColumn;
 import de.unknownreality.dataframe.DataRow;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -37,6 +38,7 @@ public interface Index {
      * @param dataRow data row to update
      */
     void update(DataRow dataRow);
+
 
     /**
      * removes a {@link DataRow} from this index
@@ -51,7 +53,7 @@ public interface Index {
      * @param values indexed row values
      * @return index of row with the input value
      */
-    int find(Comparable... values);
+    Collection<Integer> find(Comparable... values);
 
     /**
      * Returns the name if this index
@@ -59,6 +61,12 @@ public interface Index {
      * @return name of index
      */
     String getName();
+
+    /**
+     * set true if only unique values are allowed for this index
+     * @param unique allow only unique values
+     */
+    void setUnique(boolean unique);
 
 
     /**

@@ -35,11 +35,11 @@ import java.util.*;
  */
 public class Indices {
     private static Logger logger = LoggerFactory.getLogger(Indices.class);
+    public static final String PRIMARY_KEY_NAME = "%primary_key%";
 
     private final Map<String, Index> indexMap = new HashMap<>();
     private final Map<DataFrameColumn, List<Index>> columnIndexMap = new WeakHashMap<>();
     private final DataFrame dataFrame;
-
     /**
      * Creates an index for a data frame
      *
@@ -95,17 +95,35 @@ public class Indices {
     }
 
     /**
-     * Returns the row number for a index and a set of values for the index
+     * Returns the row numbers for a index and a set of values for the index
      *
      * @param name   name of the index
      * @param values row values
-     * @return row number matching the row values
+     * @return row numbers matching the row values
      */
-    public int find(String name, Comparable... values) {
+    public Collection<Integer> find(String name, Comparable... values) {
         if (!indexMap.containsKey(name)) {
             throw new IllegalArgumentException(String.format("index not found'%s'", name));
         }
         return indexMap.get(name).find(values);
+    }
+
+    /**
+     * Returns the row number for a set of primary key values
+     *
+     * @param values primary key values
+     * @return row number matching the row values
+     */
+    public Integer findByPrimaryKey(Comparable... values) {
+        Index primaryKey = indexMap.get(PRIMARY_KEY_NAME);
+        if (primaryKey == null) {
+            throw new IllegalArgumentException(String.format("no primaryKey found"));
+        }
+        Collection<Integer> indices = primaryKey.find(values);
+        if(indices.isEmpty()){
+            return null;
+        }
+        return indices.iterator().next();
     }
 
     /**
@@ -118,12 +136,7 @@ public class Indices {
         if (indexMap.containsKey(name)) {
             throw new IllegalArgumentException(String.format("error adding index: index name already exists'%s'", name));
         }
-        Index index;
-        if (columns.length == 1) {
-            index = new SingleIndex(name, columns[0]);
-        } else {
-            index = new MultiIndex(name, columns);
-        }
+        Index index = new TreeIndex(name,columns);
         indexMap.put(name, index);
         for (DataFrameColumn column : columns) {
             List<Index> indexList = columnIndexMap.get(column);
@@ -136,8 +149,20 @@ public class Indices {
         for (DataRow row : dataFrame) {
             index.update(row);
         }
-
     }
+
+    /**
+     * sets the primary key using one or more columns
+     *
+     * @param columns columns the index is based on
+     */
+    public void setPrimaryKey(DataFrameColumn... columns) {
+        if(indexMap.containsKey(PRIMARY_KEY_NAME)){
+            removeIndex(PRIMARY_KEY_NAME);
+        }
+        addIndex(PRIMARY_KEY_NAME,columns);
+    }
+
 
     /**
      * Returns <tt>true</tt> if an index with the specified name exists
