@@ -127,7 +127,10 @@ public class DataFrameJoinTest {
         checkJoinedRow(rightJoin.getRow(2), "B", 4d, "2", "TC", 6d, 1);
         checkJoinedRow(rightJoin.getRow(3), "E", Values.NA, Values.NA, "TD", 4d, 1);
 
-
+        Assert.assertEquals(true,rightJoin.getJoinInfo().isB(transcriptDataFrame));
+        Assert.assertEquals(false,rightJoin.getJoinInfo().isA(transcriptDataFrame));
+        Assert.assertEquals(0,rightJoin.getJoinInfo().getJoinedIndex("GENE_ID",transcriptDataFrame));
+        Assert.assertEquals("FPKM" + JoinUtil.JOIN_SUFFIX_B, rightJoin.getJoinInfo().getJoinedHeader("FPKM",transcriptDataFrame));
         Assert.assertEquals("FPKM" + JoinUtil.JOIN_SUFFIX_A, rightJoin.getJoinInfo().getJoinedHeaderA("FPKM"));
         Assert.assertEquals(4, rightJoin.getJoinInfo().getJoinedIndexB("FPKM"));
 

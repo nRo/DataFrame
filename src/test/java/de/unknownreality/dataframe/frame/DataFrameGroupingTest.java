@@ -85,7 +85,6 @@ public class DataFrameGroupingTest {
         testGroup(dataGroups.findByGroupValues(2, "C"), 5);
         testGroup(dataGroups.findByGroupValues(4, "B"), 7);
 
-
         DataGrouping grouping2 = dataGroups.find(FilterPredicate.and(FilterPredicate.lt("ID", 4), FilterPredicate.in("NAME", new String[]{"A", "B"})));
         Assert.assertEquals(4, grouping2.size());
 
