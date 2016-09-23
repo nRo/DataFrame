@@ -22,9 +22,7 @@
 
 package de.unknownreality.dataframe.frame;
 
-import de.unknownreality.dataframe.DataFrame;
-import de.unknownreality.dataframe.DataRow;
-import de.unknownreality.dataframe.Values;
+import de.unknownreality.dataframe.*;
 import de.unknownreality.dataframe.column.*;
 import de.unknownreality.dataframe.csv.CSVReader;
 import de.unknownreality.dataframe.csv.CSVReaderBuilder;
@@ -43,6 +41,38 @@ public class DataFrameTest {
     @Rule
     public final ExpectedException exception = ExpectedException.none();
 
+    @Test
+    public void testCreation(){
+        DataFrame dataFrame = new DataFrame();
+        dataFrame.addColumn(new IntegerColumn("id"));
+        dataFrame.addColumns(new StringColumn("first"),new StringColumn("last"));
+        dataFrame.addColumn(Double.class,"value", ColumnConverter.create().addType(Double.class,DoubleColumn.class));
+        dataFrame.removeColumn("value");
+        dataFrame.addColumn(Double.class,"value");
+        dataFrame.append(1,"A","B",1d);
+        Assert.assertEquals(1,dataFrame.size());
+        dataFrame.addColumn(StringColumn.class, "full", new ColumnAppender<String>() {
+            @Override
+            public String createRowValue(DataRow row) {
+                return row.getString("first")+"-"+row.getString("last");
+            }
+        });
+        Assert.assertEquals("A-B",dataFrame.getRow(0).getString("full"));
+        dataFrame.addColumn(Integer.class, "int_value", ColumnConverter.create(), new ColumnAppender<Integer>() {
+            @Override
+            public Integer createRowValue(DataRow row) {
+                return row.getNumber("value").intValue();
+            }
+        });
+        Assert.assertEquals(1,(int)dataFrame.getRow(0).getInteger("int_value"));
+        dataFrame.removeColumn(dataFrame.getIntegerColumn("int_value"));
+        dataFrame.addColumn(Integer.class,"int_value");
+        int colIndex = dataFrame.getHeader().getIndex("int_value");
+        Assert.assertEquals(3,colIndex);
+        Assert.assertEquals(true,dataFrame.getRow(0).isNA(colIndex));
+
+
+    }
     @Test
     public void testReader() {
         String[] header = new String[]{"A", "B", "C", "D","E"};
