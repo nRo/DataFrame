@@ -30,7 +30,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Iterator;
+import java.util.*;
 
 public class CSVIterator implements Iterator<CSVRow> {
     private static final Logger log = LoggerFactory.getLogger(CSVIterator.class);
@@ -42,7 +42,6 @@ public class CSVIterator implements Iterator<CSVRow> {
     private int cols = -1;
     private final CSVHeader header;
     private final String[] ignorePrefixes;
-
     /**
      * Creates a CSVIterator
      *
@@ -56,12 +55,17 @@ public class CSVIterator implements Iterator<CSVRow> {
         if (stream == null) {
             throw new CSVRuntimeException("csv input stream is null");
         }
+
         this.reader = new BufferedReader(new InputStreamReader(stream));
         this.separator = separator;
         this.header = header;
         this.ignorePrefixes = ignorePrefixes;
         skip(skip);
         next = getNext();
+    }
+
+    private String getLine() throws IOException {
+        return reader.readLine();
     }
 
     /**
@@ -72,7 +76,7 @@ public class CSVIterator implements Iterator<CSVRow> {
     public void skip(int rows) {
         for (int i = 0; i < rows; i++) {
             try {
-                reader.readLine();
+                getLine();
             } catch (IOException e) {
                 log.error("error reading file:{}", e);
                 close();
@@ -100,9 +104,9 @@ public class CSVIterator implements Iterator<CSVRow> {
     private CSVRow getNext() {
         try {
             lineNumber++;
-            String line = reader.readLine();
+            String line = getLine();
             while (line != null && "".equals(line.trim())) {
-                line = reader.readLine();
+                line = getLine();
             }
             if (line == null) {
                 return null;
