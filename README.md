@@ -1,5 +1,8 @@
 # Java DataFrame
 DataFrame Library for Java.
+
+![travis](https://travis-ci.org/nRo/DataFrame.svg?branch=master)
+
 Install
 -------
 Add this to you pom.xml
