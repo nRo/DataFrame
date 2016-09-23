@@ -68,8 +68,20 @@ public class DataFrameTest {
         dataFrame.removeColumn(dataFrame.getIntegerColumn("int_value"));
         dataFrame.addColumn(Integer.class,"int_value");
         int colIndex = dataFrame.getHeader().getIndex("int_value");
-        Assert.assertEquals(3,colIndex);
+        Assert.assertEquals(5,colIndex);
         Assert.assertEquals(true,dataFrame.getRow(0).isNA(colIndex));
+        dataFrame.removeColumn("int_value");
+
+        DataFrame dataFrame2 = new DataFrame();
+        dataFrame2.addColumn(new IntegerColumn("id"));
+        dataFrame2.addColumn(new StringColumn("first"));
+        dataFrame2.addColumn(new StringColumn("last"));
+        dataFrame2.addColumn(new StringColumn("full"));
+        dataFrame2.addColumn(new DoubleColumn("value"));
+        dataFrame2.append(2,"A","C","A-C",2d);
+        dataFrame = dataFrame.concat(dataFrame2);
+        Assert.assertEquals(2,dataFrame.size());
+        Assert.assertEquals(2d,dataFrame.getRow(1).toDouble("value"),0d);
 
 
     }
