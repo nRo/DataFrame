@@ -7,18 +7,13 @@ An easy-to-use DataFrame Library for Java.
 
 Install
 -------
-Add this to you pom.xml
-```xml
-<repositories>
-...
-    <repository>
-      <id>ur-release-repo</id>
-      <name>unknownreality release repo</name>
-      <url>http://maven.unknownreality.de/artifactory/public-release</url>
-    </repository>
-...
-</repositories>
 
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/de.unknownreality/dataframe/badge.svg)](https://maven-badges.herokuapp.com/maven-central/de.unknownreality/dataframe)
+
+
+Add this to you pom.xml
+
+```xml
 <dependencies>
 ...
     <dependency>
