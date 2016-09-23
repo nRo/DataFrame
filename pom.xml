@@ -6,7 +6,7 @@
 
     <groupId>de.unknownreality</groupId>
     <artifactId>dataframe</artifactId>
-    <version>0.6-SNAPSHOT</version>
+    <version>0.6</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.7</maven.compiler.source>
@@ -95,16 +95,14 @@
         </plugins>
     </build>
     <distributionManagement>
-        <repository>
-            <id>central</id>
-            <name>maven.unknownreality.de-public-releases</name>
-            <url>http://maven.unknownreality.de/artifactory/public-release</url>
-        </repository>
         <snapshotRepository>
-            <id>snapshots</id>
-            <name>maven.unknownreality.de-public-snapshots</name>
-            <url>http://maven.unknownreality.de/artifactory/public-snapshot</url>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
     </distributionManagement>
 
     <profiles>
