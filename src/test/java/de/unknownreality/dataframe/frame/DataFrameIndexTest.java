@@ -23,6 +23,7 @@
 package de.unknownreality.dataframe.frame;
 
 import de.unknownreality.dataframe.DataFrame;
+import de.unknownreality.dataframe.DataFrameRuntimeException;
 import de.unknownreality.dataframe.DataRow;
 import de.unknownreality.dataframe.MapFunction;
 import de.unknownreality.dataframe.column.IntegerColumn;
@@ -146,6 +147,11 @@ public class DataFrameIndexTest {
             values.add(r.getInteger("UID"));
         }
         Assert.assertEquals(expected,values);
+        dataFrame.removeIndex("ID_NAME");
+        exception.expect(DataFrameRuntimeException.class);
+        //UUID is primarykey -> must be unique
+        dataFrame.append(3, "Z", 12);
+        dataFrame.findByIndex("ID_NAME", 3, "B");
     }
 
 

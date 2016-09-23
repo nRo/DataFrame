@@ -23,6 +23,7 @@
 package de.unknownreality.dataframe.index;
 
 import de.unknownreality.dataframe.DataFrameColumn;
+import de.unknownreality.dataframe.DataFrameRuntimeException;
 import de.unknownreality.dataframe.DataRow;
 
 import java.util.*;
@@ -92,7 +93,7 @@ public class TreeIndex implements Index{
         if (index == values.length) {
             if(unique){
                 if(node.hasIndices()){
-                    throw new IllegalArgumentException(String.format("error adding row to index: duplicated values found '%s'", Arrays.toString(values)));
+                    throw new DataFrameRuntimeException(String.format("error adding row to index: duplicated values found '%s'", Arrays.toString(values)));
                 }
             }
             indexNodeMap.put(rowIndex,node);
