@@ -24,6 +24,7 @@ package de.unknownreality.dataframe.index;
 
 import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.DataFrameColumn;
+import de.unknownreality.dataframe.DataFrameRuntimeException;
 import de.unknownreality.dataframe.DataRow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,7 +104,7 @@ public class Indices {
      */
     public Collection<Integer> find(String name, Comparable... values) {
         if (!indexMap.containsKey(name)) {
-            throw new IllegalArgumentException(String.format("index not found'%s'", name));
+            throw new DataFrameRuntimeException(String.format("index not found'%s'", name));
         }
         return indexMap.get(name).find(values);
     }
@@ -117,7 +118,7 @@ public class Indices {
     public Integer findByPrimaryKey(Comparable... values) {
         Index primaryKey = indexMap.get(PRIMARY_KEY_NAME);
         if (primaryKey == null) {
-            throw new IllegalArgumentException(String.format("no primaryKey found"));
+            throw new DataFrameRuntimeException(String.format("no primaryKey found"));
         }
         Collection<Integer> indices = primaryKey.find(values);
         if(indices.isEmpty()){
@@ -133,10 +134,21 @@ public class Indices {
      * @param columns columns the index is based on
      */
     public void addIndex(String name, DataFrameColumn... columns) {
+        addIndex(name,false,columns);
+    }
+    /**
+     * Creates and adds a new index using one or more columns
+     *
+     * @param name    name of the index
+     * @param unique allow only unique values in this index
+     * @param columns columns the index is based on
+     */
+    public void addIndex(String name, boolean unique,DataFrameColumn... columns) {
         if (indexMap.containsKey(name)) {
-            throw new IllegalArgumentException(String.format("error adding index: index name already exists'%s'", name));
+            throw new DataFrameRuntimeException(String.format("error adding index: index name already exists'%s'", name));
         }
         Index index = new TreeIndex(name,columns);
+        index.setUnique(unique);
         indexMap.put(name, index);
         for (DataFrameColumn column : columns) {
             List<Index> indexList = columnIndexMap.get(column);
@@ -160,7 +172,7 @@ public class Indices {
         if(indexMap.containsKey(PRIMARY_KEY_NAME)){
             removeIndex(PRIMARY_KEY_NAME);
         }
-        addIndex(PRIMARY_KEY_NAME,columns);
+        addIndex(PRIMARY_KEY_NAME,true,columns);
     }
 
 
