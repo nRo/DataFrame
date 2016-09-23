@@ -5,6 +5,10 @@ An easy-to-use DataFrame Library for Java.
 ![travis](https://travis-ci.org/nRo/DataFrame.svg?branch=master)
 [![codecov](https://codecov.io/gh/nRo/DataFrame/branch/master/graph/badge.svg)](https://codecov.io/gh/nRo/DataFrame)
 
+Documentation
+-------
+[![Javadocs](http://javadoc.io/badge/de.unknownreality/dataframe.svg?color=blue)](http://javadoc.io/doc/de.unknownreality/dataframe)
+
 Install
 -------
 
