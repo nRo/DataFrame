@@ -1,5 +1,6 @@
 # Java DataFrame
-DataFrame Library for Java.
+An easy-to-use DataFrame Library for Java.
+
 
 ![travis](https://travis-ci.org/nRo/DataFrame.svg?branch=master)
 [![codecov](https://codecov.io/gh/nRo/DataFrame/branch/master/graph/badge.svg)](https://codecov.io/gh/nRo/DataFrame)
