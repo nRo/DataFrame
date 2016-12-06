@@ -1185,7 +1185,7 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
     }
 
     /**
-     * Finds a data rows using an index and the corresponding index values
+     * Finds matching data rows using an index and the corresponding index values
      *
      * @param name   name of index
      * @param values index values
@@ -1201,6 +1201,18 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
             return rows;
         }
         return new ArrayList<>(0);
+    }
+
+    /**
+     * Finds the first data row matching an index and the corresponding index values
+     *
+     * @param name   name of index
+     * @param values index values
+     * @return rows found
+     */
+    public DataRow findFirstByIndex(String name, Comparable... values) {
+        Integer idx = indices.findFirst(name,values);
+        return idx == null ? null : getRow(idx);
     }
 
     /**

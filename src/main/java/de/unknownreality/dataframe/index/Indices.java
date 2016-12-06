@@ -110,6 +110,19 @@ public class Indices {
     }
 
     /**
+     * Returns the first found row number for a index and a set of values for the index
+     * If no row is found, null is returned
+     *
+     * @param name   name of the index
+     * @param values row values
+     * @return row number matching the row values or null
+     */
+    public Integer findFirst(String name, Comparable... values){
+        Collection<Integer> rows = find(name,values);
+        return rows.isEmpty() ? null : rows.iterator().next();
+    }
+
+    /**
      * Returns the row number for a set of primary key values
      *
      * @param values primary key values
