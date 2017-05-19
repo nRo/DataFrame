@@ -130,7 +130,7 @@ public abstract class AbstractJoin {
      * @param row         row containing the values
      * @param joinColumns columns used for the join
      */
-    public void setGroupValuesA(Comparable[] groupValues, Row<Comparable> row, JoinColumn[] joinColumns) {
+    public void setGroupValuesA(Comparable[] groupValues, Row<Comparable,String> row, JoinColumn[] joinColumns) {
         for (int i = 0; i < joinColumns.length; i++) {
             String headerName = joinColumns[i].getColumnA();
             groupValues[i] = row.get(headerName);
@@ -144,7 +144,7 @@ public abstract class AbstractJoin {
      * @param row         row containing the values
      * @param joinColumns columns used for the join
      */
-    public void setGroupValuesB(Comparable[] groupValues, Row<Comparable> row, JoinColumn[] joinColumns) {
+    public void setGroupValuesB(Comparable[] groupValues, Row<Comparable,String> row, JoinColumn[] joinColumns) {
         for (int i = 0; i < joinColumns.length; i++) {
             String headerName = joinColumns[i].getColumnB();
             groupValues[i] = row.get(headerName);

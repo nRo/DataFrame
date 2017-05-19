@@ -50,6 +50,7 @@ public class TreeIndex implements Index{
             columnIndexMap.put(column, i++);
         }
         this.name = indexName;
+        this.unique = unique;
     }
 
     protected TreeIndex(String indexName,DataFrameColumn... columns) {
@@ -91,10 +92,8 @@ public class TreeIndex implements Index{
 
     private void add_rec(TreeNode node, int index, Comparable[] values, Integer rowIndex) {
         if (index == values.length) {
-            if(unique){
-                if(node.hasIndices()){
-                    throw new DataFrameRuntimeException(String.format("error adding row to index: duplicated values found '%s'", Arrays.toString(values)));
-                }
+            if(unique && node.hasIndices()){
+                throw new DataFrameRuntimeException(String.format("error adding row to index: duplicated values found '%s'", Arrays.toString(values)));
             }
             indexNodeMap.put(rowIndex,node);
             node.addIndex(rowIndex);

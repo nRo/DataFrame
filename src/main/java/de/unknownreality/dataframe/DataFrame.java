@@ -26,8 +26,8 @@ import de.unknownreality.dataframe.column.*;
 import de.unknownreality.dataframe.common.DataContainer;
 import de.unknownreality.dataframe.common.mapping.DataMapper;
 import de.unknownreality.dataframe.filter.FilterPredicate;
-import de.unknownreality.dataframe.group.GroupUtil;
 import de.unknownreality.dataframe.group.DataGrouping;
+import de.unknownreality.dataframe.group.GroupUtil;
 import de.unknownreality.dataframe.index.Indices;
 import de.unknownreality.dataframe.join.JoinColumn;
 import de.unknownreality.dataframe.join.JoinUtil;
@@ -974,16 +974,7 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
         return getColumn(name, ShortColumn.class);
     }
 
-    /**
-     * Returns a {@link DateColumn}
-     * If the column is not found or has the wrong type a {@link DataFrameRuntimeException} is thrown.
-     *
-     * @param name column name
-     * @return found column
-     */
-    public DateColumn getDateColumn(String name) {
-        return getColumn(name, DateColumn.class);
-    }
+
 
     /**
      * Groups this data frame using one or more columns
@@ -1248,8 +1239,7 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
     @Override
     public Iterator<DataRow> iterator() {
         return new Iterator<DataRow>() {
-            int index = 0;
-
+            private int index = 0;
             @Override
             public boolean hasNext() {
                 return index < size;
@@ -1257,6 +1247,9 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
 
             @Override
             public DataRow next() {
+                if (index == size()){
+                    throw new NoSuchElementException("dataframe index out of bounds");
+                }
                 return getRow(index++);
             }
 

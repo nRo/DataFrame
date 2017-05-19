@@ -23,6 +23,7 @@
 package de.unknownreality.dataframe.csv;
 
 import de.unknownreality.dataframe.common.StringUtil;
+import de.unknownreality.dataframe.common.reader.BufferedStreamIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,11 +33,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
 
-public class CSVIterator implements Iterator<CSVRow> {
+public class CSVIterator extends BufferedStreamIterator<CSVRow> {
     private static final Logger log = LoggerFactory.getLogger(CSVIterator.class);
 
-    private final BufferedReader reader;
-    private CSVRow next;
     private int lineNumber = 0;
     private final Character separator;
     private int cols = -1;
@@ -52,47 +51,12 @@ public class CSVIterator implements Iterator<CSVRow> {
      * @param skip           number of skipped lines at the start
      */
     public CSVIterator(InputStream stream, CSVHeader header, Character separator, String[] ignorePrefixes, int skip) {
-        if (stream == null) {
-            throw new CSVRuntimeException("csv input stream is null");
-        }
-
-        this.reader = new BufferedReader(new InputStreamReader(stream));
+        super(stream);
         this.separator = separator;
         this.header = header;
         this.ignorePrefixes = ignorePrefixes;
         skip(skip);
-        next = getNext();
-    }
-
-    private String getLine() throws IOException {
-        return reader.readLine();
-    }
-
-    /**
-     * skips rows
-     *
-     * @param rows number of rows to be skipped
-     */
-    public void skip(int rows) {
-        for (int i = 0; i < rows; i++) {
-            try {
-                getLine();
-            } catch (IOException e) {
-                log.error("error reading file:{}", e);
-                close();
-            }
-        }
-    }
-
-    /**
-     * closes this iterator
-     */
-    public void close() {
-        try {
-            reader.close();
-        } catch (IOException e) {
-            log.error("error closing stream", e);
-        }
+        loadNext();
     }
 
 
@@ -101,7 +65,8 @@ public class CSVIterator implements Iterator<CSVRow> {
      *
      * @return next csv row
      */
-    private CSVRow getNext() {
+    @Override
+    protected CSVRow getNext() {
         try {
             lineNumber++;
             String line = getLine();
@@ -127,7 +92,7 @@ public class CSVIterator implements Iterator<CSVRow> {
             // for (int i = 0; i < cols; i++) {
             //values[i] = values[i].trim();
             //}
-            return new CSVRow(header, values, lineNumber, separator);
+            return new CSVRow(header, values, lineNumber);
 
         } catch (IOException e) {
             log.error("error reading file: {}:{}", lineNumber, e);
@@ -137,37 +102,5 @@ public class CSVIterator implements Iterator<CSVRow> {
             close();
         }
         return null;
-    }
-
-    /**
-     * Returns true if last row is not reached yet
-     *
-     * @return true if next row exists
-     */
-    public boolean hasNext() {
-        return next != null;
-    }
-
-    /**
-     * Returns the next csv row.
-     * If last row is reached this iterator closes automatically.
-     *
-     * @return next csv row
-     */
-    public CSVRow next() {
-        CSVRow row = next;
-        next = getNext();
-        if (next == null) {
-            close();
-        }
-        return row;
-    }
-
-    /**
-     * Remove is not supported
-     */
-    @Override
-    public void remove() {
-        throw new UnsupportedOperationException("remove not supported by CSV Iterators");
     }
 }

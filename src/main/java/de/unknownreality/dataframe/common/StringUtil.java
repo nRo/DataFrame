@@ -76,6 +76,7 @@ public class StringUtil {
         char[] chars = input.trim().toCharArray();
         char c;
         String p;
+        boolean startOrSplit = true;
         for (int i = 0; i < chars.length; i++) {
             c = chars[i];
             boolean escape = escapeNext;
@@ -87,17 +88,19 @@ public class StringUtil {
                     inQuotation = false;
                     continue;
                 }
-                if (!inDoubleQuotation) {
+                if (!inDoubleQuotation && startOrSplit) {
                     inQuotation = true;
                 }
+                startOrSplit = false;
             } else if (c == '\"') {
                 if (inDoubleQuotation && !escape) {
                     inDoubleQuotation = false;
                     continue;
                 }
-                if (!inDoubleQuotation) {
+                if (!inDoubleQuotation && startOrSplit) {
                     inDoubleQuotation = true;
                 }
+                startOrSplit = false;
             } else if (c == split && !inDoubleQuotation && !inQuotation) {
                 int length = i - currentStart;
                 if (length == 0) {
@@ -107,6 +110,10 @@ public class StringUtil {
                 }
                 parts.add(p);
                 currentStart = i + 1;
+                startOrSplit = true;
+            }
+            else{
+                startOrSplit = false;
             }
         }
         if (currentStart < chars.length) {

@@ -22,6 +22,7 @@
 
 package de.unknownreality.dataframe;
 
+import de.unknownreality.dataframe.common.Row;
 import de.unknownreality.dataframe.common.parser.Parser;
 import de.unknownreality.dataframe.transform.ColumnDataFrameTransform;
 import de.unknownreality.dataframe.transform.ColumnTransform;
@@ -292,6 +293,9 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
      */
     protected abstract boolean doAppend(T value);
 
+    public abstract<H> T getValueFromRow(Row<?,H> row,H headerName);
+
+    public abstract T getValueFromRow(Row<?,?> row,int headerIdex);
 
     /**
      * A new value is appended at the end of this column using {@link #doAppend(Comparable)}.
@@ -309,6 +313,44 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
             return false;
         }
         return doAppend(value);
+    }
+
+    /**
+     * A new value is appended at the end of this column using {@link #doAppend(Comparable)}.
+     * <p>Calls{@link #validateAppend()} to ensure data frame index consistency</p>
+     *
+     * @param row row containing the value
+     * @param headerName headerName of the value within the row
+     * @return <tt>true</tt> if the value is successfully appended
+     * @see #validateAppend()
+     */
+    public final<H> boolean append(Row<?,H> row,H headerName) {
+        try {
+            validateAppend();
+        } catch (DataFrameException e) {
+            log.warn("error appending value to column", e);
+            return false;
+        }
+        return doAppend(getValueFromRow(row,headerName));
+    }
+
+    /**
+     * A new value is appended at the end of this column using {@link #doAppend(Comparable)}.
+     * <p>Calls{@link #validateAppend()} to ensure data frame index consistency</p>
+     *
+     * @param row row containing the value
+     * @param index index of the value within the row
+     * @return <tt>true</tt> if the value is successfully appended
+     * @see #validateAppend()
+     */
+    public final boolean append(Row<?,?> row,int index) {
+        try {
+            validateAppend();
+        } catch (DataFrameException e) {
+            log.warn("error appending value to column", e);
+            return false;
+        }
+        return doAppend(getValueFromRow(row,index));
     }
 
     /**
@@ -438,7 +480,7 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
      */
     public void validateAppend() throws DataFrameException {
         if (!dataFrameAppend && getDataFrame() != null) {
-            throw new DataFrameException("doAppend can only be used if the column is not added to a data frame. use dataFrame.doAppend()");
+            throw new DataFrameException("doAppend can only be used if the column is not added to a data frame. use dataFrame.append()");
         }
     }
 

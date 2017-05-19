@@ -69,7 +69,6 @@ public class DataFrameMetaWriter {
                 Attr name = doc.createAttribute("name");
                 name.setValue(attrName);
                 readerAttribute.setAttributeNode(name);
-
                 Attr value = doc.createAttribute("value");
                 value.setValue(metaFile.getAttributes().get(attrName));
                 readerAttribute.setAttributeNode(value);

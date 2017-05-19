@@ -22,7 +22,7 @@
 
 package de.unknownreality.dataframe.csv;
 
-import de.unknownreality.dataframe.common.BasicHeader;
+import de.unknownreality.dataframe.common.header.BasicHeader;
 
 /**
  * Created by Alex on 09.03.2016.

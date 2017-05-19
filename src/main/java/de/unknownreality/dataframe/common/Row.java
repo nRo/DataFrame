@@ -25,7 +25,7 @@ package de.unknownreality.dataframe.common;
 /**
  * Created by Alex on 10.03.2016.
  */
-public interface Row<V> {
+public interface Row<V,H> {
 
     /**
      * Returns an entity using head name as a specified type.
@@ -36,7 +36,7 @@ public interface Row<V> {
      * @param <T>        type of entity
      * @return entity as specified type
      */
-    <T> T get(String headerName, Class<T> cl);
+    <T> T get(H headerName, Class<T> cl);
 
 
     /**
@@ -48,7 +48,7 @@ public interface Row<V> {
      * @param <T>        type of entity
      * @return entity as specified type
      */
-    <T> T getOrNull(String headerName, Class<T> cl);
+    <T> T getOrNull(H headerName, Class<T> cl);
 
 
     /**
@@ -89,7 +89,7 @@ public interface Row<V> {
      * @param headerName header name of the column
      * @return entity at specified header name column
      */
-    V get(String headerName);
+    V get(H headerName);
 
     /**
      * Returns entity at an index as {@link String}
@@ -108,7 +108,7 @@ public interface Row<V> {
      * @param headerName header name
      * @return {@link String} entity
      */
-    String getString(String headerName);
+    String getString(H headerName);
 
     /**
      * Returns entity at an index as {@link Double}
@@ -127,7 +127,7 @@ public interface Row<V> {
      * @param headerName header name
      * @return {@link Double} entity
      */
-    Double getDouble(String headerName);
+    Double getDouble(H headerName);
 
     /**
      * Returns entity at an index as {@link Boolean}
@@ -146,7 +146,7 @@ public interface Row<V> {
      * @param headerName header name
      * @return {@link Boolean} entity
      */
-    Boolean getBoolean(String headerName);
+    Boolean getBoolean(H headerName);
 
     /**
      * Returns entity at an index as {@link Integer}
@@ -158,7 +158,7 @@ public interface Row<V> {
      */
     Integer getInteger(int index);
 
-    Integer getInteger(String headerName);
+    Integer getInteger(H headerName);
 
     /**
      * Returns entity at an index as {@link Float}
@@ -177,7 +177,7 @@ public interface Row<V> {
      * @param headerName header name
      * @return {@link Float} entity
      */
-    Float getFloat(String headerName);
+    Float getFloat(H headerName);
 
 
     /**
@@ -197,7 +197,7 @@ public interface Row<V> {
      * @param headerName header name
      * @return {@link Long} entity
      */
-    Long getLong(String headerName);
+    Long getLong(H headerName);
 
     /**
      * Returns entity at an index as {@link Short}
@@ -216,7 +216,7 @@ public interface Row<V> {
      * @param headerName header name
      * @return {@link Short} entity
      */
-    Short getShort(String headerName);
+    Short getShort(H headerName);
 
     /**
      * Returns entity at an index as {@link Byte}
@@ -235,7 +235,7 @@ public interface Row<V> {
      * @param headerName header name
      * @return {@link Byte} entity
      */
-    Byte getByte(String headerName);
+    Byte getByte(H headerName);
 
     /**
      * Returns the number of entities in this row
