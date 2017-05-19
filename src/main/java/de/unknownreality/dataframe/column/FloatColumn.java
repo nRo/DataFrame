@@ -22,6 +22,7 @@
 
 package de.unknownreality.dataframe.column;
 
+import de.unknownreality.dataframe.common.Row;
 import de.unknownreality.dataframe.common.parser.Parser;
 import de.unknownreality.dataframe.common.parser.ParserUtil;
 import org.slf4j.Logger;
@@ -72,5 +73,13 @@ public class FloatColumn extends NumberColumn<Float, FloatColumn> {
         toArray(copyValues);
         return new FloatColumn(getName(), copyValues);
     }
+    @Override
+    public <H> Float getValueFromRow(Row<?, H> row, H headerName) {
+        return row.getFloat(headerName);
+    }
 
+    @Override
+    public Float getValueFromRow(Row<?, ?> row, int headerIndex) {
+        return row.getFloat(headerIndex);
+    }
 }

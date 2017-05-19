@@ -180,6 +180,7 @@ public abstract class BasicColumn<T extends Comparable<T>, C extends BasicColumn
 
     @Override
     protected boolean doAppend(T t) {
+
         if (size == values.length - 1) {
             values = Arrays.copyOf(values, (int) ((double) values.length * GROW_FACTOR));
         }

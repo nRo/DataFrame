@@ -25,6 +25,7 @@ package de.unknownreality.dataframe.column;
 
 import de.unknownreality.dataframe.DataFrameColumn;
 import de.unknownreality.dataframe.MapFunction;
+import de.unknownreality.dataframe.common.Row;
 import de.unknownreality.dataframe.common.parser.Parser;
 import de.unknownreality.dataframe.common.parser.ParserUtil;
 
@@ -106,6 +107,16 @@ public class BooleanColumn extends BasicColumn<Boolean, BooleanColumn> {
         Boolean[] copyValues = new Boolean[size()];
         toArray(copyValues);
         return new BooleanColumn(getName(), copyValues);
+    }
+
+    @Override
+    public <H> Boolean getValueFromRow(Row<?, H> row, H headerName) {
+        return row.getBoolean(headerName);
+    }
+
+    @Override
+    public Boolean getValueFromRow(Row<?, ?> row, int headerIndex) {
+        return row.getBoolean(headerIndex);
     }
 
 
