@@ -23,6 +23,7 @@
 package de.unknownreality.dataframe.column;
 
 
+import de.unknownreality.dataframe.common.Row;
 import de.unknownreality.dataframe.common.parser.Parser;
 import de.unknownreality.dataframe.common.parser.ParserUtil;
 
@@ -65,5 +66,17 @@ public class StringColumn extends BasicColumn<String, StringColumn> {
         String[] copyValues = new String[size()];
         toArray(copyValues);
         return new StringColumn(getName(), copyValues);
+    }
+
+    @Override
+    public <H> String getValueFromRow(Row<?, H> row, H headerName) {
+
+        return row.getString(headerName);
+    }
+
+    @Override
+    public String getValueFromRow(Row<?, ?> row, int headerIndex) {
+
+        return row.getString(headerIndex);
     }
 }

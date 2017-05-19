@@ -22,6 +22,7 @@
 
 package de.unknownreality.dataframe.column;
 
+import de.unknownreality.dataframe.common.Row;
 import de.unknownreality.dataframe.common.parser.Parser;
 import de.unknownreality.dataframe.common.parser.ParserUtil;
 import org.slf4j.Logger;
@@ -69,5 +70,13 @@ public class ShortColumn extends NumberColumn<Short, ShortColumn> {
         toArray(copyValues);
         return new ShortColumn(getName(), copyValues);
     }
+    @Override
+    public <H> Short getValueFromRow(Row<?, H> row, H headerName) {
+        return row.getShort(headerName);
+    }
 
+    @Override
+    public Short getValueFromRow(Row<?, ?> row, int headerIndex) {
+        return row.getShort(headerIndex);
+    }
 }
