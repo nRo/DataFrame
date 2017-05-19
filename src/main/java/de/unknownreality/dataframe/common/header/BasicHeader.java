@@ -20,7 +20,9 @@
  * SOFTWARE.
  */
 
-package de.unknownreality.dataframe.common;
+package de.unknownreality.dataframe.common.header;
+
+import de.unknownreality.dataframe.common.Header;
 
 import java.util.*;
 
