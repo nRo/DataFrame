@@ -28,7 +28,7 @@ import de.unknownreality.dataframe.common.Row;
 /**
  * Created by Alex on 15.03.2016.
  */
-public class GroupValues implements Row<Comparable> {
+public class GroupValues implements Row<Comparable,String> {
     private final Comparable[] values;
     private final GroupHeader groupHeader;
 

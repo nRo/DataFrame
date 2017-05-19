@@ -35,10 +35,20 @@ public class Values {
 
     public static class NA implements Comparable {
 
-        public boolean isNA(String s) {
-            return toString().equals(s);
-        }
 
+
+        public boolean isNA(Object o){
+            if(o == null){
+                return false;
+            }
+            if(o == this){
+                return true;
+            }
+            if(o instanceof String){
+                return "NA".equals(o.toString());
+            }
+            return false;
+        }
         private NA() {
 
         }
@@ -53,6 +63,11 @@ public class Values {
 
         public String toString() {
             return "NA";
+        }
+
+
+        public boolean equals(Object o) {
+            return o == this;
         }
     }
 }

@@ -38,8 +38,6 @@ import java.util.Map;
  */
 public class DataFrameConverter {
     private static final Logger log = LoggerFactory.getLogger(DataFrameConverter.class);
-    public static final int MAX_PARSER_CACHE_SIZE = 10000;
-
     /**
      * Converts a parent data container to a data frame.
      * The required column information is provided by a column information map.
@@ -61,7 +59,6 @@ public class DataFrameConverter {
             }
             return dataFrame;
         }
-        Map<String, Object> parserCache = new HashMap<>();
         int[] colIndices = new int[columns.size()];
         int i = 0;
         for (String h : columns.keySet()) {
@@ -77,35 +74,19 @@ public class DataFrameConverter {
             Comparable[] rowValues = new Comparable[columns.size()];
             for (Map.Entry<String, DataFrameColumn> columnEntry : columns.entrySet()) {
                 i++;
-                String strVal = row.getString(colIndices[i]);
-                if (strVal == null || "".equals(strVal) || "null".equals(strVal)) {
+                Comparable val = null;
+                try {
+                    val = columnEntry.getValue().getValueFromRow(row, colIndices[i]);
+                }
+                catch (Exception e){
+                    log.warn("error parsing value ({}), NA added",e.getMessage());
+                }
+                if(val == null || Values.NA.isNA(val) ||
+                        val instanceof String && ("".equals(val.toString()) || "null".equals(val.toString()))){
                     rowValues[i] = Values.NA;
                     continue;
                 }
-                try {
-                    if (Values.NA.isNA(strVal)) {
-                        rowValues[i] = Values.NA;
-                        continue;
-                    }
-                    Object o;
-                    String object_ident = columnEntry.getValue().getType() + "::" + strVal;
-                    if ((o = parserCache.get(object_ident)) == null) {
-                        o = columnEntry.getValue().getParser().parse(strVal);
-                        if (parserCache.size() > MAX_PARSER_CACHE_SIZE) {
-                            parserCache.clear();
-                        }
-                        parserCache.put(object_ident, o);
-                    }
-                    if (o == null || !(o instanceof Comparable)) {
-                        rowValues[i] = Values.NA;
-                        continue;
-                    }
-                    rowValues[i] = (Comparable)o;
-                    //columnEntry.getValue().append(o);
-                } catch (ParseException e) {
-                    log.warn("error parsing value, NA added", e);
-                    columnEntry.getValue().doAppendNA();
-                }
+                rowValues[i] = val;
             }
             DataRow dataRow = new DataRow(dataFrame.getHeader(),rowValues,dataFrame.size() - 1);
             if(filterPredicate.valid(dataRow)){
@@ -115,7 +96,6 @@ public class DataFrameConverter {
 
         return dataFrame;
     }
-
 
     /**
      * Converts a parent data container to a data frame.
