@@ -22,18 +22,12 @@
 
 package de.unknownreality.dataframe;
 
-import de.unknownreality.dataframe.common.Header;
 import de.unknownreality.dataframe.common.header.BasicTypeHeader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.*;
 
 /**
  * Created by Alex on 09.03.2016.
  */
 public class DataFrameHeader extends BasicTypeHeader<String>{
-    private static Logger log = LoggerFactory.getLogger(DataFrameHeader.class);
 
 
 

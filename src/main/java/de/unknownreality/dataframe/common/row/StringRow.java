@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * Created by Alex on 19.05.2017.
@@ -275,6 +276,9 @@ public class StringRow<T,H extends Header<T>> implements Row<String,T>, Iterable
 
             @Override
             public String next() {
+                if(index >= values.length){
+                    throw new NoSuchElementException(String.format("element not found: index out of bounds %s >= %s]",index,values.length));
+                }
                 return values[index++];
             }
 

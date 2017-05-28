@@ -22,10 +22,12 @@
 
 package de.unknownreality.dataframe.csv;
 
+import de.unknownreality.dataframe.DataFrameException;
+
 /**
  * Created by Alex on 09.03.2016.
  */
-public class CSVException extends Throwable {
+public class CSVException extends DataFrameException {
     public CSVException(String message) {
         super(message);
     }

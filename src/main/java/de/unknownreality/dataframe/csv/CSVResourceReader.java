@@ -23,8 +23,6 @@
 package de.unknownreality.dataframe.csv;
 
 import de.unknownreality.dataframe.DataFrameRuntimeException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 
@@ -32,7 +30,6 @@ import java.io.InputStream;
  * Created by Alex on 12.03.2016.
  */
 public class CSVResourceReader extends CSVReader {
-    private static Logger log = LoggerFactory.getLogger(CSVResourceReader.class);
     private final String resourcePath;
     private final ClassLoader classLoader;
     private int skip = 0;

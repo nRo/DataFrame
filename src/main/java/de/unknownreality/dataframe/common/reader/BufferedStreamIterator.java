@@ -1,10 +1,7 @@
 package de.unknownreality.dataframe.common.reader;
 
+import de.unknownreality.dataframe.DataFrameRuntimeException;
 import de.unknownreality.dataframe.common.Row;
-import de.unknownreality.dataframe.common.StringUtil;
-import de.unknownreality.dataframe.csv.CSVException;
-import de.unknownreality.dataframe.csv.CSVIterator;
-import de.unknownreality.dataframe.csv.CSVRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * Created by Alex on 19.05.2017.
@@ -25,7 +23,7 @@ public abstract class BufferedStreamIterator<R extends Row> implements Iterator<
 
     public BufferedStreamIterator(InputStream stream) {
         if (stream == null) {
-            throw new RuntimeException("input stream is null");
+            throw new DataFrameRuntimeException("input stream is null");
         }
         this.reader = new BufferedReader(new InputStreamReader(stream));
     }
@@ -89,6 +87,9 @@ public abstract class BufferedStreamIterator<R extends Row> implements Iterator<
      * @return next row
      */
     public R next() {
+        if(next == null)    {
+            throw new NoSuchElementException("no next element found");
+        }
         R row = next;
         next = getNext();
         if (next == null) {

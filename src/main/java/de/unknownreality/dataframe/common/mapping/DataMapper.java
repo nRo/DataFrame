@@ -176,7 +176,7 @@ public class DataMapper<T> implements Iterable<T> {
 
             @Override
             public void remove() {
-
+                throw new UnsupportedOperationException("remove is not supported by this iterator");
             }
 
             @Override

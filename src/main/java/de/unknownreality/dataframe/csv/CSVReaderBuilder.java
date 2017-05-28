@@ -22,12 +22,12 @@
 
 package de.unknownreality.dataframe.csv;
 
+import de.unknownreality.dataframe.DataFrameException;
 import de.unknownreality.dataframe.common.DataContainer;
 import de.unknownreality.dataframe.common.ReaderBuilder;
 import de.unknownreality.dataframe.common.parser.ParserUtil;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -50,9 +50,6 @@ public class CSVReaderBuilder implements ReaderBuilder<CSVHeader, CSVRow> {
         return new CSVReaderBuilder();
     }
 
-    public CSVReaderBuilder() {
-
-    }
 
     /**
      * Sets the csv column separator char used by the resulting reader

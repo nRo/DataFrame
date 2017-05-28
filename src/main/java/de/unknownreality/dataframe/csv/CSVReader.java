@@ -25,8 +25,6 @@ package de.unknownreality.dataframe.csv;
 import de.unknownreality.dataframe.DataFrameBuilder;
 import de.unknownreality.dataframe.common.DataContainer;
 import de.unknownreality.dataframe.common.mapping.DataMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -34,7 +32,6 @@ import java.util.List;
  * Created by Alex on 09.03.2016.
  */
 public abstract class CSVReader implements DataContainer<CSVHeader, CSVRow> {
-    private static final Logger log = LoggerFactory.getLogger(CSVReader.class);
     private String headerPrefix = "#";
     private final Character separator;
     private final CSVHeader header = new CSVHeader();
@@ -116,11 +113,11 @@ public abstract class CSVReader implements DataContainer<CSVHeader, CSVRow> {
                 if (!row.get(0).startsWith(headerPrefix)) {
                     throw new CSVException("invalid header prefix in first line");
                 }
-                for (int i = 0; i < row.size(); i++) {
-                    String name = row.get(i);
-                    if (i == 0) {
-                        name = headerPrefix == null ? name : name.substring(headerPrefix.length());
-                    }
+                String name = row.get(0);
+                name = headerPrefix == null ? name : name.substring(headerPrefix.length());
+                header.add(name);
+                for (int i = 1; i < row.size(); i++) {
+                    name = row.get(i);
                     header.add(name);
                 }
             } else {
@@ -132,8 +129,7 @@ public abstract class CSVReader implements DataContainer<CSVHeader, CSVRow> {
             iterator.close();
 
         } catch (CSVException e) {
-            log.error("error creating csv header", e);
-
+            throw new CSVRuntimeException("error creating csv header",e);
         }
     }
 

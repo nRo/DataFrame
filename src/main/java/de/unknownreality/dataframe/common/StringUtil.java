@@ -30,6 +30,7 @@ import java.util.List;
  */
 public class StringUtil {
 
+    private StringUtil(){}
     /**
      * Puts a string in quotes.
      * All occurrences of quotes chars in the string are escaped.

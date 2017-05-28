@@ -27,11 +27,8 @@ import de.unknownreality.dataframe.common.reader.BufferedStreamIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.*;
 
 public class CSVIterator extends BufferedStreamIterator<CSVRow> {
     private static final Logger log = LoggerFactory.getLogger(CSVIterator.class);
@@ -89,9 +86,6 @@ public class CSVIterator extends BufferedStreamIterator<CSVRow> {
                     throw new CSVException(String.format("unequal number of column %d != %d in line %d", values.length, cols, lineNumber));
                 }
             }
-            // for (int i = 0; i < cols; i++) {
-            //values[i] = values[i].trim();
-            //}
             return new CSVRow(header, values, lineNumber);
 
         } catch (IOException e) {

@@ -26,6 +26,9 @@ package de.unknownreality.dataframe;
  * Created by Alex on 12.03.2016.
  */
 public class Values {
+
+
+    private Values(){}
     /**
      * Representation for 'not available'.
      * Null values in a row are returned as <tt>NA</tt>
@@ -61,13 +64,20 @@ public class Values {
             return -1;
         }
 
+        @Override
         public String toString() {
             return "NA";
         }
 
+        @Override
 
         public boolean equals(Object o) {
             return o == this;
+        }
+
+        @Override
+        public int hashCode(){
+            return super.hashCode();
         }
     }
 }

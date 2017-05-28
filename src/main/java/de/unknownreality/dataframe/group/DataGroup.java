@@ -42,9 +42,9 @@ public class DataGroup extends DataFrame {
             throw new IllegalArgumentException("column and values must have same length");
         }
         groupHeader = new GroupHeader(columns);
-        Comparable[] groupValues = new Comparable[values.length];
-        System.arraycopy(values, 0, groupValues, 0, values.length);
-        this.groupValues = new GroupValues(groupValues, groupHeader);
+        Comparable[] groupValueArray = new Comparable[values.length];
+        System.arraycopy(values, 0, groupValueArray, 0, values.length);
+        this.groupValues = new GroupValues(groupValueArray, groupHeader);
     }
 
     /**

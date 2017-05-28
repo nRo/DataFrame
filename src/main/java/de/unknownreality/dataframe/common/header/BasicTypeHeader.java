@@ -25,8 +25,6 @@ package de.unknownreality.dataframe.common.header;
 import de.unknownreality.dataframe.DataFrameColumn;
 import de.unknownreality.dataframe.DataFrameRuntimeException;
 import de.unknownreality.dataframe.common.Header;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -34,7 +32,6 @@ import java.util.*;
  * Created by Alex on 09.03.2016.
  */
 public abstract class BasicTypeHeader<T> implements Header<T> {
-    private static Logger log = LoggerFactory.getLogger(BasicTypeHeader.class);
     private final Map<T, Integer> headerMap = new HashMap<>();
     private final List<T> headers = new ArrayList<>();
     private final Map<T, Class<? extends Comparable>> typesMap = new HashMap<>();
@@ -126,6 +123,9 @@ public abstract class BasicTypeHeader<T> implements Header<T> {
      */
     @Override
     public boolean equals(Object other) {
+        if(other == null){
+            return false;
+        }
         if (other == this) {
             return true;
         }
@@ -146,6 +146,9 @@ public abstract class BasicTypeHeader<T> implements Header<T> {
         }
         return true;
     }
+
+
+
 
     /**
      * Returns the column class for an input column name
@@ -278,6 +281,9 @@ public abstract class BasicTypeHeader<T> implements Header<T> {
 
             @Override
             public T next() {
+                if(i >= headers.size()){
+                    throw new NoSuchElementException(String.format("element not found: index out of bounds %s >= %s]",i,headers.size()));
+                }
                 return headers.get(i++);
             }
         };

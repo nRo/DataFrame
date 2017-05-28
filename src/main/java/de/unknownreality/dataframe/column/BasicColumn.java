@@ -134,7 +134,7 @@ public abstract class BasicColumn<T extends Comparable<T>, C extends BasicColumn
 
             @Override
             public void remove() {
-
+                throw new UnsupportedOperationException("remove is not supported by this iterator");
             }
 
             @Override
@@ -144,6 +144,9 @@ public abstract class BasicColumn<T extends Comparable<T>, C extends BasicColumn
 
             @Override
             public T next() {
+                if(index >= values.length){
+                    throw new NoSuchElementException(String.format("element not found: index out of bounds %s >= %s]",index,values.length));
+                }
                 return values[index++];
             }
         };
@@ -154,9 +157,7 @@ public abstract class BasicColumn<T extends Comparable<T>, C extends BasicColumn
      * @return set of values in this column
      */
     public Set<T> uniq(){
-        Set<T> uniq = new HashSet<>(Arrays.asList(values));
-        uniq.remove(null);
-        return uniq;
+        return new HashSet<>(Arrays.asList(values));
     }
 
 
