@@ -26,6 +26,7 @@ import de.unknownreality.dataframe.column.*;
 import de.unknownreality.dataframe.common.DataContainer;
 import de.unknownreality.dataframe.common.mapping.DataMapper;
 import de.unknownreality.dataframe.filter.FilterPredicate;
+import de.unknownreality.dataframe.filter.compile.PredicateCompiler;
 import de.unknownreality.dataframe.group.DataGrouping;
 import de.unknownreality.dataframe.group.GroupUtil;
 import de.unknownreality.dataframe.index.Indices;
@@ -141,10 +142,8 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
      */
     @SuppressWarnings("unchecked")
     public DataFrame addColumn(DataFrameColumn column) {
-        if (!columnList.isEmpty()) {
-            if (column.size() != size) {
-                throw new DataFrameRuntimeException("column lengths must be equal");
-            }
+        if (!columnList.isEmpty() && column.size() != size) {
+            throw new DataFrameRuntimeException("column lengths must be equal");
         }
         columnList.add(column);
         if (column.getDataFrame() != null && column.getDataFrame() != this) {
@@ -454,7 +453,7 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
     public DataFrame removeColumn(String header) {
         DataFrameColumn column = getColumn(header);
         if (column == null) {
-            log.error("error column not found '" + header + "'");
+            log.error("error column not found {}", header);
             return this;
         }
         return removeColumn(column);
@@ -531,6 +530,9 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
         return this;
     }
 
+
+
+
     /**
      * Returns a new data frame with all rows from this data frame where a specified column value equals
      * an input value.
@@ -539,9 +541,11 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
      * @param value   input value
      * @return new data frame including the found rows
      */
-    public DataFrame find(String colName, Comparable value) {
-        return find(FilterPredicate.eq(colName, value));
+    public DataFrame select(String colName, Comparable value) {
+        return select(FilterPredicate.eq(colName, value));
     }
+
+
 
     /**
      * Returns the first found data row from this data frame where a specified column value equals
@@ -551,8 +555,8 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
      * @param value   input value
      * @return first found data row
      */
-    public DataRow findFirst(String colName, Comparable value) {
-        return findFirst(FilterPredicate.eq(colName, value));
+    public DataRow selectFirst(String colName, Comparable value) {
+        return selectFirst(FilterPredicate.eq(colName, value));
     }
 
 
@@ -561,15 +565,88 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
      *
      * @param predicate input predicate
      * @return first found data row
-     * @see #find(FilterPredicate)
+     * @see #select(FilterPredicate)
      */
-    public DataRow findFirst(FilterPredicate predicate) {
+    public DataRow selectFirst(FilterPredicate predicate) {
         for (DataRow row : this) {
             if (predicate.valid(row)) {
                 return row;
             }
         }
         return null;
+    }
+
+
+    /**
+     * Returns a new data frame based on filtered rows from this data frame.<br>
+     * Rows that are valid according to the input predicate remain in the new data frame.<br>
+     * <p><code>if(predicate.valid(row)) -&gt; add(row)</code></p>
+     *
+     * @param predicate filter predicate
+     * @return new data frame including the found row
+     * @see #filter(FilterPredicate)
+     */
+    public DataFrame select(FilterPredicate predicate) {
+        List<DataRow> rows = findRows(predicate);
+        DataFrame df = new DataFrame();
+        df.set(header.copy(), rows, indices);
+        return df;
+    }
+
+
+    /**
+     * Returns a new data frame based on filtered rows from this data frame.<br>
+     * Rows that are valid according to the input predicate remain in the new data frame.<br>
+     * The predicate is compiled from the input string.<br>
+     * <p><code>if(predicate.valid(row)) -&gt; add(row)</code></p>
+     *
+     * @param predicateString predicate string
+     * @return new data frame including the found row
+     * @see #select(FilterPredicate)
+     */
+    public DataFrame select(String predicateString) {
+        return select(PredicateCompiler.compile(predicateString));
+    }
+
+    /**
+     * Returns a new data frame with all rows from this data frame where a specified column value equals
+     * an input value.
+     *
+     * @param colName column name
+     * @param value   input value
+     * @return new data frame including the found rows
+     * @deprecated use {@link #select(String,Comparable)} instead.
+     */
+    @Deprecated
+    public DataFrame find(String colName, Comparable value) {
+        return select(colName, value);
+    }
+
+    /**
+     * Returns the first found data row from this data frame where a specified column value equals
+     * an input value.
+     *
+     * @param colName column name
+     * @param value   input value
+     * @return first found data row
+     * @deprecated use {@link #selectFirst(String,Comparable)} instead.
+     */
+    @Deprecated
+    public DataRow findFirst(String colName, Comparable value) {
+        return selectFirst(colName, value);
+    }
+
+
+    /**
+     * Returns the first found data row from this data frame matching an input predicate.
+     *
+     * @param predicate input predicate
+     * @return first found data row
+     * @deprecated use {@link #selectFirst(FilterPredicate)} instead.
+     */
+    @Deprecated
+    public DataRow findFirst(FilterPredicate predicate) {
+        return selectFirst(predicate);
     }
 
 
@@ -596,12 +673,11 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
      * @param predicate filter predicate
      * @return new data frame including the found row
      * @see #filter(FilterPredicate)
+     * @deprecated use {@link #select(FilterPredicate)} instead.
      */
+    @Deprecated
     public DataFrame find(FilterPredicate predicate) {
-        List<DataRow> rows = findRows(predicate);
-        DataFrame df = new DataFrame();
-        df.set(header.copy(), rows, indices);
-        return df;
+        return select(predicate);
     }
 
     /**

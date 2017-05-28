@@ -23,6 +23,7 @@
 package de.unknownreality.dataframe.filter;
 
 import de.unknownreality.dataframe.common.Row;
+import de.unknownreality.dataframe.filter.compile.PredicateCompiler;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -32,7 +33,7 @@ import java.util.regex.Pattern;
  */
 public abstract class FilterPredicate {
 
-    public static FilterPredicate EMPTY = empty();
+    public static final FilterPredicate EMPTY_FILTER = empty();
 
     /**
      * Returns <tt>true</tt> if the row is valid for this predicate
@@ -100,6 +101,18 @@ public abstract class FilterPredicate {
      */
     public FilterPredicate xor(FilterPredicate p) {
         return FilterPredicate.xor(this, p);
+    }
+
+
+    /**
+     * Creates a new <tt>NOR</tt> predicate using this predicate and an input predicate
+     *
+     * @param p input predicate
+     * @return <tt>NOR</tt> predicate
+     * @see #xor(FilterPredicate, FilterPredicate)
+     */
+    public FilterPredicate nor(FilterPredicate p) {
+        return FilterPredicate.nor(this, p);
     }
 
     /**
@@ -315,6 +328,30 @@ public abstract class FilterPredicate {
     }
 
     /**
+     * Returns <tt>true</tt> if one input predicate returns <tt>true</tt> and the other predicate returns <tt>false</tt>.
+     * <code>return !p1.valid(row) AND !p2.valid(row)</code>
+     *
+     * @param p1 first input predicate
+     * @param p2 second input predicate
+     * @return <tt>true</tt> if one input predicate returns <tt>true</tt> and the other returns <tt>false</tt>
+     */
+    public static FilterPredicate nor(final FilterPredicate p1, final FilterPredicate p2) {
+        return new FilterPredicate() {
+            @Override
+            public boolean valid(Row row) {
+                boolean p1v = p1.valid(row);
+                boolean p2v = p2.valid(row);
+                return !p1v && !p2v;
+            }
+
+            @Override
+            public String toString() {
+                return "(" + p1.toString() + ") NOR (" + p2.toString() + ")";
+            }
+        };
+    }
+
+    /**
      * Creates a {@link ComparePredicate} using {@link de.unknownreality.dataframe.filter.ComparePredicate.Operation#NE not equals operation}
      *
      * @param name  row column name
@@ -476,6 +513,10 @@ public abstract class FilterPredicate {
      */
     public static FilterPredicate matches(final String name, String patternString) {
         return new MatchPredicate(name, patternString);
+    }
+
+    public static FilterPredicate compile(String predicateString){
+        return PredicateCompiler.compile(predicateString);
     }
 
 }
