@@ -33,7 +33,7 @@ import java.util.LinkedHashMap;
 public class DataFrameBuilder {
     private final LinkedHashMap<String, DataFrameColumn> columns = new LinkedHashMap<>();
     private final DataContainer<?, ?> dataContainer;
-    private FilterPredicate filterPredicate = FilterPredicate.EMPTY;
+    private FilterPredicate filterPredicate = FilterPredicate.EMPTY_FILTER;
     private DataFrameBuilder(DataContainer dataContainer) {
         this.dataContainer = dataContainer;
     }

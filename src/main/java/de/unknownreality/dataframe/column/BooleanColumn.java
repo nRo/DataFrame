@@ -23,13 +23,9 @@
 package de.unknownreality.dataframe.column;
 
 
-import de.unknownreality.dataframe.DataFrameColumn;
-import de.unknownreality.dataframe.MapFunction;
 import de.unknownreality.dataframe.common.Row;
 import de.unknownreality.dataframe.common.parser.Parser;
 import de.unknownreality.dataframe.common.parser.ParserUtil;
-
-import java.util.*;
 
 /**
  * Created by Alex on 09.03.2016.

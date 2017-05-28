@@ -28,9 +28,6 @@ import de.unknownreality.dataframe.filter.FilterPredicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.ParseException;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -38,6 +35,8 @@ import java.util.Map;
  */
 public class DataFrameConverter {
     private static final Logger log = LoggerFactory.getLogger(DataFrameConverter.class);
+
+    private DataFrameConverter(){}
     /**
      * Converts a parent data container to a data frame.
      * The required column information is provided by a column information map.
@@ -51,7 +50,7 @@ public class DataFrameConverter {
      * @return created data frame
      */
     @SuppressWarnings("unchecked")
-    public static DataFrame fromDataContainer(DataContainer<?, ?> reader, LinkedHashMap<String, DataFrameColumn> columns, FilterPredicate filterPredicate) {
+    public static DataFrame fromDataContainer(DataContainer<?, ?> reader, Map<String, DataFrameColumn> columns, FilterPredicate filterPredicate) {
         if(reader.getHeader().size() == 0){
             DataFrame dataFrame = new DataFrame();
             for(DataFrameColumn column : columns.values()){
@@ -108,7 +107,7 @@ public class DataFrameConverter {
      * @return created data frame
      */
     @SuppressWarnings("unchecked")
-    public static DataFrame fromDataContainer(DataContainer<?, ?> reader, LinkedHashMap<String, DataFrameColumn> columns) {
-        return fromDataContainer(reader,columns,FilterPredicate.EMPTY);
+    public static DataFrame fromDataContainer(DataContainer<?, ?> reader, Map<String, DataFrameColumn> columns) {
+        return fromDataContainer(reader,columns,FilterPredicate.EMPTY_FILTER);
     }
 }

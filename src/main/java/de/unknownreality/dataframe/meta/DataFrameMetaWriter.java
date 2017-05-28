@@ -43,6 +43,8 @@ import java.io.File;
 public class DataFrameMetaWriter {
     private static final Logger logger = LoggerFactory.getLogger(DataFrameMetaWriter.class);
 
+
+    private DataFrameMetaWriter(){}
     /**
      * Writes a data frame meta information to a file
      *

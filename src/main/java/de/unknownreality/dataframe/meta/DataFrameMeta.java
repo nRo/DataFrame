@@ -39,7 +39,7 @@ public class DataFrameMeta {
 
     private Class<? extends ReaderBuilder> readerBuilderClass;
     private Map<String, String> attributes = new HashMap<>();
-    private LinkedHashMap<String, Class<? extends DataFrameColumn>> columns = new LinkedHashMap<>();
+    private Map<String, Class<? extends DataFrameColumn>> columns = new LinkedHashMap<>();
 
     /**
      * Creates data frame meta information
@@ -86,7 +86,7 @@ public class DataFrameMeta {
      *
      * @return column name/type map
      */
-    public LinkedHashMap<String, Class<? extends DataFrameColumn>> getColumns() {
+    public Map<String, Class<? extends DataFrameColumn>> getColumns() {
         return columns;
     }
 
@@ -103,7 +103,7 @@ public class DataFrameMeta {
 
     }
 
-    public DataFrameMeta(LinkedHashMap<String, Class<? extends DataFrameColumn>> columns,
+    public DataFrameMeta(Map<String, Class<? extends DataFrameColumn>> columns,
                          Class<? extends ReaderBuilder> readerBuilderClass, Map<String, String> attributes) {
         this.columns = columns;
         this.readerBuilderClass = readerBuilderClass;

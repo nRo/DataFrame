@@ -64,8 +64,9 @@ public class CSVFileReader extends CSVReader {
      */
     @Override
     public CSVIterator iterator() {
+        InputStream inputStream = null;
         try {
-            InputStream inputStream = new FileInputStream(file);
+            inputStream = new FileInputStream(file);
             if (gzipped) {
                 try {
                     inputStream = new GZIPInputStream(inputStream);
@@ -75,8 +76,7 @@ public class CSVFileReader extends CSVReader {
             }
             return new CSVIterator(inputStream, getHeader(), getSeparator(), getIgnorePrefixes(), skip);
         } catch (FileNotFoundException e) {
-            log.error("file not found: {}", file, e);
+            throw new CSVRuntimeException(String.format("file not found: %s",file.getAbsolutePath()));
         }
-        return null;
     }
 }

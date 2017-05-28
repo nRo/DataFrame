@@ -22,9 +22,6 @@
 
 package de.unknownreality.dataframe.csv;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 
@@ -32,7 +29,6 @@ import java.nio.charset.StandardCharsets;
  * Created by Alex on 12.03.2016.
  */
 public class CSVStringReader extends CSVReader {
-    private static Logger log = LoggerFactory.getLogger(CSVStringReader.class);
     private final String content;
     private int skip = 0;
 

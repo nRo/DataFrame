@@ -25,6 +25,7 @@ package de.unknownreality.dataframe.common;
 import de.unknownreality.dataframe.DataFrame;
 
 import java.io.File;
+import java.io.PrintStream;
 import java.util.Map;
 
 /**
@@ -54,6 +55,15 @@ public interface DataWriter {
      * @param dataContainer data container to print
      */
     void print(DataContainer<? extends Header, ? extends Row> dataContainer);
+
+    /**
+     * Prints a data container to a {@link java.io.PrintStream}
+     *
+     * @param  printStream target stream
+     * @param dataContainer data container to print
+     */
+
+    void print(PrintStream printStream,DataContainer<? extends Header, ? extends Row> dataContainer);
 
     /**
      * Returns a attributes map used by the corresponding reader builder

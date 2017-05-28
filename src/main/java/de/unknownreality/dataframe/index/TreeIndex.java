@@ -87,10 +87,10 @@ public class TreeIndex implements Index{
     public void update(DataRow dataRow) {
         remove(dataRow);
         Comparable[] values = createValues(dataRow);
-        add_rec(root, 0, values, dataRow.getIndex());
+        addRec(root, 0, values, dataRow.getIndex());
     }
 
-    private void add_rec(TreeNode node, int index, Comparable[] values, Integer rowIndex) {
+    private void addRec(TreeNode node, int index, Comparable[] values, Integer rowIndex) {
         if (index == values.length) {
             if(unique && node.hasIndices()){
                 throw new DataFrameRuntimeException(String.format("error adding row to index: duplicated values found '%s'", Arrays.toString(values)));
@@ -105,7 +105,7 @@ public class TreeIndex implements Index{
             child = new TreeNode(node, value);
             node.addChild(child);
         }
-        add_rec(child, index + 1, values, rowIndex);
+        addRec(child, index + 1, values, rowIndex);
     }
 
 
@@ -116,17 +116,17 @@ public class TreeIndex implements Index{
             return;
         }
         node.removeIndex(dataRow.getIndex());
-        remove_rec(node);
+        removeRec(node);
     }
 
-    private void remove_rec(TreeNode node) {
+    private void removeRec(TreeNode node) {
         if (node.hasIndices() || node.hasChildren()) {
             return;
         }
         if (node.getParent() != null) {
             TreeNode parent = node.getParent();
             parent.removeChild(node.getValue());
-            remove_rec(parent);
+            removeRec(parent);
         }
     }
 
@@ -144,7 +144,7 @@ public class TreeIndex implements Index{
         if (values.length != columnIndexMap.size()) {
             throw new IllegalArgumentException("value for each index column required");
         }
-        TreeNode node = find_rec(root, 0, values);
+        TreeNode node = findRec(root, 0, values);
         if (node == null || !node.hasIndices()) {
             return new ArrayList<>(0);
         }
@@ -152,7 +152,7 @@ public class TreeIndex implements Index{
     }
 
 
-    private TreeNode find_rec(TreeNode node, int index, Comparable[] values) {
+    private TreeNode findRec(TreeNode node, int index, Comparable[] values) {
         if (index == values.length) {
             return node;
         }
@@ -161,7 +161,7 @@ public class TreeIndex implements Index{
         if ((child = node.getChild(value)) == null) {
             return null;
         }
-        return find_rec(child, index + 1, values);
+        return findRec(child, index + 1, values);
 
     }
 

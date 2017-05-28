@@ -22,10 +22,12 @@
 
 package de.unknownreality.dataframe.csv;
 
+import de.unknownreality.dataframe.DataFrameRuntimeException;
+
 /**
  * Created by Alex on 09.03.2016.
  */
-public class CSVRuntimeException extends RuntimeException {
+public class CSVRuntimeException extends DataFrameRuntimeException {
     public CSVRuntimeException(String message) {
         super(message);
     }

@@ -45,6 +45,11 @@ import java.util.*;
 public class DataFrameMetaReader {
     private static Logger logger = LoggerFactory.getLogger(DataFrameMetaReader.class);
 
+
+    private DataFrameMetaReader(){}
+
+
+
     /**
      * Map containing legacy package names.
      * This map is used to rename Reader and Column classes in an old Meta file.
@@ -68,10 +73,10 @@ public class DataFrameMetaReader {
      * @return class name in current packages
      */
     private static String remapLegacyPackages(String className) {
-        for (String legacyPackage : LEGACY_PACKAGES.keySet()) {
-            if (className.contains(legacyPackage)) {
-                className = className.replace(legacyPackage, LEGACY_PACKAGES.get(legacyPackage));
-                logger.warn("old package name found '{}'", legacyPackage);
+        for(Map.Entry<String,String> e : LEGACY_PACKAGES.entrySet()){
+            if (className.contains(e.getKey())) {
+                className = className.replace(e.getKey(), e.getValue());
+                logger.warn("old package name found '{}'", e.getKey());
             }
         }
         return className;

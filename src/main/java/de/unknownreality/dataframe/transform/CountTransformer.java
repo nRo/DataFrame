@@ -25,9 +25,7 @@ package de.unknownreality.dataframe.transform;
 import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.DataFrameColumn;
 import de.unknownreality.dataframe.DataFrameRuntimeException;
-import de.unknownreality.dataframe.Values;
 import de.unknownreality.dataframe.column.IntegerColumn;
-import de.unknownreality.dataframe.column.NumberColumn;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

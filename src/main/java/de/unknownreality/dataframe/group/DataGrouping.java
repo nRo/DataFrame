@@ -122,13 +122,13 @@ public class DataGrouping implements Iterable<DataGroup> {
      * @return list of found data groups
      */
     private List<DataGroup> findGroups(FilterPredicate predicate) {
-        List<DataGroup> groups = new ArrayList<>();
+        List<DataGroup> groupList = new ArrayList<>();
         for (DataGroup g : this) {
             if (predicate.valid(g.getGroupValues())) {
-                groups.add(g);
+                groupList.add(g);
             }
         }
-        return groups;
+        return groupList;
     }
 
     /**
@@ -143,9 +143,9 @@ public class DataGrouping implements Iterable<DataGroup> {
      * @return <tt>self</tt> for method chaining
      */
     public DataGrouping filter(FilterPredicate predicate) {
-        List<DataGroup> groups = findGroups(predicate);
-        this.groups = new DataGroup[groups.size()];
-        groups.toArray(this.groups);
+        List<DataGroup> groupList = findGroups(predicate);
+        this.groups = new DataGroup[groupList.size()];
+        groupList.toArray(this.groups);
         return this;
     }
 
@@ -159,8 +159,8 @@ public class DataGrouping implements Iterable<DataGroup> {
      * @see #filter(FilterPredicate)
      */
     public DataGrouping find(FilterPredicate predicate) {
-        List<DataGroup> groups = findGroups(predicate);
-        return new DataGrouping(groups, groupColumns);
+        List<DataGroup> groupList = findGroups(predicate);
+        return new DataGrouping(groupList, groupColumns);
     }
 
     /**
@@ -271,6 +271,9 @@ public class DataGrouping implements Iterable<DataGroup> {
 
             @Override
             public DataGroup next() {
+                if(index >= groups.length){
+                    throw new NoSuchElementException(String.format("group not found: index out of bounds %s >= %s]",index,groups.length));
+                }
                 return groups[index++];
             }
 

@@ -37,6 +37,7 @@ import java.util.Comparator;
  */
 public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFrameColumn<T, C>> implements Iterable<T> {
     private static final Logger log = LoggerFactory.getLogger(DataFrameColumn.class);
+    public static final String ERROR_APPENDING = "error appending value to column";
     private String name;
     private DataFrame dataFrame;
 
@@ -115,7 +116,6 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
      * @return double value
      */
     public Double toDouble(int index){
-        Double d;
         Comparable v = get(index);
         try{
             return Number.class.cast(v).doubleValue();
@@ -309,7 +309,7 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
         try {
             validateAppend();
         } catch (DataFrameException e) {
-            log.warn("error appending value to column", e);
+            log.warn(ERROR_APPENDING, e);
             return false;
         }
         return doAppend(value);
@@ -328,7 +328,7 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
         try {
             validateAppend();
         } catch (DataFrameException e) {
-            log.warn("error appending value to column", e);
+            log.warn(ERROR_APPENDING, e);
             return false;
         }
         return doAppend(getValueFromRow(row,headerName));
@@ -347,7 +347,7 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
         try {
             validateAppend();
         } catch (DataFrameException e) {
-            log.warn("error appending value to column", e);
+            log.warn(ERROR_APPENDING, e);
             return false;
         }
         return doAppend(getValueFromRow(row,index));
@@ -367,8 +367,8 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
         try {
             return append((T) value);
         } catch (Exception e) {
-            log.warn("error appending value to column", e);
-            throw new DataFrameRuntimeException("error appending value to column", e);
+            log.warn(ERROR_APPENDING, e);
+            throw new DataFrameRuntimeException(ERROR_APPENDING, e);
         }
     }
 
@@ -393,7 +393,7 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
         try {
             validateAppend();
         } catch (DataFrameException e) {
-            log.warn("error appending value to column", e);
+            log.warn(ERROR_APPENDING, e);
             return false;
         }
         return doAppendAll(c);

@@ -192,26 +192,31 @@ public class CSVWriter implements DataWriter {
 
     @Override
     public void print(DataContainer<? extends Header, ? extends Row> dataContainer) {
+        print(System.out,dataContainer);
+    }
+
+    @Override
+    public void print(PrintStream printWriter,DataContainer<? extends Header, ? extends Row> dataContainer) {
         if (containsHeader) {
             if (headerPrefix != null) {
-                System.out.print(headerPrefix);
+                printWriter.print(headerPrefix);
             }
             for (int i = 0; i < dataContainer.getHeader().size(); i++) {
-                System.out.print(dataContainer.getHeader().get(i).toString());
+                printWriter.print(dataContainer.getHeader().get(i).toString());
                 if (i < dataContainer.getHeader().size() - 1) {
-                    System.out.print(separator);
+                    printWriter.print(separator);
                 }
             }
-            System.out.println();
+            printWriter.println();
         }
         for (Row row : dataContainer) {
             for (int i = 0; i < row.size(); i++) {
-                System.out.print(row.get(i).toString());
+                printWriter.print(row.get(i).toString());
                 if (i < row.size() - 1) {
-                    System.out.print(separator);
+                    printWriter.print(separator);
                 }
             }
-            System.out.println();
+            printWriter.println();
         }
     }
 

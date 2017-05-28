@@ -29,8 +29,8 @@ public class BasicRow<T,H extends Header<T>,V> implements Row<V,T> {
     }
 
     public V get(T headerName) {
-        int index = header.getIndex(headerName);
-        return this.values[index];
+        int headerIndex = header.getIndex(headerName);
+        return this.values[headerIndex];
     }
 
     protected H getHeader(){
@@ -142,7 +142,6 @@ public class BasicRow<T,H extends Header<T>,V> implements Row<V,T> {
      * @return double value
      */
     public Double toDouble(int index){
-        Double d;
         V v = get(index);
         try{
             return Number.class.cast(v).doubleValue();
