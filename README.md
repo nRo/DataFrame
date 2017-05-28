@@ -50,7 +50,7 @@ To build the library from sources:
     <dependency>
         <groupId>de.unknownreality</groupId>
         <artifactId>dataframe</artifactId>
-        <version>0.6-SNAPSHOT</version>
+        <version>0.6.1-SNAPSHOT</version>
     </dependency>
 ...
 </dependencies>
@@ -124,18 +124,33 @@ dataFrame.getIntegerColumn("age").map(new MapFunction<Integer>() {
 });
 ```
 
-Filter and find rows using predicates.
+Filter and select rows using predicates.
 ```java
 //keep users with age between 18 and 60
 users.filter(FilterPredicate.btwn("age",18,60));
 
-//find all rows with age > 18 an first_name == "Max"
-List<DataRow> rows = users.find(
+//find all users with age > 18 an first_name == "Max"
+DataFrame foundUsers = users.select(
       FilterPredicate.and(
               FilterPredicate.gt("age",18),
               FilterPredicate.eq("first_name","Max")
 ));
 
+```
+Create and compile predicates from strings \
+Available value comparison operations: \
+```==, !=, <, <=, >, >=, ~= (regex)``` \
+Available predicate operations: \
+```&&, ||, NOR, XOR ```
+
+```java
+//find all users that are younger than 18 or older users with first_name == "Max"
+DataFrame foundUsers = users.select("(age > 18 && first_name == 'Max') OR (age < 18)");
+
+
+// regex filter
+//find all users where the street begins with A, B or C followed by lowercase characters
+DataFrame foundUsers = users.select("street ~= /[ABC][a-z]+/");
 ```
 
 Sort rows by one or more columns.
