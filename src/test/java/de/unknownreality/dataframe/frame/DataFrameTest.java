@@ -26,6 +26,8 @@ import de.unknownreality.dataframe.*;
 import de.unknownreality.dataframe.column.*;
 import de.unknownreality.dataframe.csv.CSVReader;
 import de.unknownreality.dataframe.csv.CSVReaderBuilder;
+import de.unknownreality.dataframe.filter.compile.PredicateCompiler;
+import de.unknownreality.dataframe.filter.compile.PredicateCompilerException;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -40,6 +42,8 @@ import java.util.List;
 public class DataFrameTest {
     @Rule
     public final ExpectedException exception = ExpectedException.none();
+
+
 
     @Test
     public void testCreation(){
@@ -145,6 +149,17 @@ public class DataFrameTest {
 
     @Test
     public void testNA() {
+
+        Assert.assertEquals(true,Values.NA.isNA(Values.NA));
+        Assert.assertEquals(true,Values.NA.isNA("NA"));
+        Assert.assertEquals(false,Values.NA.isNA(null));
+        Assert.assertEquals(false,Values.NA.isNA(1));
+        Assert.assertEquals(false,Values.NA.isNA("na"));
+        Assert.assertEquals(0,Values.NA.compareTo(Values.NA));
+        Assert.assertEquals(-1,Values.NA.compareTo(1));
+        Assert.assertEquals(-1,Values.NA.compareTo(-1));
+
+
         String[] header = new String[]{"A", "B", "C", "D"};
         Integer[] col1 = new Integer[]{5, 3, 2, 4, 1};
         Double[] col2 = new Double[]{2d, 3d, null, 5d, 2d};
