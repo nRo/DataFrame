@@ -50,13 +50,14 @@ public class PredicateParserTest {
         dataFrame.addColumn(new DoubleColumn("x"));
         dataFrame.addColumn(new IntegerColumn("y"));
         dataFrame.addColumn(new BooleanColumn("z"));
+        dataFrame.addColumn(new BooleanColumn("v"));
         dataFrame.addColumn(new StringColumn("r"));
 
 
-        dataFrame.append("a",1d,5,true,"abc123");
-        dataFrame.append("b",2d,4,true,"abc/123");
-        dataFrame.append("c",3d,3,false,"abc");
-        dataFrame.append("d",4d,2,false,"123");
+        dataFrame.append("a",1d,5,true,true,"abc123");
+        dataFrame.append("b",2d,4,true,false,"abc/123");
+        dataFrame.append("c",3d,3,false,true,"abc");
+        dataFrame.append("d",4d,2,false,false,"123");
 
         FilterPredicate predicate = PredicateCompiler.compile("(name != 'a') AND (x < 3)");
         DataFrame filtered = dataFrame.select(predicate);
@@ -89,6 +90,11 @@ public class PredicateParserTest {
 
         filtered = dataFrame.select("z == true");
         Assert.assertEquals(2,filtered.size());
+
+        filtered = dataFrame.select("(z == true) XOR (v == true)");
+        Assert.assertEquals(2,filtered.size());
+        filtered = dataFrame.select("(z == true) NOR (v == true)");
+        Assert.assertEquals(1,filtered.size());
     }
 
     @Test(expected=PredicateCompilerException.class)
