@@ -166,7 +166,7 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
 
 
     /**
-     * Creates a column for a specified column value type using the default {@link ColumnConverter}.
+     * Creates a column for a specified column value type using the default {@link ColumnTypeMap}.
      *
      * @param type class of column values
      * @param name column name
@@ -174,39 +174,39 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
      * @return <tt>self</tt> for method chaining
      */
     public <T extends Comparable<T>> DataFrame addColumn(Class<T> type, String name) {
-        return addColumn(type, name, ColumnConverter.create());
+        return addColumn(type, name, ColumnTypeMap.create());
     }
 
 
     /**
-     * Creates a column for a specified column value type using the provided {@link ColumnConverter}.
+     * Creates a column for a specified column value type using the provided {@link ColumnTypeMap}.
      *
      * @param type            class of column values
      * @param name            column name
-     * @param columnConverter provided column converter
+     * @param columnTypeMap   provided column type map
      * @param <T>             type of column values
      * @return <tt>self</tt> for method chaining
      * @see #addColumn(Class, String, ColumnAppender)
      */
     @SuppressWarnings("unchecked")
-    public <T extends Comparable<T>> DataFrame addColumn(Class<T> type, String name, ColumnConverter columnConverter) {
-        return addColumn(type, name, columnConverter, null);
+    public <T extends Comparable<T>> DataFrame addColumn(Class<T> type, String name, ColumnTypeMap columnTypeMap) {
+        return addColumn(type, name, columnTypeMap, null);
     }
 
     /**
-     * Creates and adds a new column based on a specified column value type and a {@link ColumnConverter}.
+     * Creates and adds a new column based on a specified column value type and a {@link ColumnTypeMap}.
      *
      * @param type            column value value type
      * @param name            name of new column
-     * @param columnConverter column converter (value type / column class mapper)
+     * @param columnTypeMap   column type map (value type / column class mapper)
      * @param appender        column appender (value generator)
      * @param <T>             type of column values
      * @param <C>             type of created column
      * @return <tt>self</tt> for method chaining
      * @see #addColumn(Class, String, ColumnAppender)
      */
-    public <T extends Comparable<T>, C extends DataFrameColumn<T, C>> DataFrame addColumn(Class<T> type, String name, ColumnConverter columnConverter, ColumnAppender<T> appender) {
-        Class<C> columnType = columnConverter.getColumnType(type);
+    public <T extends Comparable<T>, C extends DataFrameColumn<T, C>> DataFrame addColumn(Class<T> type, String name, ColumnTypeMap columnTypeMap, ColumnAppender<T> appender) {
+        Class<C> columnType = columnTypeMap.getColumnType(type);
         if (columnType == null) {
             throw new DataFrameRuntimeException(String.format("no  column type found for %s", type.getName()));
         }
@@ -533,6 +533,17 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
     }
 
 
+    /**
+     * Shuffles all rows
+     * @return <tt>self</tt> for method chaining
+     */
+    public DataFrame shuffle(){
+        List<DataRow> rows = getRows(0, size);
+        Collections.shuffle(rows);
+        set(rows);
+        return this;
+    }
+
 
 
     /**
@@ -565,6 +576,16 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
     /**
      * Returns the first found data row from this data frame matching an input predicate.
      *
+     * @param predicateString input predicate string
+     * @return first found data row
+     * @see #select(FilterPredicate)
+     */
+    public DataRow selectFirst(String predicateString) {
+        return selectFirst(FilterPredicate.compile(predicateString));
+    }
+    /**
+     * Returns the first found data row from this data frame matching an input predicate.
+     *
      * @param predicate input predicate
      * @return first found data row
      * @see #select(FilterPredicate)
@@ -589,7 +610,7 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
      * @see #filter(FilterPredicate)
      */
     public DataFrame select(FilterPredicate predicate) {
-        List<DataRow> rows = findRows(predicate);
+        List<DataRow> rows = selectRows(predicate);
         DataFrame df = new DataFrame();
         df.set(header.copy(), rows, indices);
         return df;
@@ -652,6 +673,22 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
     }
 
 
+
+    /**
+     * Filters data rows that are not valid according to an input predicate.<br>
+     * Data rows are filtered by their column values. <br>
+     * If a data row is <b>filtered</b> if it is <b>not valid</b> according to the predicate.<br>
+     * The filtered data rows are removed from this data frame.<br>
+     * <p><code>if(!predicate.valid(row)) -&gt; remove(row)</code></p>
+     *
+     * @param predicateString filter predicate string
+     * @return <tt>self</tt> for method chaining
+     */
+    public DataFrame filter(String predicateString) {
+        filter(FilterPredicate.compile(predicateString));
+        return this;
+    }
+
     /**
      * Filters data rows that are not valid according to an input predicate.<br>
      * Data rows are filtered by their column values. <br>
@@ -682,13 +719,23 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
         return select(predicate);
     }
 
+
+    /**
+     * Finds data rows using a {@link FilterPredicate}.
+     *
+     * @param predicateString input predicate string
+     * @return list of found data rows
+     */
+    public List<DataRow> selectRows(String predicateString) {
+        return selectRows(FilterPredicate.compile(predicateString));
+    }
     /**
      * Finds data rows using a {@link FilterPredicate}.
      *
      * @param predicate input predicate
      * @return list of found data rows
      */
-    public List<DataRow> findRows(FilterPredicate predicate) {
+    public List<DataRow> selectRows(FilterPredicate predicate) {
         List<DataRow> rows = new ArrayList<>();
         for (DataRow row : this) {
             if (predicate.valid(row)) {
@@ -696,6 +743,17 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
             }
         }
         return rows;
+    }
+
+    /**
+     * Finds data rows using a {@link FilterPredicate}.
+     *
+     * @param predicate input predicate
+     * @deprecated use {@link #selectRows(FilterPredicate)} instead.
+     */
+    @Deprecated
+    public List<DataRow> findRows(FilterPredicate predicate) {
+        return selectRows(predicate);
     }
 
 
@@ -962,6 +1020,17 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
             throw new DataFrameRuntimeException(String.format("column '%s' has wrong type", name));
         }
         return cl.cast(column);
+    }
+
+    /**
+     * Returns a {@link NumberColumn}
+     * If the column is not found or has the wrong type a {@link DataFrameRuntimeException} is thrown.
+     *
+     * @param name column name
+     * @return found column
+     */
+    public NumberColumn getNumberColumn(String name) {
+        return getColumn(name, NumberColumn.class);
     }
 
     /**
@@ -1326,7 +1395,7 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
             @Override
             public DataRow next() {
                 if (index == size()){
-                    throw new NoSuchElementException("dataframe index out of bounds");
+                    throw new NoSuchElementException("index out of bounds");
                 }
                 return getRow(index++);
             }

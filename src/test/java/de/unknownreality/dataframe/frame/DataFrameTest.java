@@ -26,8 +26,6 @@ import de.unknownreality.dataframe.*;
 import de.unknownreality.dataframe.column.*;
 import de.unknownreality.dataframe.csv.CSVReader;
 import de.unknownreality.dataframe.csv.CSVReaderBuilder;
-import de.unknownreality.dataframe.filter.compile.PredicateCompiler;
-import de.unknownreality.dataframe.filter.compile.PredicateCompilerException;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -50,7 +48,7 @@ public class DataFrameTest {
         DataFrame dataFrame = new DataFrame();
         dataFrame.addColumn(new IntegerColumn("id"));
         dataFrame.addColumns(new StringColumn("first"),new StringColumn("last"));
-        dataFrame.addColumn(Double.class,"value", ColumnConverter.create().addType(Double.class,DoubleColumn.class));
+        dataFrame.addColumn(Double.class,"value", ColumnTypeMap.create().addType(Double.class,DoubleColumn.class));
         dataFrame.removeColumn("value");
         dataFrame.addColumn(Double.class,"value");
         dataFrame.append(1,"A","B",1d);
@@ -62,7 +60,7 @@ public class DataFrameTest {
             }
         });
         Assert.assertEquals("A-B",dataFrame.getRow(0).getString("full"));
-        dataFrame.addColumn(Integer.class, "int_value", ColumnConverter.create(), new ColumnAppender<Integer>() {
+        dataFrame.addColumn(Integer.class, "int_value", ColumnTypeMap.create(), new ColumnAppender<Integer>() {
             @Override
             public Integer createRowValue(DataRow row) {
                 return row.getNumber("value").intValue();
@@ -76,18 +74,28 @@ public class DataFrameTest {
         Assert.assertEquals(true,dataFrame.getRow(0).isNA(colIndex));
         dataFrame.removeColumn("int_value");
 
+        int oldSize = dataFrame.size();
+
+        dataFrame.removeColumn("___");
+        Assert.assertEquals(oldSize,dataFrame.size());
+
         DataFrame dataFrame2 = new DataFrame();
         dataFrame2.addColumn(new IntegerColumn("id"));
         dataFrame2.addColumn(new StringColumn("first"));
         dataFrame2.addColumn(new StringColumn("last"));
         dataFrame2.addColumn(new StringColumn("full"));
-        dataFrame2.addColumn(new DoubleColumn("value"));
+
+        DoubleColumn valueColumn = new DoubleColumn("value");
+        dataFrame2.addColumn(valueColumn);
         dataFrame2.append(2,"A","C","A-C",2d);
         dataFrame = dataFrame.concat(dataFrame2);
         Assert.assertEquals(2,dataFrame.size());
         Assert.assertEquals(2d,dataFrame.getRow(1).toDouble("value"),0d);
 
 
+        Assert.assertEquals(valueColumn,dataFrame2.getDoubleColumn("value"));
+        Assert.assertEquals(valueColumn,dataFrame2.getNumberColumn("value"));
+        Assert.assertEquals(valueColumn,dataFrame2.getColumn("value"));
     }
     @Test
     public void testReader() {
