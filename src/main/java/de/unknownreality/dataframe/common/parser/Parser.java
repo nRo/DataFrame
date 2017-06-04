@@ -32,5 +32,13 @@ import java.text.ParseException;
 public abstract class Parser<T> {
 
     public abstract T parse(String s) throws ParseException;
+    public T parseOrNull(String s){
+        try{
+            return parse(s);
+        }
+        catch (Exception e){
+            return null;
+        }
+    }
 
 }

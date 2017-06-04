@@ -32,7 +32,7 @@ import java.util.Map;
 /**
  * Created by Alex on 22.06.2016.
  */
-public class ColumnConverter {
+public class ColumnTypeMap {
 
     private static final Map<Class<?>, Class<? extends DataFrameColumn>> DEFAULT_COLUMN_TYPES = new HashMap<>();
 
@@ -51,8 +51,8 @@ public class ColumnConverter {
     private final Map<Class<?>, Class<? extends DataFrameColumn>> columnTypesMap = new HashMap<>();
 
     /** Do not instantiate ColumnConverter. */
-    private ColumnConverter() {
-        this.columnTypesMap.putAll(ColumnConverter.DEFAULT_COLUMN_TYPES);
+    private ColumnTypeMap() {
+        this.columnTypesMap.putAll(ColumnTypeMap.DEFAULT_COLUMN_TYPES);
     }
 
     /**
@@ -81,7 +81,7 @@ public class ColumnConverter {
      * @param <C>        column type
      * @return <tt>self</tt> for method chaining
      */
-    public <T extends Comparable<T>, C extends DataFrameColumn<T, C>> ColumnConverter addType(Class<T> type, Class<C> columnType) {
+    public <T extends Comparable<T>, C extends DataFrameColumn<T, C>> ColumnTypeMap addType(Class<T> type, Class<C> columnType) {
         columnTypesMap.put(type, columnType);
         return this;
     }
@@ -92,8 +92,8 @@ public class ColumnConverter {
      *
      * @return column converter
      */
-    public static ColumnConverter create() {
-        return new ColumnConverter();
+    public static ColumnTypeMap create() {
+        return new ColumnTypeMap();
     }
 
 

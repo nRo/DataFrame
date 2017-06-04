@@ -41,6 +41,8 @@ public abstract class BasicColumn<T extends Comparable<T>, C extends BasicColumn
 
     private int size = 0;
 
+    protected T[] values;
+
     @SuppressWarnings("unchecked")
     public BasicColumn(String name) {
         this.size = 0;
@@ -91,7 +93,6 @@ public abstract class BasicColumn<T extends Comparable<T>, C extends BasicColumn
         }
     }
 
-    protected T[] values;
 
     @Override
     protected void doReverse() {

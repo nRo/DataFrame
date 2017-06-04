@@ -194,7 +194,7 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
      */
     public C subtract(NumberColumn column) {
         if (column.size() != size()) {
-            throw new IllegalArgumentException("'divide' required column of same size");
+            throw new IllegalArgumentException("'subtract' requires column of same size");
         }
         int naCount = 0;
         int size = size();
@@ -222,7 +222,7 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
      */
     public C multiply(NumberColumn column) {
         if (column.size() != size()) {
-            throw new IllegalArgumentException("'divide' required column of same size");
+            throw new IllegalArgumentException("'multiply' requires column of same size");
         }
         int naCount = 0;
         int size = size();
@@ -250,7 +250,7 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
      */
     public C divide(NumberColumn column) {
         if (column.size() != size()) {
-            throw new IllegalArgumentException("'divide' required column of same size");
+            throw new IllegalArgumentException("'divide' requires column of same size");
         }
         int naCount = 0;
         int size = size();
