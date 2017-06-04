@@ -141,7 +141,7 @@ Create and compile predicates from strings \
 Available value comparison operations: \
 ```==, !=, <, <=, >, >=, ~= (regex)``` \
 Available predicate operations: \
-```&&, ||, NOR, XOR ```
+```&&, ||, NOR, XOR, ^(predicate) (negates the predicate) ```
 
 ```java
 //find all users that are younger than 18 or older users with first_name == "Max"
