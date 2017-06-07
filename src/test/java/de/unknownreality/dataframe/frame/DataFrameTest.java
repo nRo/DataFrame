@@ -178,6 +178,8 @@ public class DataFrameTest {
                         FilterPredicate.ne("name","a").and(FilterPredicate.ne("name","b")),
                         FilterPredicate.lt("x",4).or(FilterPredicate.gt("x",3))
                         ));
+        Assert.assertEquals(2,filtered.size());
+
         filtered = dataFrame.select(
                 FilterPredicate.eq("z",true).nor(FilterPredicate.eq("v",true))
         );
