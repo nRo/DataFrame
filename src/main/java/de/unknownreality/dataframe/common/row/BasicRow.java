@@ -352,6 +352,31 @@ public class BasicRow<T,H extends Header<T>,V> implements Row<V,T> {
         }
     }
 
+    @Override
+    public boolean equals(Object o){
+        if(o == null || !(this.getClass().equals(o.getClass()))){
+            return false;
+        }
+        if(o == this){
+            return true;
+        }
+        BasicRow<?,?,?> r = (BasicRow<?,?,?>)o;
+        for(int i = 0; i < values.length; i++){
+            if(values[i] == null && r.values[i] == null){
+                continue;
+            }
+            if(values[i] == null && r.values[i] != null){
+                return false;
+            }
+            if(values[i] != null && r.values[i] == null){
+                return false;
+            }
+            if(!values[i].equals(r.values[i])){
+                return false;
+            }
+        }
+        return true;
+    }
 
     @Override
     public String toString() {

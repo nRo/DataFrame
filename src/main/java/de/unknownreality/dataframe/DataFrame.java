@@ -700,7 +700,7 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
      * @return <tt>self</tt> for method chaining
      */
     public DataFrame filter(FilterPredicate predicate) {
-        set(findRows(predicate));
+        set(selectRows(predicate));
         return this;
     }
 
@@ -1405,5 +1405,26 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
                 throw new UnsupportedOperationException("remove is not supported for data frames");
             }
         };
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if(o == null || !(o instanceof DataFrame)){
+            return false;
+        }
+        if(o == this){
+            return true;
+        }
+        DataFrame d = (DataFrame)o;
+        if(size() != d.size()){
+            return false;
+        }
+
+        for(int i = 0; i < size(); i++){
+            if(!getRow(i).equals(d.getRow(i))){
+                return false;
+            }
+        }
+        return true;
     }
 }

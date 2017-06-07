@@ -78,6 +78,7 @@ public class DataFrameTest {
 
         dataFrame.removeColumn("___");
         Assert.assertEquals(oldSize,dataFrame.size());
+        ;
 
         DataFrame dataFrame2 = new DataFrame();
         dataFrame2.addColumn(new IntegerColumn("id"));
@@ -153,6 +154,49 @@ public class DataFrameTest {
         Assert.assertEquals(new Integer(999),df.getRow(1).getInteger("A"));
 
         df.getColumn("A").sort();
+    }
+
+    @Test
+    public void testEquals(){
+        DataFrame dataFrame = new DataFrame();
+        dataFrame.addColumn(new StringColumn("name"));
+        dataFrame.addColumn(new DoubleColumn("x"));
+        dataFrame.addColumn(new IntegerColumn("y"));
+        dataFrame.addColumn(new BooleanColumn("z"));
+        dataFrame.addColumn(new BooleanColumn("v"));
+        dataFrame.addColumn(new StringColumn("r"));
+
+
+        dataFrame.append("a",1d,5,true,true,"abc123");
+        dataFrame.append("b",2d,4,true,false,"abc/123");
+        dataFrame.append("c",3d,3,false,true,"abc");
+        dataFrame.append("d",4d,2,false,false,"123");
+
+        DataFrame dataFrame2 = new DataFrame();
+        dataFrame2.addColumn(new StringColumn("name"));
+        dataFrame2.addColumn(new DoubleColumn("x"));
+        dataFrame2.addColumn(new IntegerColumn("y"));
+        dataFrame2.addColumn(new BooleanColumn("z"));
+        dataFrame2.addColumn(new BooleanColumn("v"));
+        dataFrame2.addColumn(new StringColumn("r"));
+
+
+        dataFrame2.append("a",1d,5,true,true,"abc123");
+        dataFrame2.append("b",2d,4,true,false,"abc/123");
+        dataFrame2.append("c",3d,3,false,true,"abc");
+        dataFrame2.append("d",4d,2,false,false,"123");
+
+        Assert.assertEquals(dataFrame,dataFrame2);
+
+        DataRow r = dataFrame2.getRow(0);
+        r.set("name","abc");
+        dataFrame2.update(r);
+        Assert.assertNotEquals(dataFrame,dataFrame2);
+
+        DataFrame dataFrame3 = dataFrame.copy();
+        Assert.assertEquals(dataFrame,dataFrame3);
+
+
     }
 
     @Test
