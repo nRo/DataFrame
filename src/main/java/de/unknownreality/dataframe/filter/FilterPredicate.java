@@ -366,6 +366,18 @@ public abstract class FilterPredicate {
     }
 
     /**
+     * Creates a {@link ColumnComparePredicate} using {@link de.unknownreality.dataframe.filter.ComparePredicate.Operation#NE not equals operation}
+     *
+     * @param nameA  first row column name
+     * @param nameB  second row column name
+     * @return <tt>'not equals'</tt> predicate
+     * @see de.unknownreality.dataframe.filter.ComparePredicate.Operation#NE
+     */
+    public static FilterPredicate neColumn(final String nameA, final String nameB) {
+        return new ColumnComparePredicate(nameA, ComparePredicate.Operation.NE, nameB);
+    }
+
+    /**
      * Creates a {@link ComparePredicate} using {@link de.unknownreality.dataframe.filter.ComparePredicate.Operation#EQ equals operation}
      *
      * @param name  row column name
@@ -376,6 +388,19 @@ public abstract class FilterPredicate {
     public static FilterPredicate eq(final String name, final Object value) {
         return new ComparePredicate(name, ComparePredicate.Operation.EQ, value);
     }
+
+    /**
+     * Creates a {@link ColumnComparePredicate} using {@link de.unknownreality.dataframe.filter.ComparePredicate.Operation#EQ equals operation}
+     *
+     * @param nameA  first row column name
+     * @param nameB  second row column name
+     * @return <tt>'equals'</tt> predicate
+     * @see de.unknownreality.dataframe.filter.ComparePredicate.Operation#EQ
+     */
+    public static FilterPredicate eqColumn(final String nameA, final String nameB) {
+        return new ColumnComparePredicate(nameA, ComparePredicate.Operation.EQ, nameB);
+    }
+
 
     /**
      * Creates a {@link ComparePredicate} using {@link de.unknownreality.dataframe.filter.ComparePredicate.Operation#GT greater than operation}
@@ -390,6 +415,19 @@ public abstract class FilterPredicate {
     }
 
     /**
+     * Creates a {@link ColumnComparePredicate} using {@link de.unknownreality.dataframe.filter.ComparePredicate.Operation#GT greater than operation}
+     *
+     * @param nameA  first row column name
+     * @param nameB  second row column name
+     * @return <tt>'greater than'</tt> predicate
+     * @see de.unknownreality.dataframe.filter.ComparePredicate.Operation#GT
+     */
+    public static FilterPredicate gtColumn(final String nameA, final String nameB) {
+        return new ColumnComparePredicate(nameA, ComparePredicate.Operation.GT, nameB);
+    }
+
+
+    /**
      * Creates a {@link ComparePredicate} using {@link de.unknownreality.dataframe.filter.ComparePredicate.Operation#LT lower than operation}
      *
      * @param name  row column name
@@ -400,6 +438,18 @@ public abstract class FilterPredicate {
     public static FilterPredicate lt(final String name, final Object value) {
         return new ComparePredicate(name, ComparePredicate.Operation.LT, value);
 
+    }
+
+    /**
+     * Creates a {@link ColumnComparePredicate} using {@link de.unknownreality.dataframe.filter.ComparePredicate.Operation#LT lower than operation}
+     *
+     * @param nameA  first row column name
+     * @param nameB  second row column name
+     * @return <tt>'lower than'</tt> predicate
+     * @see de.unknownreality.dataframe.filter.ComparePredicate.Operation#LT
+     */
+    public static FilterPredicate ltColumn(final String nameA, final String nameB) {
+        return new ColumnComparePredicate(nameA, ComparePredicate.Operation.LT, nameB);
     }
 
     /**
@@ -416,6 +466,19 @@ public abstract class FilterPredicate {
     }
 
     /**
+     * Creates a {@link ColumnComparePredicate} using {@link de.unknownreality.dataframe.filter.ComparePredicate.Operation#GE greater or equal operation}
+     *
+     * @param nameA  first row column name
+     * @param nameB  second row column name
+     * @return <tt>'greater or equal'</tt> predicate
+     * @see de.unknownreality.dataframe.filter.ComparePredicate.Operation#LE
+     */
+    public static FilterPredicate geColumn(final String nameA, final String nameB) {
+        return new ColumnComparePredicate(nameA, ComparePredicate.Operation.GE, nameB);
+    }
+
+
+    /**
      * Creates a {@link ComparePredicate} using {@link de.unknownreality.dataframe.filter.ComparePredicate.Operation#LE lower or equal operation}
      *
      * @param name  row column name
@@ -425,6 +488,18 @@ public abstract class FilterPredicate {
      */
     public static FilterPredicate le(final String name, final Object value) {
         return new ComparePredicate(name, ComparePredicate.Operation.LE, value);
+    }
+
+    /**
+     * Creates a {@link ColumnComparePredicate} using {@link de.unknownreality.dataframe.filter.ComparePredicate.Operation#LE lower or equal operation}
+     *
+     * @param nameA  first row column name
+     * @param nameB  second row column name
+     * @return <tt>'lower or equal'</tt> predicate
+     * @see de.unknownreality.dataframe.filter.ComparePredicate.Operation#LE
+     */
+    public static FilterPredicate leColumn(final String nameA, final String nameB) {
+        return new ColumnComparePredicate(nameA, ComparePredicate.Operation.LE, nameB);
     }
 
     /**
