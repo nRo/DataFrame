@@ -26,6 +26,7 @@ import de.unknownreality.dataframe.*;
 import de.unknownreality.dataframe.column.*;
 import de.unknownreality.dataframe.csv.CSVReader;
 import de.unknownreality.dataframe.csv.CSVReaderBuilder;
+import de.unknownreality.dataframe.filter.FilterPredicate;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -154,6 +155,54 @@ public class DataFrameTest {
         Assert.assertEquals(new Integer(999),df.getRow(1).getInteger("A"));
 
         df.getColumn("A").sort();
+    }
+
+    @Test
+    public void predicateTest(){
+        DataFrame dataFrame = new DataFrame();
+        dataFrame.addColumn(new StringColumn("name"));
+        dataFrame.addColumn(new DoubleColumn("x"));
+        dataFrame.addColumn(new IntegerColumn("y"));
+        dataFrame.addColumn(new BooleanColumn("z"));
+        dataFrame.addColumn(new BooleanColumn("v"));
+        dataFrame.addColumn(new StringColumn("r"));
+
+
+        dataFrame.append("a",1d,5,true,true,"abc123");
+        dataFrame.append("b",2d,4,true,false,"abc/123");
+        dataFrame.append("c",3d,3,false,true,"abc");
+        dataFrame.append("d",4d,2,false,false,"123");
+
+        DataFrame filtered = dataFrame.select(
+                FilterPredicate.and(
+                        FilterPredicate.ne("name","a").and(FilterPredicate.ne("name","b")),
+                        FilterPredicate.lt("x",4).or(FilterPredicate.gt("x",3))
+                        ));
+        filtered = dataFrame.select(
+                FilterPredicate.eq("z",true).nor(FilterPredicate.eq("v",true))
+        );
+        Assert.assertEquals(1,filtered.size());
+
+        filtered = dataFrame.select(
+                FilterPredicate.eq("z",true).xor(FilterPredicate.eq("v",true))
+        );
+        Assert.assertEquals(2,filtered.size());
+
+        filtered = dataFrame.select(
+                FilterPredicate.in("name",new String[]{"a","b"}).neg()
+        );
+        Assert.assertEquals(2,filtered.size());
+        Assert.assertEquals("c",filtered.getRow(0).getString("name"));
+        Assert.assertEquals("d",filtered.getRow(1).getString("name"));
+
+        filtered = dataFrame.select(
+                FilterPredicate.eq("name","a").neg()
+        );
+        Assert.assertEquals(3,filtered.size());
+        Assert.assertEquals("b",filtered.getRow(0).getString("name"));
+        Assert.assertEquals("c",filtered.getRow(1).getString("name"));
+        Assert.assertEquals("d",filtered.getRow(2).getString("name"));
+
     }
 
     @Test

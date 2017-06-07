@@ -64,6 +64,32 @@ public class PredicateParserTest {
         Assert.assertEquals(1,filtered.size());
         Assert.assertEquals("b",filtered.getRow(0).getString("name"));
 
+
+        filtered = dataFrame.select("x >= 1");
+        Assert.assertEquals(4,filtered.size());
+
+        filtered = dataFrame.select("x > 1");
+        Assert.assertEquals(3,filtered.size());
+
+        filtered = dataFrame.select("x < 1.5");
+        Assert.assertEquals(1,filtered.size());
+
+        filtered = dataFrame.select("x <= 1");
+        Assert.assertEquals(1,filtered.size());
+
+
+        filtered = dataFrame.select("r >= '123'");
+        Assert.assertEquals(4,filtered.size());
+
+        filtered = dataFrame.select("r > '123'");
+        Assert.assertEquals(3,filtered.size());
+
+        filtered = dataFrame.select("r < 'xyz'");
+        Assert.assertEquals(4,filtered.size());
+
+        filtered = dataFrame.select("r <= '123'");
+        Assert.assertEquals(1,filtered.size());
+
         filtered = dataFrame.select("((((.name != 'a')) AND (x < 3.5))) OR((y == 2))");
         Assert.assertEquals(3,filtered.size());
         Assert.assertEquals("b",filtered.getRow(0).getString("name"));
