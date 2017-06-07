@@ -25,6 +25,7 @@
 package de.unknownreality.dataframe.filter.compile;
 
 import de.unknownreality.dataframe.common.parser.ParserUtil;
+import de.unknownreality.dataframe.filter.ColumnComparePredicate;
 import de.unknownreality.dataframe.filter.FilterPredicate;
 import de.unknownreality.dataframe.generated.PredicateBaseVisitor;
 import de.unknownreality.dataframe.generated.PredicateParser;
@@ -44,6 +45,14 @@ public class FieldFilterVisitor extends PredicateBaseVisitor<FilterPredicate> {
             RegexFilterVisitor regexFilterVisitor = new RegexFilterVisitor();
             result = regexFilterVisitor.visitRegex_filter(ctx.regex_filter());
         }
+        else if(ctx.column_predicate() != null){
+            ColumnPredicateFilterVisitor columnPredicateFilterVisitor = new ColumnPredicateFilterVisitor();
+            result = columnPredicateFilterVisitor.visitColumn_predicate(ctx.column_predicate());
+        }
+        else if(ctx.boolean_filter() != null){
+            BooleanFilterVisitor booleanFilterVisitor = new BooleanFilterVisitor();
+            result = booleanFilterVisitor.visitBoolean_filter(ctx.boolean_filter());
+        }
         else{
             result = createFieldFilter(ctx);
         }
@@ -54,7 +63,7 @@ public class FieldFilterVisitor extends PredicateBaseVisitor<FilterPredicate> {
     }
 
     private static FilterPredicate createFieldFilter(PredicateParser.Field_filterContext ctx){
-        String colName = getColname(ctx.VAR().getText());
+        String colName = getColname(ctx.variable().getText());
         String operation = ctx.FIELD_OPERATION().getText();
         Comparable value = getValue(ctx);
 
@@ -78,6 +87,9 @@ public class FieldFilterVisitor extends PredicateBaseVisitor<FilterPredicate> {
         }
     }
     public static String getColname(String text){
+        if(text.startsWith(".")){
+            text = text.substring(1);
+        }
         String colName = text;
         if(colName.startsWith("'")){
             return colName.substring(1,colName.length() - 1);

@@ -59,12 +59,12 @@ public class PredicateParserTest {
         dataFrame.append("c",3d,3,false,true,"abc");
         dataFrame.append("d",4d,2,false,false,"123");
 
-        FilterPredicate predicate = PredicateCompiler.compile("(name != 'a') AND (x < 3)");
+        FilterPredicate predicate = PredicateCompiler.compile("(.name != 'a') AND (x < 3)");
         DataFrame filtered = dataFrame.select(predicate);
         Assert.assertEquals(1,filtered.size());
         Assert.assertEquals("b",filtered.getRow(0).getString("name"));
 
-        filtered = dataFrame.select("((((name != 'a')) AND (x < 3.5))) OR((y == 2))");
+        filtered = dataFrame.select("((((.name != 'a')) AND (x < 3.5))) OR((y == 2))");
         Assert.assertEquals(3,filtered.size());
         Assert.assertEquals("b",filtered.getRow(0).getString("name"));
         Assert.assertEquals("c",filtered.getRow(1).getString("name"));
@@ -74,16 +74,16 @@ public class PredicateParserTest {
         filtered = dataFrame.select("r ~= /[a-z]+.+/");
         Assert.assertEquals(3,filtered.size());
 
-        filtered = dataFrame.select("r ~= /[a-z]+\\/[0-9]+/");
+        filtered = dataFrame.select(".r ~= /[a-z]+\\/[0-9]+/");
         Assert.assertEquals(1,filtered.size());
         Assert.assertEquals("b",filtered.getRow(0).getString("name"));
 
 
-        filtered = dataFrame.select("^(name == 'a')");
+        filtered = dataFrame.select("!(name == 'a')");
         Assert.assertEquals(3,filtered.size());
 
 
-        filtered = dataFrame.select("^((name == 'a') OR (x > 2))");
+        filtered = dataFrame.select("!((name == 'a') OR (.x > 2))");
         Assert.assertEquals(1,filtered.size());
         Assert.assertEquals("b",filtered.getRow(0).getString("name"));
 
@@ -91,10 +91,38 @@ public class PredicateParserTest {
         filtered = dataFrame.select("z == true");
         Assert.assertEquals(2,filtered.size());
 
-        filtered = dataFrame.select("(z == true) XOR (v == true)");
+        filtered = dataFrame.select("(.z == true) XOR (v == true)");
         Assert.assertEquals(2,filtered.size());
+
+        DataFrame filtered2 = dataFrame.select(".z XOR v");
+        Assert.assertEquals(2,filtered2.size());
+        Assert.assertEquals(filtered,filtered2);
+
+
         filtered = dataFrame.select("(z == true) NOR (v == true)");
         Assert.assertEquals(1,filtered.size());
+        filtered2 = dataFrame.select("z NOR v");
+        Assert.assertEquals(1,filtered.size());
+        Assert.assertEquals(filtered,filtered2);
+
+
+
+        filtered = dataFrame.select(".z == .v");
+        Assert.assertEquals(2,filtered.size());
+        Assert.assertEquals("a",filtered.getRow(0).getString("name"));
+        Assert.assertEquals("d",filtered.getRow(1).getString("name"));
+
+        filtered = dataFrame.select(".z != .v");
+        Assert.assertEquals(2,filtered.size());
+        Assert.assertEquals("b",filtered.getRow(0).getString("name"));
+        Assert.assertEquals("c",filtered.getRow(1).getString("name"));
+
+        filtered = dataFrame.select(".z && .v");
+        Assert.assertEquals(1,filtered.size());
+        Assert.assertEquals("a",filtered.getRow(0).getString("name"));
+
+        filtered = dataFrame.select("z || v");
+        Assert.assertEquals(3,filtered.size());
     }
 
     @Test(expected=PredicateCompilerException.class)
@@ -110,5 +138,10 @@ public class PredicateParserTest {
     @Test(expected=PredicateCompilerException.class)
     public void testValue() {
         PredicateCompiler.compile("((name != 'a') AND (x < a) OR (y == 2)");
+    }
+
+    @Test(expected=PredicateCompilerException.class)
+    public void testColValue() {
+        PredicateCompiler.compile("((name != .a) AND (x < a) OR (y == 2)");
     }
 }

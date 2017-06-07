@@ -100,6 +100,18 @@ public class ComparePredicate extends FilterPredicate {
         this.value = value;
     }
 
+    public String getHeaderName() {
+        return headerName;
+    }
+
+    public Operation getOperation() {
+        return operation;
+    }
+
+    public Object getValue() {
+        return value;
+    }
+
     /**
      * Returns <tt>true</tt> if the row is valid for this predicate
      *
@@ -109,20 +121,23 @@ public class ComparePredicate extends FilterPredicate {
     @SuppressWarnings("unchecked")
     @Override
     public boolean valid(Row row) {
-        Object v = row.get(headerName);
-        if (operation == Operation.EQ && v.equals(value)) {
+        return compare(row.get(headerName),value);
+    }
+
+    protected boolean compare(Object valueA, Object valueB){
+        if (operation == Operation.EQ && valueA.equals(valueB)) {
             return true;
         }
-        boolean numberCompare = (v instanceof Number && value instanceof Number);
-        if (!v.getClass().equals(value.getClass()) && !numberCompare) {
+        boolean numberCompare = (valueA instanceof Number && valueB instanceof Number);
+        if (!valueA.getClass().equals(valueB.getClass()) && !numberCompare) {
             return operation == Operation.NE;
         }
         int c = 0;
         if (numberCompare) {
             //could be better to convert to BigDecimal for comparison
-            c = Double.compare(Number.class.cast(v).doubleValue(), Number.class.cast(value).doubleValue());
-        } else if (v instanceof Comparable && value instanceof Comparable) {
-            c = ((Comparable) v).compareTo(value);
+            c = Double.compare(Number.class.cast(valueA).doubleValue(), Number.class.cast(valueB).doubleValue());
+        } else if (valueA instanceof Comparable && valueB instanceof Comparable) {
+            c = ((Comparable) valueA).compareTo(valueB);
         }
         switch (operation) {
             case GT:

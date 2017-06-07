@@ -22,33 +22,42 @@
  *
  */
 
-package de.unknownreality.dataframe.filter.compile;
+package de.unknownreality.dataframe.filter;
 
-import de.unknownreality.dataframe.filter.FilterPredicate;
-import de.unknownreality.dataframe.generated.PredicateBaseVisitor;
-import de.unknownreality.dataframe.generated.PredicateParser;
-
-import java.util.regex.Pattern;
+import de.unknownreality.dataframe.common.Row;
 
 /**
- * Created by Alex on 21.05.2017.
+ * Created by Alex on 07.06.2017.
  */
-public class RegexFilterVisitor extends PredicateBaseVisitor<FilterPredicate> {
+public class ColumnComparePredicate extends ComparePredicate {
+
+    private String headerB;
+
+    /**
+     * Creates a compare predicate for two given row column names and operation
+     *
+     * @param headerA first column name
+     * @param op      compare operation
+     * @param headerB second column name
+     */
+    public ColumnComparePredicate(String headerA, Operation op, String headerB) {
+        super(headerA, op, null);
+        this.headerB = headerB;
+    }
+
+    /**
+     * Returns <tt>true</tt> if the row is valid for this predicate
+     *
+     * @param row tested row
+     * @return <tt>true</tt> if the row is valid
+     */
+    @Override
+    public boolean valid(Row row) {
+        return super.compare(row.get(getHeaderName()), row.get(headerB));
+    }
 
     @Override
-    public FilterPredicate visitRegex_filter(PredicateParser.Regex_filterContext ctx) {
-        String colName = FieldFilterVisitor.getColname(ctx.variable().getText());
-        return FilterPredicate.matches(colName,convertPattern(ctx.REGEX().getText()));
+    public String toString() {
+        return "." + getHeaderName() + " " + getOperation() + " ." + headerB;
     }
-    private static Pattern convertPattern(String text){
-        if(!text.startsWith("/") || ! text.endsWith("/")){
-            throw new PredicateCompilerException(String.format("wrong pattern format: %s",text));
-        }
-        text = text.substring(1,text.length()-1);
-        return Pattern.compile(text);
-
-    }
-
-
-
 }

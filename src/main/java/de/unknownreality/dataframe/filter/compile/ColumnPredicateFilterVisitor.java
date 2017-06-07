@@ -33,20 +33,36 @@ import java.util.regex.Pattern;
 /**
  * Created by Alex on 21.05.2017.
  */
-public class RegexFilterVisitor extends PredicateBaseVisitor<FilterPredicate> {
+public class ColumnPredicateFilterVisitor extends PredicateBaseVisitor<FilterPredicate> {
 
     @Override
-    public FilterPredicate visitRegex_filter(PredicateParser.Regex_filterContext ctx) {
-        String colName = FieldFilterVisitor.getColname(ctx.variable().getText());
-        return FilterPredicate.matches(colName,convertPattern(ctx.REGEX().getText()));
+    public FilterPredicate visitColumn_predicate(PredicateParser.Column_predicateContext ctx) {
+        String colNameA = FieldFilterVisitor.getColname(ctx.COLUMN(0).getText());
+        String colNameB = FieldFilterVisitor.getColname(ctx.COLUMN(1).getText());
+        return createColumnFieldFilter(colNameA,colNameB,ctx.FIELD_OPERATION().getText());
     }
-    private static Pattern convertPattern(String text){
-        if(!text.startsWith("/") || ! text.endsWith("/")){
-            throw new PredicateCompilerException(String.format("wrong pattern format: %s",text));
-        }
-        text = text.substring(1,text.length()-1);
-        return Pattern.compile(text);
 
+    private static FilterPredicate createColumnFieldFilter(String colNameA, String colNameB, String operation) {
+        FieldFilterOperation fieldFilterOperation = FieldFilterOperation.find(operation);
+
+        switch (fieldFilterOperation) {
+            case EQ:
+                return FilterPredicate.eqColumn(colNameA, colNameB);
+            case NE:
+                return FilterPredicate.neColumn(colNameA, colNameB);
+            case LE:
+                return FilterPredicate.leColumn(colNameA, colNameB);
+            case LT:
+                return FilterPredicate.ltColumn(colNameA, colNameB);
+            case GE:
+                return FilterPredicate.geColumn(colNameA, colNameB);
+            case GT:
+                return FilterPredicate.gtColumn(colNameA, colNameB);
+
+            default:
+                throw new PredicateCompilerException(String.format("unsupported filter operation '%s'", operation));
+
+        }
     }
 
 
