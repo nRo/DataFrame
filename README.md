@@ -23,7 +23,7 @@ Add this to you pom.xml
     <dependency>
         <groupId>de.unknownreality</groupId>
         <artifactId>dataframe</artifactId>
-        <version>0.6</version>
+        <version>0.6.1</version>
     </dependency>
 ...
 </dependencies>
