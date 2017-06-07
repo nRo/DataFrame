@@ -141,11 +141,26 @@ Create and compile predicates from strings \
 Available value comparison operations: \
 ```==, !=, <, <=, >, >=, ~= (regex)``` \
 Available predicate operations: \
-```&&, ||, NOR, XOR, ^(predicate) (negates the predicate) ```
+```&&, ||, NOR, XOR, !(predicate) (negates the predicate) ```
 
 ```java
 //find all users that are younger than 18 or older users with first_name == "Max"
 DataFrame foundUsers = users.select("(age > 18 && first_name == 'Max') OR (age < 18)");
+
+//Boolean column filter
+//find all users that are older than 18 or the selected column is true
+DataFrame foundUsers = users.select("(age > 18) OR selected");
+
+//find all users the selected column is false
+DataFrame notSelected = users.select("!selected");
+
+//compare tow columns
+//returns all rows where col1 equals col2
+FilterPredicate.eqColumn("col1","col2")
+
+//Get all users where first name does not equal the last name
+//Column comparisons require '.' as prefix
+DataFrame dataframe = users.select(".first_name != .last_name");
 
 
 // regex filter
