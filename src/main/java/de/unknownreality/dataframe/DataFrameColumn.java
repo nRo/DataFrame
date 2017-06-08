@@ -42,6 +42,7 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
     public static final String ERROR_APPENDING = "error appending value to column";
     private String name;
     private DataFrame dataFrame;
+    private boolean dataFrameAppend = false;
 
 
     /**
@@ -470,7 +471,6 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
     }
 
 
-    private boolean dataFrameAppend = false;
 
 
     /**

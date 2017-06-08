@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
  * Created by Alex on 21.05.2017.
  */
 public class FilterPredicateVisitor extends PredicateBaseVisitor<FilterPredicate> {
-    private static Logger log = LoggerFactory.getLogger(FieldFilterVisitor.class);
 
     @Override
     public FilterPredicate visitCompilationUnit(PredicateParser.CompilationUnitContext ctx) {

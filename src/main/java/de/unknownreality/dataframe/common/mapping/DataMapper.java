@@ -40,7 +40,6 @@ public class DataMapper<T> implements Iterable<T> {
     private static final Logger log = LoggerFactory.getLogger(DataMapper.class);
     private final DataContainer<? extends Header, ? extends Row> reader;
     private FieldColumn[] columns;
-    private Map<Integer, FieldColumn> columnMap = new HashMap<>();
     private final Class<T> cl;
 
     private DataMapper(DataContainer<? extends Header, ? extends Row> reader, Class<T> cl) {
@@ -108,10 +107,9 @@ public class DataMapper<T> implements Iterable<T> {
             }
             String headerName = annotation.header();
             if (!isValid(headerName, header)) {
-                if (annotation.index() != -1) {
-                    if (annotation.index() < header.size()) {
-                        headerName = header.get(annotation.index()).toString();
-                    }
+                if (annotation.index() != -1 && annotation.index() < header.size()) {
+                    headerName = header.get(annotation.index()).toString();
+
                 }
             }
             if (!isValid(headerName, header)) {

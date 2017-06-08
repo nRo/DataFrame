@@ -34,6 +34,8 @@ import de.unknownreality.dataframe.common.parser.ParserUtil;
  */
 public class BooleanColumn extends BasicColumn<Boolean, BooleanColumn> {
 
+    private final Parser<Boolean> parser = ParserUtil.findParserOrNull(Boolean.class);
+
 
     public BooleanColumn and(BooleanColumn other) {
         for(int i  = 0; i < Math.min(size(),other.size());i++){
@@ -93,7 +95,6 @@ public class BooleanColumn extends BasicColumn<Boolean, BooleanColumn> {
         return Boolean.class;
     }
 
-    private final Parser<Boolean> parser = ParserUtil.findParserOrNull(Boolean.class);
 
     @Override
     public Parser<Boolean> getParser() {

@@ -75,13 +75,14 @@ public class DataFrameMetaReader {
      * @return class name in current packages
      */
     private static String remapLegacyPackages(String className) {
+        String remappedClassname = className;
         for(Map.Entry<String,String> e : LEGACY_PACKAGES.entrySet()){
-            if (className.contains(e.getKey())) {
-                className = className.replace(e.getKey(), e.getValue());
+            if (remappedClassname.contains(e.getKey())) {
+                remappedClassname = remappedClassname.replace(e.getKey(), e.getValue());
                 logger.warn("old package name found '{}'", e.getKey());
             }
         }
-        return className;
+        return remappedClassname;
     }
 
     /**
@@ -110,16 +111,16 @@ public class DataFrameMetaReader {
      */
     @SuppressWarnings("unchecked")
     private static <T> Class<? extends T> parseChildClass(String clName, Class<T> parentType) throws DataFrameException {
-        clName = remapLegacyPackages(clName);
+        String convertedClassName = remapLegacyPackages(clName);
         Class<?> cl;
         try {
-            cl = Class.forName(clName);
+            cl = Class.forName(convertedClassName);
         } catch (ClassNotFoundException e) {
-            throw new DataFrameException(String.format("class not found: %s", clName), e);
+            throw new DataFrameException(String.format("class not found: %s", convertedClassName), e);
         }
         if (!parentType.isAssignableFrom(cl)) {
             throw new DataFrameException(String.format("%s does not extend %s",
-                    clName, parentType.getCanonicalName()));
+                    convertedClassName, parentType.getCanonicalName()));
         }
         return (Class<? extends T>) cl;
     }

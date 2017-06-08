@@ -29,13 +29,15 @@ package de.unknownreality.dataframe;
  */
 public class Values {
 
-
-    private Values(){}
     /**
      * Representation for 'not available'.
      * Null values in a row are returned as <tt>NA</tt>
      */
     public static final NA NA = new NA();
+
+
+    private Values(){}
+
 
 
     public static class NA implements Comparable {

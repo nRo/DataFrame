@@ -28,8 +28,6 @@ import de.unknownreality.dataframe.filter.FilterPredicate;
 import de.unknownreality.dataframe.generated.PredicateBaseVisitor;
 import de.unknownreality.dataframe.generated.PredicateParser;
 
-import java.util.regex.Pattern;
-
 /**
  * Created by Alex on 21.05.2017.
  */

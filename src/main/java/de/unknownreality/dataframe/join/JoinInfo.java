@@ -62,7 +62,7 @@ public class JoinInfo {
      */
     public boolean isA(DataFrame dataFrame) {
         DataFrame df;
-        return ((df = dataFrameA.get()) != null && df == dataFrame);
+        return ((df = dataFrameA.get()) != null && df.equals(dataFrame));
     }
 
     /**
@@ -73,7 +73,7 @@ public class JoinInfo {
      */
     public boolean isB(DataFrame dataFrame) {
         DataFrame df;
-        return ((df = dataFrameB.get()) != null && df == dataFrame);
+        return ((df = dataFrameB.get()) != null && df.equals(dataFrame));
     }
 
 

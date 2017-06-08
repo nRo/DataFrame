@@ -24,6 +24,7 @@
 
 package de.unknownreality.dataframe.filter;
 
+import de.unknownreality.dataframe.DataFrameRuntimeException;
 import de.unknownreality.dataframe.common.Row;
 
 /**
@@ -139,6 +140,11 @@ public class ComparePredicate extends FilterPredicate {
         } else if (valueA instanceof Comparable && valueB instanceof Comparable) {
             c = ((Comparable) valueA).compareTo(valueB);
         }
+        return isValid(operation,c);
+    }
+
+
+    protected boolean isValid (Operation operation,int c){
         switch (operation) {
             case GT:
                 return c > 0;
@@ -152,8 +158,9 @@ public class ComparePredicate extends FilterPredicate {
                 return c == 0;
             case NE:
                 return c != 0;
+            default:
+                throw new DataFrameRuntimeException(String.format("unknown operation: %s",operation.str));
         }
-        return false;
     }
 
     @Override

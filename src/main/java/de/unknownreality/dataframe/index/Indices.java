@@ -37,7 +37,6 @@ import java.util.*;
  * Created by Alex on 27.05.2016.
  */
 public class Indices {
-    private static Logger logger = LoggerFactory.getLogger(Indices.class);
     public static final String PRIMARY_KEY_NAME = "%primary_key%";
 
     private final Map<String, Index> indexMap = new HashMap<>();

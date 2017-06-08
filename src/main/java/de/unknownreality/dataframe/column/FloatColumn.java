@@ -33,6 +33,8 @@ import de.unknownreality.dataframe.common.parser.ParserUtil;
  */
 public class FloatColumn extends NumberColumn<Float, FloatColumn> {
 
+    private final Parser<Float> parser = ParserUtil.findParserOrNull(Float.class);
+
     public FloatColumn() {
         super();
     }
@@ -57,7 +59,6 @@ public class FloatColumn extends NumberColumn<Float, FloatColumn> {
         return Float.class;
     }
 
-    private final Parser<Float> parser = ParserUtil.findParserOrNull(Float.class);
 
 
     @Override

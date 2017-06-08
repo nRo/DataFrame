@@ -33,6 +33,8 @@ import de.unknownreality.dataframe.common.parser.ParserUtil;
  */
 public class DoubleColumn extends NumberColumn<Double, DoubleColumn> {
 
+    private final Parser<Double> parser = ParserUtil.findParserOrNull(Double.class);
+
     public DoubleColumn() {
         super();
     }
@@ -51,7 +53,6 @@ public class DoubleColumn extends NumberColumn<Double, DoubleColumn> {
         return Double.class;
     }
 
-    private final Parser<Double> parser = ParserUtil.findParserOrNull(Double.class);
 
     @Override
     public Parser<Double> getParser() {
