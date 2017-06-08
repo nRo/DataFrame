@@ -53,7 +53,7 @@ predicate PREDICATE_OPERATION predicate|
 field_filter;
 
 
-value: (NUMBER | BOOLEAN_VALUE | TEXT_VALUE);
+value: (NUMBER | BOOLEAN_VALUE | TEXT_VALUE | NULL);
 variable: VAR | COLUMN;
 /*
  * Lexer Rules
@@ -95,6 +95,7 @@ FIELD_OPERATION : EQ | NE |LE | LT | GT | GE;
 NUMBER : '-'? DIGIT+([.,]DIGIT+)?;
 BOOLEAN_VALUE: 'true' | 'false';
 TEXT_VALUE : STRING;
+NULL: 'null' | 'NULL' | 'NA' | 'na';
 
 COLUMN : COL_PREFIX VAR_NAME;
 VAR: VAR_NAME;

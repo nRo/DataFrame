@@ -129,6 +129,7 @@ public class ComparePredicate extends FilterPredicate {
         if (operation == Operation.EQ && valueA.equals(valueB)) {
             return true;
         }
+
         boolean numberCompare = (valueA instanceof Number && valueB instanceof Number);
         if (!valueA.getClass().equals(valueB.getClass()) && !numberCompare) {
             return operation == Operation.NE;
