@@ -79,7 +79,6 @@ public class DataFrameTest {
 
         dataFrame.removeColumn("___");
         Assert.assertEquals(oldSize,dataFrame.size());
-        ;
 
         DataFrame dataFrame2 = new DataFrame();
         dataFrame2.addColumn(new IntegerColumn("id"));
