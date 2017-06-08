@@ -25,7 +25,6 @@
 package de.unknownreality.dataframe.filter.compile;
 
 import de.unknownreality.dataframe.common.parser.ParserUtil;
-import de.unknownreality.dataframe.filter.ColumnComparePredicate;
 import de.unknownreality.dataframe.filter.FilterPredicate;
 import de.unknownreality.dataframe.generated.PredicateBaseVisitor;
 import de.unknownreality.dataframe.generated.PredicateParser;
@@ -87,10 +86,10 @@ public class FieldFilterVisitor extends PredicateBaseVisitor<FilterPredicate> {
         }
     }
     public static String getColname(String text){
-        if(text.startsWith(".")){
-            text = text.substring(1);
-        }
         String colName = text;
+        if(colName.startsWith(".")){
+            colName = colName.substring(1);
+        }
         if(colName.startsWith("'")){
             return colName.substring(1,colName.length() - 1);
         }

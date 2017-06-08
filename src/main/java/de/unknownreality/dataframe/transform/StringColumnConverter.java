@@ -24,7 +24,8 @@
 
 package de.unknownreality.dataframe.transform;
 
-import de.unknownreality.dataframe.*;
+import de.unknownreality.dataframe.DataFrameColumn;
+import de.unknownreality.dataframe.DataFrameException;
 import de.unknownreality.dataframe.column.StringColumn;
 import de.unknownreality.dataframe.common.parser.Parser;
 

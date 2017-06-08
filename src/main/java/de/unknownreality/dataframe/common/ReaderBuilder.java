@@ -24,8 +24,6 @@
 
 package de.unknownreality.dataframe.common;
 
-import de.unknownreality.dataframe.DataFrameException;
-
 import java.io.File;
 import java.util.Map;
 

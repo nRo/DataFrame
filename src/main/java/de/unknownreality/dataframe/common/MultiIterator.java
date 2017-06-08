@@ -33,6 +33,9 @@ import java.util.Iterator;
  */
 public class MultiIterator<T> implements Iterator<T[]>, Iterable<T[]> {
 
+    private final Iterator[] iterators;
+    private T[] next;
+    private final Class<T> cl;
 
     /**
      * Creates a multi iterator from an array of iterators
@@ -61,9 +64,6 @@ public class MultiIterator<T> implements Iterator<T[]>, Iterable<T[]> {
         throw new UnsupportedOperationException("remove is not supported by MultiIterators");
     }
 
-    private final Iterator[] iterators;
-    private T[] next;
-    private final Class<T> cl;
 
     public MultiIterator(Iterable<T>[] iterables, Class<T> cl) {
         iterators = new Iterator[iterables.length];

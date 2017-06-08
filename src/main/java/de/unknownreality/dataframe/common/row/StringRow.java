@@ -43,6 +43,15 @@ import java.util.NoSuchElementException;
 public class StringRow<T,H extends Header<T>> implements Row<String,T>, Iterable<String> {
     private static final Logger log = LoggerFactory.getLogger(StringRow.class);
 
+    private static final Parser<Boolean> BOOLEAN_PARSER = ParserUtil.findParserOrNull(Boolean.class);
+    private static final Parser<Double> DOUBLE_PARSER = ParserUtil.findParserOrNull(Double.class);
+    private static final Parser<Float> FLOAT_PARSER = ParserUtil.findParserOrNull(Float.class);
+    private static final Parser<Long> LONG_PARSER = ParserUtil.findParserOrNull(Long.class);
+    private static final Parser<Integer> INTEGER_PARSER = ParserUtil.findParserOrNull(Integer.class);
+    private static final Parser<Short> SHORT_PARSER = ParserUtil.findParserOrNull(Short.class);
+    private static final Parser<Byte> BYTE_PARSER = ParserUtil.findParserOrNull(Byte.class);
+
+
     private final String[] values;
     private final H header;
     private final int rowNumber;
@@ -95,13 +104,6 @@ public class StringRow<T,H extends Header<T>> implements Row<String,T>, Iterable
         return get(headerName);
     }
 
-    private static final Parser<Boolean> BOOLEAN_PARSER = ParserUtil.findParserOrNull(Boolean.class);
-    private static final Parser<Double> DOUBLE_PARSER = ParserUtil.findParserOrNull(Double.class);
-    private static final Parser<Float> FLOAT_PARSER = ParserUtil.findParserOrNull(Float.class);
-    private static final Parser<Long> LONG_PARSER = ParserUtil.findParserOrNull(Long.class);
-    private static final Parser<Integer> INTEGER_PARSER = ParserUtil.findParserOrNull(Integer.class);
-    private static final Parser<Short> SHORT_PARSER = ParserUtil.findParserOrNull(Short.class);
-    private static final Parser<Byte> BYTE_PARSER = ParserUtil.findParserOrNull(Byte.class);
 
     @Override
     public Boolean getBoolean(int index) {

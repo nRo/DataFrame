@@ -34,6 +34,9 @@ import de.unknownreality.dataframe.common.parser.ParserUtil;
  */
 public class StringColumn extends BasicColumn<String, StringColumn> {
 
+    private final Parser<String> parser = ParserUtil.findParserOrNull(String.class);
+
+
     public StringColumn() {
         super();
     }
@@ -46,7 +49,6 @@ public class StringColumn extends BasicColumn<String, StringColumn> {
         super(name, values);
     }
 
-    private final Parser<String> parser = ParserUtil.findParserOrNull(String.class);
 
     @Override
     public Parser<String> getParser() {

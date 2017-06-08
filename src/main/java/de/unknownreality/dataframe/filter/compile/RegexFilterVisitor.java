@@ -41,11 +41,12 @@ public class RegexFilterVisitor extends PredicateBaseVisitor<FilterPredicate> {
         return FilterPredicate.matches(colName,convertPattern(ctx.REGEX().getText()));
     }
     private static Pattern convertPattern(String text){
-        if(!text.startsWith("/") || ! text.endsWith("/")){
+        String regex = text;
+        if(!regex.startsWith("/") || ! regex.endsWith("/")){
             throw new PredicateCompilerException(String.format("wrong pattern format: %s",text));
         }
-        text = text.substring(1,text.length()-1);
-        return Pattern.compile(text);
+        regex = regex.substring(1,regex.length()-1);
+        return Pattern.compile(regex);
 
     }
 

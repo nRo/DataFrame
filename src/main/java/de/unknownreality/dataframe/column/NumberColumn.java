@@ -120,7 +120,6 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
     public T max() {
         double max = Double.NEGATIVE_INFINITY;
         int naCount = 0;
-        long sum = 0;
         int size = size();
         for (int i = 0; i < size; i++) {
             if (isNA(i)) {

@@ -24,7 +24,6 @@
 
 package de.unknownreality.dataframe.csv;
 
-import de.unknownreality.dataframe.DataFrameException;
 import de.unknownreality.dataframe.common.DataContainer;
 import de.unknownreality.dataframe.common.ReaderBuilder;
 import de.unknownreality.dataframe.common.parser.ParserUtil;
