@@ -23,6 +23,7 @@
 package de.unknownreality.dataframe.frame;
 
 import de.unknownreality.dataframe.DataFrame;
+import de.unknownreality.dataframe.Values;
 import de.unknownreality.dataframe.column.BooleanColumn;
 import de.unknownreality.dataframe.column.DoubleColumn;
 import de.unknownreality.dataframe.column.IntegerColumn;
@@ -52,12 +53,15 @@ public class PredicateParserTest {
         dataFrame.addColumn(new BooleanColumn("z"));
         dataFrame.addColumn(new BooleanColumn("v"));
         dataFrame.addColumn(new StringColumn("r"));
+        dataFrame.addColumn(new IntegerColumn("n"));
 
 
-        dataFrame.append("a",1d,5,true,true,"abc123");
-        dataFrame.append("b",2d,4,true,false,"abc/123");
-        dataFrame.append("c",3d,3,false,true,"abc");
-        dataFrame.append("d",4d,2,false,false,"123");
+        dataFrame.append("a",1d,5,true,true,"abc123",1);
+        dataFrame.append("b",2d,4,true,false,"abc/123",null);
+        dataFrame.append("c",3d,3,false,true,"abc", Values.NA);
+        dataFrame.append("d",4d,2,false,false,"123",1);
+
+
 
         FilterPredicate predicate = PredicateCompiler.compile("(.name != 'a') AND (x < 3)");
         DataFrame filtered = dataFrame.select(predicate);
@@ -149,6 +153,9 @@ public class PredicateParserTest {
 
         filtered = dataFrame.select("z || v");
         Assert.assertEquals(3,filtered.size());
+
+        filtered = dataFrame.select("n == null");
+        Assert.assertEquals(2,filtered.size());
     }
 
     @Test(expected=PredicateCompilerException.class)

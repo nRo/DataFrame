@@ -24,6 +24,7 @@
 
 package de.unknownreality.dataframe.filter.compile;
 
+import de.unknownreality.dataframe.Values;
 import de.unknownreality.dataframe.common.parser.ParserUtil;
 import de.unknownreality.dataframe.filter.FilterPredicate;
 import de.unknownreality.dataframe.generated.PredicateBaseVisitor;
@@ -36,6 +37,8 @@ import java.util.regex.Pattern;
  * Created by Alex on 21.05.2017.
  */
 public class FieldFilterVisitor extends PredicateBaseVisitor<FilterPredicate> {
+    private static Pattern NUMBER_PATTERN = Pattern.compile("[0-9]+([\\.,][0-9]+)?");
+    private static final Comparable NULL_RETURN_TYPE = Values.NA;
 
     @Override
     public FilterPredicate visitField_filter(PredicateParser.Field_filterContext ctx) {
@@ -96,8 +99,11 @@ public class FieldFilterVisitor extends PredicateBaseVisitor<FilterPredicate> {
         return colName;
     }
 
-    private static Pattern NUMBER_PATTERN = Pattern.compile("[0-9]+([\\.,][0-9]+)?");
+
     private static Comparable getValue(PredicateParser.Field_filterContext ctx){
+        if(ctx.value().NULL() != null){
+            return NULL_RETURN_TYPE;
+        }
         if(ctx.value().NUMBER() != null){
             String n  =ctx.value().NUMBER().getText();
             try {
