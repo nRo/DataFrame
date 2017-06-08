@@ -5,6 +5,7 @@ An easy-to-use DataFrame Library for Java.
 ![travis](https://travis-ci.org/nRo/DataFrame.svg?branch=master)
 [![codecov](https://codecov.io/gh/nRo/DataFrame/branch/master/graph/badge.svg)](https://codecov.io/gh/nRo/DataFrame)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a03214f7198f4461ab341adecb75e0da)](https://www.codacy.com/app/nRo/DataFrame?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=nRo/DataFrame&amp;utm_campaign=Badge_Grade)
+
 Documentation
 -------
 [![Javadocs](http://javadoc.io/badge/de.unknownreality/dataframe.svg?color=blue)](http://javadoc.io/doc/de.unknownreality/dataframe)
