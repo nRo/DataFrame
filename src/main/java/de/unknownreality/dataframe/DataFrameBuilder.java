@@ -24,6 +24,7 @@
 
 package de.unknownreality.dataframe;
 
+import de.unknownreality.dataframe.column.*;
 import de.unknownreality.dataframe.common.DataContainer;
 import de.unknownreality.dataframe.filter.FilterPredicate;
 
@@ -61,6 +62,95 @@ public class DataFrameBuilder {
         columns.put(column.getName(), column);
         return this;
     }
+
+    /**
+     * Adds a new {@link BooleanColumn} to the builder.
+     *
+     * @param name name of the column
+     * @return <tt>self</tt> for method chaining
+     */
+    public DataFrameBuilder addBooleanColumn(String name) {
+        BooleanColumn column = new BooleanColumn(name);
+        return addColumn(column);
+    }
+
+    /**
+     * Adds a new {@link ByteColumn} to the builder.
+     *
+     * @param name name of the column
+     * @return <tt>self</tt> for method chaining
+     */
+    public DataFrameBuilder addByteColumn(String name) {
+        ByteColumn column = new ByteColumn(name);
+        return addColumn(column);
+    }
+
+    /**
+     * Adds a new {@link DoubleColumn} to the builder.
+     *
+     * @param name name of the column
+     * @return <tt>self</tt> for method chaining
+     */
+    public DataFrameBuilder addDoubleColumn(String name) {
+        DoubleColumn column = new DoubleColumn(name);
+        return addColumn(column);
+    }
+
+    /**
+     * Adds a new {@link FloatColumn} to the builder.
+     *
+     * @param name name of the column
+     * @return <tt>self</tt> for method chaining
+     */
+    public DataFrameBuilder addFloatColumn(String name) {
+        FloatColumn column = new FloatColumn(name);
+        return addColumn(column);
+    }
+
+    /**
+     * Adds a new {@link IntegerColumn} to the builder.
+     *
+     * @param name name of the column
+     * @return <tt>self</tt> for method chaining
+     */
+    public DataFrameBuilder addIntegerColumn(String name) {
+        IntegerColumn column = new IntegerColumn(name);
+        return addColumn(column);
+    }
+
+    /**
+     * Adds a new {@link LongColumn} to the builder.
+     *
+     * @param name name of the column
+     * @return <tt>self</tt> for method chaining
+     */
+    public DataFrameBuilder addLongColumn(String name) {
+        LongColumn column = new LongColumn(name);
+        return addColumn(column);
+    }
+
+    /**
+     * Adds a new {@link ShortColumn} to the builder.
+     *
+     * @param name name of the column
+     * @return <tt>self</tt> for method chaining
+     */
+    public DataFrameBuilder addShortColumn(String name) {
+        ShortColumn column = new ShortColumn(name);
+        return addColumn(column);
+    }
+
+    /**
+     * Adds a new {@link StringColumn} to the builder.
+     *
+     * @param name name of the column
+     * @return <tt>self</tt> for method chaining
+     */
+    public DataFrameBuilder addStringColumn(String name) {
+        StringColumn column = new StringColumn(name);
+        return addColumn(column);
+    }
+    
 
     public DataFrameBuilder withFilterPredicate(FilterPredicate predicate){
         this.filterPredicate = predicate;
