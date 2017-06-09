@@ -76,7 +76,7 @@ public abstract class BasicColumn<T extends Comparable<T>, C extends BasicColumn
     @Override
     protected final void doSet(int index, T value) {
         if (value == Values.NA) {
-            doAppendNA();
+            doSetNA(index);
             return;
         }
         values[index] = value;
@@ -160,7 +160,9 @@ public abstract class BasicColumn<T extends Comparable<T>, C extends BasicColumn
      * @return set of values in this column
      */
     public Set<T> uniq(){
-        return new HashSet<>(Arrays.asList(values));
+        Set<T> u =  new HashSet<>(Arrays.asList(values));
+        u.remove(null);
+        return u;
     }
 
 
