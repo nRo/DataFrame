@@ -365,10 +365,7 @@ public class BasicRow<T,H extends Header<T>,V> implements Row<V,T> {
             if(values[i] == null && r.values[i] == null){
                 continue;
             }
-            if(values[i] == null && r.values[i] != null){
-                return false;
-            }
-            if(values[i] != null && r.values[i] == null){
+            if(values[i] == null || r.values[i] == null){
                 return false;
             }
             if(!values[i].equals(r.values[i])){

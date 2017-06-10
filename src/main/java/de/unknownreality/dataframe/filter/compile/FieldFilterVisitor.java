@@ -132,7 +132,7 @@ public class FieldFilterVisitor extends PredicateBaseVisitor<FilterPredicate> {
         Matcher m = NUMBER_PATTERN.matcher(value);
         if(m.matches()){
             String n = m.group();
-            n.replace(",","");
+            n = n.replace(",","");
             if(n.contains(".")){
                 return Double.parseDouble(n);
             }

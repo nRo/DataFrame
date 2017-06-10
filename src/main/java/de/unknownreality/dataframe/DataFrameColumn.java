@@ -298,7 +298,7 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
 
     public abstract<H> T getValueFromRow(Row<?,H> row,H headerName);
 
-    public abstract T getValueFromRow(Row<?,?> row,int headerIdex);
+    public abstract T getValueFromRow(Row<?,?> row, int headerIndex);
 
     /**
      * A new value is appended at the end of this column using {@link #doAppend(Comparable)}.
