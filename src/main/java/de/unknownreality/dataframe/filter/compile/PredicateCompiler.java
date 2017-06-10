@@ -42,7 +42,7 @@ public class PredicateCompiler {
         if(predicateString.isEmpty()){
             return FilterPredicate.empty();
         }
-        ErrorListener errorListener = new ErrorListener(predicateString);
+        PredicateCompileErrorListener errorListener = new PredicateCompileErrorListener(predicateString);
 
         CharStream stream = CharStreams.fromString(predicateString);
         PredicateLexer lexer = new PredicateLexer(stream);

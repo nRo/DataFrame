@@ -106,11 +106,11 @@ public class DataMapper<T> implements Iterable<T> {
                 continue;
             }
             String headerName = annotation.header();
-            if (!isValid(headerName, header)) {
-                if (annotation.index() != -1 && annotation.index() < header.size()) {
-                    headerName = header.get(annotation.index()).toString();
+            if (!isValid(headerName, header)
+                    && annotation.index() != -1
+                    && annotation.index() < header.size()) {
+                headerName = header.get(annotation.index()).toString();
 
-                }
             }
             if (!isValid(headerName, header)) {
                 if (isValid(name, header)) {

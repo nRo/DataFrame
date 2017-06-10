@@ -27,8 +27,6 @@ package de.unknownreality.dataframe.filter.compile;
 import de.unknownreality.dataframe.filter.FilterPredicate;
 import de.unknownreality.dataframe.generated.PredicateBaseVisitor;
 import de.unknownreality.dataframe.generated.PredicateParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Created by Alex on 21.05.2017.

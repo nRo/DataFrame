@@ -68,6 +68,11 @@ public class PredicateParserTest {
         Assert.assertEquals(1,filtered.size());
         Assert.assertEquals("b",filtered.getRow(0).getString("name"));
 
+        filtered = dataFrame.select("(name != 'a' && z) OR (name != 'd' && !z)");
+        Assert.assertEquals(2,filtered.size());
+        Assert.assertEquals("b",filtered.getRow(0).getString("name"));
+        Assert.assertEquals("c",filtered.getRow(1).getString("name"));
+
 
         filtered = dataFrame.select("x >= 1");
         Assert.assertEquals(4,filtered.size());

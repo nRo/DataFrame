@@ -76,6 +76,10 @@ public class DataFrameConverter {
             for (Map.Entry<String, DataFrameColumn> columnEntry : columns.entrySet()) {
                 i++;
                 Comparable val = null;
+                if(Values.NA.isNA(row.get(colIndices[i]))){
+                    rowValues[i] = Values.NA;
+                    continue;
+                }
                 try {
                     val = columnEntry.getValue().getValueFromRow(row, colIndices[i]);
                 }
