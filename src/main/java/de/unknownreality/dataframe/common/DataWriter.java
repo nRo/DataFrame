@@ -25,6 +25,7 @@
 package de.unknownreality.dataframe.common;
 
 import de.unknownreality.dataframe.DataFrame;
+import de.unknownreality.dataframe.DefaultDataFrame;
 
 import java.io.File;
 import java.io.PrintStream;
@@ -43,7 +44,7 @@ public interface DataWriter {
     void write(File file, DataContainer<? extends Header, ? extends Row> dataContainer);
 
     /**
-     * Writes a {@link DataFrame} into a file and if specified also writes a meta file
+     * Writes a {@link DefaultDataFrame} into a file and if specified also writes a meta file
      *
      * @param file          target file
      * @param dataFrame     data frame to write

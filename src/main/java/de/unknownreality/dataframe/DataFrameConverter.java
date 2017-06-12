@@ -54,7 +54,7 @@ public class DataFrameConverter {
     @SuppressWarnings("unchecked")
     public static DataFrame fromDataContainer(DataContainer<?, ?> reader, Map<String, DataFrameColumn> columns, FilterPredicate filterPredicate) {
         if(reader.getHeader().size() == 0){
-            DataFrame dataFrame = new DataFrame();
+            DataFrame dataFrame = new DefaultDataFrame();
             for(DataFrameColumn column : columns.values()){
                 dataFrame.addColumn(column);
             }
@@ -66,7 +66,7 @@ public class DataFrameConverter {
             colIndices[i] = reader.getHeader().getIndex(h);
             i++;
         }
-        DataFrame dataFrame = new DataFrame();
+        DataFrame dataFrame = new DefaultDataFrame();
         for (DataFrameColumn column : columns.values()) {
             dataFrame.addColumn(column);
         }

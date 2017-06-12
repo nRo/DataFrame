@@ -49,7 +49,7 @@ public class DataFrameBuilder {
         this.dataContainer = container;
     }
     public static DataFrame createDefault(){
-        return new DataFrame();
+        return new DefaultDataFrame();
     }
 
     /**
@@ -212,7 +212,7 @@ public class DataFrameBuilder {
         if(dataContainer != null){
             return DataFrameConverter.fromDataContainer(dataContainer, getColumns(),filterPredicate);
         }
-        DataFrame dataFrame = new DataFrame();
+        DefaultDataFrame dataFrame = new DefaultDataFrame();
         for(String n : columns.keySet()){
             DataFrameColumn col = columns.get(n);
             col.setName(n);

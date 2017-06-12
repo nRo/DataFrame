@@ -24,17 +24,12 @@
 
 package de.unknownreality.dataframe.join;
 
-import de.unknownreality.dataframe.DataFrame;
-import de.unknownreality.dataframe.DataFrameHeader;
-import de.unknownreality.dataframe.DataRow;
-import de.unknownreality.dataframe.index.Indices;
-
-import java.util.List;
+import de.unknownreality.dataframe.DefaultDataFrame;
 
 /**
  * Created by Alex on 13.03.2016.
  */
-public class JoinedDataFrame extends DataFrame {
+public class JoinedDataFrame extends DefaultDataFrame {
     private final JoinInfo joinInfo;
 
     public JoinedDataFrame(JoinInfo info) {
