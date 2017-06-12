@@ -27,113 +27,17 @@ package de.unknownreality.dataframe.join;
 import de.unknownreality.dataframe.DataFrame;
 
 /**
- * Created by Alex on 12.03.2016.
+ * Created by Alex on 12.06.2017.
  */
-public class JoinUtil {
-    public static final String JOIN_SUFFIX_A = ".A";
-    public static final String JOIN_SUFFIX_B = ".B";
+public interface JoinUtil {
 
-    /**
-     * RIGHT JOIN
-     */
-    public static final RightJoin RIGHT = new RightJoin();
+    JoinedDataFrame innerJoin(DataFrame<?,?> dfA, DataFrame<?,?>  dfB, JoinColumn... joinColumns);
+    JoinedDataFrame innerJoin(DataFrame<?,?>  dfA, DataFrame<?,?>  dfB, String joinSuffixA, String joinSuffixB, JoinColumn... joinColumns);
 
-    /**
-     * LEFT JOIN
-     */
-    public static final LeftJoin LEFT = new LeftJoin();
+    JoinedDataFrame rightJoin(DataFrame<?,?> dfA, DataFrame<?,?>  dfB, JoinColumn... joinColumns);
+    JoinedDataFrame rightJoin(DataFrame<?,?>  dfA, DataFrame<?,?>  dfB, String joinSuffixA, String joinSuffixB, JoinColumn... joinColumns);
 
-    /**
-     * INNER JOIN
-     */
-    public static final InnerJoin INNER = new InnerJoin();
-
-    /**
-     * Joins two data frames using the <tt>LEFT JOIN</tt> method and the default header name suffixes
-     *
-     * @param dfA         first data frame
-     * @param dfB         second data frame
-     * @param joinColumns columns used for the join
-     * @return joined data frame
-     * @see LeftJoin#join(DataFrame<?,?> , DataFrame<?,?> , String, String, JoinColumn...)
-     */
-    public static JoinedDataFrame leftJoin(DataFrame<?,?> dfA, DataFrame<?,?> dfB, JoinColumn... joinColumns) {
-        return leftJoin(dfA, dfB, JOIN_SUFFIX_A, JOIN_SUFFIX_B, joinColumns);
-    }
-
-    /**
-     * Joins two data frames using the <tt>LEFT JOIN</tt> method and specified suffixes for the column header names
-     *
-     * @param dfA         first data frame
-     * @param dfB         second data frame
-     * @param joinSuffixA suffix used for columns in the first data frame
-     * @param joinSuffixB suffix used for columns in the second data frame
-     * @param joinColumns columns used for the join
-     * @return joined data frame
-     * @see LeftJoin#join(DataFrame<?,?> , DataFrame<?,?> , String, String, JoinColumn...)
-     */
-    public static JoinedDataFrame leftJoin(DataFrame<?,?>  dfA, DataFrame<?,?>  dfB, String joinSuffixA, String joinSuffixB, JoinColumn... joinColumns) {
-        return LEFT.join(dfA, dfB, joinSuffixA, joinSuffixB, joinColumns);
-
-    }
-
-    /**
-     * Joins two data frames using the <tt>RIGHT JOIN</tt> method and the default header name suffixes
-     *
-     * @param dfA         first data frame
-     * @param dfB         second data frame
-     * @param joinColumns columns used for the join
-     * @return joined data frame
-     * @see LeftJoin#join(DataFrame<?,?> , DataFrame<?,?> , String, String, JoinColumn...)
-     */
-    public static JoinedDataFrame rightJoin(DataFrame<?,?>  dfA, DataFrame<?,?>  dfB, JoinColumn... joinColumns) {
-        return rightJoin(dfA, dfB, JOIN_SUFFIX_A, JOIN_SUFFIX_B, joinColumns);
-    }
-
-    /**
-     * Joins two data frames using the <tt>RIGHT JOIN</tt> method and specified suffixes for the column header names
-     *
-     * @param dfA         first data frame
-     * @param dfB         second data frame
-     * @param joinSuffixA suffix used for columns in the first data frame
-     * @param joinSuffixB suffix used for columns in the second data frame
-     * @param joinColumns columns used for the join
-     * @return joined data frame
-     * @see LeftJoin#join(DataFrame<?,?> , DataFrame<?,?> , String, String, JoinColumn...)
-     */
-    public static JoinedDataFrame rightJoin(DataFrame<?,?>  dfA, DataFrame<?,?>  dfB, String joinSuffixA, String joinSuffixB, JoinColumn... joinColumns) {
-        return RIGHT.join(dfA, dfB, joinSuffixA, joinSuffixB, joinColumns);
-
-    }
-
-
-    /**
-     * Joins two data frames using the <tt>INNER JOIN</tt> method and the default header name suffixes
-     *
-     * @param dfA         first data frame
-     * @param dfB         second data frame
-     * @param joinColumns columns used for the join
-     * @return joined data frame
-     * @see LeftJoin#join(DataFrame<?,?> , DataFrame<?,?> , String, String, JoinColumn...)
-     */
-    public static JoinedDataFrame innerJoin(DataFrame<?,?>  dfA, DataFrame<?,?>  dfB, JoinColumn... joinColumns) {
-        return innerJoin(dfA, dfB, JOIN_SUFFIX_A, JOIN_SUFFIX_B, joinColumns);
-    }
-
-    /**
-     * Joins two data frames using the <tt>INNER JOIN</tt> method and specified suffixes for the column header names
-     *
-     * @param dfA         first data frame
-     * @param dfB         second data frame
-     * @param joinSuffixA suffix used for columns in the first data frame
-     * @param joinSuffixB suffix used for columns in the second data frame
-     * @param joinColumns columns used for the join
-     * @return joined data frame
-     * @see LeftJoin#join(DataFrame<?,?> , DataFrame<?,?> , String, String, JoinColumn...)
-     */
-    public static JoinedDataFrame innerJoin(DataFrame<?,?>  dfA, DataFrame<?,?>  dfB, String joinSuffixA, String joinSuffixB, JoinColumn... joinColumns) {
-        return INNER.join(dfA, dfB, joinSuffixA, joinSuffixB, joinColumns);
-    }
-
+    JoinedDataFrame leftJoin(DataFrame<?,?> dfA, DataFrame<?,?>  dfB, JoinColumn... joinColumns);
+    JoinedDataFrame leftJoin(DataFrame<?,?>  dfA, DataFrame<?,?>  dfB, String joinSuffixA, String joinSuffixB, JoinColumn... joinColumns);
 
 }

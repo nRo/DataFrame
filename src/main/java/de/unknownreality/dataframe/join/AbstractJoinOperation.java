@@ -33,7 +33,7 @@ import java.util.*;
 /**
  * Created by Alex on 10.07.2016.
  */
-public abstract class AbstractJoin {
+public abstract class AbstractJoinOperation {
 
     public abstract JoinedDataFrame join(DataFrame<?,?> dfA, DataFrame<?,?> dfB, String joinSuffixA, String joinSuffixB, JoinColumn... joinColumns);
 

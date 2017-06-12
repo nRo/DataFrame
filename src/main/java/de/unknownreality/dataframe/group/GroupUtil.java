@@ -24,93 +24,11 @@
 
 package de.unknownreality.dataframe.group;
 
-import de.unknownreality.dataframe.*;
-import de.unknownreality.dataframe.sort.SortColumn;
-
-import java.util.ArrayList;
-import java.util.List;
+import de.unknownreality.dataframe.DataFrame;
 
 /**
- * Created by Alex on 10.03.2016.
+ * Created by Alex on 12.06.2017.
  */
-public class GroupUtil {
-    /**
-     * Groups a {@link DefaultDataFrame} using one or more columns.
-     *
-     * @param df      input data frame
-     * @param columns grouping columns
-     * @return data grouping
-     */
-    public static DataGrouping groupBy(DataFrame<?,?> df, String... columns) {
-        SortColumn[] sortColumns = new SortColumn[columns.length];
-        for (int i = 0; i < columns.length; i++) {
-            sortColumns[i] = new SortColumn(columns[i]);
-        }
-        DataFrame<?,?> sortedFrame = df.copy().sort(sortColumns);
-        List<DataRow> currentList = new ArrayList<>();
-        Comparable[] lastValues = null;
-        List<DataGroup> groupList = new ArrayList<>();
-        for (DataRow row : sortedFrame) {
-            if (lastValues == null || equals(lastValues, row, columns)) {
-                currentList.add(row);
-                if (lastValues == null) {
-                    lastValues = new Comparable[columns.length];
-                    set(lastValues, row, columns);
-                }
-                continue;
-            }
-            if (!currentList.isEmpty()) {
-                DataGroup group = new DataGroup(columns, lastValues);
-                group.set(createHeader(df.getHeader()), currentList);
-                groupList.add(group);
-            }
-            currentList.clear();
-            currentList.add(row);
-            set(lastValues, row, columns);
-        }
-        if (!currentList.isEmpty()) {
-            DataGroup group = new DataGroup(columns, lastValues);
-            group.set(createHeader(df.getHeader()), currentList);
-            groupList.add(group);
-        }
-        return new DataGrouping(groupList, columns);
-    }
-
-    private static DefaultDataFrameHeader createHeader(DataFrameHeader<?> header){
-        if(header instanceof DefaultDataFrameHeader){
-            return ((DefaultDataFrameHeader)header).copy();
-        }
-        else{
-            DefaultDataFrameHeader basicDataFrameHeader = new DefaultDataFrameHeader();
-            for(String h : header){
-                basicDataFrameHeader.add(h, header.getColumnType(h), header.getType(h));
-            }
-            return basicDataFrameHeader;
-        }
-    }
-
-
-    private static boolean equals(Object[] values, DataRow row, String[] columns) {
-        for (int i = 0; i < values.length; i++) {
-            if (values[i] == null && !row.isNA(i)) {
-                return false;
-            }
-            if (values[i] != null && row.isNA(i)) {
-                return false;
-            }
-            if (values[i] == null && row.isNA(i)) {
-                continue;
-            }
-            if (!values[i].equals(row.get(columns[i]))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private static void set(Object[] values, DataRow row, String[] columns) {
-        for (int i = 0; i < values.length; i++) {
-            values[i] = row.get(columns[i]);
-        }
-    }
+public interface GroupUtil {
+    DataGrouping groupBy(DataFrame<?,?> df, String... columns);
 }

@@ -36,7 +36,7 @@ import java.util.List;
 /**
  * Created by Alex on 10.07.2016.
  */
-public abstract class DirectionJoin extends AbstractJoin {
+public abstract class DirectionJoin extends AbstractJoinOperation {
     /**
      * Creates a direction (left or right) join
      *
