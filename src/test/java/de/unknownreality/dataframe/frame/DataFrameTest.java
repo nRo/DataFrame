@@ -45,7 +45,7 @@ public class DataFrameTest {
 
     @Test
     public void testCreation() {
-        DataFrame dataFrame = new DataFrame();
+        DataFrame dataFrame = new DefaultDataFrame();
         dataFrame.addColumn(new IntegerColumn("id"));
         dataFrame.addColumns(new StringColumn("first"), new StringColumn("last"));
         dataFrame.addColumn(Double.class, "value", ColumnTypeMap.create().addType(Double.class, DoubleColumn.class));
@@ -79,7 +79,7 @@ public class DataFrameTest {
         dataFrame.removeColumn("___");
         Assert.assertEquals(oldSize, dataFrame.size());
 
-        DataFrame dataFrame2 = new DataFrame();
+        DataFrame dataFrame2 = new DefaultDataFrame();
         dataFrame2.addColumn(new IntegerColumn("id"));
         dataFrame2.addColumn(new StringColumn("first"));
         dataFrame2.addColumn(new StringColumn("last"));
@@ -118,7 +118,7 @@ public class DataFrameTest {
                 .withSeparator('\t')
                 .containsHeader(true).load(csv);
 
-        DataFrame df = reader.toDataFrame()
+        DefaultDataFrame df = reader.toDataFrame()
                 .addColumn(new IntegerColumn("A"))
                 .addColumn(new DoubleColumn("B"))
                 .addColumn(new StringColumn("C"))
@@ -135,7 +135,7 @@ public class DataFrameTest {
                 .withSeparator('\t')
                 .containsHeader(true).load(csv);
 
-        DataFrame df2 = reader.toDataFrame()
+        DefaultDataFrame df2 = reader.toDataFrame()
                 .addIntegerColumn("A")
                 .addDoubleColumn("B")
                 .addStringColumn("C")
@@ -206,7 +206,7 @@ public class DataFrameTest {
                 .withSeparator('\t')
                 .containsHeader(true).load(csv);
 
-        DataFrame df = reader.toDataFrame()
+        DefaultDataFrame df = reader.toDataFrame()
                 .addColumn(new IntegerColumn("A"))
                 .addColumn(new DoubleColumn("B"))
                 .addColumn(new StringColumn("C"))
@@ -245,7 +245,7 @@ public class DataFrameTest {
 
     @Test
     public void predicateTest() {
-        DataFrame dataFrame = new DataFrame();
+        DefaultDataFrame dataFrame = new DefaultDataFrame();
         dataFrame.addColumn(new StringColumn("name"));
         dataFrame.addColumn(new DoubleColumn("x"));
         dataFrame.addColumn(new IntegerColumn("y"));
@@ -259,7 +259,7 @@ public class DataFrameTest {
         dataFrame.append("c", 3d, 3, false, true, "abc");
         dataFrame.append("d", 4d, 2, false, false, "123");
 
-        DataFrame filtered = dataFrame.select(
+        DefaultDataFrame filtered = dataFrame.select(
                 FilterPredicate.and(
                         FilterPredicate.ne("name", "a").and(FilterPredicate.ne("name", "b")),
                         FilterPredicate.lt("x", 4).or(FilterPredicate.gt("x", 3))
@@ -295,7 +295,7 @@ public class DataFrameTest {
 
     @Test
     public void testEquals() {
-        DataFrame dataFrame = new DataFrame();
+        DefaultDataFrame dataFrame = new DefaultDataFrame();
         dataFrame.addColumn(new StringColumn("name"));
         dataFrame.addColumn(new DoubleColumn("x"));
         dataFrame.addColumn(new IntegerColumn("y"));
@@ -309,7 +309,7 @@ public class DataFrameTest {
         dataFrame.append("c", 3d, 3, false, true, "abc");
         dataFrame.append("d", 4d, 2, false, false, "123");
 
-        DataFrame dataFrame2 = new DataFrame();
+        DefaultDataFrame dataFrame2 = new DefaultDataFrame();
         dataFrame2.addColumn(new StringColumn("name"));
         dataFrame2.addColumn(new DoubleColumn("x"));
         dataFrame2.addColumn(new IntegerColumn("y"));
@@ -330,7 +330,7 @@ public class DataFrameTest {
         dataFrame2.update(r);
         Assert.assertNotEquals(dataFrame, dataFrame2);
 
-        DataFrame dataFrame3 = dataFrame.copy();
+        DefaultDataFrame dataFrame3 = dataFrame.copy();
         Assert.assertEquals(dataFrame, dataFrame3);
 
 
@@ -361,7 +361,7 @@ public class DataFrameTest {
                 .withSeparator('\t')
                 .containsHeader(true).load(csv);
 
-        DataFrame df = reader.toDataFrame()
+        DefaultDataFrame df = reader.toDataFrame()
                 .addColumn(new IntegerColumn("A"))
                 .addColumn(new DoubleColumn("B"))
                 .addColumn(new StringColumn("C"))

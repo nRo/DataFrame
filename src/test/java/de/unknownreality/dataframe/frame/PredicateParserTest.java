@@ -22,7 +22,7 @@
 
 package de.unknownreality.dataframe.frame;
 
-import de.unknownreality.dataframe.DataFrame;
+import de.unknownreality.dataframe.DefaultDataFrame;
 import de.unknownreality.dataframe.Values;
 import de.unknownreality.dataframe.column.BooleanColumn;
 import de.unknownreality.dataframe.column.DoubleColumn;
@@ -46,7 +46,7 @@ public class PredicateParserTest {
     @Test
     public void test() {
 
-        DataFrame dataFrame = new DataFrame();
+        DefaultDataFrame dataFrame = new DefaultDataFrame();
         dataFrame.addColumn(new StringColumn("name"));
         dataFrame.addColumn(new DoubleColumn("x"));
         dataFrame.addColumn(new IntegerColumn("y"));
@@ -64,7 +64,7 @@ public class PredicateParserTest {
 
 
         FilterPredicate predicate = PredicateCompiler.compile("(.name != 'a') AND (x < 3)");
-        DataFrame filtered = dataFrame.select(predicate);
+        DefaultDataFrame filtered = dataFrame.select(predicate);
         Assert.assertEquals(1,filtered.size());
         Assert.assertEquals("b",filtered.getRow(0).getString("name"));
 
@@ -129,7 +129,7 @@ public class PredicateParserTest {
         filtered = dataFrame.select("(.z == true) XOR (v == true)");
         Assert.assertEquals(2,filtered.size());
 
-        DataFrame filtered2 = dataFrame.select(".z XOR v");
+        DefaultDataFrame filtered2 = dataFrame.select(".z XOR v");
         Assert.assertEquals(2,filtered2.size());
         Assert.assertEquals(filtered,filtered2);
 
