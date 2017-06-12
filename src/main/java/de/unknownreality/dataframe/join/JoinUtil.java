@@ -55,9 +55,9 @@ public class JoinUtil {
      * @param dfB         second data frame
      * @param joinColumns columns used for the join
      * @return joined data frame
-     * @see LeftJoin#join(DataFrame, DataFrame, String, String, JoinColumn...)
+     * @see LeftJoin#join(DataFrame<?,?> , DataFrame<?,?> , String, String, JoinColumn...)
      */
-    public static JoinedDataFrame leftJoin(DataFrame dfA, DataFrame dfB, JoinColumn... joinColumns) {
+    public static JoinedDataFrame leftJoin(DataFrame<?,?> dfA, DataFrame<?,?> dfB, JoinColumn... joinColumns) {
         return leftJoin(dfA, dfB, JOIN_SUFFIX_A, JOIN_SUFFIX_B, joinColumns);
     }
 
@@ -70,9 +70,9 @@ public class JoinUtil {
      * @param joinSuffixB suffix used for columns in the second data frame
      * @param joinColumns columns used for the join
      * @return joined data frame
-     * @see LeftJoin#join(DataFrame, DataFrame, String, String, JoinColumn...)
+     * @see LeftJoin#join(DataFrame<?,?> , DataFrame<?,?> , String, String, JoinColumn...)
      */
-    public static JoinedDataFrame leftJoin(DataFrame dfA, DataFrame dfB, String joinSuffixA, String joinSuffixB, JoinColumn... joinColumns) {
+    public static JoinedDataFrame leftJoin(DataFrame<?,?>  dfA, DataFrame<?,?>  dfB, String joinSuffixA, String joinSuffixB, JoinColumn... joinColumns) {
         return LEFT.join(dfA, dfB, joinSuffixA, joinSuffixB, joinColumns);
 
     }
@@ -84,9 +84,9 @@ public class JoinUtil {
      * @param dfB         second data frame
      * @param joinColumns columns used for the join
      * @return joined data frame
-     * @see LeftJoin#join(DataFrame, DataFrame, String, String, JoinColumn...)
+     * @see LeftJoin#join(DataFrame<?,?> , DataFrame<?,?> , String, String, JoinColumn...)
      */
-    public static JoinedDataFrame rightJoin(DataFrame dfA, DataFrame dfB, JoinColumn... joinColumns) {
+    public static JoinedDataFrame rightJoin(DataFrame<?,?>  dfA, DataFrame<?,?>  dfB, JoinColumn... joinColumns) {
         return rightJoin(dfA, dfB, JOIN_SUFFIX_A, JOIN_SUFFIX_B, joinColumns);
     }
 
@@ -99,9 +99,9 @@ public class JoinUtil {
      * @param joinSuffixB suffix used for columns in the second data frame
      * @param joinColumns columns used for the join
      * @return joined data frame
-     * @see LeftJoin#join(DataFrame, DataFrame, String, String, JoinColumn...)
+     * @see LeftJoin#join(DataFrame<?,?> , DataFrame<?,?> , String, String, JoinColumn...)
      */
-    public static JoinedDataFrame rightJoin(DataFrame dfA, DataFrame dfB, String joinSuffixA, String joinSuffixB, JoinColumn... joinColumns) {
+    public static JoinedDataFrame rightJoin(DataFrame<?,?>  dfA, DataFrame<?,?>  dfB, String joinSuffixA, String joinSuffixB, JoinColumn... joinColumns) {
         return RIGHT.join(dfA, dfB, joinSuffixA, joinSuffixB, joinColumns);
 
     }
@@ -114,9 +114,9 @@ public class JoinUtil {
      * @param dfB         second data frame
      * @param joinColumns columns used for the join
      * @return joined data frame
-     * @see LeftJoin#join(DataFrame, DataFrame, String, String, JoinColumn...)
+     * @see LeftJoin#join(DataFrame<?,?> , DataFrame<?,?> , String, String, JoinColumn...)
      */
-    public static JoinedDataFrame innerJoin(DataFrame dfA, DataFrame dfB, JoinColumn... joinColumns) {
+    public static JoinedDataFrame innerJoin(DataFrame<?,?>  dfA, DataFrame<?,?>  dfB, JoinColumn... joinColumns) {
         return innerJoin(dfA, dfB, JOIN_SUFFIX_A, JOIN_SUFFIX_B, joinColumns);
     }
 
@@ -129,9 +129,9 @@ public class JoinUtil {
      * @param joinSuffixB suffix used for columns in the second data frame
      * @param joinColumns columns used for the join
      * @return joined data frame
-     * @see LeftJoin#join(DataFrame, DataFrame, String, String, JoinColumn...)
+     * @see LeftJoin#join(DataFrame<?,?> , DataFrame<?,?> , String, String, JoinColumn...)
      */
-    public static JoinedDataFrame innerJoin(DataFrame dfA, DataFrame dfB, String joinSuffixA, String joinSuffixB, JoinColumn... joinColumns) {
+    public static JoinedDataFrame innerJoin(DataFrame<?,?>  dfA, DataFrame<?,?>  dfB, String joinSuffixA, String joinSuffixB, JoinColumn... joinColumns) {
         return INNER.join(dfA, dfB, joinSuffixA, joinSuffixB, joinColumns);
     }
 

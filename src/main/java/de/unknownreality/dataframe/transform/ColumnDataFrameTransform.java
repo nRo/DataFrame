@@ -24,8 +24,8 @@
 
 package de.unknownreality.dataframe.transform;
 
-import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.DataFrameColumn;
+import de.unknownreality.dataframe.DefaultDataFrame;
 
 /**
  * Created by algru on 06.09.2016.
@@ -36,5 +36,5 @@ public interface ColumnDataFrameTransform<I extends DataFrameColumn> {
      * @param source input column
      * @return resulting dataframe
      */
-    public DataFrame transform(I source);
+    public DefaultDataFrame transform(I source);
 }

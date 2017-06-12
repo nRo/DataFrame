@@ -24,7 +24,7 @@
 
 package de.unknownreality.dataframe.csv;
 
-import de.unknownreality.dataframe.DataFrame;
+import de.unknownreality.dataframe.DefaultDataFrame;
 import de.unknownreality.dataframe.common.DataContainer;
 import de.unknownreality.dataframe.common.DataWriter;
 import de.unknownreality.dataframe.common.Header;
@@ -147,7 +147,7 @@ public class CSVWriter implements DataWriter {
     }
 
     @Override
-    public void write(File file, DataFrame dataFrame, boolean writeMetaFile) {
+    public void write(File file, DefaultDataFrame dataFrame, boolean writeMetaFile) {
         write(file, dataFrame);
         if (writeMetaFile) {
             writeMetaFile(dataFrame, new File(file.getAbsolutePath() + ".dfm"));
@@ -160,7 +160,7 @@ public class CSVWriter implements DataWriter {
      * @param dataFrame target data frame
      * @param file      target file
      */
-    private void writeMetaFile(DataFrame dataFrame, File file) {
+    private void writeMetaFile(DefaultDataFrame dataFrame, File file) {
         DataFrameMeta metaFile = DataFrameMeta.create(
                 dataFrame, CSVReaderBuilder.class, getAttributes()
         );

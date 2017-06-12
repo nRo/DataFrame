@@ -25,8 +25,8 @@
 package de.unknownreality.dataframe.join;
 
 import de.unknownreality.dataframe.DataFrame;
-import de.unknownreality.dataframe.DataFrameHeader;
 import de.unknownreality.dataframe.DataRow;
+import de.unknownreality.dataframe.DefaultDataFrameHeader;
 import de.unknownreality.dataframe.group.DataGroup;
 import de.unknownreality.dataframe.group.DataGrouping;
 
@@ -52,8 +52,8 @@ public class InnerJoin extends AbstractJoin {
      * @return joined data frame
      */
     @Override
-    public JoinedDataFrame join(DataFrame dfA, DataFrame dfB, String joinSuffixA, String joinSuffixB, JoinColumn... joinColumns) {
-        DataFrameHeader joinHeader = new DataFrameHeader();
+    public JoinedDataFrame join(DataFrame<?,?> dfA, DataFrame<?,?> dfB, String joinSuffixA, String joinSuffixB, JoinColumn... joinColumns) {
+        DefaultDataFrameHeader joinHeader = new DefaultDataFrameHeader();
         JoinInfo joinInfo = fillJoinHeader(joinHeader, dfA, dfB, joinColumns, joinSuffixA, joinSuffixB);
         String[] groupColumns = new String[joinColumns.length];
         for (int i = 0; i < joinColumns.length; i++) {

@@ -60,8 +60,8 @@ public class JoinInfo {
      * @param dataFrame input data frame
      * @return <tt>true</tt> if the data frame equals the first data frame
      */
-    public boolean isA(DataFrame dataFrame) {
-        DataFrame df;
+    public boolean isA(DataFrame<?,?> dataFrame) {
+        DataFrame<?,?> df;
         return ((df = dataFrameA.get()) != null && df.equals(dataFrame));
     }
 
@@ -71,8 +71,8 @@ public class JoinInfo {
      * @param dataFrame input data frame
      * @return <tt>true</tt> if the data frame equals the second data frame
      */
-    public boolean isB(DataFrame dataFrame) {
-        DataFrame df;
+    public boolean isB(DataFrame<?,?> dataFrame) {
+        DataFrame<?,?> df;
         return ((df = dataFrameB.get()) != null && df.equals(dataFrame));
     }
 
@@ -108,7 +108,7 @@ public class JoinInfo {
      * @param dataFrame data frame used for the join
      * @return header name in the joined data frame
      */
-    public String getJoinedHeader(String original, DataFrame dataFrame) {
+    public String getJoinedHeader(String original, DataFrame<?,?> dataFrame) {
         if (isA(dataFrame)) {
             return getJoinedHeaderA(original);
         } else if (isB(dataFrame)) {
@@ -125,7 +125,7 @@ public class JoinInfo {
      * @param dataFrame data frame used for the join
      * @return header name in the joined data frame
      */
-    public int getJoinedIndex(String original, DataFrame dataFrame) {
+    public int getJoinedIndex(String original, DataFrame<?,?> dataFrame) {
         if (isA(dataFrame)) {
             return getJoinedIndexA(original);
         } else if (isB(dataFrame)) {
