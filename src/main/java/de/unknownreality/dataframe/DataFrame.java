@@ -48,7 +48,6 @@ import java.util.*;
  */
 public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
     private static final Logger log = LoggerFactory.getLogger(DataFrame.class);
-    public static final String PRIMARY_INDEX_NAME = "primaryKey";
     private int size;
     private final Map<String, DataFrameColumn> columnsMap = new LinkedHashMap<>();
     private final LinkedHashSet<DataFrameColumn> columnList = new LinkedHashSet<>();
@@ -101,7 +100,7 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
      * @return <tt>self</tt> for method chaining
      */
     public DataFrame removePrimaryKey() {
-        indices.removeIndex(PRIMARY_INDEX_NAME);
+        indices.removeIndex(Indices.PRIMARY_KEY_NAME);
         return this;
     }
 
