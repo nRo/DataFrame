@@ -55,7 +55,6 @@ public class DataFrame implements DataContainer<DataFrameHeader, DataRow> {
     private final Indices indices = new Indices(this);
 
     public DataFrame() {
-
     }
 
     /**
