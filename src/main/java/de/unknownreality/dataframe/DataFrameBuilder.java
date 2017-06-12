@@ -48,8 +48,8 @@ public class DataFrameBuilder {
     protected DataFrameBuilder(DataContainer<?,?> container) {
         this.dataContainer = container;
     }
-    public static DefaultDataFrame createDefault(){
-        return new DefaultDataFrame();
+    public static DataFrame createDefault(){
+        return new DataFrame();
     }
 
     /**
@@ -208,11 +208,11 @@ public class DataFrameBuilder {
      *
      * @return created data frame
      */
-    public DefaultDataFrame build() {
+    public DataFrame build() {
         if(dataContainer != null){
             return DataFrameConverter.fromDataContainer(dataContainer, getColumns(),filterPredicate);
         }
-        DefaultDataFrame dataFrame = new DefaultDataFrame();
+        DataFrame dataFrame = new DataFrame();
         for(String n : columns.keySet()){
             DataFrameColumn col = columns.get(n);
             col.setName(n);

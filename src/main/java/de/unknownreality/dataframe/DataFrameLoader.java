@@ -52,7 +52,7 @@ public class DataFrameLoader {
      * @return loaded data frame
      * @throws DataFrameException thrown if the data frame can not be loaded
      */
-    public static DefaultDataFrame load(File file, FilterPredicate filterPredicate) throws DataFrameException {
+    public static DataFrame load(File file, FilterPredicate filterPredicate) throws DataFrameException {
         File dataFile;
         File metaFile;
         String ext = "." + DataFrameMeta.META_FILE_EXTENSION;
@@ -77,7 +77,7 @@ public class DataFrameLoader {
      * @return loaded data frame
      * @throws DataFrameException thrown if the data frame can not be loaded
      */
-    public static DefaultDataFrame load(File file) throws DataFrameException {
+    public static DataFrame load(File file) throws DataFrameException {
         return load(file, FilterPredicate.EMPTY_FILTER);
     }
 
@@ -92,7 +92,7 @@ public class DataFrameLoader {
      * @throws DataFrameException thrown if the data frame can not be loaded
      */
 
-    public static DefaultDataFrame load(File file, File metaFile, FilterPredicate filterPredicate) throws DataFrameException {
+    public static DataFrame load(File file, File metaFile, FilterPredicate filterPredicate) throws DataFrameException {
         if (!file.exists()) {
             throw new DataFrameException(String.format("file not found %s", file.getAbsolutePath()));
         }
@@ -128,7 +128,7 @@ public class DataFrameLoader {
      * @return loaded data frame
      * @throws DataFrameException thrown if the data frame can not be loaded
      */
-    public static DefaultDataFrame load(File file, File metaFile) throws DataFrameException {
+    public static DataFrame load(File file, File metaFile) throws DataFrameException {
         return load(file, metaFile, FilterPredicate.EMPTY_FILTER);
     }
 
@@ -144,7 +144,7 @@ public class DataFrameLoader {
      * @throws DataFrameException thrown if the data frame can not be loaded
      */
 
-    public static DefaultDataFrame loadResource(String path, String metaPath, ClassLoader classLoader, FilterPredicate filterPredicate) throws DataFrameException {
+    public static DataFrame loadResource(String path, String metaPath, ClassLoader classLoader, FilterPredicate filterPredicate) throws DataFrameException {
 
         DataFrameMeta dataFrameMeta;
         dataFrameMeta = DataFrameMetaReader.read(classLoader.getResourceAsStream(metaPath));
@@ -175,7 +175,7 @@ public class DataFrameLoader {
      * @return loaded data frame
      * @throws DataFrameException thrown if the data frame can not be loaded
      */
-    public static DefaultDataFrame loadResource(String path, String metaPath, ClassLoader classLoader) throws DataFrameException {
+    public static DataFrame loadResource(String path, String metaPath, ClassLoader classLoader) throws DataFrameException {
         return loadResource(path, metaPath, classLoader, FilterPredicate.EMPTY_FILTER);
     }
 

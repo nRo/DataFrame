@@ -24,8 +24,8 @@
 
 package de.unknownreality.dataframe.meta;
 
+import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.DataFrameColumn;
-import de.unknownreality.dataframe.DefaultDataFrame;
 import de.unknownreality.dataframe.common.DataWriter;
 import de.unknownreality.dataframe.common.ReaderBuilder;
 
@@ -51,7 +51,7 @@ public class DataFrameMeta {
      * @param dataWriterBuilder  data writer used
      * @return data frame meta information
      */
-    public static DataFrameMeta create(DefaultDataFrame dataFrame, Class<? extends ReaderBuilder> readerBuilderClass, DataWriter dataWriterBuilder) {
+    public static DataFrameMeta create(DataFrame dataFrame, Class<? extends ReaderBuilder> readerBuilderClass, DataWriter dataWriterBuilder) {
         return create(dataFrame, readerBuilderClass, dataWriterBuilder.getAttributes());
     }
 
@@ -63,7 +63,7 @@ public class DataFrameMeta {
      * @param writerAttributes   attributes of the used data writer
      * @return data frame meta information
      */
-    public static DataFrameMeta create(DefaultDataFrame dataFrame, Class<? extends ReaderBuilder> readerBuilderClass, Map<String, String> writerAttributes) {
+    public static DataFrameMeta create(DataFrame dataFrame, Class<? extends ReaderBuilder> readerBuilderClass, Map<String, String> writerAttributes) {
         DataFrameMeta dataFrameMetaFile = new DataFrameMeta();
         dataFrameMetaFile.readerBuilderClass = readerBuilderClass;
         dataFrameMetaFile.attributes = writerAttributes;

@@ -30,5 +30,5 @@ import de.unknownreality.dataframe.DataFrame;
  * Created by Alex on 12.06.2017.
  */
 public interface GroupUtil {
-    DataGrouping groupBy(DataFrame<?,?> df, String... columns);
+    DataGrouping groupBy(DataFrame df, String... columns);
 }

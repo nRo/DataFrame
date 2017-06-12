@@ -24,9 +24,9 @@
 
 package de.unknownreality.dataframe.transform;
 
+import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.DataFrameColumn;
 import de.unknownreality.dataframe.DataFrameRuntimeException;
-import de.unknownreality.dataframe.DefaultDataFrame;
 import de.unknownreality.dataframe.column.IntegerColumn;
 
 import java.util.LinkedHashMap;
@@ -53,8 +53,8 @@ public class CountTransformer<T extends Comparable<T>> implements ColumnDataFram
      * @return count dataframe
      */
     @Override
-    public DefaultDataFrame transform(DataFrameColumn<T,?> source) {
-        DefaultDataFrame countDataFrame = new DefaultDataFrame();
+    public DataFrame transform(DataFrameColumn<T,?> source) {
+        DataFrame countDataFrame = new DataFrame();
         DataFrameColumn valueColumn;
         try {
             valueColumn = source.getClass().newInstance();

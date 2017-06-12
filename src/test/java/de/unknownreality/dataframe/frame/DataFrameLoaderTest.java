@@ -22,9 +22,9 @@
 
 package de.unknownreality.dataframe.frame;
 
+import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.DataFrameLoader;
 import de.unknownreality.dataframe.DataRow;
-import de.unknownreality.dataframe.DefaultDataFrame;
 import de.unknownreality.dataframe.column.DoubleColumn;
 import de.unknownreality.dataframe.column.IntegerColumn;
 import de.unknownreality.dataframe.column.StringColumn;
@@ -43,7 +43,7 @@ public class DataFrameLoaderTest {
 
     @Test
     public void testMetaReader() throws Exception {
-        DefaultDataFrame dataFrame = DataFrameLoader.loadResource("loader_test.csv","loader_test.csv.meta",DataFrameLoaderTest.class.getClassLoader());
+        DataFrame dataFrame = DataFrameLoader.loadResource("loader_test.csv","loader_test.csv.meta",DataFrameLoaderTest.class.getClassLoader());
         Assert.assertEquals(5, dataFrame.size());
 
         /**

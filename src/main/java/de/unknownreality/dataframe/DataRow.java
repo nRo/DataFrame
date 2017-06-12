@@ -5,8 +5,8 @@ import de.unknownreality.dataframe.common.row.UpdateableRow;
 /**
  * Created by Alex on 12.06.2017.
  */
-public class DataRow extends UpdateableRow<String,DefaultDataFrameHeader,Comparable> {
-    public DataRow(DefaultDataFrameHeader header, Comparable[] values, int index) {
+public class DataRow extends UpdateableRow<String,DataFrameHeader,Comparable> {
+    public DataRow(DataFrameHeader header, Comparable[] values, int index) {
         super(header,values,index);
     }
 

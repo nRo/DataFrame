@@ -22,9 +22,9 @@
 
 package de.unknownreality.dataframe.frame;
 
+import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.DataFrameRuntimeException;
 import de.unknownreality.dataframe.DataRow;
-import de.unknownreality.dataframe.DefaultDataFrame;
 import de.unknownreality.dataframe.MapFunction;
 import de.unknownreality.dataframe.column.IntegerColumn;
 import de.unknownreality.dataframe.column.StringColumn;
@@ -58,7 +58,7 @@ public class DataFrameIndexTest {
         4;A;7
         3;A,8
          */
-        DefaultDataFrame dataFrame = CSVReaderBuilder.create()
+        DataFrame dataFrame = CSVReaderBuilder.create()
                 .containsHeader(true)
                 .withHeaderPrefix("")
                 .withSeparator(';')

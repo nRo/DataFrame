@@ -22,7 +22,7 @@
 
 package de.unknownreality.dataframe.frame;
 
-import de.unknownreality.dataframe.DefaultDataFrame;
+import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.DataRow;
 import de.unknownreality.dataframe.Values;
 import de.unknownreality.dataframe.column.DoubleColumn;
@@ -52,7 +52,7 @@ public class DataFrameJoinTest {
             C;6;3
             D;6;1
          */
-        DefaultDataFrame geneDataFrame = CSVReaderBuilder.create()
+        DataFrame geneDataFrame = CSVReaderBuilder.create()
                 .containsHeader(true)
                 .withHeaderPrefix("")
                 .withSeparator(';')
@@ -71,7 +71,7 @@ public class DataFrameJoinTest {
             TC;B;6;1
             TD;E;4;1
          */
-        DefaultDataFrame transcriptDataFrame = CSVReaderBuilder.create()
+        DataFrame transcriptDataFrame = CSVReaderBuilder.create()
                 .containsHeader(true)
                 .withHeaderPrefix("")
                 .withSeparator(';')

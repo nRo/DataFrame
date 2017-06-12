@@ -25,7 +25,7 @@
 package de.unknownreality.dataframe.join.impl;
 
 import de.unknownreality.dataframe.DataFrame;
-import de.unknownreality.dataframe.DefaultDataFrameHeader;
+import de.unknownreality.dataframe.DataFrameHeader;
 import de.unknownreality.dataframe.join.JoinColumn;
 import de.unknownreality.dataframe.join.JoinInfo;
 import de.unknownreality.dataframe.join.JoinedDataFrame;
@@ -48,8 +48,8 @@ public class RightJoin extends DirectionJoin {
      * @return joined data frame
      */
     @Override
-    public JoinedDataFrame join(DataFrame<?,?> dfA, DataFrame<?,?> dfB, String joinSuffixA, String joinSuffixB, JoinColumn... joinColumns) {
-        DefaultDataFrameHeader joinHeader = new DefaultDataFrameHeader();
+    public JoinedDataFrame join(DataFrame dfA, DataFrame dfB, String joinSuffixA, String joinSuffixB, JoinColumn... joinColumns) {
+        DataFrameHeader joinHeader = new DataFrameHeader();
         JoinInfo joinInfo = fillJoinHeader(joinHeader, dfA, dfB, joinColumns, joinSuffixA, joinSuffixB);
         return createDirectionJoin(dfB, dfA, joinHeader, joinInfo, joinColumns);
     }

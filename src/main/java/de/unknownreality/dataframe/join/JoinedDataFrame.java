@@ -24,9 +24,9 @@
 
 package de.unknownreality.dataframe.join;
 
+import de.unknownreality.dataframe.DataFrame;
+import de.unknownreality.dataframe.DataFrameHeader;
 import de.unknownreality.dataframe.DataRow;
-import de.unknownreality.dataframe.DefaultDataFrame;
-import de.unknownreality.dataframe.DefaultDataFrameHeader;
 import de.unknownreality.dataframe.index.Indices;
 
 import java.util.List;
@@ -34,7 +34,7 @@ import java.util.List;
 /**
  * Created by Alex on 13.03.2016.
  */
-public class JoinedDataFrame extends DefaultDataFrame {
+public class JoinedDataFrame extends DataFrame {
     private final JoinInfo joinInfo;
 
     public JoinedDataFrame(JoinInfo info) {
@@ -48,18 +48,6 @@ public class JoinedDataFrame extends DefaultDataFrame {
      */
     public JoinInfo getJoinInfo() {
         return joinInfo;
-    }
-
-    @Override
-    public JoinedDataFrame getThis() {
-        return this;
-    }
-
-    @Override
-    public JoinedDataFrame createNew(DefaultDataFrameHeader header, List<DataRow> rows, Indices indices) {
-        JoinedDataFrame joinedDataFrame = new JoinedDataFrame(joinInfo);
-        joinedDataFrame.set(header,rows,indices);
-        return joinedDataFrame;
     }
 
 
