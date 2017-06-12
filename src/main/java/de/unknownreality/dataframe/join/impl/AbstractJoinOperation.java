@@ -22,11 +22,14 @@
  *
  */
 
-package de.unknownreality.dataframe.join;
+package de.unknownreality.dataframe.join.impl;
 
 import de.unknownreality.dataframe.*;
 import de.unknownreality.dataframe.common.Row;
 import de.unknownreality.dataframe.group.DataGroup;
+import de.unknownreality.dataframe.join.JoinColumn;
+import de.unknownreality.dataframe.join.JoinInfo;
+import de.unknownreality.dataframe.join.JoinedDataFrame;
 
 import java.util.*;
 

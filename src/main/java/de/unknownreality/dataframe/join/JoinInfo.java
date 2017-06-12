@@ -86,7 +86,7 @@ public class JoinInfo {
      * @param original header name in the first data frame
      * @param joined   header name in the joined data frame
      */
-    protected void addDataFrameAHeader(String original, String joined) {
+    public void addDataFrameAHeader(String original, String joined) {
         dataFrameAHeaderMap.put(original, joined);
     }
 
@@ -96,7 +96,7 @@ public class JoinInfo {
      * @param original header name in the second data frame
      * @param joined   header name in the joined data frame
      */
-    protected void addDataFrameBHeader(String original, String joined) {
+    public void addDataFrameBHeader(String original, String joined) {
         dataFrameBHeaderMap.put(original, joined);
     }
 

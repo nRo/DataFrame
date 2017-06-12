@@ -5,7 +5,6 @@ import de.unknownreality.dataframe.common.DataContainer;
 import de.unknownreality.dataframe.filter.FilterPredicate;
 import de.unknownreality.dataframe.group.DataGrouping;
 import de.unknownreality.dataframe.join.JoinColumn;
-import de.unknownreality.dataframe.join.Joinable;
 import de.unknownreality.dataframe.join.JoinedDataFrame;
 import de.unknownreality.dataframe.sort.SortColumn;
 import de.unknownreality.dataframe.transform.DataFrameTransform;
@@ -18,7 +17,7 @@ import java.util.List;
 /**
  * Created by algru on 11.06.2017.
  */
-public interface DataFrame<H extends DataFrameHeader<H>, R extends DataRow> extends DataContainer<H, R>, Joinable<H,R>{
+public interface DataFrame<H extends DataFrameHeader<H>,R extends DataRow> extends DataContainer<H, R>{
 
     DataFrame<H,R> setPrimaryKey(String... colNames);
 
@@ -32,9 +31,9 @@ public interface DataFrame<H extends DataFrameHeader<H>, R extends DataRow> exte
 
     DataFrame<H,R> addColumn(DataFrameColumn column);
 
-    <T extends Comparable<T>> DataFrame<H,R> addColumn(Class<T> type, String name);
+    <T extends Comparable<T>> DataFrame addColumn(Class<T> type, String name);
 
-    <T extends Comparable<T>> DataFrame<H,R> addColumn(Class<T> type, String name, ColumnTypeMap columnTypeMap);
+    <T extends Comparable<T>> DataFrame addColumn(Class<T> type, String name, ColumnTypeMap columnTypeMap);
 
     <T extends Comparable<T>, C extends DataFrameColumn<T, C>> DataFrame<H,R> addColumn(Class<T> type, String name, ColumnTypeMap columnTypeMap, ColumnAppender<T> appender);
 
@@ -60,7 +59,7 @@ public interface DataFrame<H extends DataFrameHeader<H>, R extends DataRow> exte
 
     DataFrame<H,R> sort(SortColumn... columns);
 
-    DataFrame<H,R> sort(Comparator<DataRow> comp);
+    DataFrame<H,R> sort(Comparator<R> comp);
 
     DataFrame<H,R> sort(String name);
 
@@ -150,6 +149,24 @@ public interface DataFrame<H extends DataFrameHeader<H>, R extends DataRow> exte
 
     DataGrouping groupBy(String... column);
 
+    JoinedDataFrame joinLeft(DataFrame<H,R> dataFrame, String... joinColumns);
+
+    JoinedDataFrame joinLeft(DataFrame<H,R> dataFrame, JoinColumn... joinColumns);
+
+    JoinedDataFrame joinLeft(DataFrame<H,R> dataFrame, String suffixA, String suffixB, JoinColumn... joinColumns);
+
+    JoinedDataFrame joinRight(DataFrame<H,R> dataFrame, String... joinColumns);
+
+    JoinedDataFrame joinRight(DataFrame<H,R> dataFrame, JoinColumn... joinColumns);
+
+    JoinedDataFrame joinRight(DataFrame<H,R> dataFrame, String suffixA, String suffixB, JoinColumn... joinColumns);
+
+    JoinedDataFrame joinInner(DataFrame<H,R> dataFrame, String... joinColumns);
+
+    JoinedDataFrame joinInner(DataFrame<H,R> dataFrame, JoinColumn... joinColumns);
+
+    JoinedDataFrame joinInner(DataFrame<H,R> dataFrame, String suffixA, String suffixB, JoinColumn... joinColumns);
+
     DataFrame<H,R> copy();
 
     boolean containsColumn(DataFrameColumn column);
@@ -168,4 +185,5 @@ public interface DataFrame<H extends DataFrameHeader<H>, R extends DataRow> exte
 
     @Override
     Iterator<R> iterator();
+
 }

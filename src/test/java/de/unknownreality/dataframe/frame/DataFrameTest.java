@@ -45,7 +45,7 @@ public class DataFrameTest {
 
     @Test
     public void testCreation() {
-        DataFrame dataFrame = new DefaultDataFrame();
+        DataFrame dataFrame = DataFrameBuilder.createDefault();
         dataFrame.addColumn(new IntegerColumn("id"));
         dataFrame.addColumns(new StringColumn("first"), new StringColumn("last"));
         dataFrame.addColumn(Double.class, "value", ColumnTypeMap.create().addType(Double.class, DoubleColumn.class));
@@ -118,7 +118,7 @@ public class DataFrameTest {
                 .withSeparator('\t')
                 .containsHeader(true).load(csv);
 
-        DefaultDataFrame df = reader.toDataFrame()
+        DataFrame df = reader.toDataFrame()
                 .addColumn(new IntegerColumn("A"))
                 .addColumn(new DoubleColumn("B"))
                 .addColumn(new StringColumn("C"))
@@ -135,7 +135,7 @@ public class DataFrameTest {
                 .withSeparator('\t')
                 .containsHeader(true).load(csv);
 
-        DefaultDataFrame df2 = reader.toDataFrame()
+        DataFrame df2 = reader.toDataFrame()
                 .addIntegerColumn("A")
                 .addDoubleColumn("B")
                 .addStringColumn("C")
@@ -150,6 +150,7 @@ public class DataFrameTest {
 
         Assert.assertEquals(df, df2);
 
+        df.iterator();
 
 
         Assert.assertEquals(header.length, df.getHeader().size());
@@ -361,12 +362,13 @@ public class DataFrameTest {
                 .withSeparator('\t')
                 .containsHeader(true).load(csv);
 
-        DefaultDataFrame df = reader.toDataFrame()
+        DataFrame df = reader.toDataFrame()
                 .addColumn(new IntegerColumn("A"))
                 .addColumn(new DoubleColumn("B"))
                 .addColumn(new StringColumn("C"))
                 .addColumn(new BooleanColumn("D"))
                 .build();
+        List<DataRow> r = df.getRows();
         int i = 0;
         for (DataRow row : df) {
             if (i == 2) {

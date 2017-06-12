@@ -27,12 +27,13 @@ package de.unknownreality.dataframe.join;
 import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.DataFrameHeader;
 import de.unknownreality.dataframe.DataRow;
-import de.unknownreality.dataframe.common.Header;
+import de.unknownreality.dataframe.join.impl.DefaultJoinUtil;
 
 /**
  * Created by Alex on 12.06.2017.
  */
 public interface Joinable<H extends DataFrameHeader<H>, R extends DataRow> {
+
     DataFrame<H,R> getThis();
 
     JoinUtil getJoinUtil();

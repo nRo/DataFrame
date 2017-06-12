@@ -22,10 +22,13 @@
 
 package de.unknownreality.dataframe.frame;
 
-import de.unknownreality.dataframe.DefaultDataFrame;
 import de.unknownreality.dataframe.DataRow;
+import de.unknownreality.dataframe.DefaultDataFrame;
 import de.unknownreality.dataframe.Values;
-import de.unknownreality.dataframe.column.*;
+import de.unknownreality.dataframe.column.BooleanColumn;
+import de.unknownreality.dataframe.column.DoubleColumn;
+import de.unknownreality.dataframe.column.IntegerColumn;
+import de.unknownreality.dataframe.column.StringColumn;
 import de.unknownreality.dataframe.csv.CSVReader;
 import de.unknownreality.dataframe.csv.CSVReaderBuilder;
 import de.unknownreality.dataframe.transform.CountTransformer;

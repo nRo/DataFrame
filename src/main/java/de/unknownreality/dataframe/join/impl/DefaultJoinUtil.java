@@ -22,9 +22,12 @@
  *
  */
 
-package de.unknownreality.dataframe.join;
+package de.unknownreality.dataframe.join.impl;
 
 import de.unknownreality.dataframe.DataFrame;
+import de.unknownreality.dataframe.join.JoinColumn;
+import de.unknownreality.dataframe.join.JoinUtil;
+import de.unknownreality.dataframe.join.JoinedDataFrame;
 
 /**
  * Created by Alex on 12.03.2016.
