@@ -39,7 +39,7 @@ public class Indices {
 
     private final Map<String, Index> indexMap = new HashMap<>();
     private final Map<DataFrameColumn, List<Index>> columnIndexMap = new WeakHashMap<>();
-    private final DataFrame dataFrame;
+    private final DataFrame<?,?> dataFrame;
     /**
      * Creates an index for a data frame
      *
@@ -64,7 +64,7 @@ public class Indices {
      *
      * @param dataFrame data frame the indices are copied to
      */
-    public void copyTo(DataFrame dataFrame) {
+    public void copyTo(DataFrame<?,?> dataFrame) {
         for (Map.Entry<String, Index> entry : indexMap.entrySet()) {
             List<DataFrameColumn> indexColumns = entry.getValue().getColumns();
             DataFrameColumn[] dfColumns = new DataFrameColumn[indexColumns.size()];

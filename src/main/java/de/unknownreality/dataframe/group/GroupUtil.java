@@ -24,8 +24,7 @@
 
 package de.unknownreality.dataframe.group;
 
-import de.unknownreality.dataframe.DataFrame;
-import de.unknownreality.dataframe.DataRow;
+import de.unknownreality.dataframe.*;
 import de.unknownreality.dataframe.sort.SortColumn;
 
 import java.util.ArrayList;
@@ -36,18 +35,18 @@ import java.util.List;
  */
 public class GroupUtil {
     /**
-     * Groups a {@link DataFrame} using one or more columns.
+     * Groups a {@link DefaultDataFrame} using one or more columns.
      *
      * @param df      input data frame
      * @param columns grouping columns
      * @return data grouping
      */
-    public static DataGrouping groupBy(DataFrame df, String... columns) {
+    public static DataGrouping groupBy(DataFrame<?,?> df, String... columns) {
         SortColumn[] sortColumns = new SortColumn[columns.length];
         for (int i = 0; i < columns.length; i++) {
             sortColumns[i] = new SortColumn(columns[i]);
         }
-        DataFrame sortedFrame = df.copy().sort(sortColumns);
+        DataFrame<?,?> sortedFrame = df.copy().sort(sortColumns);
         List<DataRow> currentList = new ArrayList<>();
         Comparable[] lastValues = null;
         List<DataGroup> groupList = new ArrayList<>();
@@ -62,7 +61,7 @@ public class GroupUtil {
             }
             if (!currentList.isEmpty()) {
                 DataGroup group = new DataGroup(columns, lastValues);
-                group.set(df.getHeader().copy(), currentList);
+                group.set(createHeader(df.getHeader()), currentList);
                 groupList.add(group);
             }
             currentList.clear();
@@ -71,10 +70,23 @@ public class GroupUtil {
         }
         if (!currentList.isEmpty()) {
             DataGroup group = new DataGroup(columns, lastValues);
-            group.set(df.getHeader().copy(), currentList);
+            group.set(createHeader(df.getHeader()), currentList);
             groupList.add(group);
         }
         return new DataGrouping(groupList, columns);
+    }
+
+    private static DefaultDataFrameHeader createHeader(DataFrameHeader<?> header){
+        if(header instanceof DefaultDataFrameHeader){
+            return ((DefaultDataFrameHeader)header).copy();
+        }
+        else{
+            DefaultDataFrameHeader basicDataFrameHeader = new DefaultDataFrameHeader();
+            for(String h : header){
+                basicDataFrameHeader.add(h, header.getColumnType(h), header.getType(h));
+            }
+            return basicDataFrameHeader;
+        }
     }
 
 

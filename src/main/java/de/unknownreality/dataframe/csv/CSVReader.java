@@ -149,7 +149,7 @@ public abstract class CSVReader implements DataContainer<CSVHeader, CSVRow> {
      * @return {@link DataFrameBuilder} for this csv reader.
      */
     public DataFrameBuilder toDataFrame() {
-        return DataFrameBuilder.create(this);
+        return DataFrameBuilder.createFrom(this);
     }
 
 

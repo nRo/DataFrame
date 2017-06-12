@@ -22,18 +22,27 @@
  *
  */
 
-package de.unknownreality.dataframe.transform;
-
-import de.unknownreality.dataframe.DataFrame;
+package de.unknownreality.dataframe;
 
 /**
- * Created by algru on 06.09.2016.
+ * Created by Alex on 09.03.2016.
  */
-public interface DataFrameTransform {
-    /**
-     * Transforms an input dataframe into a new data frame
-     * @param source input dataframe
-     * @return resulting dataframe
-     */
-    public <D extends DataFrame> D transform(D source);
+public class DefaultDataFrameHeader extends DataFrameHeader<DefaultDataFrameHeader> {
+
+
+
+
+    @Override
+    public DefaultDataFrameHeader add(DataFrameColumn<?, ?> column) {
+        return (DefaultDataFrameHeader)add(column.getName(), column.getClass(), column.getType());
+    }
+
+    @Override
+    public DefaultDataFrameHeader copy() {
+        DefaultDataFrameHeader copy = new DefaultDataFrameHeader();
+        for (String h : this) {
+            copy.add(h, getColumnType(h), getType(h));
+        }
+        return copy;
+    }
 }

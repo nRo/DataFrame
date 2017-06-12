@@ -48,8 +48,12 @@ public class DataFrameBuilder {
      * @param dataContainer parent data container
      * @return data frame builder
      */
-    public static DataFrameBuilder create(DataContainer dataContainer) {
+    public static DataFrameBuilder createFrom(DataContainer dataContainer) {
         return new DataFrameBuilder(dataContainer);
+    }
+
+    public static DataFrameBuilder create(){
+        return new DataFrameBuilder(null);
     }
 
     /**
@@ -176,7 +180,7 @@ public class DataFrameBuilder {
      * @return created data frame
      * @see DataFrameConverter#fromDataContainer(DataContainer, Map, FilterPredicate)
      */
-    public DataFrame build() {
+    public DefaultDataFrame build() {
         return DataFrameConverter.fromDataContainer(dataContainer, columns,filterPredicate);
 
     }

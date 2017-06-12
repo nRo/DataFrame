@@ -29,9 +29,9 @@ import de.unknownreality.dataframe.common.row.UpdateableRow;
 /**
  * Created by Alex on 09.03.2016.
  */
-public class DataRow extends UpdateableRow<String,DataFrameHeader,Comparable> {
+public class DataRow extends UpdateableRow<String,DefaultDataFrameHeader,Comparable> {
 
-    public DataRow(DataFrameHeader header, Comparable[] values, int index) {
+    public DataRow(DefaultDataFrameHeader header, Comparable[] values, int index) {
         super(header,values,index);
     }
 
