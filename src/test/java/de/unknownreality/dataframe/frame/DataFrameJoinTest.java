@@ -29,7 +29,7 @@ import de.unknownreality.dataframe.column.DoubleColumn;
 import de.unknownreality.dataframe.column.IntegerColumn;
 import de.unknownreality.dataframe.column.StringColumn;
 import de.unknownreality.dataframe.csv.CSVReaderBuilder;
-import de.unknownreality.dataframe.join.JoinUtil;
+import de.unknownreality.dataframe.join.DefaultJoinUtil;
 import de.unknownreality.dataframe.join.JoinedDataFrame;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -130,8 +130,8 @@ public class DataFrameJoinTest {
         Assert.assertEquals(true,rightJoin.getJoinInfo().isB(transcriptDataFrame));
         Assert.assertEquals(false,rightJoin.getJoinInfo().isA(transcriptDataFrame));
         Assert.assertEquals(0,rightJoin.getJoinInfo().getJoinedIndex("GENE_ID",transcriptDataFrame));
-        Assert.assertEquals("FPKM" + JoinUtil.JOIN_SUFFIX_B, rightJoin.getJoinInfo().getJoinedHeader("FPKM",transcriptDataFrame));
-        Assert.assertEquals("FPKM" + JoinUtil.JOIN_SUFFIX_A, rightJoin.getJoinInfo().getJoinedHeaderA("FPKM"));
+        Assert.assertEquals("FPKM" + DefaultJoinUtil.JOIN_SUFFIX_B, rightJoin.getJoinInfo().getJoinedHeader("FPKM",transcriptDataFrame));
+        Assert.assertEquals("FPKM" + DefaultJoinUtil.JOIN_SUFFIX_A, rightJoin.getJoinInfo().getJoinedHeaderA("FPKM"));
         Assert.assertEquals(4, rightJoin.getJoinInfo().getJoinedIndexB("FPKM"));
 
     }
@@ -139,10 +139,10 @@ public class DataFrameJoinTest {
 
     private static void checkJoinedRow(DataRow row, Object geneId, Object gene_fpkm, Object chr, Object transcriptId, Object transcript_fpkm, Object transcriptNumber) {
         Assert.assertEquals(geneId, row.get("GENE_ID"));
-        Assert.assertEquals(gene_fpkm, row.get("FPKM" + JoinUtil.JOIN_SUFFIX_A));
+        Assert.assertEquals(gene_fpkm, row.get("FPKM" + DefaultJoinUtil.JOIN_SUFFIX_A));
         Assert.assertEquals(chr, row.get("CHR"));
         Assert.assertEquals(transcriptId, row.get("TRANSCRIPT_ID"));
-        Assert.assertEquals(transcript_fpkm, row.get("FPKM" + JoinUtil.JOIN_SUFFIX_B));
+        Assert.assertEquals(transcript_fpkm, row.get("FPKM" + DefaultJoinUtil.JOIN_SUFFIX_B));
         Assert.assertEquals(transcriptNumber, row.get("TRANSCRIPT_NUMBER"));
     }
 

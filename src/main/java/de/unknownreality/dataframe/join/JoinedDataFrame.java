@@ -51,7 +51,7 @@ public class JoinedDataFrame extends DefaultDataFrame {
     }
 
     @Override
-    protected JoinedDataFrame getThis() {
+    public JoinedDataFrame getThis() {
         return this;
     }
 

@@ -5,6 +5,7 @@ import de.unknownreality.dataframe.common.DataContainer;
 import de.unknownreality.dataframe.filter.FilterPredicate;
 import de.unknownreality.dataframe.group.DataGrouping;
 import de.unknownreality.dataframe.join.JoinColumn;
+import de.unknownreality.dataframe.join.Joinable;
 import de.unknownreality.dataframe.join.JoinedDataFrame;
 import de.unknownreality.dataframe.sort.SortColumn;
 import de.unknownreality.dataframe.transform.DataFrameTransform;
@@ -17,7 +18,7 @@ import java.util.List;
 /**
  * Created by algru on 11.06.2017.
  */
-public interface DataFrame<H extends DataFrameHeader<H>, R extends DataRow> extends DataContainer<H, R> {
+public interface DataFrame<H extends DataFrameHeader<H>, R extends DataRow> extends DataContainer<H, R>, Joinable<H,R>{
 
     DataFrame<H,R> setPrimaryKey(String... colNames);
 
@@ -29,12 +30,10 @@ public interface DataFrame<H extends DataFrameHeader<H>, R extends DataRow> exte
 
     DataFrame<H,R> renameColumn(String name, String newName);
 
-    @SuppressWarnings("unchecked")
     DataFrame<H,R> addColumn(DataFrameColumn column);
 
     <T extends Comparable<T>> DataFrame<H,R> addColumn(Class<T> type, String name);
 
-    @SuppressWarnings("unchecked")
     <T extends Comparable<T>> DataFrame<H,R> addColumn(Class<T> type, String name, ColumnTypeMap columnTypeMap);
 
     <T extends Comparable<T>, C extends DataFrameColumn<T, C>> DataFrame<H,R> addColumn(Class<T> type, String name, ColumnTypeMap columnTypeMap, ColumnAppender<T> appender);
@@ -47,7 +46,6 @@ public interface DataFrame<H extends DataFrameHeader<H>, R extends DataRow> exte
 
     DataFrame<H,R> append(Comparable... values);
 
-    @SuppressWarnings("unchecked")
     DataFrame<H,R> append(R row);
 
     DataFrame<H,R> update(R dataRow);
@@ -151,24 +149,6 @@ public interface DataFrame<H extends DataFrameHeader<H>, R extends DataRow> exte
     ShortColumn getShortColumn(String name);
 
     DataGrouping groupBy(String... column);
-
-    JoinedDataFrame joinLeft(DataFrame<H,R> dataFrame, String... joinColumns);
-
-    JoinedDataFrame joinLeft(DataFrame<H,R> dataFrame, JoinColumn... joinColumns);
-
-    JoinedDataFrame joinLeft(DataFrame<H,R> dataFrame, String suffixA, String suffixB, JoinColumn... joinColumns);
-
-    JoinedDataFrame joinRight(DataFrame<H,R> dataFrame, String... joinColumns);
-
-    JoinedDataFrame joinRight(DataFrame<H,R> dataFrame, JoinColumn... joinColumns);
-
-    JoinedDataFrame joinRight(DataFrame<H,R> dataFrame, String suffixA, String suffixB, JoinColumn... joinColumns);
-
-    JoinedDataFrame joinInner(DataFrame<H,R> dataFrame, String... joinColumns);
-
-    JoinedDataFrame joinInner(DataFrame<H,R> dataFrame, JoinColumn... joinColumns);
-
-    JoinedDataFrame joinInner(DataFrame<H,R> dataFrame, String suffixA, String suffixB, JoinColumn... joinColumns);
 
     DataFrame<H,R> copy();
 

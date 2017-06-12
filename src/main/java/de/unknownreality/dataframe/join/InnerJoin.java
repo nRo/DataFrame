@@ -36,7 +36,7 @@ import java.util.List;
 /**
  * Created by Alex on 10.07.2016.
  */
-public class InnerJoin extends AbstractJoin {
+public class InnerJoin extends AbstractJoinOperation {
     protected InnerJoin() {
     }
 

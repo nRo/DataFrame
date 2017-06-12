@@ -62,7 +62,7 @@ public class DefaultDataFrame extends AbstractDataFrame<DefaultDataFrameHeader,D
     }
 
     @Override
-    protected DefaultDataFrame getThis() {
+    public DefaultDataFrame getThis() {
         return this;
     }
 

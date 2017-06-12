@@ -5,11 +5,10 @@ import de.unknownreality.dataframe.common.mapping.DataMapper;
 import de.unknownreality.dataframe.filter.FilterPredicate;
 import de.unknownreality.dataframe.filter.compile.PredicateCompiler;
 import de.unknownreality.dataframe.group.DataGrouping;
+import de.unknownreality.dataframe.group.DefaultGroupUtil;
 import de.unknownreality.dataframe.group.GroupUtil;
 import de.unknownreality.dataframe.index.Indices;
-import de.unknownreality.dataframe.join.JoinColumn;
-import de.unknownreality.dataframe.join.JoinUtil;
-import de.unknownreality.dataframe.join.JoinedDataFrame;
+import de.unknownreality.dataframe.join.*;
 import de.unknownreality.dataframe.sort.RowColumnComparator;
 import de.unknownreality.dataframe.sort.SortColumn;
 import de.unknownreality.dataframe.transform.DataFrameTransform;
@@ -21,19 +20,39 @@ import java.util.*;
 /**
  * Created by algru on 11.06.2017.
  */
-public abstract class AbstractDataFrame<H extends DataFrameHeader<H>, R extends DataRow, D extends AbstractDataFrame<H,R,D>> implements DataFrame<H,R> {
+public abstract class AbstractDataFrame<H extends DataFrameHeader<H>, R extends DataRow, D extends AbstractDataFrame<H,R,D>>
+        implements DataFrame<H,R> {
     private static final Logger log = LoggerFactory.getLogger(DefaultDataFrame.class);
 
     private int size;
     private final Map<String, DataFrameColumn> columnsMap = new LinkedHashMap<>();
     private final LinkedHashSet<DataFrameColumn> columnList = new LinkedHashSet<>();
     private final Indices indices = new Indices(this);
+    private JoinUtil joinUtil = new DefaultJoinUtil();
+    private GroupUtil groupUtil = new DefaultGroupUtil();
 
-    protected abstract D getThis();
+    public abstract D getThis();
 
     protected abstract void setHeader(H header);
 
     public abstract D createNew(H header, List<R> rows,Indices indices);
+
+    public JoinUtil getJoinUtil() {
+        return joinUtil;
+    }
+
+    public void setJoinUtil(JoinUtil joinUtil) {
+        this.joinUtil = joinUtil;
+    }
+
+    public GroupUtil getGroupUtil() {
+        return groupUtil;
+    }
+
+    public void setGroupUtil(GroupUtil groupUtil) {
+        this.groupUtil = groupUtil;
+    }
+
     /**
      * Sets the primary key columns using column names
      *
@@ -1059,150 +1078,13 @@ public abstract class AbstractDataFrame<H extends DataFrameHeader<H>, R extends 
      *
      * @param column group columns
      * @return {@link DataGrouping data grouping}
-     * @see GroupUtil#groupBy(DataFrame, String...)
+     * @see DefaultGroupUtil#groupBy(DataFrame, String...)
      */
     @Override
     public DataGrouping groupBy(String... column) {
-        return GroupUtil.groupBy(this, column);
+        return groupUtil.groupBy(this, column);
     }
 
-    /**
-     * Joins this data frame with another data frame using the <tt>LEFT JOIN</tt> method.
-     *
-     * @param dataFrame   other data frame
-     * @param joinColumns join columns
-     * @return joined data frame
-     * @see JoinUtil#leftJoin(DataFrame, DataFrame, JoinColumn...)
-     */
-    @Override
-    public JoinedDataFrame joinLeft(DataFrame<H,R> dataFrame, String... joinColumns) {
-        JoinColumn[] joinColumnsArray = new JoinColumn[joinColumns.length];
-        for (int i = 0; i < joinColumns.length; i++) {
-            joinColumnsArray[i] = new JoinColumn(joinColumns[i]);
-        }
-        return joinLeft(dataFrame, joinColumnsArray);
-    }
-
-    /**
-     * Joins this data frame with another data frame using the <tt>LEFT JOIN</tt> method.
-     *
-     * @param dataFrame   other data frame
-     * @param joinColumns join columns
-     * @return joined data frame
-     * @see JoinUtil#leftJoin(DataFrame, DataFrame, JoinColumn...)
-     */
-    @Override
-    public JoinedDataFrame joinLeft(DataFrame<H,R> dataFrame, JoinColumn... joinColumns) {
-        return JoinUtil.leftJoin(this, dataFrame, joinColumns);
-    }
-
-    /**
-     * Joins this data frame with another data frame using the <tt>LEFT JOIN</tt> method.
-     * Column names are altered using the provided suffixes.
-     *
-     * @param dataFrame   other data frame
-     * @param suffixA     suffixes for columns from this data frame
-     * @param suffixB     suffixes for columns from the other data frame
-     * @param joinColumns join columns
-     * @return joined data frame
-     * @see JoinUtil#leftJoin(DataFrame, DataFrame, String, String, JoinColumn...)
-     */
-    @Override
-    public JoinedDataFrame joinLeft(DataFrame<H,R> dataFrame, String suffixA, String suffixB, JoinColumn... joinColumns) {
-        return JoinUtil.leftJoin(this, dataFrame, suffixA, suffixB, joinColumns);
-    }
-
-    /**
-     * Joins this data frame with another data frame using the <tt>RIGHT JOIN</tt> method.
-     *
-     * @param dataFrame   other data frame
-     * @param joinColumns join columns
-     * @return joined data frame
-     * @see JoinUtil#rightJoin(DataFrame, DataFrame, JoinColumn...)
-     */
-    @Override
-    public JoinedDataFrame joinRight(DataFrame<H,R> dataFrame, String... joinColumns) {
-        JoinColumn[] joinColumnsArray = new JoinColumn[joinColumns.length];
-        for (int i = 0; i < joinColumns.length; i++) {
-            joinColumnsArray[i] = new JoinColumn(joinColumns[i]);
-        }
-        return joinRight(dataFrame, joinColumnsArray);
-    }
-
-    /**
-     * Joins this data frame with another data frame using the <tt>LEFT JOIN</tt> method.
-     *
-     * @param dataFrame   other data frame
-     * @param joinColumns join columns
-     * @return joined data frame
-     * @see JoinUtil#leftJoin(DataFrame, DataFrame, JoinColumn...)
-     */
-    @Override
-    public JoinedDataFrame joinRight(DataFrame<H,R> dataFrame, JoinColumn... joinColumns) {
-        return JoinUtil.rightJoin(this, dataFrame, joinColumns);
-    }
-
-    /**
-     * Joins this data frame with another data frame using the <tt>RIGHT JOIN</tt> method.
-     * Column names are altered using the provided suffixes.
-     *
-     * @param dataFrame   other data frame
-     * @param suffixA     suffixes for columns from this data frame
-     * @param suffixB     suffixes for columns from the other data frame
-     * @param joinColumns join columns
-     * @return joined data frame
-     * @see JoinUtil#rightJoin(DataFrame, DataFrame, String, String, JoinColumn...)
-     */
-    @Override
-    public JoinedDataFrame joinRight(DataFrame<H,R> dataFrame, String suffixA, String suffixB, JoinColumn... joinColumns) {
-        return JoinUtil.rightJoin(this, dataFrame, suffixA, suffixB, joinColumns);
-    }
-
-    /**
-     * Joins this data frame with another data frame using the <tt>INNER JOIN</tt> method.
-     *
-     * @param dataFrame   other data frame
-     * @param joinColumns join columns
-     * @return joined data frame
-     * @see JoinUtil#innerJoin(DataFrame, DataFrame, JoinColumn...)
-     */
-    @Override
-    public JoinedDataFrame joinInner(DataFrame<H,R> dataFrame, String... joinColumns) {
-        JoinColumn[] joinColumnsArray = new JoinColumn[joinColumns.length];
-        for (int i = 0; i < joinColumns.length; i++) {
-            joinColumnsArray[i] = new JoinColumn(joinColumns[i]);
-        }
-        return joinInner(dataFrame, joinColumnsArray);
-    }
-
-    /**
-     * Joins this data frame with another data frame using the <tt>INNER JOIN</tt> method.
-     *
-     * @param dataFrame   other data frame
-     * @param joinColumns join columns
-     * @return joined data frame
-     * @see JoinUtil#innerJoin(DataFrame, DataFrame, JoinColumn...)
-     */
-    @Override
-    public JoinedDataFrame joinInner(DataFrame<H,R> dataFrame, JoinColumn... joinColumns) {
-        return JoinUtil.innerJoin(this, dataFrame, joinColumns);
-    }
-
-    /**
-     * Joins this data frame with another data frame using the <tt>INNER JOIN</tt> method.
-     * Column names are altered using the provided suffixes.
-     *
-     * @param dataFrame   other data frame
-     * @param suffixA     suffixes for columns from this data frame
-     * @param suffixB     suffixes for columns from the other data frame
-     * @param joinColumns join columns
-     * @return joined data frame
-     * @see JoinUtil#innerJoin(DataFrame, DataFrame, String, String, JoinColumn...)
-     */
-    @Override
-    public JoinedDataFrame joinInner(DataFrame<H,R> dataFrame, String suffixA, String suffixB, JoinColumn... joinColumns) {
-        return JoinUtil.innerJoin(this, dataFrame, suffixA, suffixB, joinColumns);
-    }
 
     /**
      * Returns a copy of this data frame.
