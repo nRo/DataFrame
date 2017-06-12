@@ -22,8 +22,8 @@
 
 package de.unknownreality.dataframe.frame;
 
+import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.DataRow;
-import de.unknownreality.dataframe.DefaultDataFrame;
 import de.unknownreality.dataframe.Values;
 import de.unknownreality.dataframe.column.BooleanColumn;
 import de.unknownreality.dataframe.column.DoubleColumn;
@@ -58,14 +58,14 @@ public class DataFrameTransformTest {
                 .withSeparator('\t')
                 .containsHeader(true).load(csv);
 
-        DefaultDataFrame df = reader.toDataFrame()
+        DataFrame df = reader.toDataFrame()
                 .addColumn(new IntegerColumn("A"))
                 .addColumn(new DoubleColumn("B"))
                 .addColumn(new StringColumn("C"))
                 .addColumn(new BooleanColumn("D"))
                 .build();
 
-        DefaultDataFrame counts = df.getColumn("A").transform(new CountTransformer());
+        DataFrame counts = df.getColumn("A").transform(new CountTransformer());
         for(DataRow row : counts){
             Assert.assertEquals(1,(int)row.getInteger(CountTransformer.COUNTS_COLUMN));
         }

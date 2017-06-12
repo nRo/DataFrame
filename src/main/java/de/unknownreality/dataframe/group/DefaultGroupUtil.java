@@ -35,18 +35,18 @@ import java.util.List;
  */
 public class DefaultGroupUtil implements GroupUtil{
     /**
-     * Groups a {@link DefaultDataFrame} using one or more columns.
+     * Groups a {@link DataFrame} using one or more columns.
      *
      * @param df      input data frame
      * @param columns grouping columns
      * @return data grouping
      */
-    public DataGrouping groupBy(DataFrame<?,?> df, String... columns) {
+    public DataGrouping groupBy(DataFrame df, String... columns) {
         SortColumn[] sortColumns = new SortColumn[columns.length];
         for (int i = 0; i < columns.length; i++) {
             sortColumns[i] = new SortColumn(columns[i]);
         }
-        DataFrame<?,?> sortedFrame = df.copy().sort(sortColumns);
+        DataFrame sortedFrame = df.copy().sort(sortColumns);
         List<DataRow> currentList = new ArrayList<>();
         Comparable[] lastValues = null;
         List<DataGroup> groupList = new ArrayList<>();
@@ -76,12 +76,12 @@ public class DefaultGroupUtil implements GroupUtil{
         return new DataGrouping(groupList, columns);
     }
 
-    private static DefaultDataFrameHeader createHeader(DataFrameHeader<?> header){
-        if(header instanceof DefaultDataFrameHeader){
-            return ((DefaultDataFrameHeader)header).copy();
+    private static DataFrameHeader createHeader(DataFrameHeader header){
+        if(header instanceof DataFrameHeader){
+            return ((DataFrameHeader)header).copy();
         }
         else{
-            DefaultDataFrameHeader basicDataFrameHeader = new DefaultDataFrameHeader();
+            DataFrameHeader basicDataFrameHeader = new DataFrameHeader();
             for(String h : header){
                 basicDataFrameHeader.add(h, header.getColumnType(h), header.getType(h));
             }

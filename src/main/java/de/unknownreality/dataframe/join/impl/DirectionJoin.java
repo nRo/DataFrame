@@ -25,8 +25,8 @@
 package de.unknownreality.dataframe.join.impl;
 
 import de.unknownreality.dataframe.DataFrame;
+import de.unknownreality.dataframe.DataFrameHeader;
 import de.unknownreality.dataframe.DataRow;
-import de.unknownreality.dataframe.DefaultDataFrameHeader;
 import de.unknownreality.dataframe.group.DataGroup;
 import de.unknownreality.dataframe.group.DataGrouping;
 import de.unknownreality.dataframe.join.JoinColumn;
@@ -50,8 +50,8 @@ public abstract class DirectionJoin extends AbstractJoinOperation {
      * @param joinColumns columns used for the join
      * @return joined data frame
      */
-    public JoinedDataFrame createDirectionJoin(DataFrame<?,?> dfA, DataFrame<?,?> dfB,
-                                               DefaultDataFrameHeader joinHeader, JoinInfo joinInfo, JoinColumn[] joinColumns) {
+    public JoinedDataFrame createDirectionJoin(DataFrame dfA, DataFrame dfB,
+                                               DataFrameHeader joinHeader, JoinInfo joinInfo, JoinColumn[] joinColumns) {
         String[] groupColumns = new String[joinColumns.length];
         for (int i = 0; i < joinColumns.length; i++) {
             groupColumns[i] = joinColumns[i].getColumnB();

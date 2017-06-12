@@ -22,8 +22,8 @@
 
 package de.unknownreality.dataframe.frame;
 
+import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.DataRow;
-import de.unknownreality.dataframe.DefaultDataFrame;
 import de.unknownreality.dataframe.column.IntegerColumn;
 import de.unknownreality.dataframe.column.StringColumn;
 import de.unknownreality.dataframe.csv.CSVReaderBuilder;
@@ -55,7 +55,7 @@ public class DataFrameGroupingTest {
             4;B;7
             3;B;8
          */
-        DefaultDataFrame dataFrame = CSVReaderBuilder.create()
+        DataFrame dataFrame = CSVReaderBuilder.create()
                 .containsHeader(true)
                 .withHeaderPrefix("")
                 .withSeparator(';')

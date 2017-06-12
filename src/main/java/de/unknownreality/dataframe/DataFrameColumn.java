@@ -41,7 +41,7 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
     private static final Logger log = LoggerFactory.getLogger(DataFrameColumn.class);
     public static final String ERROR_APPENDING = "error appending value to column";
     private String name;
-    private DataFrame<?,?> dataFrame;
+    private DataFrame dataFrame;
     private boolean dataFrameAppend = false;
 
 
@@ -67,7 +67,7 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
      * @param transformer column transformer
      * @return resulting column
      */
-    public DefaultDataFrame transform(ColumnDataFrameTransform<C> transformer){
+    public DataFrame transform(ColumnDataFrameTransform<C> transformer){
         return transformer.transform(getThis());
     }
 
@@ -475,7 +475,7 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
 
     /**
      * Throws an {@link DataFrameException exception} if appending is currently not allowed.
-     * Appending is not allowed if the column is part of a {@link DefaultDataFrame data frame}.
+     * Appending is not allowed if the column is part of a {@link DataFrame data frame}.
      * This step is necessary to ensure consistency of indices in the data frame.
      *
      * @throws DataFrameException Exception thrown if appending is not allowed
@@ -487,7 +487,7 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
     }
 
     /**
-     * Notifies the parent {@link DefaultDataFrame data frame} about a value change at a specified index.
+     * Notifies the parent {@link DataFrame data frame} about a value change at a specified index.
      * This tells the data frame to update the indices if required.
      *
      * @param index index of the changed value
@@ -500,7 +500,7 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
     }
 
     /**
-     * Notifies the parent {@link DefaultDataFrame data frame} that this column changed.
+     * Notifies the parent {@link DataFrame data frame} that this column changed.
      * This tells the data frame to update the indices if required.
      */
     public void notifyDataFrameColumnChanged() {
@@ -526,23 +526,23 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
     }
 
     /**
-     * Returns the parent {@link DefaultDataFrame data frame}
+     * Returns the parent {@link DataFrame data frame}
      *
      * @return parent data frame
      */
-    public DataFrame<?, ?> getDataFrame() {
+    public DataFrame getDataFrame() {
         return dataFrame;
     }
 
     /**
-     * Used internally by the data frame. Sets the parent {@link DefaultDataFrame data frame}.
+     * Used internally by the data frame. Sets the parent {@link DataFrame data frame}.
      * Columns can only be part of one data frame.
      * Throws an exception if this column is already appended to an other data frame.
      *
      * @param dataFrame parent data frame
      * @throws DataFrameException thrown if column already assigned to other data frame
      */
-    protected void setDataFrame(DataFrame<?,?> dataFrame) throws DataFrameException {
+    protected void setDataFrame(DataFrame dataFrame) throws DataFrameException {
         if (dataFrame == null) {
             this.dataFrame = null;
             return;

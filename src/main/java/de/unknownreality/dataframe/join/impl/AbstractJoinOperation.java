@@ -38,7 +38,7 @@ import java.util.*;
  */
 public abstract class AbstractJoinOperation {
 
-    public abstract JoinedDataFrame join(DataFrame<?,?> dfA, DataFrame<?,?> dfB, String joinSuffixA, String joinSuffixB, JoinColumn... joinColumns);
+    public abstract JoinedDataFrame join(DataFrame dfA, DataFrame dfB, String joinSuffixA, String joinSuffixB, JoinColumn... joinColumns);
 
 
     /**
@@ -49,7 +49,7 @@ public abstract class AbstractJoinOperation {
      * @param joinInfo        info about the joined data frame
      * @param joinedRowValues array that is filled with the row values
      */
-    public void fillValues(DataFrame<?,?> dataFrame, DataRow row, JoinInfo joinInfo, Comparable[] joinedRowValues) {
+    public void fillValues(DataFrame dataFrame, DataRow row, JoinInfo joinInfo, Comparable[] joinedRowValues) {
         for (String headerName : dataFrame.getHeader()) {
             int joinedIndex = joinInfo.getJoinedIndex(headerName, dataFrame);
             joinedRowValues[joinedIndex] = row.get(headerName);
@@ -83,7 +83,7 @@ public abstract class AbstractJoinOperation {
      * @param suffixB     suffix used for headers from the second data frame
      * @return information about the join
      */
-    public JoinInfo fillJoinHeader(DataFrameHeader joinHeader, DataFrame<?,?> dfA, DataFrame<?,?> dfB,
+    public JoinInfo fillJoinHeader(DataFrameHeader joinHeader, DataFrame dfA, DataFrame dfB,
                                    JoinColumn[] joinColumns, String suffixA, String suffixB) {
         Set<String> joinColumnSetA = new HashSet<>();
         Set<String> joinColumnSetB = new HashSet<>();
@@ -164,7 +164,7 @@ public abstract class AbstractJoinOperation {
      * @param joinHeader resulting data frame header
      * @param joinedRows list of rows for the joined data frame
      */
-    public void appendGroupJoinedRows(DataGroup group, DataFrame<?,?> dfA, DataFrame<?,?> dfB, DataRow rowA, JoinInfo joinInfo, DefaultDataFrameHeader joinHeader, List<DataRow> joinedRows) {
+    public void appendGroupJoinedRows(DataGroup group, DataFrame dfA, DataFrame dfB, DataRow rowA, JoinInfo joinInfo, DataFrameHeader joinHeader, List<DataRow> joinedRows) {
         for (DataRow rowB : group) {
             Comparable[] joinedRowValues = new Comparable[joinHeader.size()];
             fillValues(dfA, rowA, joinInfo, joinedRowValues);

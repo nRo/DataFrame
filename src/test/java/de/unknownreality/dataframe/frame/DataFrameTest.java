@@ -79,7 +79,7 @@ public class DataFrameTest {
         dataFrame.removeColumn("___");
         Assert.assertEquals(oldSize, dataFrame.size());
 
-        DataFrame dataFrame2 = new DefaultDataFrame();
+        DataFrame dataFrame2 = new DataFrame();
         dataFrame2.addColumn(new IntegerColumn("id"));
         dataFrame2.addColumn(new StringColumn("first"));
         dataFrame2.addColumn(new StringColumn("last"));
@@ -207,7 +207,7 @@ public class DataFrameTest {
                 .withSeparator('\t')
                 .containsHeader(true).load(csv);
 
-        DefaultDataFrame df = reader.toDataFrame()
+        DataFrame df = reader.toDataFrame()
                 .addColumn(new IntegerColumn("A"))
                 .addColumn(new DoubleColumn("B"))
                 .addColumn(new StringColumn("C"))
@@ -246,7 +246,7 @@ public class DataFrameTest {
 
     @Test
     public void predicateTest() {
-        DefaultDataFrame dataFrame = new DefaultDataFrame();
+        DataFrame dataFrame = new DataFrame();
         dataFrame.addColumn(new StringColumn("name"));
         dataFrame.addColumn(new DoubleColumn("x"));
         dataFrame.addColumn(new IntegerColumn("y"));
@@ -260,7 +260,7 @@ public class DataFrameTest {
         dataFrame.append("c", 3d, 3, false, true, "abc");
         dataFrame.append("d", 4d, 2, false, false, "123");
 
-        DefaultDataFrame filtered = dataFrame.select(
+        DataFrame filtered = dataFrame.select(
                 FilterPredicate.and(
                         FilterPredicate.ne("name", "a").and(FilterPredicate.ne("name", "b")),
                         FilterPredicate.lt("x", 4).or(FilterPredicate.gt("x", 3))
@@ -296,7 +296,7 @@ public class DataFrameTest {
 
     @Test
     public void testEquals() {
-        DefaultDataFrame dataFrame = new DefaultDataFrame();
+        DataFrame dataFrame = new DataFrame();
         dataFrame.addColumn(new StringColumn("name"));
         dataFrame.addColumn(new DoubleColumn("x"));
         dataFrame.addColumn(new IntegerColumn("y"));
@@ -310,7 +310,7 @@ public class DataFrameTest {
         dataFrame.append("c", 3d, 3, false, true, "abc");
         dataFrame.append("d", 4d, 2, false, false, "123");
 
-        DefaultDataFrame dataFrame2 = new DefaultDataFrame();
+        DataFrame dataFrame2 = new DataFrame();
         dataFrame2.addColumn(new StringColumn("name"));
         dataFrame2.addColumn(new DoubleColumn("x"));
         dataFrame2.addColumn(new IntegerColumn("y"));
@@ -331,7 +331,7 @@ public class DataFrameTest {
         dataFrame2.update(r);
         Assert.assertNotEquals(dataFrame, dataFrame2);
 
-        DefaultDataFrame dataFrame3 = dataFrame.copy();
+        DataFrame dataFrame3 = dataFrame.copy();
         Assert.assertEquals(dataFrame, dataFrame3);
 
 

@@ -5,15 +5,20 @@ import de.unknownreality.dataframe.common.header.BasicTypeHeader;
 /**
  * Created by algru on 11.06.2017.
  */
-public abstract class DataFrameHeader<H extends DataFrameHeader> extends BasicTypeHeader<String> {
+public class DataFrameHeader extends BasicTypeHeader<String> {
 
-    /**
-     * Adds a new data frame column to this header
-     * @param column new data frame column
-     * @return <tt>self</tt> for method chaining
-     */
-    public abstract H add(DataFrameColumn<?, ?> column);
 
-    @Override
-    public abstract H copy();
+
+
+    public DataFrameHeader add(DataFrameColumn<?, ?> column) {
+        return (DataFrameHeader)add(column.getName(), column.getClass(), column.getType());
+    }
+
+    public DataFrameHeader copy() {
+        DataFrameHeader copy = new DataFrameHeader();
+        for (String h : this) {
+            copy.add(h, getColumnType(h), getType(h));
+        }
+        return copy;
+    }
 }

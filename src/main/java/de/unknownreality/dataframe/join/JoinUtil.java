@@ -31,13 +31,13 @@ import de.unknownreality.dataframe.DataFrame;
  */
 public interface JoinUtil {
 
-    JoinedDataFrame innerJoin(DataFrame<?,?> dfA, DataFrame<?,?>  dfB, JoinColumn... joinColumns);
-    JoinedDataFrame innerJoin(DataFrame<?,?>  dfA, DataFrame<?,?>  dfB, String joinSuffixA, String joinSuffixB, JoinColumn... joinColumns);
+    JoinedDataFrame innerJoin(DataFrame dfA, DataFrame  dfB, JoinColumn... joinColumns);
+    JoinedDataFrame innerJoin(DataFrame  dfA, DataFrame  dfB, String joinSuffixA, String joinSuffixB, JoinColumn... joinColumns);
 
-    JoinedDataFrame rightJoin(DataFrame<?,?> dfA, DataFrame<?,?>  dfB, JoinColumn... joinColumns);
-    JoinedDataFrame rightJoin(DataFrame<?,?>  dfA, DataFrame<?,?>  dfB, String joinSuffixA, String joinSuffixB, JoinColumn... joinColumns);
+    JoinedDataFrame rightJoin(DataFrame dfA, DataFrame  dfB, JoinColumn... joinColumns);
+    JoinedDataFrame rightJoin(DataFrame  dfA, DataFrame  dfB, String joinSuffixA, String joinSuffixB, JoinColumn... joinColumns);
 
-    JoinedDataFrame leftJoin(DataFrame<?,?> dfA, DataFrame<?,?>  dfB, JoinColumn... joinColumns);
-    JoinedDataFrame leftJoin(DataFrame<?,?>  dfA, DataFrame<?,?>  dfB, String joinSuffixA, String joinSuffixB, JoinColumn... joinColumns);
+    JoinedDataFrame leftJoin(DataFrame dfA, DataFrame  dfB, JoinColumn... joinColumns);
+    JoinedDataFrame leftJoin(DataFrame  dfA, DataFrame  dfB, String joinSuffixA, String joinSuffixB, JoinColumn... joinColumns);
 
 }
