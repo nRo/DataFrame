@@ -22,7 +22,7 @@
 
 package de.unknownreality.dataframe.frame;
 
-import de.unknownreality.dataframe.DataFrame;
+import de.unknownreality.dataframe.DefaultDataFrame;
 import de.unknownreality.dataframe.DataFrameRuntimeException;
 import de.unknownreality.dataframe.DataRow;
 import de.unknownreality.dataframe.MapFunction;
@@ -34,7 +34,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -59,7 +58,7 @@ public class DataFrameIndexTest {
         4;A;7
         3;A,8
          */
-        DataFrame dataFrame = CSVReaderBuilder.create()
+        DefaultDataFrame dataFrame = CSVReaderBuilder.create()
                 .containsHeader(true)
                 .withHeaderPrefix("")
                 .withSeparator(';')

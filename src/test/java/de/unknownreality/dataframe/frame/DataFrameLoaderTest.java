@@ -22,18 +22,13 @@
 
 package de.unknownreality.dataframe.frame;
 
-import de.unknownreality.dataframe.DataFrame;
+import de.unknownreality.dataframe.DefaultDataFrame;
 import de.unknownreality.dataframe.DataFrameLoader;
-import de.unknownreality.dataframe.DataFrameRuntimeException;
 import de.unknownreality.dataframe.DataRow;
 import de.unknownreality.dataframe.column.DoubleColumn;
 import de.unknownreality.dataframe.column.IntegerColumn;
 import de.unknownreality.dataframe.column.StringColumn;
-import de.unknownreality.dataframe.common.ReaderBuilder;
-import de.unknownreality.dataframe.csv.CSVReaderBuilder;
 import de.unknownreality.dataframe.filter.FilterPredicate;
-import de.unknownreality.dataframe.meta.DataFrameMeta;
-import de.unknownreality.dataframe.meta.DataFrameMetaReader;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -48,7 +43,7 @@ public class DataFrameLoaderTest {
 
     @Test
     public void testMetaReader() throws Exception {
-        DataFrame dataFrame = DataFrameLoader.loadResource("loader_test.csv","loader_test.csv.meta",DataFrameLoaderTest.class.getClassLoader());
+        DefaultDataFrame dataFrame = DataFrameLoader.loadResource("loader_test.csv","loader_test.csv.meta",DataFrameLoaderTest.class.getClassLoader());
         Assert.assertEquals(5, dataFrame.size());
 
         /**
