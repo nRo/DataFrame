@@ -24,12 +24,12 @@
 
 package de.unknownreality.dataframe.group;
 
-import de.unknownreality.dataframe.DataFrame;
+import de.unknownreality.dataframe.DefaultDataFrame;
 
 /**
  * Created by Alex on 10.03.2016.
  */
-public class DataGroup extends DataFrame {
+public class DataGroup extends DefaultDataFrame {
     private GroupHeader groupHeader;
     private GroupValues groupValues;
 

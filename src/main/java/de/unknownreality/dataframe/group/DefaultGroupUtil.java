@@ -35,7 +35,7 @@ import java.util.List;
  */
 public class DefaultGroupUtil implements GroupUtil{
     /**
-     * Groups a {@link DataFrame} using one or more columns.
+     * Groups a {@link DefaultDataFrame} using one or more columns.
      *
      * @param df      input data frame
      * @param columns grouping columns

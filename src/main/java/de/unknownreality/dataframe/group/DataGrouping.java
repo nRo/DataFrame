@@ -25,6 +25,8 @@
 package de.unknownreality.dataframe.group;
 
 import de.unknownreality.dataframe.DataFrameRuntimeException;
+import de.unknownreality.dataframe.DataRow;
+import de.unknownreality.dataframe.DefaultDataFrame;
 import de.unknownreality.dataframe.common.MultiKey;
 import de.unknownreality.dataframe.filter.FilterPredicate;
 import de.unknownreality.dataframe.sort.SortColumn;
@@ -34,7 +36,7 @@ import java.util.*;
 /**
  * Created by Alex on 10.03.2016.
  */
-public class DataGrouping implements Iterable<DataGroup> {
+public class DataGrouping extends DefaultDataFrame {
     private DataGroup[] groups;
     private final String[] groupColumns;
     private final Map<MultiKey, DataGroup> groupMap = new HashMap<>();
@@ -54,6 +56,10 @@ public class DataGrouping implements Iterable<DataGroup> {
         }
     }
 
+    public DataGroup getGroup(int index){
+        return groups[index];
+    }
+
     /**
      * Concatenates two data groupings. The data groups from the other data grouping are appended to this data grouping
      *
@@ -67,7 +73,7 @@ public class DataGrouping implements Iterable<DataGroup> {
         DataGroup[] newGroups = new DataGroup[groups.length + other.size()];
         System.arraycopy(groups, 0, newGroups, 0, groups.length);
         int i = groups.length;
-        for (DataGroup g : other) {
+        for (DataGroup g : other.groups) {
             newGroups[i++] = g;
             groupMap.put(getKey((Comparable[]) g.getGroupValues().getValues()), g);
         }
@@ -117,172 +123,5 @@ public class DataGrouping implements Iterable<DataGroup> {
         return groups.length;
     }
 
-    /**
-     * Finds data groups using a {@link FilterPredicate}.
-     *
-     * @param predicate input predicate
-     * @return list of found data groups
-     */
-    private List<DataGroup> findGroups(FilterPredicate predicate) {
-        List<DataGroup> groupList = new ArrayList<>();
-        for (DataGroup g : this) {
-            if (predicate.valid(g.getGroupValues())) {
-                groupList.add(g);
-            }
-        }
-        return groupList;
-    }
 
-    /**
-     * Filters data groups that are not valid according to an input predicate.<br>
-     * Data groups are filtered by their group values. <br>
-     * The predicated treats group values like data rows. <br>
-     * If a data group is <b>filtered</b> if it is <b>not valid</b> according to the predicate.<br>
-     * The filtered data groups are removed from this data grouping.<br>
-     * <p><code>if(!predicate.valid(dataGroup)) -&gt; remove(dataGroup)</code></p>
-     *
-     * @param predicate filter predicate
-     * @return <tt>self</tt> for method chaining
-     */
-    public DataGrouping filter(FilterPredicate predicate) {
-        List<DataGroup> groupList = findGroups(predicate);
-        this.groups = new DataGroup[groupList.size()];
-        groupList.toArray(this.groups);
-        return this;
-    }
-
-    /**
-     * Returns a new data grouping based on filtered data groups from this data grouping.<br>
-     * Data groups that are valid according to the input predicate remain in the new data grouping.<br>
-     * <p><code>if(predicate.valid(dataGroup)) -&gt; add(dataGroup)</code></p>
-     *
-     * @param predicate filter predicate
-     * @return new data grouping including the found data groups
-     * @see #filter(FilterPredicate)
-     */
-    public DataGrouping find(FilterPredicate predicate) {
-        List<DataGroup> groupList = findGroups(predicate);
-        return new DataGrouping(groupList, groupColumns);
-    }
-
-    /**
-     * Returns a new data grouping with all data groups from this grouping where a specified group value equals
-     * an input value.
-     *
-     * @param colName group value column name
-     * @param value   input value
-     * @return new data grouping including the found data groups
-     */
-    public DataGrouping find(String colName, Comparable value) {
-        return find(FilterPredicate.eq(colName, value));
-    }
-
-    /**
-     * Returns the first found data group from this grouping where a specified group value equals
-     * an input value.
-     *
-     * @param colName group value column name
-     * @param value   input value
-     * @return first found data group
-     */
-    public DataGroup findFirst(String colName, Comparable value) {
-        return findFirst(FilterPredicate.eq(colName, value));
-
-    }
-
-    /**
-     * Returns the first found data group from this data grouping matching an input predicate.
-     *
-     * @param predicate input predicate
-     * @return first found data group
-     * @see #find(FilterPredicate)
-     */
-    public DataGroup findFirst(FilterPredicate predicate) {
-        for (DataGroup row : this) {
-            if (predicate.valid(row.getGroupValues())) {
-                return row;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Sorts the data groups in this data grouping using one or more {@link SortColumn}.
-     * Sort column specify the group values used for sorting
-     *
-     * @param columns sort columns
-     * @return <tt>self</tt> for method chaining
-     * @see SortColumn
-     */
-    public DataGrouping sort(SortColumn... columns) {
-        Arrays.sort(groups, new GroupValueComparator(columns));
-        return this;
-    }
-
-    /**
-     * Sorts the data groups using a specified group value
-     *
-     * @param name group value name used for sorting
-     * @return <tt>self</tt> for method chaining
-     * @see #sort(SortColumn...)
-     */
-    public DataGrouping sort(String name) {
-        return sort(name, SortColumn.Direction.Ascending);
-    }
-
-    /**
-     * Sorts the data groups using a specified group value and a sort direction
-     *
-     * @param name group value name used for sorting
-     * @param dir  sort direction (asc|desc)
-     * @return <tt>self</tt> for method chaining
-     * @see #sort(SortColumn...)
-     */
-    public DataGrouping sort(String name, SortColumn.Direction dir) {
-        Arrays.sort(groups, new GroupValueComparator(new SortColumn[]{new SortColumn(name, dir)}));
-        return this;
-    }
-
-    /**
-     * Sorts the data groups using a custom comparator.
-     *
-     * @param comp comparator used to sort data groups
-     * @return <tt>self</tt> for method chaining
-     */
-    public DataGrouping sort(Comparator<DataGroup> comp) {
-        Arrays.sort(groups, comp);
-        return this;
-    }
-
-
-    /**
-     * Returns an iterator over the data groups in this grouping.
-     * <p>{@link Iterator#remove()} is not supported</p>
-     *
-     * @return data groups iterator
-     */
-    @Override
-    public Iterator<DataGroup> iterator() {
-        return new Iterator<DataGroup>() {
-            int index = 0;
-
-            @Override
-            public boolean hasNext() {
-                return index < groups.length;
-            }
-
-            @Override
-            public DataGroup next() {
-                if(index >= groups.length){
-                    throw new NoSuchElementException(String.format("group not found: index out of bounds %s >= %s]",index,groups.length));
-                }
-                return groups[index++];
-            }
-
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException("remove is not supported in data groupings");
-            }
-        };
-    }
 }

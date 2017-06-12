@@ -23,6 +23,7 @@
 package de.unknownreality.dataframe.frame;
 
 import de.unknownreality.dataframe.DataFrame;
+import de.unknownreality.dataframe.DefaultDataFrame;
 import de.unknownreality.dataframe.Values;
 import de.unknownreality.dataframe.column.BooleanColumn;
 import de.unknownreality.dataframe.column.DoubleColumn;
@@ -46,7 +47,7 @@ public class PredicateParserTest {
     @Test
     public void test() {
 
-        DataFrame dataFrame = new DataFrame();
+        DataFrame dataFrame = new DefaultDataFrame();
         dataFrame.addColumn(new StringColumn("name"));
         dataFrame.addColumn(new DoubleColumn("x"));
         dataFrame.addColumn(new IntegerColumn("y"));

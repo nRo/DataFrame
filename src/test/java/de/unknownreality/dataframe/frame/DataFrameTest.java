@@ -79,7 +79,7 @@ public class DataFrameTest {
         dataFrame.removeColumn("___");
         Assert.assertEquals(oldSize, dataFrame.size());
 
-        DataFrame dataFrame2 = new DataFrame();
+        DataFrame dataFrame2 = new DefaultDataFrame();
         dataFrame2.addColumn(new IntegerColumn("id"));
         dataFrame2.addColumn(new StringColumn("first"));
         dataFrame2.addColumn(new StringColumn("last"));
@@ -246,7 +246,7 @@ public class DataFrameTest {
 
     @Test
     public void predicateTest() {
-        DataFrame dataFrame = new DataFrame();
+        DataFrame dataFrame = new DefaultDataFrame();
         dataFrame.addColumn(new StringColumn("name"));
         dataFrame.addColumn(new DoubleColumn("x"));
         dataFrame.addColumn(new IntegerColumn("y"));
@@ -296,7 +296,7 @@ public class DataFrameTest {
 
     @Test
     public void testEquals() {
-        DataFrame dataFrame = new DataFrame();
+        DataFrame dataFrame = new DefaultDataFrame();
         dataFrame.addColumn(new StringColumn("name"));
         dataFrame.addColumn(new DoubleColumn("x"));
         dataFrame.addColumn(new IntegerColumn("y"));
@@ -310,7 +310,7 @@ public class DataFrameTest {
         dataFrame.append("c", 3d, 3, false, true, "abc");
         dataFrame.append("d", 4d, 2, false, false, "123");
 
-        DataFrame dataFrame2 = new DataFrame();
+        DataFrame dataFrame2 = new DefaultDataFrame();
         dataFrame2.addColumn(new StringColumn("name"));
         dataFrame2.addColumn(new DoubleColumn("x"));
         dataFrame2.addColumn(new IntegerColumn("y"));
