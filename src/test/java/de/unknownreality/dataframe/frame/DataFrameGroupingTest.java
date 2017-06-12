@@ -22,8 +22,8 @@
 
 package de.unknownreality.dataframe.frame;
 
-import de.unknownreality.dataframe.DefaultDataFrame;
 import de.unknownreality.dataframe.DataRow;
+import de.unknownreality.dataframe.DefaultDataFrame;
 import de.unknownreality.dataframe.column.IntegerColumn;
 import de.unknownreality.dataframe.column.StringColumn;
 import de.unknownreality.dataframe.csv.CSVReaderBuilder;

@@ -27,19 +27,29 @@ package de.unknownreality.dataframe;
 import de.unknownreality.dataframe.column.*;
 import de.unknownreality.dataframe.common.DataContainer;
 import de.unknownreality.dataframe.filter.FilterPredicate;
+import de.unknownreality.dataframe.group.GroupUtil;
+import de.unknownreality.dataframe.join.JoinUtil;
 
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * Created by Alex on 09.03.2016.
  */
 public class DataFrameBuilder {
     private final LinkedHashMap<String, DataFrameColumn> columns = new LinkedHashMap<>();
-    private final DataContainer<?, ?> dataContainer;
+
+    private JoinUtil joinUtil = null;
+    private GroupUtil groupUtil = null;
+    private  DataContainer<?, ?> dataContainer;
     private FilterPredicate filterPredicate = FilterPredicate.EMPTY_FILTER;
-    private DataFrameBuilder(DataContainer dataContainer) {
-        this.dataContainer = dataContainer;
+    protected DataFrameBuilder() {
+    }
+
+    protected DataFrameBuilder(DataContainer<?,?> container) {
+        this.dataContainer = container;
+    }
+    public static DefaultDataFrame createDefault(){
+        return new DefaultDataFrame();
     }
 
     /**
@@ -53,7 +63,7 @@ public class DataFrameBuilder {
     }
 
     public static DataFrameBuilder create(){
-        return new DataFrameBuilder(null);
+        return new DataFrameBuilder();
     }
 
     /**
@@ -154,12 +164,28 @@ public class DataFrameBuilder {
         StringColumn column = new StringColumn(name);
         return addColumn(column);
     }
-    
+
+
+    public DataFrameBuilder setGroupUtil(GroupUtil groupUtil) {
+        this.groupUtil = groupUtil;
+        return this;
+    }
+
+    public DataFrameBuilder setJoinUtil(JoinUtil joinUtil) {
+        this.joinUtil = joinUtil;
+        return this;
+    }
 
     public DataFrameBuilder withFilterPredicate(FilterPredicate predicate){
         this.filterPredicate = predicate;
         return this;
     }
+
+    public DataFrameBuilder from(DataContainer<?, ?> container){
+        this.dataContainer = container;
+        return this;
+    }
+
 
     /**
      * Adds a new column to the builder and defines the name of the column in the parent data container.
@@ -173,17 +199,32 @@ public class DataFrameBuilder {
         return this;
     }
 
-
-    /**
-     * Builds the data frame using the parent data container and column information.
-     *
-     * @return created data frame
-     * @see DataFrameConverter#fromDataContainer(DataContainer, Map, FilterPredicate)
-     */
-    public DefaultDataFrame build() {
-        return DataFrameConverter.fromDataContainer(dataContainer, columns,filterPredicate);
-
+    public LinkedHashMap<String, DataFrameColumn> getColumns() {
+        return columns;
     }
 
+    /**
+     * Builds a new data frame.
+     *
+     * @return created data frame
+     */
+    public DefaultDataFrame build() {
+        if(dataContainer != null){
+            return DataFrameConverter.fromDataContainer(dataContainer, getColumns(),filterPredicate);
+        }
+        DefaultDataFrame dataFrame = new DefaultDataFrame();
+        for(String n : columns.keySet()){
+            DataFrameColumn col = columns.get(n);
+            col.setName(n);
+            dataFrame.addColumn(col);
+        }
+        if(joinUtil != null){
+            dataFrame.setJoinUtil(joinUtil);
+        }
+        if(groupUtil != null){
+            dataFrame.setGroupUtil(groupUtil);
+        }
+        return dataFrame;
+    }
 
 }

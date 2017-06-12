@@ -22,9 +22,9 @@
 
 package de.unknownreality.dataframe.frame;
 
-import de.unknownreality.dataframe.DefaultDataFrame;
 import de.unknownreality.dataframe.DataFrameRuntimeException;
 import de.unknownreality.dataframe.DataRow;
+import de.unknownreality.dataframe.DefaultDataFrame;
 import de.unknownreality.dataframe.MapFunction;
 import de.unknownreality.dataframe.column.IntegerColumn;
 import de.unknownreality.dataframe.column.StringColumn;

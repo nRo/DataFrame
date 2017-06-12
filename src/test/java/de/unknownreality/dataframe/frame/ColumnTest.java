@@ -24,11 +24,9 @@
 
 package de.unknownreality.dataframe.frame;
 
-import de.unknownreality.dataframe.DataFrameRuntimeException;
 import de.unknownreality.dataframe.MapFunction;
 import de.unknownreality.dataframe.Values;
 import de.unknownreality.dataframe.column.BasicColumn;
-import de.unknownreality.dataframe.column.DoubleColumn;
 import de.unknownreality.dataframe.column.IntegerColumn;
 import org.junit.Assert;
 import org.junit.Test;

@@ -22,10 +22,13 @@
  *
  */
 
-package de.unknownreality.dataframe.join;
+package de.unknownreality.dataframe.join.impl;
 
 import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.DefaultDataFrameHeader;
+import de.unknownreality.dataframe.join.JoinColumn;
+import de.unknownreality.dataframe.join.JoinInfo;
+import de.unknownreality.dataframe.join.JoinedDataFrame;
 
 /**
  * Created by Alex on 10.07.2016.
