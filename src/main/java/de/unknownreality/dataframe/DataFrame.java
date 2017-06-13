@@ -11,6 +11,7 @@ import de.unknownreality.dataframe.transform.DataFrameTransform;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -180,4 +181,6 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     DataRow findFirstByIndex(String name, Comparable... values);
 
     Collection<DataFrameColumn> getColumns();
+
+    public Iterable<? extends DataRow> rows();
 }

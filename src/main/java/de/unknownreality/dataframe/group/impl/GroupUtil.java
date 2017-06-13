@@ -22,9 +22,10 @@
  *
  */
 
-package de.unknownreality.dataframe.group;
+package de.unknownreality.dataframe.group.impl;
 
 import de.unknownreality.dataframe.DataFrame;
+import de.unknownreality.dataframe.group.DataGrouping;
 
 /**
  * Created by Alex on 12.06.2017.

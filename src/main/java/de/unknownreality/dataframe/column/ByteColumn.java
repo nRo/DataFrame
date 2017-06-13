@@ -80,4 +80,9 @@ public class ByteColumn extends NumberColumn<Byte, ByteColumn> {
     public Byte getValueFromRow(Row<?, ?> row, int headerIndex) {
         return row.getByte(headerIndex);
     }
+
+    @Override
+    public ByteColumn copyEmpty() {
+        return new ByteColumn(getName());
+    }
 }

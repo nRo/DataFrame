@@ -30,6 +30,7 @@ import de.unknownreality.dataframe.csv.CSVReaderBuilder;
 import de.unknownreality.dataframe.filter.FilterPredicate;
 import de.unknownreality.dataframe.group.DataGroup;
 import de.unknownreality.dataframe.group.DataGrouping;
+import de.unknownreality.dataframe.group.GroupRow;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -85,17 +86,17 @@ public class DataFrameGroupingTest {
         testGroup(dataGroups.findByGroupValues(2, "C"), 5);
         testGroup(dataGroups.findByGroupValues(4, "B"), 7);
 
-        DataGrouping grouping2 = dataGroups.find(FilterPredicate.and(FilterPredicate.lt("ID", 4), FilterPredicate.in("NAME", new String[]{"A", "B"})));
+        DataFrame grouping2 = dataGroups.select(FilterPredicate.and(FilterPredicate.lt("ID", 4), FilterPredicate.in("NAME", new String[]{"A", "B"})));
         Assert.assertEquals(4, grouping2.size());
 
 
     }
 
 
-    public static void testGroup(DataGroup group, int... values) {
-        Assert.assertEquals(values.length, group.size());
+    public static void testGroup(GroupRow groupRow, int... values) {
+        Assert.assertEquals(values.length, groupRow.getGroup().size());
         int i = 0;
-        for (DataRow row : group) {
+        for (DataRow row : groupRow.getGroup()) {
             Assert.assertEquals(values[i++], (int) row.getInteger("VALUE"));
         }
     }

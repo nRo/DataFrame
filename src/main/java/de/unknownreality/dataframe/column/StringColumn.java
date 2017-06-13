@@ -80,7 +80,11 @@ public class StringColumn extends BasicColumn<String, StringColumn> {
 
     @Override
     public String getValueFromRow(Row<?, ?> row, int headerIndex) {
-
         return row.getString(headerIndex);
+    }
+
+    @Override
+    public StringColumn copyEmpty() {
+        return new StringColumn(getName());
     }
 }

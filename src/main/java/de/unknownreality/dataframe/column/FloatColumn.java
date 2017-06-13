@@ -82,4 +82,9 @@ public class FloatColumn extends NumberColumn<Float, FloatColumn> {
     public Float getValueFromRow(Row<?, ?> row, int headerIndex) {
         return row.getFloat(headerIndex);
     }
+
+    @Override
+    public FloatColumn copyEmpty() {
+        return new FloatColumn(getName());
+    }
 }

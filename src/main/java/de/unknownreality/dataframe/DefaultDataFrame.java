@@ -30,7 +30,7 @@ import de.unknownreality.dataframe.filter.FilterPredicate;
 import de.unknownreality.dataframe.filter.compile.PredicateCompiler;
 import de.unknownreality.dataframe.group.DataGrouping;
 import de.unknownreality.dataframe.group.DefaultGroupUtil;
-import de.unknownreality.dataframe.group.GroupUtil;
+import de.unknownreality.dataframe.group.impl.GroupUtil;
 import de.unknownreality.dataframe.index.Indices;
 import de.unknownreality.dataframe.join.JoinColumn;
 import de.unknownreality.dataframe.join.JoinUtil;
@@ -1376,6 +1376,11 @@ public class DefaultDataFrame implements DataFrame {
     @Override
     public Collection<DataFrameColumn> getColumns() {
         return columnList;
+    }
+
+    @Override
+    public Iterable<? extends DataRow> rows() {
+        return this;
     }
 
     /**

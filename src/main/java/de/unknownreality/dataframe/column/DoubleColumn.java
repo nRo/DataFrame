@@ -80,4 +80,9 @@ public class DoubleColumn extends NumberColumn<Double, DoubleColumn> {
     public Double getValueFromRow(Row<?, ?> row, int headerIndex) {
         return row.getDouble(headerIndex);
     }
+
+    @Override
+    public DoubleColumn copyEmpty() {
+        return new DoubleColumn(getName());
+    }
 }

@@ -248,6 +248,12 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
      */
     public abstract C copy();
 
+    /**
+     * Creates a empty copy (no values) of this column
+     *
+     * @return The copy of this column
+     */
+    public abstract C copyEmpty();
 
     /**
      * Clears this column.

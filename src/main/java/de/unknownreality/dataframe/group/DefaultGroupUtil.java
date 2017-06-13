@@ -25,6 +25,7 @@
 package de.unknownreality.dataframe.group;
 
 import de.unknownreality.dataframe.*;
+import de.unknownreality.dataframe.group.impl.GroupUtil;
 import de.unknownreality.dataframe.sort.SortColumn;
 
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ import java.util.List;
 /**
  * Created by Alex on 10.03.2016.
  */
-public class DefaultGroupUtil implements GroupUtil{
+public class DefaultGroupUtil implements GroupUtil {
     /**
      * Groups a {@link DefaultDataFrame} using one or more columns.
      *
@@ -73,7 +74,16 @@ public class DefaultGroupUtil implements GroupUtil{
             group.set(createHeader(df.getHeader()), currentList);
             groupList.add(group);
         }
-        return new DataGrouping(groupList, columns);
+        return new DataGrouping(groupList, createGroupColumns(df, columns));
+    }
+
+    private static DataFrameColumn[] createGroupColumns(DataFrame df, String... columns){
+        DataFrameColumn[] groupColumns = new DataFrameColumn[columns.length];
+        for(int i = 0; i < columns.length; i++){
+            DataFrameColumn orgCol = df.getColumn(columns[i]);
+            groupColumns[i] = orgCol.copyEmpty();
+        }
+        return groupColumns;
     }
 
     private static DataFrameHeader createHeader(DataFrameHeader header){

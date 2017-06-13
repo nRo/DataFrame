@@ -79,4 +79,9 @@ public class ShortColumn extends NumberColumn<Short, ShortColumn> {
     public Short getValueFromRow(Row<?, ?> row, int headerIndex) {
         return row.getShort(headerIndex);
     }
+
+    @Override
+    public ShortColumn copyEmpty() {
+        return new ShortColumn(getName());
+    }
 }

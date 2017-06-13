@@ -80,4 +80,9 @@ public class LongColumn extends NumberColumn<Long, LongColumn> {
     public Long getValueFromRow(Row<?, ?> row, int headerIndex) {
         return row.getLong(headerIndex);
     }
+
+    @Override
+    public LongColumn copyEmpty() {
+        return new LongColumn(getName());
+    }
 }
