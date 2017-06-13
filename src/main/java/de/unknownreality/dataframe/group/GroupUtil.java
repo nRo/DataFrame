@@ -22,7 +22,7 @@
  *
  */
 
-package de.unknownreality.dataframe.group.impl;
+package de.unknownreality.dataframe.group;
 
 import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.group.DataGrouping;

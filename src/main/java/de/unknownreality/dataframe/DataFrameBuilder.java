@@ -27,7 +27,7 @@ package de.unknownreality.dataframe;
 import de.unknownreality.dataframe.column.*;
 import de.unknownreality.dataframe.common.DataContainer;
 import de.unknownreality.dataframe.filter.FilterPredicate;
-import de.unknownreality.dataframe.group.impl.GroupUtil;
+import de.unknownreality.dataframe.group.GroupUtil;
 import de.unknownreality.dataframe.join.JoinUtil;
 
 import java.util.LinkedHashMap;

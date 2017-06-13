@@ -24,12 +24,10 @@
 
 package de.unknownreality.dataframe.group;
 
-import de.unknownreality.dataframe.DataFrameColumn;
-import de.unknownreality.dataframe.DataFrameRuntimeException;
-import de.unknownreality.dataframe.DataRow;
-import de.unknownreality.dataframe.DefaultDataFrame;
+import de.unknownreality.dataframe.*;
 import de.unknownreality.dataframe.common.MultiKey;
 import de.unknownreality.dataframe.filter.FilterPredicate;
+import de.unknownreality.dataframe.group.aggr.AggregateFunction;
 import de.unknownreality.dataframe.sort.SortColumn;
 
 import java.util.*;
@@ -48,23 +46,65 @@ public class DataGrouping extends DefaultDataFrame {
      * @param groupColumns group columns
      */
     public DataGrouping(List<DataGroup> groups, DataFrameColumn... groupColumns) {
-        this.addIndex(GROUP_INDEX,groupColumns);
+        this.addIndex(GROUP_INDEX, groupColumns);
         this.groups = new DataGroup[groups.size()];
         groups.toArray(this.groups);
-        for(DataFrameColumn col : groupColumns){
+        for (DataFrameColumn col : groupColumns) {
             addColumn(col);
         }
-        for(int i = 0; i < groups.size();i++){
+        for (int i = 0; i < groups.size(); i++) {
             this.groups[i] = groups.get(i);
             this.append(groups.get(i).getGroupValues().getValues());
         }
     }
 
-    public DataGroup getGroup(int index){
+    @SuppressWarnings("unchecked")
+    public <T extends Comparable<T>> DataGrouping aggregate(String columnName, AggregateFunction<T> fun) {
+        return agg(columnName,fun);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends Comparable<T>> DataGrouping agg(String columnName, AggregateFunction<T> fun) {
+        List<T> values = new ArrayList<>();
+        for(int i = 0; i < size(); i++){
+            T v = fun.aggregate(getRow(i).getGroup());
+            values.add(v);
+        }
+        Class<? extends Comparable> vType = null;
+        for(T v : values){
+            if(v != null){
+                vType = v.getClass();
+                break;
+            }
+        }
+        vType = vType == null ? String.class : vType;
+        Class<? extends DataFrameColumn> colType = ColumnTypeMap.get(vType);
+        if(colType == null){
+            throw new DataFrameRuntimeException(String.format("no column type found for value type '%s'", vType.getCanonicalName()));
+        }
+        DataFrameColumn<T,?> aggCol;
+        try {
+            aggCol = colType.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new DataFrameRuntimeException(String.format("error creating instance of column [%s], empty constructor required", colType.getCanonicalName()), e);
+        }
+        aggCol.setName(columnName);
+        for(T v : values){
+            if(v == null){
+                aggCol.appendNA();
+                continue;
+            }
+            aggCol.append(v);
+        }
+        addColumn(aggCol);
+        return this;
+    }
+
+    public DataGroup getGroup(int index) {
         return groups[index];
     }
 
-    public DataGroup getGroup(DataRow row){
+    public DataGroup getGroup(DataRow row) {
         return getGroup(row.getIndex());
     }
 
@@ -76,12 +116,12 @@ public class DataGrouping extends DefaultDataFrame {
      * @return found data group. or <tt>null</tt> if no group was found
      */
     public GroupRow findByGroupValues(Comparable... values) {
-       return (GroupRow)findFirstByIndex(GROUP_INDEX,values);
+        return (GroupRow) findFirstByIndex(GROUP_INDEX, values);
     }
 
 
     @Override
     public GroupRow getRow(int i) {
-        return new GroupRow(getGroup(i),getHeader(), getRowValues(i),i);
+        return new GroupRow(getGroup(i), getHeader(), getRowValues(i), i);
     }
 }
