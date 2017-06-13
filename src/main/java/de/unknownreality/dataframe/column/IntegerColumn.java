@@ -79,4 +79,9 @@ public class IntegerColumn extends NumberColumn<Integer, IntegerColumn> {
     public Integer getValueFromRow(Row<?, ?> row, int headerIndex) {
         return row.getInteger(headerIndex);
     }
+
+    @Override
+    public IntegerColumn copyEmpty() {
+        return new IntegerColumn(getName());
+    }
 }

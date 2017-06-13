@@ -370,7 +370,7 @@ public class DataFrameTest {
                 .build();
         List<DataRow> r = df.getRows();
         int i = 0;
-        for (DataRow row : df) {
+        for (DataRow row : df.rows()) {
             if (i == 2) {
                 Assert.assertEquals(true, row.isNA("B"));
             } else {

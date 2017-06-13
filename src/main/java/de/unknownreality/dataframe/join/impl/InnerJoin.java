@@ -29,6 +29,7 @@ import de.unknownreality.dataframe.DataFrameHeader;
 import de.unknownreality.dataframe.DataRow;
 import de.unknownreality.dataframe.group.DataGroup;
 import de.unknownreality.dataframe.group.DataGrouping;
+import de.unknownreality.dataframe.group.GroupRow;
 import de.unknownreality.dataframe.join.JoinColumn;
 import de.unknownreality.dataframe.join.JoinInfo;
 import de.unknownreality.dataframe.join.JoinedDataFrame;
@@ -67,9 +68,9 @@ public class InnerJoin extends AbstractJoinOperation {
         DataGrouping joinedGroups = dfB.groupBy(groupColumns);
         for (DataRow row : dfA) {
             setGroupValuesA(groupValues, row, joinColumns);
-            DataGroup group = joinedGroups.findByGroupValues((Comparable[]) groupValues);
-            if (group != null) {
-                appendGroupJoinedRows(group, dfA, dfB, row, joinInfo, joinHeader, joinedRows);
+            GroupRow groupRow = joinedGroups.findByGroupValues((Comparable[]) groupValues);
+            if (groupRow != null) {
+                appendGroupJoinedRows(groupRow.getGroup(), dfA, dfB, row, joinInfo, joinHeader, joinedRows);
             }
         }
         JoinedDataFrame joinedDataFrame = new JoinedDataFrame(joinInfo);

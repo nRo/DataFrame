@@ -109,6 +109,11 @@ public class BooleanColumn extends BasicColumn<Boolean, BooleanColumn> {
     }
 
     @Override
+    public BooleanColumn copyEmpty() {
+        return new BooleanColumn(getName());
+    }
+
+    @Override
     public <H> Boolean getValueFromRow(Row<?, H> row, H headerName) {
         return row.getBoolean(headerName);
     }
