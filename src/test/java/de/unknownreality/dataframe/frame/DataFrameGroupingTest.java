@@ -24,6 +24,10 @@ package de.unknownreality.dataframe.frame;
 
 import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.DataRow;
+import de.unknownreality.dataframe.DefaultDataFrame;
+import de.unknownreality.dataframe.Values;
+import de.unknownreality.dataframe.column.BooleanColumn;
+import de.unknownreality.dataframe.column.DoubleColumn;
 import de.unknownreality.dataframe.column.IntegerColumn;
 import de.unknownreality.dataframe.column.StringColumn;
 import de.unknownreality.dataframe.csv.CSVReaderBuilder;
@@ -31,6 +35,9 @@ import de.unknownreality.dataframe.filter.FilterPredicate;
 import de.unknownreality.dataframe.group.DataGroup;
 import de.unknownreality.dataframe.group.DataGrouping;
 import de.unknownreality.dataframe.group.GroupRow;
+import de.unknownreality.dataframe.group.aggr.Aggregate;
+import de.unknownreality.dataframe.group.aggr.AggregateFunction;
+import de.unknownreality.dataframe.transform.DataFrameTransform;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -76,7 +83,7 @@ public class DataFrameGroupingTest {
         2;C  (1)
         4;B  (1)
          */
-        DataGrouping dataGroups = dataFrame.groupBy("ID", "NAME");
+        DataGrouping dataGroups = dataFrame.groupBy("ID", "NAME").agg("MAX", Aggregate.max("VALUE",Integer.class));
         Assert.assertEquals(6, dataGroups.size());
 
         testGroup(dataGroups.findByGroupValues(1, "A"), 1, 6);
@@ -86,10 +93,80 @@ public class DataFrameGroupingTest {
         testGroup(dataGroups.findByGroupValues(2, "C"), 5);
         testGroup(dataGroups.findByGroupValues(4, "B"), 7);
 
+
+        dataGroups.agg("count2",(group -> group.size()));
+        Assert.assertEquals((Integer)2,dataGroups.findByGroupValues(1, "A").getInteger("count2"));
+        Assert.assertEquals((Integer)1,dataGroups.findByGroupValues(1, "B").getInteger("count2"));
+        Assert.assertEquals((Integer)1,dataGroups.findByGroupValues(2, "A").getInteger("count2"));
+        Assert.assertEquals((Integer)2,dataGroups.findByGroupValues(3, "B").getInteger("count2"));
+        Assert.assertEquals((Integer)1,dataGroups.findByGroupValues(2, "C").getInteger("count2"));
+        Assert.assertEquals((Integer)1,dataGroups.findByGroupValues(4, "B").getInteger("count2"));
+
         DataFrame grouping2 = dataGroups.select(FilterPredicate.and(FilterPredicate.lt("ID", 4), FilterPredicate.in("NAME", new String[]{"A", "B"})));
         Assert.assertEquals(4, grouping2.size());
 
 
+    }
+
+    @Test
+    public void testAgg(){
+        DataFrame dataFrame = new DefaultDataFrame();
+        dataFrame.addColumn(new StringColumn("name"));
+        dataFrame.addColumn(new DoubleColumn("x"));
+        dataFrame.addColumn(new IntegerColumn("y"));
+        dataFrame.addColumn(new BooleanColumn("z"));
+        dataFrame.addColumn(new BooleanColumn("v"));
+        dataFrame.addColumn(new StringColumn("r"));
+        dataFrame.addColumn(new IntegerColumn("n"));
+
+
+        dataFrame.append("a",1d,5,true,true,"abc123",1);
+        dataFrame.append("b",2d,4,true,false,"abc/123",null);
+        dataFrame.append("c",3d,3,false,true,"abc", Values.NA);
+        dataFrame.append("d",4d,2,false,false,"123",1);
+        dataFrame.append("a",2d,5,true,true,"abc123",1);
+        dataFrame.append("b",2d,4,true,false,"abc/123",null);
+        dataFrame.append("c",3d,3,false,true,"abc", Values.NA);
+        dataFrame.append("d",4d,2,false,false,"123",1);
+        dataFrame.append("a",3d,5,true,true,"abc123",1);
+        dataFrame.append("b",2d,4,true,false,"abc/123",null);
+
+
+
+        DataGrouping grouping = dataFrame
+                .groupBy("name")
+                .agg("count",Aggregate.count())
+                .agg("mean", Aggregate.mean("x"))
+                .agg("max",Aggregate.max("x"))
+                .agg("min",group -> group.getDoubleColumn("x").min())
+                .agg("na_count", group -> {
+                    int c = 0;
+                    for(int i  = 0; i < group.size(); i++){
+                        if(group.getRow(i).isNA("n")){
+                            c++;
+                        }
+                    }
+                    return c;
+                })
+                .agg("desc",group -> group.getGroupDescription());
+
+
+        System.out.println(grouping.getHeader());
+        for(DataRow r : grouping){
+            System.out.println(r);
+        }
+
+        DataFrame df = grouping.select("na_count < 3");
+        System.out.println(df.getHeader());
+        for(DataRow r : df){
+            System.out.println(r);
+        }
+        df.getStringColumn("desc").map(value -> value+"::2");
+        DataFrame joined = grouping.joinInner(df,"name");
+        System.out.println(joined.getHeader());
+        for(DataRow r : joined){
+            System.out.println(r);
+        }
     }
 
 

@@ -47,12 +47,28 @@ public class ColumnTypeMap {
         DEFAULT_COLUMN_TYPES.put(Byte.class, ByteColumn.class);
     }
 
+    private static final Map<Class<?>, Class<? extends DataFrameColumn>> ADDITIONAL_COLUMN_TYPES = new HashMap<>();
+
+
 
     private final Map<Class<?>, Class<? extends DataFrameColumn>> columnTypesMap = new HashMap<>();
+
+    public static synchronized<T extends Comparable<T>> void registerType(Class<T> cl,
+                                                                          Class<? extends DataFrameColumn<T,?>> colType){
+        ADDITIONAL_COLUMN_TYPES.put(cl,colType);
+    }
+
+    private static final ColumnTypeMap defaultInstance = create();
+
+    public static <T extends Comparable<T>, C extends DataFrameColumn<T, C>> Class<C> get(Class<T> type){
+        return defaultInstance.getColumnType(type);
+    }
+
 
     /** Do not instantiate ColumnConverter. */
     private ColumnTypeMap() {
         this.columnTypesMap.putAll(ColumnTypeMap.DEFAULT_COLUMN_TYPES);
+        this.columnTypesMap.putAll(ColumnTypeMap.ADDITIONAL_COLUMN_TYPES);
     }
 
     /**

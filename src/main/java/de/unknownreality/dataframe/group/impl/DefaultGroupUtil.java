@@ -22,10 +22,12 @@
  *
  */
 
-package de.unknownreality.dataframe.group;
+package de.unknownreality.dataframe.group.impl;
 
 import de.unknownreality.dataframe.*;
-import de.unknownreality.dataframe.group.impl.GroupUtil;
+import de.unknownreality.dataframe.group.DataGroup;
+import de.unknownreality.dataframe.group.DataGrouping;
+import de.unknownreality.dataframe.group.GroupUtil;
 import de.unknownreality.dataframe.sort.SortColumn;
 
 import java.util.ArrayList;
