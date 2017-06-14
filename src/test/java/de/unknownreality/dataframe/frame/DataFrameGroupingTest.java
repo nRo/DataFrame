@@ -127,8 +127,8 @@ public class DataFrameGroupingTest {
         dataFrame.append("a",2d,5,true,true,"abc123",1);
         dataFrame.append("b",2d,4,true,false,"abc/123",null);
         dataFrame.append("c",3d,3,false,true,"abc", Values.NA);
-        dataFrame.append("d",4d,2,false,false,"123",1);
-        dataFrame.append("a",3d,5,true,true,"abc123",1);
+        dataFrame.append("d",4d,2,false,false,"a123",1);
+        dataFrame.append("a",3d,5,true,true,"1bc123",1);
         dataFrame.append("b",2d,4,true,false,"abc/123",null);
 
 
@@ -138,16 +138,10 @@ public class DataFrameGroupingTest {
                 .agg("count",Aggregate.count())
                 .agg("mean", Aggregate.mean("x"))
                 .agg("max",Aggregate.max("x"))
-                .agg("min",group -> group.getDoubleColumn("x").min())
-                .agg("na_count", group -> {
-                    int c = 0;
-                    for(int i  = 0; i < group.size(); i++){
-                        if(group.getRow(i).isNA("n")){
-                            c++;
-                        }
-                    }
-                    return c;
-                })
+                .agg("na_count", Aggregate.naCount("n"))
+                .agg("filter_count",Aggregate.filterCount("r ~= /[a-z].+/"))
+                .agg("first", Aggregate.first("x"))
+
                 .agg("desc",group -> group.getGroupDescription());
 
 
