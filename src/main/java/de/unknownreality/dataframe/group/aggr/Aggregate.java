@@ -25,6 +25,7 @@
 package de.unknownreality.dataframe.group.aggr;
 
 import de.unknownreality.dataframe.common.NumberUtil;
+import de.unknownreality.dataframe.filter.FilterPredicate;
 import de.unknownreality.dataframe.group.DataGroup;
 
 /**
@@ -32,46 +33,73 @@ import de.unknownreality.dataframe.group.DataGroup;
  */
 public class Aggregate {
     public static final AggregateFunction<Integer> count = (group -> group.size());
-    public static AggregateFunction<Integer> count(){
+
+    public static AggregateFunction<Integer> count() {
         return count;
     }
 
-    public static AggregateFunction<Double> mean(final String colName){
+    public static AggregateFunction<Double> mean(final String colName) {
         return group -> group.getNumberColumn(colName).mean();
     }
 
-    public static AggregateFunction<Double> median(final String colName){
-        return median(colName,Double.class);
+    public static AggregateFunction<Double> median(final String colName) {
+        return median(colName, Double.class);
     }
 
-    public static<T extends Number> AggregateFunction<T> median(final String colName, Class<T> type){
+    public static <T extends Number> AggregateFunction<T> median(final String colName, Class<T> type) {
         return group -> NumberUtil.convert(
                 group.getNumberColumn(colName).median(), type
         );
     }
 
-    public static AggregateFunction<Double> min(final String colName){
-        return min(colName,Double.class);
+    public static AggregateFunction<Double> min(final String colName) {
+        return min(colName, Double.class);
     }
 
-    public static<T extends Number> AggregateFunction<T> min(final String colName, Class<T> type){
+    public static <T extends Number> AggregateFunction<T> min(final String colName, Class<T> type) {
         return group -> NumberUtil.convert(
                 group.getNumberColumn(colName).min(), type
         );
     }
 
-    public static AggregateFunction<Double> max(final String colName){
-        return max(colName,Double.class);
+    public static AggregateFunction<Double> max(final String colName) {
+        return max(colName, Double.class);
     }
 
-    public static<T extends Number> AggregateFunction<T> max(final String colName, Class<T> type){
+    public static <T extends Number> AggregateFunction<T> max(final String colName, Class<T> type) {
         return group -> NumberUtil.convert(
                 group.getNumberColumn(colName).max(), type
         );
     }
 
+    public static AggregateFunction<Integer> filterCount(FilterPredicate filterPredicate) {
+        return group -> group.selectRows(filterPredicate).size();
+    }
+
+    public static AggregateFunction<Integer> filterCount(String predicateString) {
+        return group -> group.selectRows(predicateString).size();
+    }
+
+    public static AggregateFunction<Comparable> first(final String colName) {
+        return group -> group.getRow(0).get(colName);
+    }
+
+    public static AggregateFunction<Comparable> last(final String colName) {
+        return group -> group.getRow(group.size() - 1).get(colName);
+    }
 
 
+    public static AggregateFunction<Integer> naCount(String column) {
+        return group -> {
+            int c = 0;
+            for (int i = 0; i < group.size(); i++) {
+                if (group.getRow(i).isNA(column)) {
+                    c++;
+                }
+            }
+            return c;
+        };
+    }
 
 
 }

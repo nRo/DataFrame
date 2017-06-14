@@ -16,4 +16,5 @@ public class GroupRow extends DataRow {
     public DataGroup getGroup() {
         return group;
     }
+
 }
