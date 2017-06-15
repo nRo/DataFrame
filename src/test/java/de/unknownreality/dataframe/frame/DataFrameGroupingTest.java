@@ -83,8 +83,12 @@ public class DataFrameGroupingTest {
         2;C  (1)
         4;B  (1)
          */
-        DataGrouping dataGroups = dataFrame.groupBy("ID", "NAME").agg("MAX", Aggregate.max("VALUE",Integer.class));
+        DataGrouping dataGroups = dataFrame.groupBy("ID", "NAME").agg("MAX", Aggregate.max("VALUE")).agg("MIN",Aggregate.max("VALUE"));
         Assert.assertEquals(6, dataGroups.size());
+
+        Assert.assertEquals(IntegerColumn.class, dataGroups.getColumn("MIN").getClass());
+        Assert.assertEquals(IntegerColumn.class, dataGroups.getColumn("MAX").getClass());
+
 
         testGroup(dataGroups.findByGroupValues(1, "A"), 1, 6);
         testGroup(dataGroups.findByGroupValues(1, "B"), 2);
@@ -94,7 +98,7 @@ public class DataFrameGroupingTest {
         testGroup(dataGroups.findByGroupValues(4, "B"), 7);
 
 
-        dataGroups.agg("count2",(group -> group.size()));
+        dataGroups.agg("count2",(DataGroup::size));
         Assert.assertEquals((Integer)2,dataGroups.findByGroupValues(1, "A").getInteger("count2"));
         Assert.assertEquals((Integer)1,dataGroups.findByGroupValues(1, "B").getInteger("count2"));
         Assert.assertEquals((Integer)1,dataGroups.findByGroupValues(2, "A").getInteger("count2"));
@@ -141,7 +145,7 @@ public class DataFrameGroupingTest {
                 .agg("na_count", Aggregate.naCount("n"))
                 .agg("filter_count",Aggregate.filterCount("r ~= /[a-z].+/"))
                 .agg("first", Aggregate.first("x"))
-
+                .agg("x_25", Aggregate.quantile("x",0.25))
                 .agg("desc",group -> group.getGroupDescription());
 
 

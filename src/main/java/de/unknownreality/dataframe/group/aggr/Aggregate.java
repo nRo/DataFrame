@@ -42,34 +42,17 @@ public class Aggregate {
         return group -> group.getNumberColumn(colName).mean();
     }
 
-    public static AggregateFunction<Double> median(final String colName) {
-        return median(colName, Double.class);
+    public static AggregateFunction<Comparable> median(final String colName) {
+        return group -> group.getNumberColumn(colName).median();
     }
 
-    public static <T extends Number> AggregateFunction<T> median(final String colName, Class<T> type) {
-        return group -> NumberUtil.convert(
-                group.getNumberColumn(colName).median(), type
-        );
+    public static AggregateFunction<Comparable> min(final String colName) {
+        return group -> group.getNumberColumn(colName).min();
     }
 
-    public static AggregateFunction<Double> min(final String colName) {
-        return min(colName, Double.class);
-    }
 
-    public static <T extends Number> AggregateFunction<T> min(final String colName, Class<T> type) {
-        return group -> NumberUtil.convert(
-                group.getNumberColumn(colName).min(), type
-        );
-    }
-
-    public static AggregateFunction<Double> max(final String colName) {
-        return max(colName, Double.class);
-    }
-
-    public static <T extends Number> AggregateFunction<T> max(final String colName, Class<T> type) {
-        return group -> NumberUtil.convert(
-                group.getNumberColumn(colName).max(), type
-        );
+    public static AggregateFunction<Comparable> max(final String colName) {
+        return group -> group.getNumberColumn(colName).max();
     }
 
     public static AggregateFunction<Integer> filterCount(FilterPredicate filterPredicate) {
@@ -86,6 +69,11 @@ public class Aggregate {
 
     public static AggregateFunction<Comparable> last(final String colName) {
         return group -> group.getRow(group.size() - 1).get(colName);
+    }
+
+
+    public static AggregateFunction<Comparable> quantile(final String colName, double quantile) {
+        return group -> group.getNumberColumn(colName).getQuantile(quantile);
     }
 
 

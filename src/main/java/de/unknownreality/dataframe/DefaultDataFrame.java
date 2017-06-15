@@ -987,8 +987,9 @@ public class DefaultDataFrame implements DataFrame {
      * @param name column name
      * @return column
      */
+    @SuppressWarnings("unchecked")
     @Override
-    public DataFrameColumn getColumn(String name) {
+    public <T extends Comparable<T>, C extends DataFrameColumn<T, C>> DataFrameColumn<T,C> getColumn(String name) {
         return columnsMap.get(name);
     }
 
@@ -1020,8 +1021,9 @@ public class DefaultDataFrame implements DataFrame {
      * @param name column name
      * @return found column
      */
+    @SuppressWarnings("unchecked")
     @Override
-    public NumberColumn getNumberColumn(String name) {
+    public <T extends Number & Comparable<T>, C extends NumberColumn<T, C>> NumberColumn<T,C> getNumberColumn(String name) {
         return getColumn(name, NumberColumn.class);
     }
 

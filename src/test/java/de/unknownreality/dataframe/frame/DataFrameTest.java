@@ -34,6 +34,7 @@ import org.junit.rules.ExpectedException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by Alex on 12.03.2016.
@@ -391,6 +392,49 @@ public class DataFrameTest {
         Assert.assertEquals(3d, dc.mean(), 0d);
         Assert.assertEquals(5d, dc.max(), 0d);
         Assert.assertEquals(2d, dc.min(), 0d);
+
+    }
+
+
+    @Test
+    public void numbersSortedTest(){
+        final AtomicInteger sortCount = new AtomicInteger(0);
+        DoubleColumn testColumn = new DoubleColumn("test"){
+            @Override
+            protected Double[] getSortedValues() {
+                if(requireSorting()){
+                    sortCount.incrementAndGet();
+                }
+                return super.getSortedValues();
+            }
+        };
+
+        DataFrame dataFrame = new DefaultDataFrame();
+        dataFrame.addColumn(testColumn);
+        dataFrame.append(2d);
+        dataFrame.append(3d);
+        dataFrame.append(1d);
+        dataFrame.append(6d);
+        dataFrame.append(5d);
+        dataFrame.append(4d);
+
+        Assert.assertEquals(0,sortCount.get());
+        Assert.assertEquals((Double)1d, testColumn.getQuantile(0d));
+        Assert.assertEquals(1,sortCount.get());
+        Assert.assertEquals((Double)6d,testColumn.getQuantile(1d));
+        Assert.assertEquals(1,sortCount.get());
+        dataFrame.append(7d);
+        dataFrame.append(8d);
+        Assert.assertEquals((Double)8d,testColumn.getQuantile(1d));
+        Assert.assertEquals(2,sortCount.get());
+        Assert.assertEquals((Double)4d,testColumn.getQuantile(0.5));
+        Assert.assertEquals(2,sortCount.get());
+        Assert.assertEquals((Double)2d,testColumn.getQuantile(0.25));
+        Assert.assertEquals(2,sortCount.get());
+
+        testColumn.map((value -> value*2d));
+        Assert.assertEquals((Double)8d,testColumn.getQuantile(0.5));
+        Assert.assertEquals(3,sortCount.get());
 
     }
 
