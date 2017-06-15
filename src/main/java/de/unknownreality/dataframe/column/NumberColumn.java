@@ -48,6 +48,10 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
         super(name, values);
     }
 
+    private T[] sorted = null;
+    private boolean requiresSorting = true;
+    private boolean enableSortedCache = true;
+
     @Override
     public T get(int index) {
         return super.values[index];
@@ -60,9 +64,16 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
      * @return median of all values
      */
     public T median() {
-        Comparable[] array = toArray();
-        Arrays.sort(array);
+        Comparable[] array = getSortedValues();
         return NumberUtil.convert((Number) array[size() / 2], getType());
+    }
+
+
+    public T getQuantile(double quantile) {
+        T[] array = getSortedValues();
+        int index = (int) Math.ceil(quantile * array.length) - 1;
+        index = index < 0 ? 0 : index;
+        return array[index];
     }
 
 
@@ -96,6 +107,9 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
      * @return minimum of all values
      */
     public T min() {
+        if (!requireSorting()) {
+            return sorted[0];
+        }
         Double min = Double.MAX_VALUE;
         int naCount = 0;
         int size = size();
@@ -118,6 +132,9 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
      * @return maximum of all values
      */
     public T max() {
+        if (!requireSorting()) {
+            return sorted[sorted.length - 1];
+        }
         double max = Double.NEGATIVE_INFINITY;
         int naCount = 0;
         int size = size();
@@ -182,6 +199,62 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
         return getThis();
     }
 
+    protected T[] getSortedValues() {
+        if(!enableSortedCache){
+            T[] sortedValues = (T[]) toArray();
+            Arrays.sort(sortedValues);
+            return sortedValues;
+        }
+        if (requireSorting()) {
+            sorted = (T[]) toArray();
+            Arrays.sort(sorted);
+            requiresSorting = false;
+        }
+        return sorted;
+    }
+
+    protected boolean requireSorting() {
+        return requiresSorting || sorted == null;
+    }
+
+    protected void setRequireSorting() {
+        requiresSorting = true;
+        sorted = null;
+    }
+
+    public void setEnableSortedCache(boolean enable){
+        enableSortedCache = enable;
+        if(!enable){
+            setRequireSorting();
+        }
+    }
+    public void clearSortedCache(){
+        setRequireSorting();
+    }
+
+    @Override
+    public void notifyDataFrameColumnChanged() {
+        super.notifyDataFrameColumnChanged();
+        setRequireSorting();
+    }
+
+    @Override
+    public void notifyDataFrameValueChanged(int index) {
+        super.notifyDataFrameValueChanged(index);
+        setRequireSorting();
+    }
+
+    @Override
+    protected boolean doAppend(T t) {
+        setRequireSorting();
+        return super.doAppend(t);
+    }
+
+    @Override
+    protected boolean doAppendNA() {
+        setRequireSorting();
+        return super.doAppendNA();
+    }
 
     /**
      * Subtracts the values of another {@link NumberColumn} from the values in this column.

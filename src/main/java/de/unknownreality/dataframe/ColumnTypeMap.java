@@ -60,8 +60,9 @@ public class ColumnTypeMap {
 
     private static final ColumnTypeMap defaultInstance = create();
 
-    public static <T extends Comparable<T>, C extends DataFrameColumn<T, C>> Class<C> get(Class<T> type){
-        return defaultInstance.getColumnType(type);
+
+    public static <T extends Comparable<T>, C extends DataFrameColumn<T, ?>> Class<C> get(Class<T> type){
+        return  defaultInstance.getColumnType(type);
     }
 
 
@@ -80,7 +81,7 @@ public class ColumnTypeMap {
      * @return column matching the value type
      */
     @SuppressWarnings("unchecked")
-    public <T extends Comparable<T>, C extends DataFrameColumn<T, C>> Class<C> getColumnType(Class<T> type) {
+    public <T extends Comparable<T>, C extends DataFrameColumn<T, ?>> Class<C> getColumnType(Class<T> type) {
         Class<? extends DataFrameColumn> columnType = columnTypesMap.get(type);
         if (columnType == null) {
             return null;

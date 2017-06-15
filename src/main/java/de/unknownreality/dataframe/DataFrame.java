@@ -110,7 +110,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
 
     List<DataRow> getRows(int from, int to);
 
-    <R extends DataRow> List<R> getRows();
+    List<DataRow> getRows();
 
     DataFrameHeader getHeader();
 
@@ -128,11 +128,11 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
 
     Collection<String> getColumnNames();
 
-    DataFrameColumn getColumn(String name);
+    <T extends Comparable<T>, C extends DataFrameColumn<T, C>> DataFrameColumn<T,C> getColumn(String name);
 
     <T extends DataFrameColumn> T getColumn(String name, Class<T> cl);
 
-    NumberColumn getNumberColumn(String name);
+    <T extends Number & Comparable<T>, C extends NumberColumn<T, C>> NumberColumn<T,C> getNumberColumn(String name);
 
     StringColumn getStringColumn(String name);
 

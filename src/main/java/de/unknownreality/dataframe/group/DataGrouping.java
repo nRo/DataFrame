@@ -63,7 +63,7 @@ public class DataGrouping extends DefaultDataFrame {
         return agg(columnName,fun);
     }
 
-    @SuppressWarnings("unchecked")
+
     public <T extends Comparable<T>> DataGrouping agg(String columnName, AggregateFunction<T> fun) {
         List<T> values = new ArrayList<>();
         for(int i = 0; i < size(); i++){
@@ -78,14 +78,14 @@ public class DataGrouping extends DefaultDataFrame {
             }
         }
         vType = vType == null ? String.class : vType;
-        Class<? extends DataFrameColumn> colType = ColumnTypeMap.get(vType);
+        Class colType = ColumnTypeMap.get(vType);
         if(colType == null){
             throw new DataFrameRuntimeException(String.format("no column type found for value type '%s'", vType.getCanonicalName()));
         }
         DataFrameColumn<T,?> aggCol;
         try {
-            aggCol = colType.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
+            aggCol = (DataFrameColumn<T,?>)colType.newInstance();
+        } catch (InstantiationException | IllegalAccessException | ClassCastException e) {
             throw new DataFrameRuntimeException(String.format("error creating instance of column [%s], empty constructor required", colType.getCanonicalName()), e);
         }
         aggCol.setName(columnName);
@@ -124,4 +124,5 @@ public class DataGrouping extends DefaultDataFrame {
     public GroupRow getRow(int i) {
         return new GroupRow(getGroup(i), getHeader(), getRowValues(i), i);
     }
+
 }
