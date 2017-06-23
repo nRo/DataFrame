@@ -26,12 +26,12 @@ package de.unknownreality.dataframe.meta;
 
 import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.DataFrameColumn;
-import de.unknownreality.dataframe.common.DataWriter;
-import de.unknownreality.dataframe.common.ReaderBuilder;
+import de.unknownreality.dataframe.io.ColumnInformation;
+import de.unknownreality.dataframe.io.DataWriter;
+import de.unknownreality.dataframe.io.ReadFormat;
+import de.unknownreality.dataframe.io.ReaderBuilder;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Alex on 07.06.2016.
@@ -39,7 +39,7 @@ import java.util.Map;
 public class DataFrameMeta {
     public static final String META_FILE_EXTENSION = "dfm";
 
-    private Class<? extends ReaderBuilder> readerBuilderClass;
+    private Class<? extends ReadFormat> readFormatClass;
     private Map<String, String> attributes = new HashMap<>();
     private Map<String, Class<? extends DataFrameColumn>> columns = new LinkedHashMap<>();
 
@@ -47,25 +47,25 @@ public class DataFrameMeta {
      * Creates data frame meta information
      *
      * @param dataFrame          source data frame
-     * @param readerBuilderClass class of used reader builder
+     * @param readFormatClass class of used read format
      * @param dataWriterBuilder  data writer used
      * @return data frame meta information
      */
-    public static DataFrameMeta create(DataFrame dataFrame, Class<? extends ReaderBuilder> readerBuilderClass, DataWriter dataWriterBuilder) {
-        return create(dataFrame, readerBuilderClass, dataWriterBuilder.getAttributes());
+    public static DataFrameMeta create(DataFrame dataFrame, Class<? extends ReadFormat> readFormatClass, DataWriter dataWriterBuilder) {
+        return create(dataFrame, readFormatClass, dataWriterBuilder.getSettings());
     }
 
     /**
      * Creates data frame meta information
      *
      * @param dataFrame          source data frame
-     * @param readerBuilderClass class of used reader builder
+     * @param readFormatClass class of used read format
      * @param writerAttributes   attributes of the used data writer
      * @return data frame meta information
      */
-    public static DataFrameMeta create(DataFrame dataFrame, Class<? extends ReaderBuilder> readerBuilderClass, Map<String, String> writerAttributes) {
+    public static DataFrameMeta create(DataFrame dataFrame, Class<? extends ReadFormat> readFormatClass, Map<String, String> writerAttributes) {
         DataFrameMeta dataFrameMetaFile = new DataFrameMeta();
-        dataFrameMetaFile.readerBuilderClass = readerBuilderClass;
+        dataFrameMetaFile.readFormatClass = readFormatClass;
         dataFrameMetaFile.attributes = writerAttributes;
         for (String header : dataFrame.getHeader()) {
             dataFrameMetaFile.columns.put(header, dataFrame.getHeader().getColumnType(header));
@@ -78,8 +78,8 @@ public class DataFrameMeta {
      *
      * @return reader builder class
      */
-    public Class<? extends ReaderBuilder> getReaderBuilderClass() {
-        return readerBuilderClass;
+    public Class<? extends ReadFormat> getReadFormatClass() {
+        return readFormatClass;
     }
 
     /**
@@ -101,14 +101,25 @@ public class DataFrameMeta {
         return attributes;
     }
 
+    public List<ColumnInformation> getColumnInformation(){
+        List<ColumnInformation> columnInformations = new ArrayList<>();
+        int i = 0;
+        for(Map.Entry<String, Class<? extends DataFrameColumn>> e : columns.entrySet()){
+            ColumnInformation information = new ColumnInformation(i++, e.getKey());
+            information.setColumnType(e.getValue());
+            columnInformations.add(information);
+        }
+        return columnInformations;
+    }
+
     public DataFrameMeta() {
 
     }
 
     public DataFrameMeta(Map<String, Class<? extends DataFrameColumn>> columns,
-                         Class<? extends ReaderBuilder> readerBuilderClass, Map<String, String> attributes) {
+                         Class<? extends ReadFormat> readFormatClass, Map<String, String> attributes) {
         this.columns = columns;
-        this.readerBuilderClass = readerBuilderClass;
+        this.readFormatClass = readFormatClass;
         this.attributes = attributes;
     }
 }

@@ -27,6 +27,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.io.IOException;
+
 /**
  * Created by Alex on 12.03.2016.
  */
@@ -35,17 +37,19 @@ public class CSVReaderTest {
     public final ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void testReader() {
+    public void testReader() throws IOException {
         String testCSV = "#A\tB\tC\n1\tX\t3\n1\tX\t3\n";
-        CSVReader reader = CSVReaderBuilder.create()
+        CSVReader reader = CSVFormat.createReader()
                 .withHeaderPrefix("#")
-                .containsHeader(true)
-                .withSeparator('\t').load(testCSV);
-        Assert.assertEquals("A", reader.getHeader().get(0));
-        Assert.assertEquals("B", reader.getHeader().get(1));
-        Assert.assertEquals("C", reader.getHeader().get(2));
+                .withHeader(true)
+                .withSeparator('\t').build();
 
-        for (CSVRow row : reader) {
+        CSVIterator csvRows = reader.load(testCSV);
+        Assert.assertEquals("A", csvRows.getColumnsInformation().get(0).getName());
+        Assert.assertEquals("B", csvRows.getColumnsInformation().get(1).getName());
+        Assert.assertEquals("C", csvRows.getColumnsInformation().get(2).getName());
+
+        for (CSVRow row : csvRows) {
             Assert.assertEquals("1", row.get(0));
             Assert.assertEquals("X", row.get(1));
             Assert.assertEquals("3", row.get(2));

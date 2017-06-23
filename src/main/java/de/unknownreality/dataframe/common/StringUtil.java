@@ -46,18 +46,32 @@ public class StringUtil {
     }
 
     /**
-     * Splits a string and returns the parts as array.
+     * Split an input string at a specified split-character  into several parts.
+     * <tt>"</tt> and <tt>'</tt> are considered during the process.
+     * <p><code>"testA    testB   testB" -&gt; [testA,testB,testC]</code></p>
+     * <p><code>"'testA    testB'   testB" -&gt; [testA    testB,testC]</code></p>
      *
-     * @param input string to split
-     * @param split split char
-     * @return array of parts
-     * @see #splitQuoted(String, Character, List)
+     * @param input input string
+     * @param split char used to split
      */
     public static String[] splitQuoted(String input, Character split) {
         List<String> parts = new ArrayList<>();
-        splitQuoted(input, split, parts);
+        splitQuoted(input, split, new ListParts(parts));
         String[] result = new String[parts.size()];
         return parts.toArray(result);
+    }
+
+    /**
+     * Split an input string at a specified split-character  into several parts.
+     * <tt>"</tt> and <tt>'</tt> are considered during the process.
+     * <p><code>"testA    testB   testB" -&gt; [testA,testB,testC]</code></p>
+     * <p><code>"'testA    testB'   testB" -&gt; [testA    testB,testC]</code></p>
+     *
+     * @param input input string
+     * @param split char used to split
+     */
+    public static void splitQuoted(String input, Character split, String[] parts) {
+        splitQuoted(input, split, new ArrayParts(parts));
     }
 
     /**
@@ -71,7 +85,7 @@ public class StringUtil {
      * @param parts list filled with the resulting parts
      */
     @SuppressWarnings("ConstantConditions")
-    public static void splitQuoted(String input, Character split, List<String> parts) {
+    public static void splitQuoted(String input, Character split, Parts parts) {
         boolean inQuotation = false;
         boolean inDoubleQuotation = false;
         boolean escapeNext = false;
@@ -80,6 +94,7 @@ public class StringUtil {
         char c;
         String p;
         boolean startOrSplit = true;
+        boolean partQuoted = false;
         for (int i = 0; i < chars.length; i++) {
             c = chars[i];
             boolean escape = escapeNext;
@@ -89,6 +104,7 @@ public class StringUtil {
             } else if (c == '\'') {
                 if (inQuotation && !escape) {
                     inQuotation = false;
+                    partQuoted = true;
                     continue;
                 }
                 if (!inDoubleQuotation && startOrSplit) {
@@ -98,14 +114,20 @@ public class StringUtil {
             } else if (c == '\"') {
                 if (inDoubleQuotation && !escape) {
                     inDoubleQuotation = false;
+                    partQuoted = true;
                     continue;
                 }
                 if (!inDoubleQuotation && startOrSplit) {
                     inDoubleQuotation = true;
+                    currentStart++;
                 }
                 startOrSplit = false;
             } else if (c == split && !inDoubleQuotation && !inQuotation) {
                 int length = i - currentStart;
+                if(partQuoted){
+                    length = length - 1;
+                    partQuoted = false;
+                }
                 if (length == 0) {
                     p = "";
                 } else {
@@ -120,9 +142,40 @@ public class StringUtil {
             }
         }
         if (currentStart < chars.length) {
-            p = input.substring(currentStart);
+            int length = chars.length - currentStart;
+            if(partQuoted){
+                length = length - 1;
+            }
+            p = input.substring(currentStart,currentStart + length);
             parts.add(p);
         }
+    }
 
+    private static interface Parts{
+        void add(String part);
+    }
+    private static class ListParts implements Parts{
+        private List<String> list;
+        public ListParts(List<String> list){
+            this.list = list;
+        }
+
+        @Override
+        public void add(String part) {
+            list.add(part);
+        }
+    }
+
+    private static class ArrayParts implements Parts{
+        private String[] array;
+        private int p = 0;
+        public ArrayParts(String[] array){
+            this.array = array;
+        }
+
+        @Override
+        public void add(String part) {
+            array[p++] = part;
+        }
     }
 }

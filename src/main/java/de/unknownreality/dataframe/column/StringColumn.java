@@ -49,6 +49,10 @@ public class StringColumn extends BasicColumn<String, StringColumn> {
         super(name, values);
     }
 
+    public StringColumn(String name, String[] values, int size) {
+        super(name, values, size);
+    }
+
 
     @Override
     public Parser<String> getParser() {
@@ -67,9 +71,9 @@ public class StringColumn extends BasicColumn<String, StringColumn> {
 
     @Override
     public StringColumn copy() {
-        String[] copyValues = new String[size()];
+        String[] copyValues = new String[values.length];
         toArray(copyValues);
-        return new StringColumn(getName(), copyValues);
+        return new StringColumn(getName(), copyValues, size());
     }
 
     @Override

@@ -22,47 +22,43 @@
  *
  */
 
-package de.unknownreality.dataframe.common;
+package de.unknownreality.dataframe.csv;
 
-import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Alex on 07.06.2016.
+ * Created by Alex on 17.06.2017.
  */
-public interface ReaderBuilder<H extends Header, R extends Row> {
-    /**
-     * Loads a map of attributes.
-     * Used to create readers from data frame meta files
-     *
-     * @param attributes map of attributes
-     * @throws Exception throws an exception if any error occurs
-     */
-    void loadAttributes(Map<String, String> attributes) throws Exception;
-
-    /**
-     * Creates a data container from a file.
-     *
-     * @param f file to be read
-     * @return created data container
-     */
-    DataContainer<H, R> fromFile(File f);
-
-    /**
-     * Creates a data container from a string
-     *
-     * @param content string content used to create the data container
-     * @return created data container
-     */
-    DataContainer<H, R> fromString(String content);
-
-    /**
-     * Creates a data container from a resoruce
-     * @param content resource path
-     * @param classLoader class loader
-     * @return created data container
-     */
-    DataContainer<H, R> fromResource(String content,ClassLoader classLoader);
+public class ColumnSettings {
+    private List<String> ignoreColumns = new ArrayList();
+    private List<String> selectColumns = new ArrayList<>();
+    private Map<String, Class<? extends Comparable>> columnTypeMap = new HashMap<>();
 
 
+    public List<String> getIgnoreColumns() {
+        return ignoreColumns;
+    }
+
+    public List<String> getSelectColumns() {
+        return selectColumns;
+    }
+
+    public Map<String, Class<? extends Comparable>> getColumnTypeMap() {
+        return columnTypeMap;
+    }
+
+    public void setIgnoreColumns(List<String> ignoreColumns) {
+        this.ignoreColumns = ignoreColumns;
+    }
+
+    public void setColumnTypeMap(Map<String, Class<? extends Comparable>> columnTypeMap) {
+        this.columnTypeMap = columnTypeMap;
+    }
+
+    public void setSelectColumns(List<String> selectColumns) {
+        this.selectColumns = selectColumns;
+    }
 }

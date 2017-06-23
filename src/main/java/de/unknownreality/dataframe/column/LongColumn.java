@@ -47,6 +47,10 @@ public class LongColumn extends NumberColumn<Long, LongColumn> {
         super(name, values);
     }
 
+    public LongColumn(String name, Long[] values, int size) {
+        super(name, values, size);
+    }
+
 
     @Override
     protected LongColumn getThis() {
@@ -67,9 +71,9 @@ public class LongColumn extends NumberColumn<Long, LongColumn> {
 
     @Override
     public LongColumn copy() {
-        Long[] copyValues = new Long[size()];
+        Long[] copyValues = new Long[values.length];
         toArray(copyValues);
-        return new LongColumn(getName(), copyValues);
+        return new LongColumn(getName(), copyValues, size());
     }
     @Override
     public <H> Long getValueFromRow(Row<?, H> row, H headerName) {

@@ -31,13 +31,29 @@ import de.unknownreality.dataframe.common.header.BasicHeader;
  */
 public class CSVHeader extends BasicHeader {
 
+    private int emptyColumnIndex = 1;
+
+    @Override
+    public void add(String name) {
+        super.add(name);
+        emptyColumnIndex++;
+    }
+
     /**
      * Adds a new column without specified name.
      * If no name is provided, names are created: <tt>V1,V2,V3...</tt>
      */
     public void add() {
-        String name = "V" + (size() + 1);
+        String name = "V" + (emptyColumnIndex++);
         super.add(name);
+    }
+
+    protected String getNextEmptyColumnName(){
+        return "V" + (emptyColumnIndex);
+    }
+
+    protected void incrementEmptyColumnIndex(){
+        emptyColumnIndex++;
     }
 
 }

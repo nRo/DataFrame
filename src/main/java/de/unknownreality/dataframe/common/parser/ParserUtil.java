@@ -87,7 +87,15 @@ public class ParserUtil {
 
         parserMap.put(Boolean.class, new Parser<Boolean>() {
             @Override
-            public Boolean parse(String s) {
+            public Boolean parse(String s) throws ParseException {
+                if (s == null || !(
+                        "false".equals(s.toLowerCase())
+                                || "true".equals(s.toLowerCase())
+                                || "f".equals(s.toLowerCase())
+                                || "t".equals(s.toLowerCase())
+                )) {
+                    throw new ParseException(String.format("illegal boolean value: %s", s), 0);
+                }
                 return Boolean.parseBoolean(s);
             }
         });

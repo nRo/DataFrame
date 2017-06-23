@@ -47,6 +47,11 @@ public class ShortColumn extends NumberColumn<Short, ShortColumn> {
         super(name, values);
     }
 
+    public ShortColumn(String name, Short[] values, int size) {
+        super(name, values, size);
+    }
+
+
 
     @Override
     public Class<Short> getType() {
@@ -66,9 +71,9 @@ public class ShortColumn extends NumberColumn<Short, ShortColumn> {
 
     @Override
     public ShortColumn copy() {
-        Short[] copyValues = new Short[size()];
+        Short[] copyValues = new Short[values.length];
         toArray(copyValues);
-        return new ShortColumn(getName(), copyValues);
+        return new ShortColumn(getName(), copyValues, size());
     }
     @Override
     public <H> Short getValueFromRow(Row<?, H> row, H headerName) {

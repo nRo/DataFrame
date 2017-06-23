@@ -22,7 +22,7 @@
  *
  */
 
-package de.unknownreality.dataframe.common;
+package de.unknownreality.dataframe.io;
 
 
 import org.slf4j.Logger;
@@ -45,7 +45,7 @@ public class GZipUtil {
      */
     public static boolean isGzipped(File file) {
         try {
-            return isGZipped(new FileInputStream(file));
+            return isGzipped(new FileInputStream(file));
         } catch (Exception e) {
             log.error("error opening file", e);
         }
@@ -58,7 +58,7 @@ public class GZipUtil {
      * @param is Input stream to test
      * @return <tt>true</tt> if input stream is gzipped
      */
-    public static boolean isGZipped(InputStream is) {
+    public static boolean isGzipped(InputStream is) {
         if (!is.markSupported()) {
             is = new BufferedInputStream(is);
         }

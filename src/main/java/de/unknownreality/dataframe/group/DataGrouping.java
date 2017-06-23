@@ -25,12 +25,10 @@
 package de.unknownreality.dataframe.group;
 
 import de.unknownreality.dataframe.*;
-import de.unknownreality.dataframe.common.MultiKey;
-import de.unknownreality.dataframe.filter.FilterPredicate;
 import de.unknownreality.dataframe.group.aggr.AggregateFunction;
-import de.unknownreality.dataframe.sort.SortColumn;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Alex on 10.03.2016.
@@ -63,7 +61,7 @@ public class DataGrouping extends DefaultDataFrame {
         return agg(columnName,fun);
     }
 
-
+    @SuppressWarnings("unchecked")
     public <T extends Comparable<T>> DataGrouping agg(String columnName, AggregateFunction<T> fun) {
         List<T> values = new ArrayList<>();
         for(int i = 0; i < size(); i++){

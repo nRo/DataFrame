@@ -26,7 +26,7 @@ package de.unknownreality.dataframe.meta;
 
 import de.unknownreality.dataframe.DataFrameColumn;
 import de.unknownreality.dataframe.DataFrameException;
-import de.unknownreality.dataframe.common.ReaderBuilder;
+import de.unknownreality.dataframe.io.ReadFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -39,7 +39,10 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Created by Alex on 07.06.2016.
@@ -56,16 +59,13 @@ public class DataFrameMetaReader {
      * Map containing legacy package names.
      * This map is used to rename Reader and Column classes in an old Meta file.
      */
-    private static final Map<String, String> LEGACY_PACKAGES = new TreeMap<>(new Comparator<String>() {
-        @Override
-        public int compare(String o1, String o2) {
-            return -Integer.compare(o1.length(), o2.length());
-        }
-    });
+    private static final Map<String, String> LEGACY_PACKAGES = new TreeMap<>((o1, o2) -> -Integer.compare(o1.length(), o2.length()));
 
     static {
         LEGACY_PACKAGES.put("de.unknownreality.data.", "de.unknownreality.dataframe.");
         LEGACY_PACKAGES.put("de.unknownreality.data.frame.", "de.unknownreality.dataframe.");
+        LEGACY_PACKAGES.put("de.unknownreality.data.csv.CSVReaderBuilder", "de.unknownreality.dataframe.csv.CSVFormat");
+        LEGACY_PACKAGES.put("de.unknownreality.dataframe.csv.CSVReaderBuilder", "de.unknownreality.dataframe.csv.CSVFormat");
     }
 
     /**
@@ -86,18 +86,18 @@ public class DataFrameMetaReader {
     }
 
     /**
-     * Finds the reader builder class in a xml element
+     * Finds the reader format class in a xml element
      *
-     * @param readerBuilder reader builder xml element
+     * @param readFormat reader format xml element
      * @return reader builder class
      * @throws DataFrameException thrown if the reader builder class can not be found
      */
-    private static Class<? extends ReaderBuilder> findReaderBuilderClass(Element readerBuilder) throws DataFrameException {
-        String rbClassString = readerBuilder.getAttribute("class");
+    private static Class<? extends ReadFormat> findReadFormatClass(Element readFormat) throws DataFrameException {
+        String rbClassString = readFormat.getAttribute("class");
         if (rbClassString == null) {
-            throw new DataFrameException("no readerBuilder class attribute found");
+            throw new DataFrameException("no readFormat class attribute found");
         }
-        return parseChildClass(rbClassString, ReaderBuilder.class);
+        return parseChildClass(rbClassString, ReadFormat.class);
     }
 
     /**
@@ -221,7 +221,7 @@ public class DataFrameMetaReader {
         } catch (IOException e) {
             throw new DataFrameException("error reading dataFrameMeta file ", e);
         }
-        Class<? extends ReaderBuilder> readerBuilderClass;
+        Class<? extends ReadFormat> readFormatClass;
         Map<String, String> readerBuilderAttributes;
         LinkedHashMap<String, Class<? extends DataFrameColumn>> columns;
 
@@ -236,7 +236,7 @@ public class DataFrameMetaReader {
         Node readerBuilderNode = readBuilderElements.item(0);
         if (readerBuilderNode.getNodeType() == Node.ELEMENT_NODE) {
             Element readerBuilder = (Element) readerBuilderNode;
-            readerBuilderClass = findReaderBuilderClass(readerBuilder);
+            readFormatClass = findReadFormatClass(readerBuilder);
             readerBuilderAttributes = findReaderBuilderAttributes(readerBuilder);
         } else {
             throw new DataFrameException("error parsing readerBuilder element");
@@ -256,7 +256,7 @@ public class DataFrameMetaReader {
         } else {
             throw new DataFrameException("error parsing columns element");
         }
-        return new DataFrameMeta(columns, readerBuilderClass, readerBuilderAttributes);
+        return new DataFrameMeta(columns, readFormatClass, readerBuilderAttributes);
 
     }
 

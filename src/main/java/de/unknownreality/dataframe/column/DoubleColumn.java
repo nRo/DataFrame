@@ -46,6 +46,9 @@ public class DoubleColumn extends NumberColumn<Double, DoubleColumn> {
     public DoubleColumn(String name, Double[] values) {
         super(name, values);
     }
+    public DoubleColumn(String name, Double[] values, int size) {
+        super(name, values, size);
+    }
 
 
     @Override
@@ -67,9 +70,9 @@ public class DoubleColumn extends NumberColumn<Double, DoubleColumn> {
 
     @Override
     public DoubleColumn copy() {
-        Double[] copyValues = new Double[size()];
+        Double[] copyValues = new Double[values.length];
         toArray(copyValues);
-        return new DoubleColumn(getName(), copyValues);
+        return new DoubleColumn(getName(), copyValues, size());
     }
     @Override
     public <H> Double getValueFromRow(Row<?, H> row, H headerName) {

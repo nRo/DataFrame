@@ -22,26 +22,26 @@
 
 package de.unknownreality.dataframe.frame;
 
-import de.unknownreality.dataframe.DataFrame;
-import de.unknownreality.dataframe.DataRow;
-import de.unknownreality.dataframe.DefaultDataFrame;
-import de.unknownreality.dataframe.Values;
+import de.unknownreality.dataframe.*;
 import de.unknownreality.dataframe.column.BooleanColumn;
 import de.unknownreality.dataframe.column.DoubleColumn;
 import de.unknownreality.dataframe.column.IntegerColumn;
 import de.unknownreality.dataframe.column.StringColumn;
-import de.unknownreality.dataframe.csv.CSVReaderBuilder;
 import de.unknownreality.dataframe.filter.FilterPredicate;
 import de.unknownreality.dataframe.group.DataGroup;
 import de.unknownreality.dataframe.group.DataGrouping;
 import de.unknownreality.dataframe.group.GroupRow;
 import de.unknownreality.dataframe.group.aggr.Aggregate;
-import de.unknownreality.dataframe.group.aggr.AggregateFunction;
-import de.unknownreality.dataframe.transform.DataFrameTransform;
+import de.unknownreality.dataframe.csv.CSVReader;
+import de.unknownreality.dataframe.csv.CSVReaderBuilder;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 /**
  * Created by Alex on 12.03.2016.
@@ -51,7 +51,7 @@ public class DataFrameGroupingTest {
     public final ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void testReader() {
+    public void testReader() throws IOException {
         /*
         ID;NAME;VALUE
             1;A;1
@@ -63,15 +63,18 @@ public class DataFrameGroupingTest {
             4;B;7
             3;B;8
          */
-        DataFrame dataFrame = CSVReaderBuilder.create()
-                .containsHeader(true)
+
+        CSVReader csvReader = CSVReaderBuilder.create()
+                .withHeader(true)
                 .withHeaderPrefix("")
                 .withSeparator(';')
-                .loadResource("data_grouping.csv", DataFrameGroupingTest.class.getClassLoader())
-                .toDataFrame()
-                .addColumn(new IntegerColumn("ID"))
-                .addColumn(new StringColumn("NAME"))
-                .addColumn(new IntegerColumn("VALUE")).build();
+                .setColumnType("ID",Integer.class)
+                .setColumnType("NAME",String.class)
+                .setColumnType("VALUE",Integer.class)
+                .build();
+
+        DataFrame dataFrame = DataFrameLoader.load("data_grouping.csv", DataFrameGroupingTest.class.getClassLoader(), csvReader);
+
         Assert.assertEquals(8, dataFrame.size());
 
         /*
@@ -113,7 +116,7 @@ public class DataFrameGroupingTest {
     }
 
     @Test
-    public void testAgg(){
+    public void testAgg() throws IOException {
         DataFrame dataFrame = new DefaultDataFrame();
         dataFrame.addColumn(new StringColumn("name"));
         dataFrame.addColumn(new DoubleColumn("x"));
@@ -148,23 +151,19 @@ public class DataFrameGroupingTest {
                 .agg("x_25", Aggregate.quantile("x",0.25))
                 .agg("desc",group -> group.getGroupDescription());
 
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(System.out));
+        writer.write("test");
+        writer.newLine();
 
-        System.out.println(grouping.getHeader());
-        for(DataRow r : grouping){
-            System.out.println(r);
-        }
+        grouping.print();
 
         DataFrame df = grouping.select("na_count < 3");
-        System.out.println(df.getHeader());
-        for(DataRow r : df){
-            System.out.println(r);
-        }
+        df.print();
+
         df.getStringColumn("desc").map(value -> value+"::2");
         DataFrame joined = grouping.joinInner(df,"name");
-        System.out.println(joined.getHeader());
-        for(DataRow r : joined){
-            System.out.println(r);
-        }
+        joined.print();
+
     }
 
 

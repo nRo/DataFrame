@@ -22,10 +22,11 @@
  *
  */
 
-package de.unknownreality.dataframe.common.reader;
+package de.unknownreality.dataframe.io;
 
 import de.unknownreality.dataframe.DataFrameRuntimeException;
 import de.unknownreality.dataframe.common.Row;
+import de.unknownreality.dataframe.common.RowIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,13 +34,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
  * Created by Alex on 19.05.2017.
  */
-public abstract class BufferedStreamIterator<R extends Row> implements Iterator<R> {
+public abstract class BufferedStreamIterator<R extends Row> implements RowIterator<R> {
     private static final Logger log = LoggerFactory.getLogger(BufferedStreamIterator.class);
     private final BufferedReader reader;
     private R next;
@@ -50,6 +50,13 @@ public abstract class BufferedStreamIterator<R extends Row> implements Iterator<
             throw new DataFrameRuntimeException("input stream is null");
         }
         this.reader = new BufferedReader(new InputStreamReader(stream));
+    }
+
+    public BufferedStreamIterator(BufferedReader reader){
+        if(reader == null){
+            throw new DataFrameRuntimeException("reader is null");
+        }
+        this.reader = reader;
     }
 
     protected void loadNext(){

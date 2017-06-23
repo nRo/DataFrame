@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * Created by Alex on 14.03.2016.
  */
-public interface DataContainer<H extends Header, R extends Row> extends RowIterator<R> {
+public interface DataContainer<H extends Header, R extends Row> extends RowIterable<R> {
     /**
      * Returns the header of this data container
      *

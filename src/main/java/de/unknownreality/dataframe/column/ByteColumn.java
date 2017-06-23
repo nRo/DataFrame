@@ -47,6 +47,9 @@ public class ByteColumn extends NumberColumn<Byte, ByteColumn> {
         super(name, values);
     }
 
+    public ByteColumn(String name, Byte[] values, int size) {
+        super(name, values, size);
+    }
 
     @Override
     public Class<Byte> getType() {
@@ -66,9 +69,9 @@ public class ByteColumn extends NumberColumn<Byte, ByteColumn> {
 
     @Override
     public ByteColumn copy() {
-        Byte[] copyValues = new Byte[size()];
+        Byte[] copyValues = new Byte[values.length];
         toArray(copyValues);
-        return new ByteColumn(getName(), copyValues);
+        return new ByteColumn(getName(), copyValues, size());
     }
 
     @Override

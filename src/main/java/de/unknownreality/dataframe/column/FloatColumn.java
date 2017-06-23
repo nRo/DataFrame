@@ -47,6 +47,10 @@ public class FloatColumn extends NumberColumn<Float, FloatColumn> {
         super(name, values);
     }
 
+    public FloatColumn(String name, Float[] values, int size) {
+        super(name, values, size);
+    }
+
 
     @Override
     protected FloatColumn getThis() {
@@ -69,9 +73,9 @@ public class FloatColumn extends NumberColumn<Float, FloatColumn> {
 
     @Override
     public FloatColumn copy() {
-        Float[] copyValues = new Float[size()];
+        Float[] copyValues = new Float[values.length];
         toArray(copyValues);
-        return new FloatColumn(getName(), copyValues);
+        return new FloatColumn(getName(), copyValues, size());
     }
     @Override
     public <H> Float getValueFromRow(Row<?, H> row, H headerName) {

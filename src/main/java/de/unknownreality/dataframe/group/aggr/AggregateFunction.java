@@ -24,11 +24,7 @@
 
 package de.unknownreality.dataframe.group.aggr;
 
-import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.group.DataGroup;
-import de.unknownreality.dataframe.group.GroupRow;
-
-import java.util.Comparator;
 
 /**
  * Created by Alex on 13.06.2017.

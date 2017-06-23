@@ -46,6 +46,7 @@ public abstract class BasicTypeHeader<T> implements Header<T> {
 
     /**
      * Adds a new data frame column to this header
+     *
      * @param column new data frame column
      * @return <tt>self</tt> for method chaining
      */
@@ -56,9 +57,10 @@ public abstract class BasicTypeHeader<T> implements Header<T> {
 
     /**
      * Adds a new header entry based on column name, column class and column value type.
-     * @param name column name
+     *
+     * @param name     column name
      * @param colClass column class
-     * @param type column value type
+     * @param type     column value type
      * @return <tt>self</tt> for method chaining
      */
     public BasicTypeHeader add(T name, Class<? extends DataFrameColumn> colClass, Class<? extends Comparable> type) {
@@ -71,7 +73,51 @@ public abstract class BasicTypeHeader<T> implements Header<T> {
     }
 
     /**
+     * Adds a new header entry based on column name, column class and column value type.
+     *
+     * @param name     column name
+     * @param colClass column class
+     * @param type     column value type
+     * @return <tt>self</tt> for method chaining
+     */
+    public BasicTypeHeader set(T name, Class<? extends DataFrameColumn> colClass, Class<? extends Comparable> type) {
+        Integer index = headerMap.get(name);
+        if (index == null) {
+            add(name, colClass, type);
+        }
+        typesMap.put(name, type);
+        colTypeMap.put(name, colClass);
+        return this;
+    }
+
+    /**
+     * Replaces an existing header with a new one.
+     *
+     * @param existing  existing column name
+     * @param existing  replacement column name
+     * @param colClass replacement column class
+     * @param type     replacement column value type
+     * @return <tt>self</tt> for method chaining
+     */
+    public BasicTypeHeader replace(T existing, T replacement, Class<? extends DataFrameColumn> colClass, Class<? extends Comparable> type) {
+        Integer index = headerMap.get(existing);
+        if (index == null) {
+            throw new DataFrameRuntimeException(String.format("header not found: %s",existing));
+        }
+        headers.remove(existing);
+        headers.add(index,replacement);
+        headerMap.put(replacement,index);
+        typesMap.remove(existing);
+        colTypeMap.remove(existing);
+        typesMap.put(replacement, type);
+        colTypeMap.put(replacement, colClass);
+        return this;
+    }
+
+
+    /**
      * Removes a column from this header
+     *
      * @param name column name
      */
     public void remove(T name) {
@@ -120,12 +166,13 @@ public abstract class BasicTypeHeader<T> implements Header<T> {
     /**
      * Returns <tt>true</tt> if the other header is compatible with this header.
      * Compatible means that both headers contain the same columns with the same column classes.
+     *
      * @param other object to test for compatibility
      * @return <tt>true</tt> if the object is equal or compatible with this header
      */
     @Override
     public boolean equals(Object other) {
-        if(other == null){
+        if (other == null) {
             return false;
         }
         if (other == this) {
@@ -150,10 +197,9 @@ public abstract class BasicTypeHeader<T> implements Header<T> {
     }
 
 
-
-
     /**
      * Returns the column class for an input column name
+     *
      * @param name input column name
      * @return column class
      */
@@ -163,7 +209,8 @@ public abstract class BasicTypeHeader<T> implements Header<T> {
 
     /**
      * Returns the column class for a column index
-     * @param index  column index
+     *
+     * @param index column index
      * @return column class
      */
     public Class<? extends DataFrameColumn> getColumnType(int index) {
@@ -172,6 +219,7 @@ public abstract class BasicTypeHeader<T> implements Header<T> {
 
     /**
      * Returns the column value type for an input column name
+     *
      * @param name input column name
      * @return column value type
      */
@@ -181,6 +229,7 @@ public abstract class BasicTypeHeader<T> implements Header<T> {
 
     /**
      * Returns the column value type for a column index
+     *
      * @param index column index
      * @return column value type
      */
@@ -204,6 +253,7 @@ public abstract class BasicTypeHeader<T> implements Header<T> {
 
     /**
      * Returns <tt>true</tt> if the header contains a column with the input name
+     *
      * @param name input name
      * @return <tt>true</tt> if header contains input name
      */
@@ -240,12 +290,14 @@ public abstract class BasicTypeHeader<T> implements Header<T> {
 
     /**
      * Creates a copy of this header.
+     *
      * @return copy of header
      */
     public abstract BasicTypeHeader copy();
 
     /**
      * Returns a string representation of this header
+     *
      * @return string representation
      */
     @Override
@@ -264,6 +316,7 @@ public abstract class BasicTypeHeader<T> implements Header<T> {
     /**
      * Returns an iterator over the column names in this header.
      * {@link Iterator#remove()} is not supported
+     *
      * @return column name iterator
      */
     @Override
@@ -283,8 +336,8 @@ public abstract class BasicTypeHeader<T> implements Header<T> {
 
             @Override
             public T next() {
-                if(i >= headers.size()){
-                    throw new NoSuchElementException(String.format("element not found: index out of bounds %s >= %s]",i,headers.size()));
+                if (i >= headers.size()) {
+                    throw new NoSuchElementException(String.format("element not found: index out of bounds %s >= %s]", i, headers.size()));
                 }
                 return headers.get(i++);
             }

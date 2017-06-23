@@ -47,6 +47,10 @@ public class IntegerColumn extends NumberColumn<Integer, IntegerColumn> {
         super(name, values);
     }
 
+    public IntegerColumn(String name, Integer[] values, int size) {
+        super(name, values, size);
+    }
+
 
     @Override
     protected IntegerColumn getThis() {
@@ -66,9 +70,9 @@ public class IntegerColumn extends NumberColumn<Integer, IntegerColumn> {
 
     @Override
     public IntegerColumn copy() {
-        Integer[] copyValues = new Integer[size()];
+        Integer[] copyValues = new Integer[values.length];
         toArray(copyValues);
-        return new IntegerColumn(getName(), copyValues);
+        return new IntegerColumn(getName(), copyValues, size());
     }
     @Override
     public <H> Integer getValueFromRow(Row<?, H> row, H headerName) {

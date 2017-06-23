@@ -54,10 +54,14 @@ public abstract class BasicColumn<T extends Comparable<T>, C extends BasicColumn
         this(null);
     }
 
-    public BasicColumn(String name, T[] values) {
+    public BasicColumn(String name, T[] values, int size) {
         this.values = values;
         setName(name);
-        size = values.length;
+        this.size = size;
+    }
+
+    public BasicColumn(String name, T[] values) {
+       this(name,values,values.length);
     }
 
 
@@ -187,7 +191,7 @@ public abstract class BasicColumn<T extends Comparable<T>, C extends BasicColumn
     @Override
     protected boolean doAppend(T t) {
 
-        if (size == values.length - 1) {
+        if (size >= values.length - 1) {
             values = Arrays.copyOf(values, (int) ((double) values.length * GROW_FACTOR));
         }
         values[size++] = t;

@@ -80,6 +80,11 @@ public interface Index {
     boolean containsColumn(DataFrameColumn column);
 
     /**
+     * Returns <tt>true</tt> if this index is unique
+     * @return <tt>true</tt> if this index is unique
+     */
+    boolean isUnique();
+    /**
      * Returns the columns used in this index
      *
      * @return columns in this index
@@ -90,5 +95,7 @@ public interface Index {
      * Clears this index
      */
     void clear();
+
+    void replaceColumn(DataFrameColumn existing, DataFrameColumn replacement);
 
 }

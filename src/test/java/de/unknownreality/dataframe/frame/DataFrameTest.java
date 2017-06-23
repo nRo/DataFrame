@@ -24,14 +24,16 @@ package de.unknownreality.dataframe.frame;
 
 import de.unknownreality.dataframe.*;
 import de.unknownreality.dataframe.column.*;
+
+import de.unknownreality.dataframe.filter.FilterPredicate;
 import de.unknownreality.dataframe.csv.CSVReader;
 import de.unknownreality.dataframe.csv.CSVReaderBuilder;
-import de.unknownreality.dataframe.filter.FilterPredicate;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -100,7 +102,7 @@ public class DataFrameTest {
     }
 
     @Test
-    public void testReader() {
+    public void testReader() throws IOException {
         String[] header = new String[]{"A", "B", "C", "D", "E","F","G","H","I"};
         Integer[] col1 = new Integer[]{5, 3, 2, 4, 1};
         Double[] col2 = new Double[]{1d, 3d, 5d, 5d, 2d};
@@ -114,39 +116,31 @@ public class DataFrameTest {
 
         String csv = createCSV(header, col1, col2, col3, col4, col5, col6, col7, col8, col9);
 
-        CSVReader reader = CSVReaderBuilder.create()
+        CSVReader csvReader = CSVReaderBuilder.create()
+                .withHeader(true)
                 .withHeaderPrefix("#")
                 .withSeparator('\t')
-                .containsHeader(true).load(csv);
-
-        DataFrame df = reader.toDataFrame()
-                .addColumn(new IntegerColumn("A"))
-                .addColumn(new DoubleColumn("B"))
-                .addColumn(new StringColumn("C"))
-                .addColumn(new BooleanColumn("D"))
-                .addColumn(new StringColumn("E"))
-                .addColumn(new ByteColumn("F"))
-                .addColumn(new ShortColumn("G"))
-                .addColumn(new LongColumn("H"))
-                .addColumn(new FloatColumn("I"))
+                .setColumnType("A",Integer.class)
+                .setColumnType("B",Double.class)
+                .setColumnType("C",String.class)
+                .setColumnType("D",Boolean.class)
+                .setColumnType("E",String.class)
+                .setColumnType("F",Byte.class)
+                .setColumnType("G",Short.class)
+                .setColumnType("H",Long.class)
+                .setColumnType("I",Float.class)
                 .build();
 
-        reader = CSVReaderBuilder.create()
-                .withHeaderPrefix("#")
-                .withSeparator('\t')
-                .containsHeader(true).load(csv);
 
-        DataFrame df2 = reader.toDataFrame()
-                .addIntegerColumn("A")
-                .addDoubleColumn("B")
-                .addStringColumn("C")
-                .addBooleanColumn("D")
-                .addStringColumn("E")
-                .addByteColumn("F")
-                .addShortColumn("G")
-                .addLongColumn("H")
-                .addFloatColumn("I")
-                .build();
+        DataFrame df = DataFrameLoader.load(csv,csvReader);
+
+
+
+
+
+
+        DataFrame df2 = DataFrameLoader.load(csv,csvReader);
+
 
 
         Assert.assertEquals(df, df2);
@@ -189,7 +183,7 @@ public class DataFrameTest {
     }
 
     @Test
-    public void rowAccessTest(){
+    public void rowAccessTest() throws IOException {
         String[] header = new String[]{"A", "B", "C", "D", "E","F","G","H","I"};
         Integer[] col1 = new Integer[]{5, 3, 2, 4, 1};
         Double[] col2 = new Double[]{1d, 3d, 5d, 5d, 2d};
@@ -203,22 +197,26 @@ public class DataFrameTest {
 
         String csv = createCSV(header, col1, col2, col3, col4, col5, col6, col7, col8, col9);
 
-        CSVReader reader = CSVReaderBuilder.create()
+        CSVReader csvReader = CSVReaderBuilder.create()
+                .withHeader(true)
                 .withHeaderPrefix("#")
                 .withSeparator('\t')
-                .containsHeader(true).load(csv);
-
-        DataFrame df = reader.toDataFrame()
-                .addColumn(new IntegerColumn("A"))
-                .addColumn(new DoubleColumn("B"))
-                .addColumn(new StringColumn("C"))
-                .addColumn(new BooleanColumn("D"))
-                .addColumn(new StringColumn("E"))
-                .addColumn(new ByteColumn("F"))
-                .addColumn(new ShortColumn("G"))
-                .addColumn(new LongColumn("H"))
-                .addColumn(new FloatColumn("I"))
+                .setColumnType("A",Integer.class)
+                .setColumnType("B",Double.class)
+                .setColumnType("C",String.class)
+                .setColumnType("D",Boolean.class)
+                .setColumnType("E",String.class)
+                .setColumnType("F",Byte.class)
+                .setColumnType("G",Short.class)
+                .setColumnType("H",Long.class)
+                .setColumnType("I",Float.class)
                 .build();
+
+
+        DataFrame df = DataFrameLoader.load(csv,csvReader);
+
+
+
 
         Assert.assertEquals(1l, df.getRow(2).get("H"));
         Assert.assertEquals(1l, df.getRow(2).getLong("H").longValue());
@@ -339,7 +337,7 @@ public class DataFrameTest {
     }
 
     @Test
-    public void testNA() {
+    public void testNA() throws IOException {
 
         Assert.assertEquals(true, Values.NA.isNA(Values.NA));
         Assert.assertEquals(true, Values.NA.isNA("NA"));
@@ -358,17 +356,18 @@ public class DataFrameTest {
         Boolean[] col4 = new Boolean[]{false, false, true, false, true};
         String csv = createCSV(header, col1, col2, col3, col4);
 
-        CSVReader reader = CSVReaderBuilder.create()
+
+
+        CSVReader csvReader = CSVReaderBuilder.create()
+                .withHeader(true)
                 .withHeaderPrefix("#")
                 .withSeparator('\t')
-                .containsHeader(true).load(csv);
-
-        DataFrame df = reader.toDataFrame()
-                .addColumn(new IntegerColumn("A"))
-                .addColumn(new DoubleColumn("B"))
-                .addColumn(new StringColumn("C"))
-                .addColumn(new BooleanColumn("D"))
+                .setColumnType("A",Integer.class)
+                .setColumnType("B",Double.class)
+                .setColumnType("C",String.class)
+                .setColumnType("D",Boolean.class)
                 .build();
+        DataFrame df = DataFrameLoader.load(csv,csvReader);
         List<DataRow> r = df.getRows();
         int i = 0;
         for (DataRow row : df.rows()) {

@@ -84,6 +84,9 @@ public class BooleanColumn extends BasicColumn<Boolean, BooleanColumn> {
         super(name, values);
     }
 
+    public BooleanColumn(String name, Boolean[] values, int size) {
+        super(name, values, size);
+    }
 
     @Override
     protected BooleanColumn getThis() {
@@ -103,9 +106,9 @@ public class BooleanColumn extends BasicColumn<Boolean, BooleanColumn> {
 
     @Override
     public BooleanColumn copy() {
-        Boolean[] copyValues = new Boolean[size()];
+        Boolean[] copyValues = new Boolean[values.length];
         toArray(copyValues);
-        return new BooleanColumn(getName(), copyValues);
+        return new BooleanColumn(getName(), copyValues, size());
     }
 
     @Override
