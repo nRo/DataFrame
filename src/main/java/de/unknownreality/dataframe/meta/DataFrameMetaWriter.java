@@ -65,7 +65,7 @@ public class DataFrameMetaWriter {
             rootElement.appendChild(readerBuilder);
 
             Attr attr = doc.createAttribute("class");
-            attr.setValue(metaFile.getReaderBuilderClass().getCanonicalName());
+            attr.setValue(metaFile.getReadFormatClass().getCanonicalName());
             readerBuilder.setAttributeNode(attr);
 
             for (String attrName : metaFile.getAttributes().keySet()) {

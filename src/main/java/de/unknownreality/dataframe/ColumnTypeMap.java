@@ -60,7 +60,6 @@ public class ColumnTypeMap {
 
     private static final ColumnTypeMap defaultInstance = create();
 
-
     public static <T extends Comparable<T>, C extends DataFrameColumn<T, ?>> Class<C> get(Class<T> type){
         return  defaultInstance.getColumnType(type);
     }

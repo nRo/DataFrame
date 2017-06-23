@@ -81,6 +81,21 @@ public class TreeIndex implements Index{
     }
 
     @Override
+    public boolean isUnique() {
+        return unique;
+    }
+
+    @Override
+    public void replaceColumn(DataFrameColumn existing, DataFrameColumn replacement){
+        Integer index = columnIndexMap.get(existing);
+        if(index == null){
+            throw new DataFrameRuntimeException(String.format("column not found: %s",existing.getName()));
+        }
+        columnIndexMap.remove(existing);
+        columnIndexMap.put(replacement,index);
+    }
+
+    @Override
     public List<DataFrameColumn> getColumns() {
         return new ArrayList<>(columnIndexMap.keySet());
     }

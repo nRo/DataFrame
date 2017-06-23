@@ -60,6 +60,30 @@ public class Indices {
     }
 
     /**
+     * Replaces an existing column with a replacement column
+     * All existing indices will be updated
+     * @param existing existing column
+     * @param replacement replacement column
+     */
+    public void replace(DataFrameColumn existing, DataFrameColumn replacement){
+        if(!isIndexColumn(existing)){
+            return;
+        }
+        List<Index> existingIndices = columnIndexMap.get(existing);
+        for(Index idx : existingIndices){
+            idx.replaceColumn(existing,replacement);
+            idx.clear();
+        }
+        columnIndexMap.remove(existing);
+        columnIndexMap.put(replacement,existingIndices);
+        for(DataRow row : dataFrame){
+            for(Index idx : existingIndices){
+                idx.update(row);
+            }
+        }
+    }
+
+    /**
      * Copies all indices into another data frame
      *
      * @param dataFrame data frame the indices are copied to

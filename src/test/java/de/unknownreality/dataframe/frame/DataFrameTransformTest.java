@@ -23,19 +23,18 @@
 package de.unknownreality.dataframe.frame;
 
 import de.unknownreality.dataframe.DataFrame;
+import de.unknownreality.dataframe.DataFrameLoader;
 import de.unknownreality.dataframe.DataRow;
 import de.unknownreality.dataframe.Values;
-import de.unknownreality.dataframe.column.BooleanColumn;
-import de.unknownreality.dataframe.column.DoubleColumn;
-import de.unknownreality.dataframe.column.IntegerColumn;
-import de.unknownreality.dataframe.column.StringColumn;
-import de.unknownreality.dataframe.csv.CSVReader;
-import de.unknownreality.dataframe.csv.CSVReaderBuilder;
+
+import de.unknownreality.dataframe.io.FileFormat;
 import de.unknownreality.dataframe.transform.CountTransformer;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
+import java.io.IOException;
 
 /**
  * Created by Alex on 12.03.2016.
@@ -45,7 +44,7 @@ public class DataFrameTransformTest {
     public final ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void testTransform() {
+    public void testTransform() throws IOException {
         String[] header = new String[]{"A", "B", "C", "D"};
         Integer[] col1 = new Integer[]{5, 3, 2, 4, 1};
         Double[] col2 = new Double[]{2d, 3d, null, 5d, 2d};
@@ -53,17 +52,8 @@ public class DataFrameTransformTest {
         Boolean[] col4 = new Boolean[]{false, false, true, false, true};
         String csv = createCSV(header, col1, col2, col3, col4);
 
-        CSVReader reader = CSVReaderBuilder.create()
-                .withHeaderPrefix("#")
-                .withSeparator('\t')
-                .containsHeader(true).load(csv);
+        DataFrame df = DataFrameLoader.load(csv, FileFormat.TSV);
 
-        DataFrame df = reader.toDataFrame()
-                .addColumn(new IntegerColumn("A"))
-                .addColumn(new DoubleColumn("B"))
-                .addColumn(new StringColumn("C"))
-                .addColumn(new BooleanColumn("D"))
-                .build();
 
         DataFrame counts = df.getColumn("A").transform(new CountTransformer());
         for(DataRow row : counts){
@@ -89,7 +79,7 @@ public class DataFrameTransformTest {
 
     private String createCSV(String[] head, Object[]... cols) {
         StringBuilder sb = new StringBuilder();
-        sb.append("#");
+        sb.append("");
         for (int i = 0; i < head.length; i++) {
             sb.append(head[i]);
             if (i < head.length - 1) {

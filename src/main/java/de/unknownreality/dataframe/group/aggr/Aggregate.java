@@ -24,9 +24,7 @@
 
 package de.unknownreality.dataframe.group.aggr;
 
-import de.unknownreality.dataframe.common.NumberUtil;
 import de.unknownreality.dataframe.filter.FilterPredicate;
-import de.unknownreality.dataframe.group.DataGroup;
 
 /**
  * Created by Alex on 13.06.2017.

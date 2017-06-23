@@ -48,6 +48,11 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
         super(name, values);
     }
 
+    public NumberColumn(String name, T[] values, int size) {
+        super(name, values, size);
+    }
+
+
     private T[] sorted = null;
     private boolean requiresSorting = true;
     private boolean enableSortedCache = true;

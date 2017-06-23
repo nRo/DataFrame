@@ -22,18 +22,16 @@
 
 package de.unknownreality.dataframe.frame;
 
-import de.unknownreality.dataframe.DataFrame;
-import de.unknownreality.dataframe.DataFrameRuntimeException;
-import de.unknownreality.dataframe.DataRow;
-import de.unknownreality.dataframe.MapFunction;
+import de.unknownreality.dataframe.*;
 import de.unknownreality.dataframe.column.IntegerColumn;
-import de.unknownreality.dataframe.column.StringColumn;
+import de.unknownreality.dataframe.csv.CSVReader;
 import de.unknownreality.dataframe.csv.CSVReaderBuilder;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -46,7 +44,7 @@ public class DataFrameIndexTest {
     public final ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void testIndex() {
+    public void testIndex() throws IOException {
         /*
        ID;NAME;UID
         1;A;1
@@ -58,15 +56,18 @@ public class DataFrameIndexTest {
         4;A;7
         3;A,8
          */
-        DataFrame dataFrame = CSVReaderBuilder.create()
-                .containsHeader(true)
+
+
+        CSVReader csvReader = CSVReaderBuilder.create()
+                .withHeader(true)
                 .withHeaderPrefix("")
                 .withSeparator(';')
-                .loadResource("data_index.csv", DataFrameIndexTest.class.getClassLoader())
-                .toDataFrame()
-                .addColumn(new IntegerColumn("ID"))
-                .addColumn(new StringColumn("NAME"))
-                .addColumn(new IntegerColumn("UID")).build();
+                .setColumnType("ID",Integer.class)
+                .setColumnType("NAME",String.class)
+                .setColumnType("UID",Integer.class)
+                .build();
+
+        DataFrame dataFrame = DataFrameLoader.load("data_index.csv", DataFrameGroupingTest.class.getClassLoader(), csvReader);
         Assert.assertEquals(8, dataFrame.size());
 
         dataFrame.setPrimaryKey("UID");
@@ -79,6 +80,7 @@ public class DataFrameIndexTest {
 
         Assert.assertEquals(2, (int) dataFrame.findByPrimaryKey(3).getInteger("ID"));
         Assert.assertEquals("A", dataFrame.findByPrimaryKey(3).getString("NAME"));
+
 
         dataFrame.addIndex("ID_NAME", "ID", "NAME");
 
@@ -136,6 +138,8 @@ public class DataFrameIndexTest {
         row.set("UID",999);
         dataFrame.update(row);
         Assert.assertEquals(999, (int) dataFrame.findByIndex("ID_NAME", 3, "B").iterator().next().getInteger("UID"));
+        row.set("UID",2);
+        dataFrame.update(row);
 
         expected.add(12);
 
@@ -147,10 +151,25 @@ public class DataFrameIndexTest {
         }
         Assert.assertEquals(expected,values);
         dataFrame.removeIndex("ID_NAME");
+
+
+        IntegerColumn integerColumn =  dataFrame.getIntegerColumn("UID").copy();
+        integerColumn.map(value -> value + 100);
+        integerColumn.setName("UID2");
+        dataFrame.replaceColumn("UID",integerColumn);
+        Assert.assertEquals(3, (int) dataFrame.findByPrimaryKey(101).getInteger("ID"));
+        Assert.assertEquals("A", dataFrame.findByPrimaryKey(101).getString("NAME"));
+
+        Assert.assertEquals(3, (int) dataFrame.findByPrimaryKey(102).getInteger("ID"));
+        Assert.assertEquals("B", dataFrame.findByPrimaryKey(102).getString("NAME"));
+
+        Assert.assertEquals(4, (int) dataFrame.findByPrimaryKey(103).getInteger("ID"));
+        Assert.assertEquals("A", dataFrame.findByPrimaryKey(103).getString("NAME"));
+
         exception.expect(DataFrameRuntimeException.class);
         //UUID is primarykey -> must be unique
-        dataFrame.append(3, "Z", 12);
-        dataFrame.findByIndex("ID_NAME", 3, "B");
+        dataFrame.append(3, "Z", 101);
+
     }
 
 

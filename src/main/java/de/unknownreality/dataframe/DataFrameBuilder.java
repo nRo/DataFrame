@@ -25,12 +25,15 @@
 package de.unknownreality.dataframe;
 
 import de.unknownreality.dataframe.column.*;
-import de.unknownreality.dataframe.common.DataContainer;
 import de.unknownreality.dataframe.filter.FilterPredicate;
 import de.unknownreality.dataframe.group.GroupUtil;
+import de.unknownreality.dataframe.io.ColumnInformation;
+import de.unknownreality.dataframe.io.DataIterator;
 import de.unknownreality.dataframe.join.JoinUtil;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * Created by Alex on 09.03.2016.
@@ -40,29 +43,35 @@ public class DataFrameBuilder {
 
     private JoinUtil joinUtil = null;
     private GroupUtil groupUtil = null;
-    private  DataContainer<?, ?> dataContainer;
+    private DataIterator<?> dataIterator;
     private FilterPredicate filterPredicate = FilterPredicate.EMPTY_FILTER;
+
     protected DataFrameBuilder() {
     }
 
-    protected DataFrameBuilder(DataContainer<?,?> container) {
-        this.dataContainer = container;
+    protected DataFrameBuilder(DataIterator<?> dataIterator) {
+        this.dataIterator = dataIterator;
     }
-    public static DataFrame createDefault(){
+
+    public static DataFrame createDefault() {
         return new DefaultDataFrame();
     }
 
     /**
      * Creates a data frame builder instance based on a parent data container.
      *
-     * @param dataContainer parent data container
+     * @param dataIterator parent data reader
      * @return data frame builder
-     */
-    public static DataFrameBuilder createFrom(DataContainer dataContainer) {
-        return new DataFrameBuilder(dataContainer);
+     *
+     * @deprecated use {@link DataFrame#load} instead.
+     *
+     * */
+    @Deprecated
+    public static DataFrameBuilder createFrom(DataIterator<?> dataIterator) {
+        return new DataFrameBuilder(dataIterator);
     }
 
-    public static DataFrameBuilder create(){
+    public static DataFrameBuilder create() {
         return new DataFrameBuilder();
     }
 
@@ -176,13 +185,13 @@ public class DataFrameBuilder {
         return this;
     }
 
-    public DataFrameBuilder withFilterPredicate(FilterPredicate predicate){
+    public DataFrameBuilder withFilterPredicate(FilterPredicate predicate) {
         this.filterPredicate = predicate;
         return this;
     }
 
-    public DataFrameBuilder from(DataContainer<?, ?> container){
-        this.dataContainer = container;
+    public DataFrameBuilder from(DataIterator<?> dataIterator) {
+        this.dataIterator = dataIterator;
         return this;
     }
 
@@ -209,19 +218,30 @@ public class DataFrameBuilder {
      * @return created data frame
      */
     public DataFrame build() {
-        if(dataContainer != null){
-            return DataFrameConverter.fromDataContainer(dataContainer, getColumns(),filterPredicate);
+        if (dataIterator != null) {
+            List<ColumnInformation> columnInformationList = new ArrayList<>();
+            int i = 0;
+            for (String n : columns.keySet()) {
+                ColumnInformation columnInformation = new ColumnInformation(i, n);
+                columnInformation.setColumnType(columns.get(n).getClass());
+                columnInformationList.add(columnInformation);
+                i++;
+            }
+            if (columnInformationList.isEmpty()) {
+                columnInformationList = dataIterator.getColumnsInformation();
+            }
+            return DataFrameConverter.fromDataIterator(dataIterator, columnInformationList, filterPredicate);
         }
         DefaultDataFrame dataFrame = new DefaultDataFrame();
-        for(String n : columns.keySet()){
+        for (String n : columns.keySet()) {
             DataFrameColumn col = columns.get(n);
             col.setName(n);
             dataFrame.addColumn(col);
         }
-        if(joinUtil != null){
+        if (joinUtil != null) {
             dataFrame.setJoinUtil(joinUtil);
         }
-        if(groupUtil != null){
+        if (groupUtil != null) {
             dataFrame.setGroupUtil(groupUtil);
         }
         return dataFrame;

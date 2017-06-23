@@ -24,13 +24,17 @@
 
 package de.unknownreality.dataframe;
 
-import de.unknownreality.dataframe.common.DataContainer;
+import de.unknownreality.dataframe.column.StringColumn;
 import de.unknownreality.dataframe.common.Row;
 import de.unknownreality.dataframe.filter.FilterPredicate;
+import de.unknownreality.dataframe.io.ColumnInformation;
+import de.unknownreality.dataframe.io.DataIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * Created by Alex on 09.03.2016.
@@ -38,67 +42,97 @@ import java.util.Map;
 public class DataFrameConverter {
     private static final Logger log = LoggerFactory.getLogger(DataFrameConverter.class);
 
-    private DataFrameConverter(){}
+    private DataFrameConverter() {
+    }
+
     /**
      * Converts a parent data container to a data frame.
-     * The required column information is provided by a column information map.
-     * Keys in this map are name of the column in the parent data container.
-     * Values are the corresponding data frame columns.
+     * The required column information is provided by a column information object.
+     * Column information specified by the dataIterator is used.
      * Only rows validated by the filter are appended to the resulting data frame
      *
-     * @param reader          parent data container
-     * @param columns         column information map
-     * @param filterPredicate row filter
+     * @param dataIterator       parent data container
+     * @param filterPredicate    row filter
+     * @return created data frame
+     */
+    public static <R extends Row> DataFrame fromDataIterator(DataIterator<R> dataIterator, FilterPredicate filterPredicate) {
+        return fromDataIterator(dataIterator,null, filterPredicate);
+    }
+
+    /**
+     * Converts a parent data container to a data frame.
+     * The required column information is provided by a column information object.
+     * If no column information is defined, the one specified by the dataIterator is used.
+     * Only rows validated by the filter are appended to the resulting data frame
+     *
+     * @param dataIterator       parent data container
+     * @param columnsInformation column information
+     * @param filterPredicate    row filter
      * @return created data frame
      */
     @SuppressWarnings("unchecked")
-    public static DataFrame fromDataContainer(DataContainer<?, ?> reader, Map<String, DataFrameColumn> columns, FilterPredicate filterPredicate) {
-        if(reader.getHeader().size() == 0){
-            DataFrame dataFrame = new DefaultDataFrame();
-            for(DataFrameColumn column : columns.values()){
-                dataFrame.addColumn(column);
-            }
-            return dataFrame;
+    public static <R extends Row> DataFrame fromDataIterator(DataIterator<R> dataIterator, List<ColumnInformation> columnsInformation, FilterPredicate filterPredicate) {
+
+        if (columnsInformation == null) {
+            columnsInformation = new ArrayList<>(dataIterator.getColumnsInformation());
         }
-        int[] colIndices = new int[columns.size()];
-        int i = 0;
-        for (String h : columns.keySet()) {
-            colIndices[i] = reader.getHeader().getIndex(h);
-            i++;
-        }
+        columnsInformation.sort(Comparator.comparingInt(ColumnInformation::getIndex));
+
+
+        int columnCount = dataIterator.getColumnsInformation().size();
         DataFrame dataFrame = new DefaultDataFrame();
-        for (DataFrameColumn column : columns.values()) {
-            dataFrame.addColumn(column);
+        DataFrameColumn[] columns = new DataFrameColumn[columnCount];
+        for (int i = 0; i < columnCount; i++) {
+            ColumnInformation columnInformation = columnsInformation.get(i);
+            Class colType = columnInformation.getColumnType();
+
+            DataFrameColumn<?, ?> col;
+            try {
+                col = (DataFrameColumn<?, ?>) colType.newInstance();
+            } catch (InstantiationException | IllegalAccessException | ClassCastException e) {
+                throw new DataFrameRuntimeException(String.format("error creating instance of column [%s], empty constructor required", colType.getCanonicalName()), e);
+            }
+            col.setName(columnInformation.getName());
+            dataFrame.addColumn(col);
+            columns[i] = col;
         }
-        for (Row row : reader) {
-            i = -1;
-            Comparable[] rowValues = new Comparable[columns.size()];
-            for (Map.Entry<String, DataFrameColumn> columnEntry : columns.entrySet()) {
-                i++;
+
+        for (R row : dataIterator) {
+            Comparable[] rowValues = new Comparable[columnCount];
+            for (int i = 0; i < columnCount; i++) {
+                ColumnInformation columnInformation = columnsInformation.get(i);
                 Comparable val = null;
-                if(Values.NA.isNA(row.get(colIndices[i]))){
+                if (Values.NA.isNA(row.get(columnInformation.getIndex()))) {
                     rowValues[i] = Values.NA;
                     continue;
                 }
                 try {
-                    val = columnEntry.getValue().getValueFromRow(row, colIndices[i]);
+                    val = columns[i].getValueFromRow(row, columnInformation.getIndex());
+                } catch (Exception e) {
+                    log.warn("error parsing value ({}), NA added", e.getMessage());
                 }
-                catch (Exception e){
-                    log.warn("error parsing value ({}), NA added",e.getMessage());
-                }
-                if(val == null || Values.NA.isNA(val) ||
-                        val instanceof String && ("".equals(val.toString()) || "null".equals(val.toString()))){
+                if (val == null || Values.NA.isNA(val) ||
+                        val instanceof String && ("".equals(val.toString()) || "null".equals(val.toString()))) {
                     rowValues[i] = Values.NA;
                     continue;
                 }
                 rowValues[i] = val;
             }
-            DataRow dataRow = new DataRow(dataFrame.getHeader(),rowValues,dataFrame.size() - 1);
-            if(filterPredicate.valid(dataRow)){
+            DataRow dataRow = new DataRow(dataFrame.getHeader(), rowValues, dataFrame.size() - 1);
+            if (filterPredicate.valid(dataRow)) {
                 dataFrame.append(dataRow);
             }
         }
+        AutodetectConverter autodetectConverter = new AutodetectConverter();
+        for (int i = 0; i < columns.length; i++) {
+            if (columnsInformation.get(i).isAutodetect() && (columns[i] instanceof StringColumn)) {
+                DataFrameColumn newColumn = autodetectConverter.convert((StringColumn) columns[i]);
+                if (newColumn != columns[i]) {
+                    dataFrame.replaceColumn(columns[i], newColumn);
+                }
 
+            }
+        }
         return dataFrame;
     }
 
@@ -108,12 +142,11 @@ public class DataFrameConverter {
      * Keys in this map are name of the column in the parent data container.
      * Values are the corresponding data frame columns.
      *
-     * @param reader          parent data container
-     * @param columns         column information map
+     * @param dataIterator parent data container
      * @return created data frame
      */
     @SuppressWarnings("unchecked")
-    public static DataFrame fromDataContainer(DataContainer<?, ?> reader, Map<String, DataFrameColumn> columns) {
-        return fromDataContainer(reader,columns,FilterPredicate.EMPTY_FILTER);
+    public static <R extends Row> DataFrame fromDataIterator(DataIterator<R> dataIterator) {
+        return fromDataIterator(dataIterator, FilterPredicate.EMPTY_FILTER);
     }
 }

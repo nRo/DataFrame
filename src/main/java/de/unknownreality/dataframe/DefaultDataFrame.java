@@ -29,8 +29,8 @@ import de.unknownreality.dataframe.common.mapping.DataMapper;
 import de.unknownreality.dataframe.filter.FilterPredicate;
 import de.unknownreality.dataframe.filter.compile.PredicateCompiler;
 import de.unknownreality.dataframe.group.DataGrouping;
-import de.unknownreality.dataframe.group.impl.DefaultGroupUtil;
 import de.unknownreality.dataframe.group.GroupUtil;
+import de.unknownreality.dataframe.group.impl.DefaultGroupUtil;
 import de.unknownreality.dataframe.index.Indices;
 import de.unknownreality.dataframe.join.JoinColumn;
 import de.unknownreality.dataframe.join.JoinUtil;
@@ -51,7 +51,7 @@ public class DefaultDataFrame implements DataFrame {
     private static final Logger log = LoggerFactory.getLogger(DefaultDataFrame.class);
     private int size;
     private final Map<String, DataFrameColumn> columnsMap = new LinkedHashMap<>();
-    private final LinkedHashSet<DataFrameColumn> columnList = new LinkedHashSet<>();
+    private final List<DataFrameColumn> columnList = new ArrayList<>();
     private DataFrameHeader header = new DataFrameHeader();
     private final Indices indices = new Indices(this);
     private JoinUtil joinUtil = new DefaultJoinUtil();
@@ -84,7 +84,7 @@ public class DefaultDataFrame implements DataFrame {
         for (int i = 0; i < columns.length; i++) {
             columns[i] = getColumn(colNames[i]);
         }
-        return setPrimaryKey( columns);
+        return setPrimaryKey(columns);
     }
 
     /**
@@ -143,6 +143,35 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
+     * Replaces an existing column with a replacement column
+     *
+     * @param existing    existing column name
+     * @param replacement replacement column
+     * @return <tt>self</tt> for method chaining
+     */
+    public DataFrame replaceColumn(String existing, DataFrameColumn replacement) {
+        DataFrameColumn existingColumn = getColumn(existing);
+        return replaceColumn(existingColumn, replacement);
+    }
+
+    /**
+     * Replaces an existing column with a replacement column
+     *
+     * @param existing    existing column
+     * @param replacement replacement column
+     * @return <tt>self</tt> for method chaining
+     */
+    public DataFrame replaceColumn(DataFrameColumn existing, DataFrameColumn replacement) {
+        int existingIndex = header.getIndex(existing.getName());
+        columnList.set(existingIndex, replacement);
+        header.replace(existing, replacement);
+        columnsMap.remove(existing.getName());
+        columnsMap.put(replacement.getName(), replacement);
+        indices.replace(existing, replacement);
+        return this;
+    }
+
+    /**
      * Adds a column to the data frame.
      * If the column is already part of another data frame a {@link DataFrameRuntimeException} is thrown.
      *
@@ -174,6 +203,95 @@ public class DefaultDataFrame implements DataFrame {
 
 
     /**
+     * Adds a new {@link BooleanColumn} to the dataframe.
+     *
+     * @param name name of the column
+     * @return <tt>self</tt> for method chaining
+     */
+    public DataFrame addBooleanColumn(String name) {
+        BooleanColumn column = new BooleanColumn(name);
+        return addColumn(column);
+    }
+
+    /**
+     * Adds a new {@link ByteColumn} to the dataframe.
+     *
+     * @param name name of the column
+     * @return <tt>self</tt> for method chaining
+     */
+    public DataFrame addByteColumn(String name) {
+        ByteColumn column = new ByteColumn(name);
+        return addColumn(column);
+    }
+
+    /**
+     * Adds a new {@link DoubleColumn} to the dataframe.
+     *
+     * @param name name of the column
+     * @return <tt>self</tt> for method chaining
+     */
+    public DataFrame addDoubleColumn(String name) {
+        DoubleColumn column = new DoubleColumn(name);
+        return addColumn(column);
+    }
+
+    /**
+     * Adds a new {@link FloatColumn} to the dataframe.
+     *
+     * @param name name of the column
+     * @return <tt>self</tt> for method chaining
+     */
+    public DataFrame addFloatColumn(String name) {
+        FloatColumn column = new FloatColumn(name);
+        return addColumn(column);
+    }
+
+    /**
+     * Adds a new {@link IntegerColumn} to the dataframe.
+     *
+     * @param name name of the column
+     * @return <tt>self</tt> for method chaining
+     */
+    public DataFrame addIntegerColumn(String name) {
+        IntegerColumn column = new IntegerColumn(name);
+        return addColumn(column);
+    }
+
+    /**
+     * Adds a new {@link LongColumn} to the dataframe.
+     *
+     * @param name name of the column
+     * @return <tt>self</tt> for method chaining
+     */
+    public DataFrame addLongColumn(String name) {
+        LongColumn column = new LongColumn(name);
+        return addColumn(column);
+    }
+
+    /**
+     * Adds a new {@link ShortColumn} to the dataframe.
+     *
+     * @param name name of the column
+     * @return <tt>self</tt> for method chaining
+     */
+    public DataFrame addShortColumn(String name) {
+        ShortColumn column = new ShortColumn(name);
+        return addColumn(column);
+    }
+
+    /**
+     * Adds a new {@link StringColumn} to the dataframe.
+     *
+     * @param name name of the column
+     * @return <tt>self</tt> for method chaining
+     */
+    public DataFrame addStringColumn(String name) {
+        StringColumn column = new StringColumn(name);
+        return addColumn(column);
+    }
+
+
+    /**
      * Creates a column for a specified column value type using the default {@link ColumnTypeMap}.
      *
      * @param type class of column values
@@ -190,10 +308,10 @@ public class DefaultDataFrame implements DataFrame {
     /**
      * Creates a column for a specified column value type using the provided {@link ColumnTypeMap}.
      *
-     * @param type            class of column values
-     * @param name            column name
-     * @param columnTypeMap   provided column type map
-     * @param <T>             type of column values
+     * @param type          class of column values
+     * @param name          column name
+     * @param columnTypeMap provided column type map
+     * @param <T>           type of column values
      * @return <tt>self</tt> for method chaining
      * @see #addColumn(Class, String, ColumnAppender)
      */
@@ -206,12 +324,12 @@ public class DefaultDataFrame implements DataFrame {
     /**
      * Creates and adds a new column based on a specified column value type and a {@link ColumnTypeMap}.
      *
-     * @param type            column value value type
-     * @param name            name of new column
-     * @param columnTypeMap   column type map (value type / column class mapper)
-     * @param appender        column appender (value generator)
-     * @param <T>             type of column values
-     * @param <C>             type of created column
+     * @param type          column value value type
+     * @param name          name of new column
+     * @param columnTypeMap column type map (value type / column class mapper)
+     * @param appender      column appender (value generator)
+     * @param <T>           type of column values
+     * @param <C>           type of created column
      * @return <tt>self</tt> for method chaining
      * @see #addColumn(Class, String, ColumnAppender)
      */
@@ -303,7 +421,7 @@ public class DefaultDataFrame implements DataFrame {
      * <p>There must be <b>exactly one value for each column</b>.</p>
      * <p><b>The object types have to match the column types</b>.</p>
      * If the wrong number of values or a wrong type is found a {@link DataFrameRuntimeException} is thrown.
-
+     * <p>
      * <p>If the data frame contains:<br>
      * <code>StringColumn,DoubleColumn,IntegerColumn</code><br>
      * The only correct call to this method is:<br>
@@ -560,16 +678,16 @@ public class DefaultDataFrame implements DataFrame {
 
     /**
      * Shuffles all rows
+     *
      * @return <tt>self</tt> for method chaining
      */
     @Override
-    public DataFrame shuffle(){
+    public DataFrame shuffle() {
         List<DataRow> rows = getRows(0, size);
         Collections.shuffle(rows);
         set(rows);
         return this;
     }
-
 
 
     /**
@@ -584,7 +702,6 @@ public class DefaultDataFrame implements DataFrame {
     public DataFrame select(String colName, Comparable value) {
         return select(FilterPredicate.eq(colName, value));
     }
-
 
 
     /**
@@ -612,6 +729,7 @@ public class DefaultDataFrame implements DataFrame {
     public DataRow selectFirst(String predicateString) {
         return selectFirst(FilterPredicate.compile(predicateString));
     }
+
     /**
      * Returns the first found data row from this data frame matching an input predicate.
      *
@@ -664,8 +782,6 @@ public class DefaultDataFrame implements DataFrame {
     }
 
 
-
-
     /**
      * Filters data rows that are not valid according to an input predicate.<br>
      * Data rows are filtered by their column values. <br>
@@ -699,7 +815,6 @@ public class DefaultDataFrame implements DataFrame {
     }
 
 
-
     /**
      * Finds data rows using a {@link FilterPredicate}.
      *
@@ -710,6 +825,7 @@ public class DefaultDataFrame implements DataFrame {
     public List<DataRow> selectRows(String predicateString) {
         return selectRows(FilterPredicate.compile(predicateString));
     }
+
     /**
      * Finds data rows using a {@link FilterPredicate}.
      *
@@ -730,11 +846,12 @@ public class DefaultDataFrame implements DataFrame {
 
     /**
      * Converts this dataframe into another dataframe using a specified transformer
+     *
      * @param transformer the applied transformer
      * @return resulting dataframe
      */
     @Override
-    public DataFrame transform(DataFrameTransform transformer){
+    public DataFrame transform(DataFrameTransform transformer) {
         return transformer.transform(this);
     }
 
@@ -747,7 +864,7 @@ public class DefaultDataFrame implements DataFrame {
     @Override
     public DataRow findByPrimaryKey(Comparable... keyValues) {
         Integer index = this.indices.findByPrimaryKey(keyValues);
-        if(index == null || index < 0){
+        if (index == null || index < 0) {
             return null;
         }
         return getRow(index);
@@ -834,7 +951,7 @@ public class DefaultDataFrame implements DataFrame {
     @Override
     public DataFrame createSubset(int from, int to) {
         DefaultDataFrame newFrame = new DefaultDataFrame();
-        newFrame.set(header.copy(), getRows(from, to),indices);
+        newFrame.set(header.copy(), getRows(from, to), indices);
         return newFrame;
     }
 
@@ -989,7 +1106,7 @@ public class DefaultDataFrame implements DataFrame {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends Comparable<T>, C extends DataFrameColumn<T, C>> DataFrameColumn<T,C> getColumn(String name) {
+    public <T extends Comparable<T>, C extends DataFrameColumn<T, C>> DataFrameColumn<T, C> getColumn(String name) {
         return columnsMap.get(name);
     }
 
@@ -1023,7 +1140,7 @@ public class DefaultDataFrame implements DataFrame {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends Number & Comparable<T>, C extends NumberColumn<T, C>> NumberColumn<T,C> getNumberColumn(String name) {
+    public <T extends Number & Comparable<T>, C extends NumberColumn<T, C>> NumberColumn<T, C> getNumberColumn(String name) {
         return getColumn(name, NumberColumn.class);
     }
 
@@ -1122,7 +1239,6 @@ public class DefaultDataFrame implements DataFrame {
     public ShortColumn getShortColumn(String name) {
         return getColumn(name, ShortColumn.class);
     }
-
 
 
     /**
@@ -1349,7 +1465,7 @@ public class DefaultDataFrame implements DataFrame {
         Collection<Integer> rowIndices = indices.find(name, values);
         if (!rowIndices.isEmpty()) {
             List<DataRow> rows = new ArrayList<>();
-            for(Integer i : rowIndices){
+            for (Integer i : rowIndices) {
                 rows.add(getRow(i));
             }
             return rows;
@@ -1366,7 +1482,7 @@ public class DefaultDataFrame implements DataFrame {
      */
     @Override
     public DataRow findFirstByIndex(String name, Comparable... values) {
-        Integer idx = indices.findFirst(name,values);
+        Integer idx = indices.findFirst(name, values);
         return idx == null ? null : getRow(idx);
     }
 
@@ -1425,6 +1541,7 @@ public class DefaultDataFrame implements DataFrame {
     public Iterator<DataRow> iterator() {
         return new Iterator<DataRow>() {
             private int index = 0;
+
             @Override
             public boolean hasNext() {
                 return index < size;
@@ -1432,7 +1549,7 @@ public class DefaultDataFrame implements DataFrame {
 
             @Override
             public DataRow next() {
-                if (index == size()){
+                if (index == size()) {
                     throw new NoSuchElementException("index out of bounds");
                 }
                 return getRow(index++);
@@ -1446,20 +1563,20 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     @Override
-    public boolean equals(Object o){
-        if(o == null || !(o instanceof DefaultDataFrame)){
+    public boolean equals(Object o) {
+        if (o == null || !(o instanceof DefaultDataFrame)) {
             return false;
         }
-        if(o == this){
+        if (o == this) {
             return true;
         }
-        DataFrame d = (DataFrame)o;
-        if(size() != d.size()){
+        DataFrame d = (DataFrame) o;
+        if (size() != d.size()) {
             return false;
         }
 
-        for(int i = 0; i < size(); i++){
-            if(!getRow(i).equals(d.getRow(i))){
+        for (int i = 0; i < size(); i++) {
+            if (!getRow(i).equals(d.getRow(i))) {
                 return false;
             }
         }

@@ -24,15 +24,18 @@
 
 package de.unknownreality.dataframe;
 
-import de.unknownreality.dataframe.common.DataContainer;
-import de.unknownreality.dataframe.common.ReaderBuilder;
+import de.unknownreality.dataframe.csv.CSVReaderBuilder;
 import de.unknownreality.dataframe.filter.FilterPredicate;
+import de.unknownreality.dataframe.io.DataIterator;
+import de.unknownreality.dataframe.io.DataReader;
+import de.unknownreality.dataframe.io.ReadFormat;
+import de.unknownreality.dataframe.io.ReaderBuilder;
 import de.unknownreality.dataframe.meta.DataFrameMeta;
 import de.unknownreality.dataframe.meta.DataFrameMetaReader;
 
 import java.io.File;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.io.InputStream;
+import java.net.URL;
 
 /**
  * Created by Alex on 08.06.2016.
@@ -40,7 +43,175 @@ import java.util.Map;
 public class DataFrameLoader {
 
 
-    private DataFrameLoader(){}
+    private DataFrameLoader() {
+    }
+
+    public static DataFrame fromCSV(File file, char separator, String headerPrefix){
+        return load(file, CSVReaderBuilder.create()
+                .withHeader(true)
+                .withSeparator(separator)
+                .withHeaderPrefix(headerPrefix)
+                .build());
+
+    }
+
+    public static DataFrame fromCSV(String content, char separator, String headerPrefix){
+        return load(content, CSVReaderBuilder.create().
+                withHeader(true).withSeparator(separator)
+                .withHeaderPrefix(headerPrefix)
+                .build());
+    }
+
+    public static DataFrame fromCSV(String resource, ClassLoader classLoader, char separator, String headerPrefix){
+        return load(resource, classLoader,
+                CSVReaderBuilder.create().
+                        withHeader(true).
+                        withSeparator(separator).
+                        withHeaderPrefix(headerPrefix).build());
+
+    }
+
+    public static DataFrame fromCSV(URL url, char separator, String headerPrefix){
+        return load(url, CSVReaderBuilder.create()
+                .withHeader(true)
+                .withSeparator(separator)
+                .withHeaderPrefix(headerPrefix)
+                .build());
+
+    }
+
+    public static DataFrame fromCSV(byte[] bytes, char separator, String headerPrefix){
+        return load(bytes, CSVReaderBuilder.create()
+                .withHeader(true)
+                .withSeparator(separator)
+                .withHeaderPrefix(headerPrefix)
+                .build());
+
+    }
+
+    public static DataFrame fromCSV(InputStream is, char separator, String headerPrefix){
+        return load(is, CSVReaderBuilder.create()
+                .withHeader(true)
+                .withSeparator(separator)
+                .withHeaderPrefix(headerPrefix)
+                .build());
+    }
+
+
+    public static DataFrame fromCSV(File file, char separator, boolean header){
+        return load(file, CSVReaderBuilder.create()
+                .withHeader(header)
+                .withSeparator(separator)
+                .build());
+
+    }
+
+    public static DataFrame fromCSV(String content, char separator, boolean header){
+        return load(content, CSVReaderBuilder.create()
+                .withHeader(header)
+                .withSeparator(separator)
+                .build());
+    }
+
+    public static DataFrame fromCSV(String resource, ClassLoader classLoader, char separator, boolean header) {
+        return load(resource, classLoader, CSVReaderBuilder.create()
+                .withHeader(header)
+                .withSeparator(separator)
+                .build());
+
+    }
+
+    public static DataFrame fromCSV(URL url, char separator, boolean header) {
+        return load(url, CSVReaderBuilder.create()
+                .withHeader(header)
+                .withSeparator(separator)
+                .build());
+
+    }
+
+    public static DataFrame fromCSV(byte[] bytes, char separator, boolean header){
+        return load(bytes, CSVReaderBuilder.create()
+                .withHeader(header)
+                .withSeparator(separator)
+                .build());
+
+    }
+
+    public static DataFrame fromCSV(InputStream is, char separator, boolean header){
+        return load(is, CSVReaderBuilder.create()
+                .withHeader(header)
+                .withSeparator(separator)
+                .build());
+    }
+
+
+    public static DataFrame load(File file, ReadFormat readFormat){
+        return load(file, readFormat.getReaderBuilder().build());
+
+    }
+
+    public static DataFrame load(String content, ReadFormat readFormat){
+        return load(content, readFormat.getReaderBuilder().build());
+    }
+
+    public static DataFrame load(String resource, ClassLoader classLoader, ReadFormat readFormat){
+        return load(resource, classLoader, readFormat.getReaderBuilder().build());
+
+    }
+
+    public static DataFrame load(URL url, ReadFormat readFormat){
+        return load(url, readFormat.getReaderBuilder().build());
+
+    }
+
+    public static DataFrame load(byte[] bytes, ReadFormat readFormat){
+        return load(bytes, readFormat.getReaderBuilder().build());
+
+    }
+
+    public static DataFrame load(InputStream is, ReadFormat readFormat){
+        return load(is, readFormat.getReaderBuilder().build());
+    }
+
+
+    public static DataFrame load(File file, DataReader reader){
+
+        return load(reader.load(file));
+
+    }
+
+    public static DataFrame load(String content, DataReader reader){
+        return load(reader.load(content));
+    }
+
+    public static DataFrame load(String resource, ClassLoader classLoader, DataReader reader){
+        return load(reader.load(resource, classLoader));
+
+    }
+
+    public static DataFrame load(URL url, DataReader reader){
+        return load(reader.load(url));
+
+    }
+
+    public static DataFrame load(byte[] bytes, DataReader reader){
+        return load(reader.load(bytes));
+
+    }
+
+    public static DataFrame load(InputStream is, DataReader reader){
+        return load(reader.load(is));
+    }
+
+    public static DataFrame load(DataIterator<?> dataIterator) {
+        return DataFrameConverter.fromDataIterator(dataIterator, FilterPredicate.EMPTY_FILTER);
+    }
+
+    public static DataFrame load(DataIterator<?> dataIterator, FilterPredicate predicate) {
+        return DataFrameConverter.fromDataIterator(dataIterator, predicate);
+    }
+
+
     /**
      * Loads a data frame from a file.
      * The matching data frame meta file must be present.
@@ -102,22 +273,9 @@ public class DataFrameLoader {
 
         DataFrameMeta dataFrameMeta;
         dataFrameMeta = DataFrameMetaReader.read(metaFile);
-
-        ReaderBuilder readerBuilder;
-        try {
-            readerBuilder = dataFrameMeta.getReaderBuilderClass().newInstance();
-        } catch (Exception e) {
-            throw new DataFrameException("error creating readerBuilder instance", e);
-        }
-        try {
-            readerBuilder.loadAttributes(dataFrameMeta.getAttributes());
-        } catch (Exception e) {
-            throw new DataFrameException("error loading readerBuilder attributes", e);
-        }
-        Map<String, DataFrameColumn> columns = createColumns(dataFrameMeta);
-        DataContainer fileContainer = readerBuilder.fromFile(file);
-        Map<String, DataFrameColumn> convertedColumns = convertColumns(columns, fileContainer);
-        return DataFrameConverter.fromDataContainer(fileContainer, convertedColumns, filterPredicate);
+        DataReader<?, ?> reader = getDataReader(dataFrameMeta);
+        DataIterator<?> dataIterator = reader.load(file);
+        return DataFrameConverter.fromDataIterator(dataIterator, dataFrameMeta.getColumnInformation(), filterPredicate);
     }
 
     /**
@@ -148,23 +306,34 @@ public class DataFrameLoader {
 
         DataFrameMeta dataFrameMeta;
         dataFrameMeta = DataFrameMetaReader.read(classLoader.getResourceAsStream(metaPath));
+        DataReader<?, ?> reader = getDataReader(dataFrameMeta);
+        DataIterator<?> dataIterator = reader.load(path, classLoader);;
+        return DataFrameConverter.fromDataIterator(dataIterator, dataFrameMeta.getColumnInformation(), filterPredicate);
+    }
 
+    private static DataReader<?, ?> getDataReader(DataFrameMeta meta) throws DataFrameException {
+        ReadFormat readFormat;
+        try {
+            readFormat = meta.getReadFormatClass().newInstance();
+        } catch (Exception e) {
+            throw new DataFrameException("error creating readformat instance", e);
+        }
         ReaderBuilder readerBuilder;
         try {
-            readerBuilder = dataFrameMeta.getReaderBuilderClass().newInstance();
+            readerBuilder = readFormat.getReaderBuilder();
         } catch (Exception e) {
             throw new DataFrameException("error creating readerBuilder instance", e);
         }
+        DataReader<?, ?> reader;
         try {
-            readerBuilder.loadAttributes(dataFrameMeta.getAttributes());
+            reader = readerBuilder.loadSettings(meta.getAttributes()).build();
         } catch (Exception e) {
             throw new DataFrameException("error loading readerBuilder attributes", e);
         }
-        Map<String, DataFrameColumn> columns = createColumns(dataFrameMeta);
-        DataContainer fileContainer = readerBuilder.fromResource(path, classLoader);
-        Map<String, DataFrameColumn> convertedColumns = convertColumns(columns, fileContainer);
-        return DataFrameConverter.fromDataContainer(fileContainer, convertedColumns, filterPredicate);
+
+        return reader;
     }
+
 
     /**
      * Loads a data frame from a resource and the corresponding meta resource.
@@ -177,48 +346,6 @@ public class DataFrameLoader {
      */
     public static DataFrame loadResource(String path, String metaPath, ClassLoader classLoader) throws DataFrameException {
         return loadResource(path, metaPath, classLoader, FilterPredicate.EMPTY_FILTER);
-    }
-
-    private static Map<String, DataFrameColumn> convertColumns(Map<String, DataFrameColumn> columns, DataContainer fileContainer) throws DataFrameException {
-        int i = 0;
-
-        //Fix for empty data frames
-        if(fileContainer.getHeader().size() == 0){
-            return columns;
-        }
-        LinkedHashMap<String, DataFrameColumn> convertedColumns = new LinkedHashMap<>();
-        for (Map.Entry<String, DataFrameColumn> entry : columns.entrySet()) {
-            if (i == fileContainer.getHeader().size()) {
-                throw new DataFrameException("columns count not matching meta file");
-            }
-            convertedColumns.put(fileContainer.getHeader().get(i).toString(), entry.getValue());
-            i++;
-        }
-        return convertedColumns;
-    }
-
-    /**
-     * Creates the columns from a data frame meta information
-     *
-     * @param dataFrameMeta meta information
-     * @return data frame columns
-     * @throws DataFrameException thrown if the columns can not be created
-     */
-    public static Map<String, DataFrameColumn> createColumns(DataFrameMeta dataFrameMeta) throws DataFrameException {
-        LinkedHashMap<String, DataFrameColumn> columns = new LinkedHashMap<>();
-        for (Map.Entry<String, Class<? extends DataFrameColumn>> entry : dataFrameMeta.getColumns().entrySet()) {
-            String name = entry.getKey();
-            Class<? extends DataFrameColumn> columnType = entry.getValue();
-            DataFrameColumn column;
-            try {
-                column = columnType.newInstance();
-            } catch (Exception e) {
-                throw new DataFrameException("error creating column instance", e);
-            }
-            column.setName(name);
-            columns.put(name, column);
-        }
-        return columns;
     }
 
 

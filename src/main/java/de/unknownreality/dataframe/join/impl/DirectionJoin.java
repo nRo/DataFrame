@@ -27,7 +27,6 @@ package de.unknownreality.dataframe.join.impl;
 import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.DataFrameHeader;
 import de.unknownreality.dataframe.DataRow;
-import de.unknownreality.dataframe.group.DataGroup;
 import de.unknownreality.dataframe.group.DataGrouping;
 import de.unknownreality.dataframe.group.GroupRow;
 import de.unknownreality.dataframe.join.JoinColumn;

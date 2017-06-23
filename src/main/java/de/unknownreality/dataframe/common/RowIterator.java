@@ -24,8 +24,10 @@
 
 package de.unknownreality.dataframe.common;
 
+import java.util.Iterator;
+
 /**
- * Created by Alex on 10.03.2016.
+ * Created by Alex on 17.06.2017.
  */
-public interface RowIterator<T extends Row> extends Iterable<T> {
+public interface RowIterator<R extends Row> extends Iterator<R> {
 }

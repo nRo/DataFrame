@@ -23,11 +23,10 @@
 package de.unknownreality.dataframe.frame;
 
 import de.unknownreality.dataframe.DataFrame;
+import de.unknownreality.dataframe.DataFrameLoader;
 import de.unknownreality.dataframe.DataRow;
 import de.unknownreality.dataframe.Values;
-import de.unknownreality.dataframe.column.DoubleColumn;
-import de.unknownreality.dataframe.column.IntegerColumn;
-import de.unknownreality.dataframe.column.StringColumn;
+import de.unknownreality.dataframe.csv.CSVReader;
 import de.unknownreality.dataframe.csv.CSVReaderBuilder;
 import de.unknownreality.dataframe.join.JoinedDataFrame;
 import de.unknownreality.dataframe.join.impl.DefaultJoinUtil;
@@ -35,6 +34,8 @@ import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
+import java.io.IOException;
 
 /**
  * Created by Alex on 12.03.2016.
@@ -44,7 +45,7 @@ public class DataFrameJoinTest {
     public final ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void testReader() {
+    public void testReader() throws IOException {
         /*
            GENE_ID;FPKM;CHR
             A;5;1
@@ -52,15 +53,18 @@ public class DataFrameJoinTest {
             C;6;3
             D;6;1
          */
-        DataFrame geneDataFrame = CSVReaderBuilder.create()
-                .containsHeader(true)
+
+
+        CSVReader csvReader = CSVReaderBuilder.create()
+                .withHeader(true)
                 .withHeaderPrefix("")
                 .withSeparator(';')
-                .loadResource("data_join_a.csv", DataFrameJoinTest.class.getClassLoader())
-                .toDataFrame()
-                .addColumn(new StringColumn("GENE_ID"))
-                .addColumn(new DoubleColumn("FPKM"))
-                .addColumn(new StringColumn("CHR")).build();
+                .setColumnType("GENE_ID",String.class)
+                .setColumnType("FPKM",Double.class)
+                .setColumnType("CHR",String.class)
+                .build();
+
+        DataFrame geneDataFrame = DataFrameLoader.load("data_join_a.csv", DataFrameGroupingTest.class.getClassLoader(), csvReader);
         Assert.assertEquals(4, geneDataFrame.size());
 
 
@@ -71,16 +75,19 @@ public class DataFrameJoinTest {
             TC;B;6;1
             TD;E;4;1
          */
-        DataFrame transcriptDataFrame = CSVReaderBuilder.create()
-                .containsHeader(true)
+        csvReader = CSVReaderBuilder.create()
+                .withHeader(true)
                 .withHeaderPrefix("")
                 .withSeparator(';')
-                .loadResource("data_join_b.csv", DataFrameJoinTest.class.getClassLoader())
-                .toDataFrame()
-                .addColumn(new StringColumn("TRANSCRIPT_ID"))
-                .addColumn(new StringColumn("GENE_ID"))
-                .addColumn(new DoubleColumn("FPKM"))
-                .addColumn(new IntegerColumn("TRANSCRIPT_NUMBER")).build();
+                .setColumnType("TRANSCRIPT_ID",String.class)
+                .setColumnType("GENE_ID",String.class)
+                .setColumnType("FPKM",Double.class)
+                .setColumnType("TRANSCRIPT_NUMBER",Integer.class)
+                .build();
+
+        DataFrame transcriptDataFrame = DataFrameLoader.load("data_join_b.csv", DataFrameGroupingTest.class.getClassLoader(), csvReader);
+
+
         Assert.assertEquals(4, transcriptDataFrame.size());
 
         /*

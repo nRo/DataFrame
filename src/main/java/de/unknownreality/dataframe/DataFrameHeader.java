@@ -14,6 +14,9 @@ public class DataFrameHeader extends BasicTypeHeader<String> {
         return (DataFrameHeader)add(column.getName(), column.getClass(), column.getType());
     }
 
+    public DataFrameHeader replace(DataFrameColumn<?, ?> existing, DataFrameColumn<?, ?> replacement){
+        return (DataFrameHeader) replace(existing.getName(),replacement.getName(),replacement.getClass(), replacement.getType());
+    }
     public DataFrameHeader copy() {
         DataFrameHeader copy = new DataFrameHeader();
         for (String h : this) {
