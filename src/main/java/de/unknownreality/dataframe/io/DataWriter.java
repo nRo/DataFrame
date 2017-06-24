@@ -24,7 +24,9 @@
 
 package de.unknownreality.dataframe.io;
 
+import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.DataFrameRuntimeException;
+import de.unknownreality.dataframe.DataFrameWriter;
 import de.unknownreality.dataframe.common.DataContainer;
 
 import java.io.*;
@@ -65,6 +67,18 @@ public abstract class DataWriter {
 
 
     public abstract void write(BufferedWriter writer, DataContainer<?,?> dataContainer);
+
+    /**
+     * Writes a dataframe to a file
+     * @param file target file
+     * @param dataFrame dataframe to write
+     * @param writeMeta write meta file
+     * @deprecated use {@link de.unknownreality.dataframe.DataFrame#write} instead
+     */
+    @Deprecated
+    public  void write(File file, DataFrame dataFrame, boolean writeMeta){
+        DataFrameWriter.write(file,dataFrame,this, writeMeta);
+    }
 
 
     public void write(File file, DataContainer<?, ?> dataContainer) {

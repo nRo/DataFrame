@@ -57,7 +57,12 @@ public class CSVWriterBuilder implements WriterBuilder<CSVWriter> {
         return this;
     }
 
-    public CSVWriterBuilder withGZip(boolean gzip){
+    @Deprecated
+    public CSVWriterBuilder containsHeader(boolean header){
+        this.containsHeader = header;
+        return this;
+    }
+    public CSVWriterBuilder useGzip(boolean gzip){
         this.gzip = gzip;
         return this;
     }
