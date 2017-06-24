@@ -193,7 +193,6 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
 
     public Iterable<? extends DataRow> rows();
 
-
     static DataFrame load(File file, ReadFormat readFormat) {
         return DataFrameLoader.load(file, readFormat);
 
@@ -316,7 +315,6 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     }
 
 
-
     default void write(File file, DataWriter dataWriter) {
         DataFrameWriter.write(file, this, dataWriter);
     }
@@ -341,7 +339,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
         DataFrameWriter.write(file, this, writeFormat, writeMetaFile);
     }
 
-    default void write(Writer writer,WriteFormat writeFormat) {
+    default void write(Writer writer, WriteFormat writeFormat) {
         DataFrameWriter.write(writer, this, writeFormat);
     }
 
@@ -354,7 +352,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     }
 
     default void write(File file, boolean writeMetaFile) {
-        DataFrameWriter.write(file, this,writeMetaFile);
+        DataFrameWriter.write(file, this, writeMetaFile);
     }
 
     default void write(Writer writer) {
@@ -366,49 +364,49 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     }
 
     default void writeCSV(File file, char separator, boolean writeHeader) {
-        DataFrameWriter.writeCSV(file, this,separator,writeHeader);
+        DataFrameWriter.writeCSV(file, this, separator, writeHeader);
     }
 
     default void writeCSV(File file, char separator, boolean writeHeader, boolean writeMetaFile) {
-        DataFrameWriter.writeCSV(file, this,separator,writeHeader, writeMetaFile);
+        DataFrameWriter.writeCSV(file, this, separator, writeHeader, writeMetaFile);
     }
 
     default void writeCSV(Writer writer, char separator, boolean writeHeader) {
-        DataFrameWriter.writeCSV(writer, this,separator,writeHeader);
+        DataFrameWriter.writeCSV(writer, this, separator, writeHeader);
     }
 
     default void writeCSV(OutputStream outputStream, char separator, boolean writeHeader) {
-        DataFrameWriter.writeCSV(outputStream, this,separator,writeHeader);
+        DataFrameWriter.writeCSV(outputStream, this, separator, writeHeader);
 
     }
 
     default void writeCSV(File file, char separator, String headerPrefix) {
-        DataFrameWriter.writeCSV(file, this,separator,headerPrefix);
+        DataFrameWriter.writeCSV(file, this, separator, headerPrefix);
     }
 
     default void writeCSV(File file, char separator, String headerPrefix, boolean writeMetaFile) {
-        DataFrameWriter.writeCSV(file, this,separator,headerPrefix, writeMetaFile);
+        DataFrameWriter.writeCSV(file, this, separator, headerPrefix, writeMetaFile);
     }
 
     default void writeCSV(Writer writer, char separator, String headerPrefix) {
-        DataFrameWriter.writeCSV(writer, this,separator,headerPrefix);
+        DataFrameWriter.writeCSV(writer, this, separator, headerPrefix);
 
     }
 
     default void writeCSV(OutputStream outputStream, char separator, String headerPrefix) {
-        DataFrameWriter.writeCSV(outputStream, this,separator,headerPrefix);
+        DataFrameWriter.writeCSV(outputStream, this, separator, headerPrefix);
     }
 
-    default void print(){
+    default void print() {
         DataFrameWriter.print(this);
     }
 
-    default void print(DataWriter dataWriter){
+    default void print(DataWriter dataWriter) {
         DataFrameWriter.print(this, dataWriter);
 
     }
 
-    default void print(WriteFormat writeFormat){
+    default void print(WriteFormat writeFormat) {
         DataFrameWriter.print(this, writeFormat);
     }
 }
