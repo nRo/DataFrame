@@ -26,10 +26,7 @@ package de.unknownreality.dataframe;
 
 import de.unknownreality.dataframe.csv.CSVReaderBuilder;
 import de.unknownreality.dataframe.filter.FilterPredicate;
-import de.unknownreality.dataframe.io.DataIterator;
-import de.unknownreality.dataframe.io.DataReader;
-import de.unknownreality.dataframe.io.ReadFormat;
-import de.unknownreality.dataframe.io.ReaderBuilder;
+import de.unknownreality.dataframe.io.*;
 import de.unknownreality.dataframe.meta.DataFrameMeta;
 import de.unknownreality.dataframe.meta.DataFrameMetaReader;
 
@@ -41,6 +38,7 @@ import java.net.URL;
  * Created by Alex on 08.06.2016.
  */
 public class DataFrameLoader {
+    private final static ReadFormat DEFAULT_READ_FORMAT = FileFormat.TSV;
 
 
     private DataFrameLoader() {
@@ -145,6 +143,30 @@ public class DataFrameLoader {
     }
 
 
+
+    public static DataFrame load(String content){
+        return load(content, DEFAULT_READ_FORMAT);
+    }
+
+    public static DataFrame load(String resource, ClassLoader classLoader){
+        return load(resource, classLoader, DEFAULT_READ_FORMAT);
+
+    }
+
+    public static DataFrame load(URL url){
+        return load(url, DEFAULT_READ_FORMAT);
+
+    }
+
+    public static DataFrame load(byte[] bytes){
+        return load(bytes, DEFAULT_READ_FORMAT);
+
+    }
+
+    public static DataFrame load(InputStream is){
+        return load(is, DEFAULT_READ_FORMAT);
+    }
+
     public static DataFrame load(File file, ReadFormat readFormat){
         return load(file, readFormat.getReaderBuilder().build());
 
@@ -221,9 +243,8 @@ public class DataFrameLoader {
      * @param file            data frame file
      * @param filterPredicate row filter
      * @return loaded data frame
-     * @throws DataFrameException thrown if the data frame can not be loaded
      */
-    public static DataFrame load(File file, FilterPredicate filterPredicate) throws DataFrameException {
+    public static DataFrame load(File file, FilterPredicate filterPredicate) {
         File dataFile;
         File metaFile;
         String ext = "." + DataFrameMeta.META_FILE_EXTENSION;
@@ -236,6 +257,9 @@ public class DataFrameLoader {
             dataFile = file;
             metaFile = new File(filePath + ext);
         }
+        if(!metaFile.exists()){
+            return load(dataFile,DEFAULT_READ_FORMAT);
+        }
         return load(dataFile, metaFile, filterPredicate);
     }
 
@@ -246,9 +270,8 @@ public class DataFrameLoader {
      *
      * @param file data frame file
      * @return loaded data frame
-     * @throws DataFrameException thrown if the data frame can not be loaded
      */
-    public static DataFrame load(File file) throws DataFrameException {
+    public static DataFrame load(File file) {
         return load(file, FilterPredicate.EMPTY_FILTER);
     }
 
@@ -260,19 +283,22 @@ public class DataFrameLoader {
      * @param metaFile        data frame meta file
      * @param filterPredicate row filter
      * @return loaded data frame
-     * @throws DataFrameException thrown if the data frame can not be loaded
      */
 
-    public static DataFrame load(File file, File metaFile, FilterPredicate filterPredicate) throws DataFrameException {
+    public static DataFrame load(File file, File metaFile, FilterPredicate filterPredicate)  {
         if (!file.exists()) {
-            throw new DataFrameException(String.format("file not found %s", file.getAbsolutePath()));
+            throw new DataFrameRuntimeException(String.format("file not found %s", file.getAbsolutePath()));
         }
         if (!metaFile.exists()) {
-            throw new DataFrameException(String.format("meta file not found %s", metaFile.getAbsolutePath()));
+            throw new DataFrameRuntimeException(String.format("meta file not found %s", metaFile.getAbsolutePath()));
         }
 
         DataFrameMeta dataFrameMeta;
-        dataFrameMeta = DataFrameMetaReader.read(metaFile);
+        try {
+            dataFrameMeta = DataFrameMetaReader.read(metaFile);
+        } catch (DataFrameException e) {
+            throw new DataFrameRuntimeException("error loading reading meta file", e);
+        }
         DataReader<?, ?> reader = getDataReader(dataFrameMeta);
         DataIterator<?> dataIterator = reader.load(file);
         return DataFrameConverter.fromDataIterator(dataIterator, dataFrameMeta.getColumnInformation(), filterPredicate);
@@ -284,9 +310,8 @@ public class DataFrameLoader {
      * @param file     data frame file
      * @param metaFile data frame meta file
      * @return loaded data frame
-     * @throws DataFrameException thrown if the data frame can not be loaded
      */
-    public static DataFrame load(File file, File metaFile) throws DataFrameException {
+    public static DataFrame load(File file, File metaFile) {
         return load(file, metaFile, FilterPredicate.EMPTY_FILTER);
     }
 
@@ -299,36 +324,39 @@ public class DataFrameLoader {
      * @param classLoader     class loader for the resource
      * @param filterPredicate row filter
      * @return loaded data frame
-     * @throws DataFrameException thrown if the data frame can not be loaded
      */
 
-    public static DataFrame loadResource(String path, String metaPath, ClassLoader classLoader, FilterPredicate filterPredicate) throws DataFrameException {
+    public static DataFrame loadResource(String path, String metaPath, ClassLoader classLoader, FilterPredicate filterPredicate) {
 
         DataFrameMeta dataFrameMeta;
-        dataFrameMeta = DataFrameMetaReader.read(classLoader.getResourceAsStream(metaPath));
+        try {
+            dataFrameMeta = DataFrameMetaReader.read(classLoader.getResourceAsStream(metaPath));
+        } catch (DataFrameException e) {
+            throw new DataFrameRuntimeException("error reading meta file", e);
+        }
         DataReader<?, ?> reader = getDataReader(dataFrameMeta);
         DataIterator<?> dataIterator = reader.load(path, classLoader);;
         return DataFrameConverter.fromDataIterator(dataIterator, dataFrameMeta.getColumnInformation(), filterPredicate);
     }
 
-    private static DataReader<?, ?> getDataReader(DataFrameMeta meta) throws DataFrameException {
+    private static DataReader<?, ?> getDataReader(DataFrameMeta meta) {
         ReadFormat readFormat;
         try {
             readFormat = meta.getReadFormatClass().newInstance();
         } catch (Exception e) {
-            throw new DataFrameException("error creating readformat instance", e);
+            throw new DataFrameRuntimeException("error creating readformat instance", e);
         }
         ReaderBuilder readerBuilder;
         try {
             readerBuilder = readFormat.getReaderBuilder();
         } catch (Exception e) {
-            throw new DataFrameException("error creating readerBuilder instance", e);
+            throw new DataFrameRuntimeException("error creating readerBuilder instance", e);
         }
         DataReader<?, ?> reader;
         try {
             reader = readerBuilder.loadSettings(meta.getAttributes()).build();
         } catch (Exception e) {
-            throw new DataFrameException("error loading readerBuilder attributes", e);
+            throw new DataFrameRuntimeException("error loading readerBuilder attributes", e);
         }
 
         return reader;
@@ -342,9 +370,8 @@ public class DataFrameLoader {
      * @param metaPath    path to  meta file resoure
      * @param classLoader class loader for the resource
      * @return loaded data frame
-     * @throws DataFrameException thrown if the data frame can not be loaded
      */
-    public static DataFrame loadResource(String path, String metaPath, ClassLoader classLoader) throws DataFrameException {
+    public static DataFrame loadResource(String path, String metaPath, ClassLoader classLoader) {
         return loadResource(path, metaPath, classLoader, FilterPredicate.EMPTY_FILTER);
     }
 

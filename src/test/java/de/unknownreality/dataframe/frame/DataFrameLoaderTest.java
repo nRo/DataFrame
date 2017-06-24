@@ -77,9 +77,12 @@ public class DataFrameLoaderTest {
         DataFrame url = DataFrame.fromCSV(uri.toURL(),';', false);
 
         File tmpFile = File.createTempFile("dataframe", ".csv");
-
-
         Assert.assertEquals(res, url);
+        res.write(tmpFile);
+        DataFrame file = DataFrame.load(tmpFile);
+        Assert.assertEquals(file, url);
+        tmpFile.delete();
+
     }
 
 
