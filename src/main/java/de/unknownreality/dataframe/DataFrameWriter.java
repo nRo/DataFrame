@@ -152,10 +152,11 @@ public class DataFrameWriter {
 
 
     public static void writeMetaFile(File file, DataFrame dataFrame, DataWriter dataWriter) {
-        DataFrameMeta metaFile = DataFrameMeta.create(
+        File metaFile = new File(file.getAbsolutePath()+"."+DataFrameMeta.META_FILE_EXTENSION);
+        DataFrameMeta meta = DataFrameMeta.create(
                 dataFrame, dataWriter.getReadFormat().getClass(), dataWriter.getSettings()
         );
-        DataFrameMetaWriter.write(metaFile, file);
+        DataFrameMetaWriter.write(meta, metaFile);
     }
 
 

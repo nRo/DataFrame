@@ -193,6 +193,36 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
 
     public Iterable<? extends DataRow> rows();
 
+
+
+    static DataFrame load(File file) {
+        return DataFrameLoader.load(file);
+
+    }
+
+    static DataFrame load(String content) {
+        return DataFrameLoader.load(content);
+    }
+
+    static DataFrame load(String resource, ClassLoader classLoader) {
+        return DataFrameLoader.load(resource, classLoader);
+
+    }
+
+    static DataFrame load(URL url) {
+        return DataFrameLoader.load(url);
+
+    }
+
+    static DataFrame load(byte[] bytes) {
+        return DataFrameLoader.load(bytes);
+
+    }
+
+    static DataFrame load(InputStream is) {
+        return DataFrameLoader.load(is);
+    }
+
     static DataFrame load(File file, ReadFormat readFormat) {
         return DataFrameLoader.load(file, readFormat);
 
