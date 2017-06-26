@@ -44,7 +44,16 @@ public class DataFrameLoader {
     private DataFrameLoader() {
     }
 
-    public static DataFrame fromCSV(File file, char separator, String headerPrefix){
+    /**
+     * Loads a data frame from a file string using the CSV format ({@link de.unknownreality.dataframe.csv.CSVFormat}).
+     * The column separator can be specified.
+     * If the header starts with a certain prefix it can be specified, otherwise the prefix should be set to "" or null
+     * @param file input file
+     * @param  separator column separator
+     * @param headerPrefix header prefix
+     * @return resulting dataframe
+     */
+    public static DataFrame fromCSV(File file, char separator, String headerPrefix) {
         return load(file, CSVReaderBuilder.create()
                 .withHeader(true)
                 .withSeparator(separator)
@@ -53,14 +62,33 @@ public class DataFrameLoader {
 
     }
 
-    public static DataFrame fromCSV(String content, char separator, String headerPrefix){
+    /**
+     * Loads a data frame from a content string using the CSV format ({@link de.unknownreality.dataframe.csv.CSVFormat}).
+     * The column separator can be specified.
+     * If the header starts with a certain prefix it can be specified, otherwise the prefix should be set to "" or null
+     * @param content content string
+     * @param  separator column separator
+     * @param headerPrefix header prefix
+     * @return resulting dataframe
+     */
+    public static DataFrame fromCSV(String content, char separator, String headerPrefix) {
         return load(content, CSVReaderBuilder.create().
                 withHeader(true).withSeparator(separator)
                 .withHeaderPrefix(headerPrefix)
                 .build());
     }
 
-    public static DataFrame fromCSV(String resource, ClassLoader classLoader, char separator, String headerPrefix){
+    /**
+     * Loads a data frame from a resource using the CSV format ({@link de.unknownreality.dataframe.csv.CSVFormat}).
+     * The column separator can be specified.
+     * If the header starts with a certain prefix it can be specified, otherwise the prefix should be set to "" or null
+     * @param resource resource path
+     * @param classLoader class loader used to find the resource
+     * @param  separator column separator
+     * @param headerPrefix header prefix
+     * @return resulting dataframe
+     */
+    public static DataFrame fromCSV(String resource, ClassLoader classLoader, char separator, String headerPrefix) {
         return load(resource, classLoader,
                 CSVReaderBuilder.create().
                         withHeader(true).
@@ -69,7 +97,17 @@ public class DataFrameLoader {
 
     }
 
-    public static DataFrame fromCSV(URL url, char separator, String headerPrefix){
+
+    /**
+     * Loads a data frame from a url using the CSV format ({@link de.unknownreality.dataframe.csv.CSVFormat}).
+     * The column separator can be specified.
+     * If the header starts with a certain prefix it can be specified, otherwise the prefix should be set to "" or null
+     * @param url input url
+     * @param  separator column separator
+     * @param headerPrefix header prefix
+     * @return resulting dataframe
+     */
+    public static DataFrame fromCSV(URL url, char separator, String headerPrefix) {
         return load(url, CSVReaderBuilder.create()
                 .withHeader(true)
                 .withSeparator(separator)
@@ -78,7 +116,16 @@ public class DataFrameLoader {
 
     }
 
-    public static DataFrame fromCSV(byte[] bytes, char separator, String headerPrefix){
+    /**
+     * Loads a data frame from a byte array using the CSV format ({@link de.unknownreality.dataframe.csv.CSVFormat}).
+     * The column separator can be specified.
+     * If the header starts with a certain prefix it can be specified, otherwise the prefix should be set to "" or null
+     * @param bytes input byte array
+     * @param  separator column separator
+     * @param headerPrefix header prefix
+     * @return resulting dataframe
+     */
+    public static DataFrame fromCSV(byte[] bytes, char separator, String headerPrefix) {
         return load(bytes, CSVReaderBuilder.create()
                 .withHeader(true)
                 .withSeparator(separator)
@@ -87,7 +134,16 @@ public class DataFrameLoader {
 
     }
 
-    public static DataFrame fromCSV(InputStream is, char separator, String headerPrefix){
+    /**
+     * Loads a data frame from a {@link InputStream} using the CSV format ({@link de.unknownreality.dataframe.csv.CSVFormat}).
+     * The column separator can be specified.
+     * If the header starts with a certain prefix it can be specified, otherwise the prefix should be set to "" or null
+     * @param is input stream
+     * @param  separator column separator
+     * @param headerPrefix header prefix
+     * @return resulting dataframe
+     */
+    public static DataFrame fromCSV(InputStream is, char separator, String headerPrefix) {
         return load(is, CSVReaderBuilder.create()
                 .withHeader(true)
                 .withSeparator(separator)
@@ -95,8 +151,15 @@ public class DataFrameLoader {
                 .build());
     }
 
-
-    public static DataFrame fromCSV(File file, char separator, boolean header){
+    /**
+     * Loads a data frame from a file using the CSV format ({@link de.unknownreality.dataframe.csv.CSVFormat}).
+     * The column separator can be specified. If the CSV contains no header, the columns are named V1, V2,...
+     * @param file input file
+     * @param  separator column separator
+     * @param header specifies wether the csv contains a header or not
+     * @return resulting dataframe
+     */
+    public static DataFrame fromCSV(File file, char separator, boolean header) {
         return load(file, CSVReaderBuilder.create()
                 .withHeader(header)
                 .withSeparator(separator)
@@ -104,13 +167,31 @@ public class DataFrameLoader {
 
     }
 
-    public static DataFrame fromCSV(String content, char separator, boolean header){
+
+    /**
+     * Loads a data frame from a content string using the CSV format ({@link de.unknownreality.dataframe.csv.CSVFormat}).
+     * The column separator can be specified. If the CSV contains no header, the columns are named V1, V2,...
+     * @param content content string
+     * @param  separator column separator
+     * @param header specifies wether the csv contains a header or not
+     * @return resulting dataframe
+     */
+    public static DataFrame fromCSV(String content, char separator, boolean header) {
         return load(content, CSVReaderBuilder.create()
                 .withHeader(header)
                 .withSeparator(separator)
                 .build());
     }
 
+    /**
+     * Loads a data frame from a URL array using the CSV format ({@link de.unknownreality.dataframe.csv.CSVFormat}).
+     * The column separator can be specified. If the CSV contains no header, the columns are named V1, V2,...
+     * @param resource resource path
+     * @param classLoader class loader used to find the resource
+     * @param  separator column separator
+     * @param header specifies wether the csv contains a header or not
+     * @return resulting dataframe
+     */
     public static DataFrame fromCSV(String resource, ClassLoader classLoader, char separator, boolean header) {
         return load(resource, classLoader, CSVReaderBuilder.create()
                 .withHeader(header)
@@ -119,6 +200,14 @@ public class DataFrameLoader {
 
     }
 
+    /**
+     * Loads a data frame from a URL array using the CSV format ({@link de.unknownreality.dataframe.csv.CSVFormat}).
+     * The column separator can be specified. If the CSV contains no header, the columns are named V1, V2,...
+     * @param url input url
+     * @param  separator column separator
+     * @param header specifies wether the csv contains a header or not
+     * @return resulting dataframe
+     */
     public static DataFrame fromCSV(URL url, char separator, boolean header) {
         return load(url, CSVReaderBuilder.create()
                 .withHeader(header)
@@ -127,7 +216,15 @@ public class DataFrameLoader {
 
     }
 
-    public static DataFrame fromCSV(byte[] bytes, char separator, boolean header){
+    /**
+     * Loads a data frame from a byte array using the CSV format ({@link de.unknownreality.dataframe.csv.CSVFormat}).
+     * The column separator can be specified. If the CSV contains no header, the columns are named V1, V2,...
+     * @param bytes input byte array
+     * @param  separator column separator
+     * @param header specifies wether the csv contains a header or not
+     * @return resulting dataframe
+     */
+    public static DataFrame fromCSV(byte[] bytes, char separator, boolean header) {
         return load(bytes, CSVReaderBuilder.create()
                 .withHeader(header)
                 .withSeparator(separator)
@@ -135,7 +232,15 @@ public class DataFrameLoader {
 
     }
 
-    public static DataFrame fromCSV(InputStream is, char separator, boolean header){
+    /**
+     * Loads a data frame from a {@link InputStream} using the CSV format ({@link de.unknownreality.dataframe.csv.CSVFormat}).
+     * The column separator can be specified. If the CSV contains no header, the columns are named V1, V2,...
+     * @param is input stream
+     * @param  separator column separator
+     * @param header specifies wether the csv contains a header or not
+     * @return resulting dataframe
+     */
+    public static DataFrame fromCSV(InputStream is, char separator, boolean header) {
         return load(is, CSVReaderBuilder.create()
                 .withHeader(header)
                 .withSeparator(separator)
@@ -144,91 +249,225 @@ public class DataFrameLoader {
 
 
 
-    public static DataFrame load(String content){
+    /**
+     * Loads a data frame from a content string using the default tab separated format ({@link de.unknownreality.dataframe.csv.TSVFormat}).
+     *
+     * @param content content string
+     * @return resulting dataframe
+     */
+    public static DataFrame load(String content) {
         return load(content, DEFAULT_READ_FORMAT);
     }
 
-    public static DataFrame load(String resource, ClassLoader classLoader){
+
+    /**
+     * Loads a data frame from a resource using the default tab separated format ({@link de.unknownreality.dataframe.csv.TSVFormat}).
+     *
+     * @param resource resource path
+     * @param classLoader class loader used to find the resource
+     * @return resulting dataframe
+     */
+    public static DataFrame load(String resource, ClassLoader classLoader) {
         return load(resource, classLoader, DEFAULT_READ_FORMAT);
 
     }
 
-    public static DataFrame load(URL url){
+    /**
+     * Loads a data frame from a URL using the default tab separated format ({@link de.unknownreality.dataframe.csv.TSVFormat}).
+     *
+     * @param url input url
+     * @return resulting dataframe
+     */
+    public static DataFrame load(URL url) {
         return load(url, DEFAULT_READ_FORMAT);
 
     }
 
-    public static DataFrame load(byte[] bytes){
+    /**
+     * Loads a data frame from a byte array using the default tab separated format ({@link de.unknownreality.dataframe.csv.TSVFormat}).
+     *
+     * @param bytes input byte array
+     * @return resulting dataframe
+     */
+    public static DataFrame load(byte[] bytes) {
         return load(bytes, DEFAULT_READ_FORMAT);
 
     }
 
-    public static DataFrame load(InputStream is){
+    /**
+     * Loads a data frame from a {@link InputStream} using the default tab separated format ({@link de.unknownreality.dataframe.csv.TSVFormat}).
+     *
+     * @param is input stream
+     * @return resulting dataframe
+     */
+    public static DataFrame load(InputStream is) {
         return load(is, DEFAULT_READ_FORMAT);
     }
 
-    public static DataFrame load(File file, ReadFormat readFormat){
+
+    /**
+     * Loads a data frame from a file using a specified {@link ReadFormat}.
+     *
+     * @param file       input file
+     * @param readFormat read format
+     * @return resulting dataframe
+     */
+    public static DataFrame load(File file, ReadFormat readFormat) {
         return load(file, readFormat.getReaderBuilder().build());
 
     }
 
-    public static DataFrame load(String content, ReadFormat readFormat){
+    /**
+     * Loads a data frame from a content String using a specified {@link ReadFormat}.
+     *
+     * @param content    content string
+     * @param readFormat read format
+     * @return resulting dataframe
+     */
+    public static DataFrame load(String content, ReadFormat readFormat) {
         return load(content, readFormat.getReaderBuilder().build());
     }
 
-    public static DataFrame load(String resource, ClassLoader classLoader, ReadFormat readFormat){
+
+    /**
+     * Loads a data frame from a resource using a specified {@link ReadFormat}
+     *
+     * @param resource    resource path
+     * @param classLoader ClassLoader used to find the resource
+     * @param readFormat  read format
+     * @return resulting dataframe
+     */
+    public static DataFrame load(String resource, ClassLoader classLoader, ReadFormat readFormat) {
         return load(resource, classLoader, readFormat.getReaderBuilder().build());
 
     }
 
-    public static DataFrame load(URL url, ReadFormat readFormat){
+    /**
+     * Loads a data frame from a URL array using a specified {@link ReadFormat}.
+     *
+     * @param url        input url
+     * @param readFormat read format
+     * @return resulting dataframe
+     */
+    public static DataFrame load(URL url, ReadFormat readFormat) {
         return load(url, readFormat.getReaderBuilder().build());
 
     }
 
-    public static DataFrame load(byte[] bytes, ReadFormat readFormat){
+    /**
+     * Loads a data frame from a byte array using a specified {@link ReadFormat}.
+     *
+     * @param bytes      input byte array
+     * @param readFormat read format
+     * @return resulting dataframe
+     */
+    public static DataFrame load(byte[] bytes, ReadFormat readFormat) {
         return load(bytes, readFormat.getReaderBuilder().build());
 
     }
 
-    public static DataFrame load(InputStream is, ReadFormat readFormat){
+
+    /**
+     * Loads a data frame from a {@link InputStream} using a specified {@link ReadFormat}.
+     *
+     * @param is         input stream
+     * @param readFormat read format
+     * @return resulting dataframe
+     */
+    public static DataFrame load(InputStream is, ReadFormat readFormat) {
         return load(is, readFormat.getReaderBuilder().build());
     }
 
 
-    public static DataFrame load(File file, DataReader reader){
+    /**
+     * Loads a data frame from a file using a specified {@link DataReader}
+     *
+     * @param file   input file
+     * @param reader data reader
+     * @return resulting dataframe
+     */
+    public static DataFrame load(File file, DataReader reader) {
 
         return load(reader.load(file));
 
     }
 
-    public static DataFrame load(String content, DataReader reader){
+    /**
+     * Loads a data frame from a content String using a specified {@link DataReader}
+     *
+     * @param content content string
+     * @param reader  data reader
+     * @return resulting dataframe
+     */
+    public static DataFrame load(String content, DataReader reader) {
         return load(reader.load(content));
     }
 
-    public static DataFrame load(String resource, ClassLoader classLoader, DataReader reader){
+    /**
+     * Loads a data frame from a resource using a specified {@link DataReader}
+     *
+     * @param resource    resource path
+     * @param classLoader ClassLoader used to find the resource
+     * @param reader      data reader
+     * @return resulting dataframe
+     */
+    public static DataFrame load(String resource, ClassLoader classLoader, DataReader reader) {
         return load(reader.load(resource, classLoader));
 
     }
 
-    public static DataFrame load(URL url, DataReader reader){
+    /**
+     * Loads a data frame from a URL using a specified {@link DataReader}
+     *
+     * @param url    input url
+     * @param reader data reader
+     * @return resulting dataframe
+     */
+    public static DataFrame load(URL url, DataReader reader) {
         return load(reader.load(url));
 
     }
 
-    public static DataFrame load(byte[] bytes, DataReader reader){
+    /**
+     * Loads a data frame from a byte array using a specified {@link DataReader}
+     *
+     * @param bytes  input byte array
+     * @param reader data reader
+     * @return resulting dataframe
+     */
+    public static DataFrame load(byte[] bytes, DataReader reader) {
         return load(reader.load(bytes));
 
     }
 
-    public static DataFrame load(InputStream is, DataReader reader){
+    /**
+     * Loads a data frame from a {@link InputStream} using a specified {@link DataReader}
+     *
+     * @param is     input
+     * @param reader data reader
+     * @return resulting dataframe
+     */
+    public static DataFrame load(InputStream is, DataReader reader) {
         return load(reader.load(is));
     }
 
+    /**
+     * Loads a data frame from a {@link DataIterator}
+     *
+     * @param dataIterator data iterator
+     * @return resulting dataframe
+     */
     public static DataFrame load(DataIterator<?> dataIterator) {
         return DataFrameConverter.fromDataIterator(dataIterator, FilterPredicate.EMPTY_FILTER);
     }
 
+    /**
+     * Loads a data frame from a {@link DataIterator} and filters all rows using a specified predicate
+     *
+     * @param dataIterator data iterator
+     * @param predicate    filter predicate
+     * @return resulting dataframe
+     */
     public static DataFrame load(DataIterator<?> dataIterator, FilterPredicate predicate) {
         return DataFrameConverter.fromDataIterator(dataIterator, predicate);
     }
@@ -257,8 +496,8 @@ public class DataFrameLoader {
             dataFile = file;
             metaFile = new File(filePath + ext);
         }
-        if(!metaFile.exists()){
-            return load(dataFile,DEFAULT_READ_FORMAT);
+        if (!metaFile.exists()) {
+            return load(dataFile, DEFAULT_READ_FORMAT);
         }
         return load(dataFile, metaFile, filterPredicate);
     }
@@ -285,7 +524,7 @@ public class DataFrameLoader {
      * @return loaded data frame
      */
 
-    public static DataFrame load(File file, File metaFile, FilterPredicate filterPredicate)  {
+    public static DataFrame load(File file, File metaFile, FilterPredicate filterPredicate) {
         if (!file.exists()) {
             throw new DataFrameRuntimeException(String.format("file not found %s", file.getAbsolutePath()));
         }
@@ -335,7 +574,8 @@ public class DataFrameLoader {
             throw new DataFrameRuntimeException("error reading meta file", e);
         }
         DataReader<?, ?> reader = getDataReader(dataFrameMeta);
-        DataIterator<?> dataIterator = reader.load(path, classLoader);;
+        DataIterator<?> dataIterator = reader.load(path, classLoader);
+        ;
         return DataFrameConverter.fromDataIterator(dataIterator, dataFrameMeta.getColumnInformation(), filterPredicate);
     }
 
