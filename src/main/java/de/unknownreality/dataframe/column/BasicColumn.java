@@ -26,6 +26,7 @@ package de.unknownreality.dataframe.column;
 
 
 import de.unknownreality.dataframe.DataFrameColumn;
+import de.unknownreality.dataframe.DataFrameRuntimeException;
 import de.unknownreality.dataframe.MapFunction;
 import de.unknownreality.dataframe.Values;
 
@@ -64,6 +65,14 @@ public abstract class BasicColumn<T extends Comparable<T>, C extends BasicColumn
        this(name,values,values.length);
     }
 
+    @Override
+    public C setCapacity(int capacity) {
+        if(capacity < size){
+            throw new DataFrameRuntimeException("capacity can not be lower than current size");
+        }
+        values = Arrays.copyOf(values, capacity);
+        return getThis();
+    }
 
     @Override
     protected void doSort(Comparator<T> comparator) {

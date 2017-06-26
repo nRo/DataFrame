@@ -52,6 +52,8 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
      */
     protected abstract C getThis();
 
+    public abstract C setCapacity(int capacity);
+
     /**
      * Used to apply transformations on a column
      * @param transformer column transformer

@@ -65,6 +65,9 @@ public class ColumnTypeMap {
     }
 
 
+    public static <T extends Comparable<T>, C extends DataFrameColumn<T, ?>> DataFrameColumn createColumn(Class<T> type){
+        return  defaultInstance.getColumn(type);
+    }
     /** Do not instantiate ColumnConverter. */
     private ColumnTypeMap() {
         this.columnTypesMap.putAll(ColumnTypeMap.DEFAULT_COLUMN_TYPES);
@@ -72,7 +75,7 @@ public class ColumnTypeMap {
     }
 
     /**
-     * Returns a data frame column for a provided column value type
+     * Returns a data frame column type for a provided column value type
      *
      * @param type column value class
      * @param <T>  column type
@@ -83,10 +86,13 @@ public class ColumnTypeMap {
     public <T extends Comparable<T>, C extends DataFrameColumn<T, ?>> Class<C> getColumnType(Class<T> type) {
         Class<? extends DataFrameColumn> columnType = columnTypesMap.get(type);
         if (columnType == null) {
-            return null;
+            throw new DataFrameRuntimeException(String.format("no column type found for value type '%s'", type.getCanonicalName()));
         }
         return (Class<C>) columnType;
     }
+
+
+
 
     /**
      * Adds a new column type for a column value type
@@ -101,6 +107,27 @@ public class ColumnTypeMap {
         columnTypesMap.put(type, columnType);
         return this;
     }
+
+    /**
+     * Returns a data frame column for a provided column value type
+     *
+     * @param type column value class
+     * @param <T>  column type
+     * @param <C>  value type
+     * @return column matching the value type
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends Comparable<T>, C extends DataFrameColumn<T, ?>> C getColumn(Class<T> type) {
+        Class<? extends DataFrameColumn> columnType = getColumnType(type);
+        DataFrameColumn newColumn = null;
+        try {
+            newColumn = columnType.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new DataFrameRuntimeException(String.format("error creating column instance (%s)", columnType.getCanonicalName()));
+        }
+        return (C)newColumn;
+    }
+
 
 
     /**
