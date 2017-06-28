@@ -220,15 +220,6 @@ Group dataframes using one or more columns.
 //group by "age" and "first_name"
 DataGrouping grouping = users.groupBy("age","first_name");
 
-//iterate through all found groups
-for(DataGroup group : grouping)
-{
-    //print the group description (group values)
-    System.out.println(group.getGroupDescription());
-    for(DataRow row : group){
-        System.out.println(row);
-    }
-}
 
 //iterate through all found groups
 for(DataRow row : grouping){
