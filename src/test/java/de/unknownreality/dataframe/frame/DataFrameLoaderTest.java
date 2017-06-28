@@ -29,17 +29,20 @@ import de.unknownreality.dataframe.DataRow;
 import de.unknownreality.dataframe.column.DoubleColumn;
 import de.unknownreality.dataframe.column.IntegerColumn;
 import de.unknownreality.dataframe.column.StringColumn;
+import de.unknownreality.dataframe.csv.CSVWriter;
+import de.unknownreality.dataframe.csv.CSVWriterBuilder;
 import de.unknownreality.dataframe.filter.FilterPredicate;
 import de.unknownreality.dataframe.csv.CSVReader;
 import de.unknownreality.dataframe.csv.CSVReaderBuilder;
+import de.unknownreality.dataframe.io.FileFormat;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URI;
+import java.nio.file.Files;
 
 /**
  * Created by Alex on 12.03.2016.
@@ -60,11 +63,6 @@ public class DataFrameLoaderTest {
                 .addColumn(new IntegerColumn("ID"))
                 .addColumn(new StringColumn("NAME"))
                 .addColumn(new IntegerColumn("VALUE")).build();
-
-
-        DataFrame dataFrame = DataFrame.fromCSV("data_grouping.csv",DataFrameGroupingTest.class.getClassLoader(),';',true);
-        Assert.assertEquals(dataFrame, legacy);
-
     }
     @Test
     public void loaderTest() throws IOException {
@@ -73,15 +71,38 @@ public class DataFrameLoaderTest {
         Assert.assertEquals(5, res.size());
         Assert.assertEquals(3, res.getColumns().size());
 
-        URI uri = URI.create("https://raw.githubusercontent.com/nRo/DataFrame/master/src/test/resources/loader_test.csv");
+        File tmpFile = File.createTempFile("dataframe", ".csv");
+        res.writeCSV(tmpFile,';', false);
+
+        URI uri = tmpFile.toURI();
         DataFrame url = DataFrame.fromCSV(uri.toURL(),';', false);
 
-        File tmpFile = File.createTempFile("dataframe", ".csv");
+
+
+
+
         Assert.assertEquals(res, url);
         res.write(tmpFile);
         DataFrame file = DataFrame.load(tmpFile);
         Assert.assertEquals(file, url);
+
+        byte[] data = Files.readAllBytes(tmpFile.toPath());
+        DataFrame d = DataFrame.load(data);
+        Assert.assertEquals(file, d);
+
+        String s = new String(data,"UTF-8");
+        d = DataFrame.load(s);
+        Assert.assertEquals(file, d);
+
+
+        d = DataFrame.load(new FileInputStream(tmpFile));
+        Assert.assertEquals(file, d);
+
+
+        d = DataFrame.load(new FileReader(tmpFile));
+        Assert.assertEquals(file, d);
         tmpFile.delete();
+
 
     }
 
