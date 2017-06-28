@@ -40,7 +40,7 @@ public class StringColumnConverter {
      * @param colType target column type
      * @return
      */
-    public <V extends Comparable<V>, C extends DataFrameColumn<V, C>> C convert(StringColumn column, Class<C> colType) throws DataFrameException {
+    public static <V extends Comparable<V>, C extends DataFrameColumn<V, C>> C convert(StringColumn column, Class<C> colType) throws DataFrameException {
         if (colType == StringColumn.class) {
             return (C) column.copy();
         }

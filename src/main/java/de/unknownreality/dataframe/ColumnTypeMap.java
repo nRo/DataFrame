@@ -35,6 +35,7 @@ import java.util.Map;
 public class ColumnTypeMap {
 
     private static final Map<Class<?>, Class<? extends DataFrameColumn>> DEFAULT_COLUMN_TYPES = new HashMap<>();
+    private static final Map<Class<?>, Class<? extends DataFrameColumn>> ADDITIONAL_COLUMN_TYPES = new HashMap<>();
 
     static {
         DEFAULT_COLUMN_TYPES.put(String.class, StringColumn.class);
@@ -47,7 +48,6 @@ public class ColumnTypeMap {
         DEFAULT_COLUMN_TYPES.put(Byte.class, ByteColumn.class);
     }
 
-    private static final Map<Class<?>, Class<? extends DataFrameColumn>> ADDITIONAL_COLUMN_TYPES = new HashMap<>();
 
 
 
