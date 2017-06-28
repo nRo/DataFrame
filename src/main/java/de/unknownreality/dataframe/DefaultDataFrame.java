@@ -73,10 +73,7 @@ public class DefaultDataFrame implements DataFrame {
 
 
     /**
-     * Sets the primary key columns using column names
-     *
-     * @param colNames primary key columns
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
     @Override
     public DataFrame setPrimaryKey(String... colNames) {
@@ -88,10 +85,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Sets the primary key columns using column objects
-     *
-     * @param cols primary key columns
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
     @Override
     public DataFrame setPrimaryKey(DataFrameColumn... cols) {
@@ -100,9 +94,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Removes the current primary key
-     *
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
     @Override
     public DataFrame removePrimaryKey() {
@@ -111,10 +103,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Removes the index with the specified name
-     *
-     * @param name name of index
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
     @Override
     public DataFrame removeIndex(String name) {
@@ -123,11 +112,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Renames a column
-     *
-     * @param name    current column name
-     * @param newName new column name
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
     @Override
     public DataFrame renameColumn(String name, String newName) {
@@ -143,11 +128,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Replaces an existing column with a replacement column
-     *
-     * @param existing    existing column name
-     * @param replacement replacement column
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
     public DataFrame replaceColumn(String existing, DataFrameColumn replacement) {
         DataFrameColumn existingColumn = getColumn(existing);
@@ -155,11 +136,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Replaces an existing column with a replacement column
-     *
-     * @param existing    existing column
-     * @param replacement replacement column
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
     public DataFrame replaceColumn(DataFrameColumn existing, DataFrameColumn replacement) {
         int existingIndex = header.getIndex(existing.getName());
@@ -172,11 +149,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Adds a column to the data frame.
-     * If the column is already part of another data frame a {@link DataFrameRuntimeException} is thrown.
-     *
-     * @param column column to add
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
     @Override
     @SuppressWarnings("unchecked")
@@ -292,12 +265,7 @@ public class DefaultDataFrame implements DataFrame {
 
 
     /**
-     * Creates a column for a specified column value type using the default {@link ColumnTypeMap}.
-     *
-     * @param type class of column values
-     * @param name column name
-     * @param <T>  type of column values
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
     @Override
     public <T extends Comparable<T>> DataFrame addColumn(Class<T> type, String name) {
@@ -306,14 +274,7 @@ public class DefaultDataFrame implements DataFrame {
 
 
     /**
-     * Creates a column for a specified column value type using the provided {@link ColumnTypeMap}.
-     *
-     * @param type          class of column values
-     * @param name          column name
-     * @param columnTypeMap provided column type map
-     * @param <T>           type of column values
-     * @return <tt>self</tt> for method chaining
-     * @see #addColumn(Class, String, ColumnAppender)
+     * @inheritDoc
      */
     @Override
     @SuppressWarnings("unchecked")
@@ -322,16 +283,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Creates and adds a new column based on a specified column value type and a {@link ColumnTypeMap}.
-     *
-     * @param type          column value value type
-     * @param name          name of new column
-     * @param columnTypeMap column type map (value type / column class mapper)
-     * @param appender      column appender (value generator)
-     * @param <T>           type of column values
-     * @param <C>           type of created column
-     * @return <tt>self</tt> for method chaining
-     * @see #addColumn(Class, String, ColumnAppender)
+     * @inheritDoc
      */
     @Override
     public <T extends Comparable<T>, C extends DataFrameColumn<T, C>> DataFrame addColumn(Class<T> type, String name, ColumnTypeMap columnTypeMap, ColumnAppender<T> appender) {
@@ -344,18 +296,8 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Creates and adds a column to this data frame based on a provided column class.
-     * The values in the created column are generated by a {@link ColumnAppender}.
-     * If no column appender is specified, the column is filled with {@link Values#NA NA} values.
+     * @inheritDoc If no column appender is specified, the column is filled with {@link Values#NA NA} values.
      * If the column can not be created or added a {@link DataFrameRuntimeException} is thrown.
-     *
-     * @param type     class of created column
-     * @param name     name of created column
-     * @param appender column appender (value generator)
-     * @param <T>      type of column values
-     * @param <C>      type of created column
-     * @return <tt>self</tt> for method chaining
-     * @see #addColumn(DataFrameColumn)
      */
     @Override
     public <T extends Comparable<T>, C extends DataFrameColumn<T, C>> DataFrame addColumn(Class<C> type, String name, ColumnAppender<T> appender) {
@@ -388,10 +330,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Adds a collection of columns to this data frame
-     *
-     * @param columns columns to add
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
 
     @Override
@@ -403,10 +342,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Adds an array of columns to this data frame
-     *
-     * @param columns columns to add
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
     @Override
     public DataFrame addColumns(DataFrameColumn... columns) {
@@ -417,20 +353,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Appends a new row based on {@link Comparable} values.
-     * <p>There must be <b>exactly one value for each column</b>.</p>
-     * <p><b>The object types have to match the column types</b>.</p>
-     * If the wrong number of values or a wrong type is found a {@link DataFrameRuntimeException} is thrown.
-     * <p>
-     * <p>If the data frame contains:<br>
-     * <code>StringColumn,DoubleColumn,IntegerColumn</code><br>
-     * The only correct call to this method is:<br>
-     * <code>append(String, Double, Integer)</code>
-     * </p>
-     * <p>empty column values must be provided as <tt>null</tt> or {@link Values#NA NA}</p>
-     *
-     * @param values values for the appended row
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc If the wrong number of values or a wrong type is found a {@link DataFrameRuntimeException} is thrown.
      */
     @Override
     public DataFrame append(Comparable... values) {
@@ -465,11 +388,9 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Appends a new data row.
-     * {@link Values#NA NA} is added for all columns with no value in the provided row.
-     *
      * @param row row containing the new values
      * @return <tt>self</tt> for method chaining
+     * @inheritDoc {@link Values#NA NA} is added for all columns with no value in the provided row.
      */
     @Override
     @SuppressWarnings("unchecked")
@@ -491,11 +412,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Persists the updated values of a data row.
-     * <tt>null</tt> values are ignored. Use {@link Values#NA NA} instead-
-     *
-     * @param dataRow data row with updated values
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
     @Override
     public DataFrame update(DataRow dataRow) {
@@ -515,10 +432,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Clears all rows in this data frame and sets new rows using the provided {@link DataRow} collection.
-     *
-     * @param rows new collection of rows
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
     @Override
     public DataFrame set(Collection<DataRow> rows) {
@@ -534,12 +448,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Removes all columns and rows from this data frame.
-     * New columns are created using the specified data frame header an populated with the provided data rows.
-     *
-     * @param header new header
-     * @param rows   new rows
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
     @Override
     public DataFrame set(DataFrameHeader header, Collection<DataRow> rows) {
@@ -547,14 +456,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Removes all columns and rows from this data frame.
-     * New columns are created using the specified data frame header and populated with the provided data rows.
-     * If indices are provided, they are copied to this data frame.
-     *
-     * @param header  new header
-     * @param rows    new rows
-     * @param indices indices to copy
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
     protected DataFrame set(DataFrameHeader header, Collection<DataRow> rows, Indices indices) {
         this.header = header;
@@ -584,10 +486,7 @@ public class DefaultDataFrame implements DataFrame {
 
 
     /**
-     * Removes a column from this data frame
-     *
-     * @param header column header name
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
     @Override
     public DataFrame removeColumn(String header) {
@@ -600,10 +499,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Removes a column from this data frame
-     *
-     * @param column column to remove
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
     @Override
     public DataFrame removeColumn(DataFrameColumn column) {
@@ -622,10 +518,7 @@ public class DefaultDataFrame implements DataFrame {
 
 
     /**
-     * Sorts the rows in this data frame by one or more {@link SortColumn}
-     *
-     * @param columns sort columns
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
     @Override
     public DataFrame sort(SortColumn... columns) {
@@ -636,10 +529,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Sorts the rows in this data frame using a custom {@link Comparator}
-     *
-     * @param comp comparator used to sort the rows
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
     @Override
     public DataFrame sort(Comparator<DataRow> comp) {
@@ -650,10 +540,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Sorts the rows in this data frame using one column and the default sort direction (<tt>ascending</tt>)
-     *
-     * @param name sort column
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
     @Override
     public DataFrame sort(String name) {
@@ -661,11 +548,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Sorts the rows in this data frame using one column and sort direction.
-     *
-     * @param name sort column
-     * @param dir  sort direction
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
     @Override
     public DataFrame sort(String name, SortColumn.Direction dir) {
@@ -677,9 +560,7 @@ public class DefaultDataFrame implements DataFrame {
 
 
     /**
-     * Shuffles all rows
-     *
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
     @Override
     public DataFrame shuffle() {
@@ -691,12 +572,7 @@ public class DefaultDataFrame implements DataFrame {
 
 
     /**
-     * Returns a new data frame with all rows from this data frame where a specified column value equals
-     * an input value.
-     *
-     * @param colName column name
-     * @param value   input value
-     * @return new data frame including the found rows
+     * @inheritDoc
      */
     @Override
     public DataFrame select(String colName, Comparable value) {
@@ -705,12 +581,7 @@ public class DefaultDataFrame implements DataFrame {
 
 
     /**
-     * Returns the first found data row from this data frame where a specified column value equals
-     * an input value.
-     *
-     * @param colName column name
-     * @param value   input value
-     * @return first found data row
+     * @inheritDoc
      */
     @Override
     public DataRow selectFirst(String colName, Comparable value) {
@@ -719,11 +590,7 @@ public class DefaultDataFrame implements DataFrame {
 
 
     /**
-     * Returns the first found data row from this data frame matching an input predicate.
-     *
-     * @param predicateString input predicate string
-     * @return first found data row
-     * @see #select(FilterPredicate)
+     * @inheritDoc
      */
     @Override
     public DataRow selectFirst(String predicateString) {
@@ -731,11 +598,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Returns the first found data row from this data frame matching an input predicate.
-     *
-     * @param predicate input predicate
-     * @return first found data row
-     * @see #select(FilterPredicate)
+     * @inheritDoc
      */
     @Override
     public DataRow selectFirst(FilterPredicate predicate) {
@@ -749,13 +612,7 @@ public class DefaultDataFrame implements DataFrame {
 
 
     /**
-     * Returns a new data frame based on filtered rows from this data frame.<br>
-     * Rows that are valid according to the input predicate remain in the new data frame.<br>
-     * <p><code>if(predicate.valid(row)) -&gt; add(row)</code></p>
-     *
-     * @param predicate filter predicate
-     * @return new data frame including the found row
-     * @see #filter(FilterPredicate)
+     * @inheritDoc
      */
     @Override
     public DataFrame select(FilterPredicate predicate) {
@@ -767,14 +624,7 @@ public class DefaultDataFrame implements DataFrame {
 
 
     /**
-     * Returns a new data frame based on filtered rows from this data frame.<br>
-     * Rows that are valid according to the input predicate remain in the new data frame.<br>
-     * The predicate is compiled from the input string.<br>
-     * <p><code>if(predicate.valid(row)) -&gt; add(row)</code></p>
-     *
-     * @param predicateString predicate string
-     * @return new data frame including the found row
-     * @see #select(FilterPredicate)
+     * @inheritDoc
      */
     @Override
     public DataFrame select(String predicateString) {
@@ -783,14 +633,7 @@ public class DefaultDataFrame implements DataFrame {
 
 
     /**
-     * Filters data rows that are not valid according to an input predicate.<br>
-     * Data rows are filtered by their column values. <br>
-     * If a data row is <b>filtered</b> if it is <b>not valid</b> according to the predicate.<br>
-     * The filtered data rows are removed from this data frame.<br>
-     * <p><code>if(!predicate.valid(row)) -&gt; remove(row)</code></p>
-     *
-     * @param predicateString filter predicate string
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
     @Override
     public DataFrame filter(String predicateString) {
@@ -799,14 +642,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Filters data rows that are not valid according to an input predicate.<br>
-     * Data rows are filtered by their column values. <br>
-     * If a data row is <b>filtered</b> if it is <b>not valid</b> according to the predicate.<br>
-     * The filtered data rows are removed from this data frame.<br>
-     * <p><code>if(!predicate.valid(row)) -&gt; remove(row)</code></p>
-     *
-     * @param predicate filter predicate
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
     @Override
     public DataFrame filter(FilterPredicate predicate) {
@@ -816,10 +652,7 @@ public class DefaultDataFrame implements DataFrame {
 
 
     /**
-     * Finds data rows using a {@link FilterPredicate}.
-     *
-     * @param predicateString input predicate string
-     * @return list of found data rows
+     * @inheritDoc
      */
     @Override
     public List<DataRow> selectRows(String predicateString) {
@@ -827,10 +660,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Finds data rows using a {@link FilterPredicate}.
-     *
-     * @param predicate input predicate
-     * @return list of found data rows
+     * @inheritDoc
      */
     @Override
     public List<DataRow> selectRows(FilterPredicate predicate) {
@@ -845,10 +675,7 @@ public class DefaultDataFrame implements DataFrame {
 
 
     /**
-     * Converts this dataframe into another dataframe using a specified transformer
-     *
-     * @param transformer the applied transformer
-     * @return resulting dataframe
+     * @inheritDoc
      */
     @Override
     public DataFrame transform(DataFrameTransform transformer) {
@@ -856,10 +683,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Finds a data row using the primary key
-     *
-     * @param keyValues input key values
-     * @return found data row
+     * @inheritDoc
      */
     @Override
     public DataRow findByPrimaryKey(Comparable... keyValues) {
@@ -871,9 +695,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Reverses all columns
-     *
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
     @Override
     public DataFrame reverse() {
@@ -884,12 +706,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Adds a new index based on one or multiple index columns.
-     * <p><b>Values in index columns must be unique for all rows</b></p>
-     *
-     * @param indexName   name of new index
-     * @param columnNames index columns
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
     @Override
     public DataFrame addIndex(String indexName, String... columnNames) {
@@ -902,12 +719,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Adds a new index based on one or multiple index columns.
-     * <p><b>Values in index columns must be unique for all rows</b></p>
-     *
-     * @param indexName name of new index
-     * @param columns   index columns
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
     @Override
     public DataFrame addIndex(String indexName, DataFrameColumn... columns) {
@@ -916,9 +728,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Returns the number of rows in this data frame
-     *
-     * @return number of rows
+     * @inheritDoc
      */
     @Override
     public int size() {
@@ -927,12 +737,7 @@ public class DefaultDataFrame implements DataFrame {
 
 
     /**
-     * Sets this data frame to a subset of itself.
-     * Only rows between <tt>from</tt> and <tt>to</tt> remain in this data frame
-     *
-     * @param from lowest remaining row index
-     * @param to   highest remaining row index
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
     @Override
     public DataFrame subset(int from, int to) {
@@ -941,12 +746,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Creates a new data frame from a subset of this data frame.
-     * Rows between <tt>from</tt> and <tt>to</tt> are added to the new data frame.
-     *
-     * @param from lowest row index
-     * @param to   highest row index
-     * @return created subset data frame
+     * @inheritDoc
      */
     @Override
     public DataFrame createSubset(int from, int to) {
@@ -956,11 +756,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Returns a list the list of rows between <tt>from</tt> and <tt>to</tt>.
-     *
-     * @param from lowest row index
-     * @param to   highest row index
-     * @return list of rows between <tt>from</tt> and <tt>to</tt>
+     * @inheritDoc
      */
     @Override
     public List<DataRow> getRows(int from, int to) {
@@ -972,9 +768,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Returns all rows in this data frame
-     *
-     * @return list of all rows
+     * @inheritDoc
      */
     @Override
     public List<DataRow> getRows() {
@@ -982,9 +776,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Returns the header of this data frame
-     *
-     * @return data frame header
+     * @inheritDoc
      */
     @Override
     public DataFrameHeader getHeader() {
@@ -993,11 +785,7 @@ public class DefaultDataFrame implements DataFrame {
 
 
     /**
-     * Concatenates two data frames. The rows from the other data frame are appended to this data frame.
-     * Throws a {@link DataFrameRuntimeException} if the data frames are not compatible.
-     *
-     * @param other other data frame
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
     @Override
     public DataFrame concat(DataFrame other) {
@@ -1011,11 +799,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Appends the rows from a collection of data frames to this data frame.
-     * Throws a {@link DataFrameRuntimeException} if the data frames are not compatible.
-     *
-     * @param dataFrames other data frames
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
     @Override
     public DataFrame concat(Collection<DataFrame> dataFrames) {
@@ -1031,11 +815,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Appends the rows from an array of data frames to this data frame.
-     * Throws a {@link DataFrameRuntimeException} if the data frames are not compatible.
-     *
-     * @param dataFrames other data frames
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
     @Override
     public DataFrame concat(DataFrame... dataFrames) {
@@ -1043,11 +823,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Returns <tt>true</tt> if the header of an input data frame equals the header of this data frame.
-     *
-     * @param input input data frame
-     * @return <tt>true</tt> if the other data frame is compatible with this data frame.
-     * @see DataFrameHeader#equals(Object)
+     * @inheritDoc
      */
     @Override
     public boolean isCompatible(DataFrame input) {
@@ -1055,10 +831,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Returns the data row at a specified index
-     *
-     * @param i index of data row
-     * @return data row at  specified index
+     * @inheritDoc
      */
     @Override
     public DataRow getRow(int i) {
@@ -1066,10 +839,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Returns the values of a row at a specified index
-     *
-     * @param i index of data row
-     * @return values in data row
+     * @inheritDoc
      */
     @Override
     public Comparable[] getRowValues(int i) {
@@ -1089,9 +859,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Returns a collection of the column names in this data frame
-     *
-     * @return column names
+     * @inheritDoc
      */
     @Override
     public Collection<String> getColumnNames() {
@@ -1099,10 +867,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Returns a column based on its name
-     *
-     * @param name column name
-     * @return column
+     * @inheritDoc
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -1111,13 +876,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Returns a column as a specified column type.
-     * If the column is not found or has the wrong type a {@link DataFrameRuntimeException} is thrown.
-     *
-     * @param name column name
-     * @param cl   class of column
-     * @param <T>  type of column
-     * @return found column
+     * @inheritDoc
      */
     @Override
     public <T extends DataFrameColumn> T getColumn(String name, Class<T> cl) {
@@ -1132,11 +891,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Returns a {@link NumberColumn}
-     * If the column is not found or has the wrong type a {@link DataFrameRuntimeException} is thrown.
-     *
-     * @param name column name
-     * @return found column
+     * @inheritDoc
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -1145,11 +900,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Returns a {@link StringColumn}
-     * If the column is not found or has the wrong type a {@link DataFrameRuntimeException} is thrown.
-     *
-     * @param name column name
-     * @return found column
+     * @inheritDoc
      */
     @Override
     public StringColumn getStringColumn(String name) {
@@ -1157,11 +908,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Returns a {@link DoubleColumn}
-     * If the column is not found or has the wrong type a {@link DataFrameRuntimeException} is thrown.
-     *
-     * @param name column name
-     * @return found column
+     * @inheritDoc
      */
     @Override
     public DoubleColumn getDoubleColumn(String name) {
@@ -1169,11 +916,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Returns a {@link IntegerColumn}
-     * If the column is not found or has the wrong type a {@link DataFrameRuntimeException} is thrown.
-     *
-     * @param name column name
-     * @return found column
+     * @inheritDoc
      */
     @Override
     public IntegerColumn getIntegerColumn(String name) {
@@ -1181,11 +924,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Returns a {@link FloatColumn}
-     * If the column is not found or has the wrong type a {@link DataFrameRuntimeException} is thrown.
-     *
-     * @param name column name
-     * @return found column
+     * @inheritDoc
      */
     @Override
     public FloatColumn getFloatColumn(String name) {
@@ -1193,11 +932,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Returns a {@link BooleanColumn}
-     * If the column is not found or has the wrong type a {@link DataFrameRuntimeException} is thrown.
-     *
-     * @param name column name
-     * @return found column
+     * @inheritDoc
      */
     @Override
     public BooleanColumn getBooleanColumn(String name) {
@@ -1205,11 +940,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Returns a {@link ByteColumn}
-     * If the column is not found or has the wrong type a {@link DataFrameRuntimeException} is thrown.
-     *
-     * @param name column name
-     * @return found column
+     * @inheritDoc
      */
     @Override
     public ByteColumn getByteColumn(String name) {
@@ -1217,11 +948,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Returns a {@link LongColumn}
-     * If the column is not found or has the wrong type a {@link DataFrameRuntimeException} is thrown.
-     *
-     * @param name column name
-     * @return found column
+     * @inheritDoc
      */
     @Override
     public LongColumn getLongColumn(String name) {
@@ -1229,11 +956,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Returns a {@link ShortColumn}
-     * If the column is not found or has the wrong type a {@link DataFrameRuntimeException} is thrown.
-     *
-     * @param name column name
-     * @return found column
+     * @inheritDoc
      */
     @Override
     public ShortColumn getShortColumn(String name) {
@@ -1242,11 +965,7 @@ public class DefaultDataFrame implements DataFrame {
 
 
     /**
-     * Groups this data frame using one or more columns
-     *
-     * @param column group columns
-     * @return {@link DataGrouping data grouping}
-     * @see GroupUtil#groupBy(DataFrame, String...)
+     * @inheritDoc
      */
     @Override
     public DataGrouping groupBy(String... column) {
@@ -1254,12 +973,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Joins this data frame with another data frame using the <tt>LEFT JOIN</tt> method.
-     *
-     * @param dataFrame   other data frame
-     * @param joinColumns join columns
-     * @return joined data frame
-     * @see JoinUtil#leftJoin(DataFrame, DataFrame, JoinColumn...)
+     * @inheritDoc
      */
     @Override
     public JoinedDataFrame joinLeft(DataFrame dataFrame, String... joinColumns) {
@@ -1271,12 +985,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Joins this data frame with another data frame using the <tt>LEFT JOIN</tt> method.
-     *
-     * @param dataFrame   other data frame
-     * @param joinColumns join columns
-     * @return joined data frame
-     * @see JoinUtil#leftJoin(DataFrame, DataFrame, JoinColumn...)
+     * @inheritDoc
      */
     @Override
     public JoinedDataFrame joinLeft(DataFrame dataFrame, JoinColumn... joinColumns) {
@@ -1284,15 +993,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Joins this data frame with another data frame using the <tt>LEFT JOIN</tt> method.
-     * Column names are altered using the provided suffixes.
-     *
-     * @param dataFrame   other data frame
-     * @param suffixA     suffixes for columns from this data frame
-     * @param suffixB     suffixes for columns from the other data frame
-     * @param joinColumns join columns
-     * @return joined data frame
-     * @see JoinUtil#leftJoin(DataFrame, DataFrame, String, String, JoinColumn...)
+     * @inheritDoc
      */
     @Override
     public JoinedDataFrame joinLeft(DataFrame dataFrame, String suffixA, String suffixB, JoinColumn... joinColumns) {
@@ -1300,12 +1001,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Joins this data frame with another data frame using the <tt>RIGHT JOIN</tt> method.
-     *
-     * @param dataFrame   other data frame
-     * @param joinColumns join columns
-     * @return joined data frame
-     * @see JoinUtil#rightJoin(DataFrame, DataFrame, JoinColumn...)
+     * @inheritDoc
      */
     @Override
     public JoinedDataFrame joinRight(DataFrame dataFrame, String... joinColumns) {
@@ -1317,12 +1013,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Joins this data frame with another data frame using the <tt>LEFT JOIN</tt> method.
-     *
-     * @param dataFrame   other data frame
-     * @param joinColumns join columns
-     * @return joined data frame
-     * @see JoinUtil#leftJoin(DataFrame, DataFrame, JoinColumn...)
+     * @inheritDoc
      */
     @Override
     public JoinedDataFrame joinRight(DataFrame dataFrame, JoinColumn... joinColumns) {
@@ -1330,15 +1021,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Joins this data frame with another data frame using the <tt>RIGHT JOIN</tt> method.
-     * Column names are altered using the provided suffixes.
-     *
-     * @param dataFrame   other data frame
-     * @param suffixA     suffixes for columns from this data frame
-     * @param suffixB     suffixes for columns from the other data frame
-     * @param joinColumns join columns
-     * @return joined data frame
-     * @see JoinUtil#rightJoin(DataFrame, DataFrame, String, String, JoinColumn...)
+     * @inheritDoc
      */
     @Override
     public JoinedDataFrame joinRight(DataFrame dataFrame, String suffixA, String suffixB, JoinColumn... joinColumns) {
@@ -1346,12 +1029,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Joins this data frame with another data frame using the <tt>INNER JOIN</tt> method.
-     *
-     * @param dataFrame   other data frame
-     * @param joinColumns join columns
-     * @return joined data frame
-     * @see JoinUtil#innerJoin(DataFrame, DataFrame, JoinColumn...)
+     * @inheritDoc
      */
     @Override
     public JoinedDataFrame joinInner(DataFrame dataFrame, String... joinColumns) {
@@ -1363,12 +1041,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Joins this data frame with another data frame using the <tt>INNER JOIN</tt> method.
-     *
-     * @param dataFrame   other data frame
-     * @param joinColumns join columns
-     * @return joined data frame
-     * @see JoinUtil#innerJoin(DataFrame, DataFrame, JoinColumn...)
+     * @inheritDoc
      */
     @Override
     public JoinedDataFrame joinInner(DataFrame dataFrame, JoinColumn... joinColumns) {
@@ -1376,15 +1049,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Joins this data frame with another data frame using the <tt>INNER JOIN</tt> method.
-     * Column names are altered using the provided suffixes.
-     *
-     * @param dataFrame   other data frame
-     * @param suffixA     suffixes for columns from this data frame
-     * @param suffixB     suffixes for columns from the other data frame
-     * @param joinColumns join columns
-     * @return joined data frame
-     * @see JoinUtil#innerJoin(DataFrame, DataFrame, String, String, JoinColumn...)
+     * @inheritDoc
      */
     @Override
     public JoinedDataFrame joinInner(DataFrame dataFrame, String suffixA, String suffixB, JoinColumn... joinColumns) {
@@ -1392,10 +1057,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Returns a copy of this data frame.
-     * Header, columns, rows and indices are copied.
-     *
-     * @return copy of data frame
+     * @inheritDoc
      */
     @Override
     public DataFrame copy() {
@@ -1406,10 +1068,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Returns <tt>true</tt> if this data frame contains the input column
-     *
-     * @param column input column
-     * @return <tt>true</tt> if this data frame contains the input column
+     * @inheritDoc
      */
     @Override
     public boolean containsColumn(DataFrameColumn column) {
@@ -1417,12 +1076,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Notifies this data frame about a changed value in a column.
-     * Used to update indices.
-     *
-     * @param column changed column
-     * @param index  changed index
-     * @param value  new value
+     * @inheritDoc
      */
     protected void notifyColumnValueChanged(DataFrameColumn column, int index, Comparable value) {
         if (indices.isIndexColumn(column)) {
@@ -1431,10 +1085,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Notifies this data frame about a changed  column.
-     * Used to update indices.
-     *
-     * @param column changed column
+     * @inheritDoc
      */
     protected void notifyColumnChanged(DataFrameColumn column) {
         if (indices.isIndexColumn(column)) {
@@ -1443,10 +1094,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Returns <tt>true</tt> if the input column is part of at least one index
-     *
-     * @param column input column
-     * @return <tt>true</tt> if column is part of index
+     * @inheritDoc
      */
     @Override
     public boolean isIndexColumn(DataFrameColumn column) {
@@ -1454,11 +1102,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Finds matching data rows using an index and the corresponding index values
-     *
-     * @param name   name of index
-     * @param values index values
-     * @return rows found
+     * @inheritDoc
      */
     @Override
     public List<DataRow> findByIndex(String name, Comparable... values) {
@@ -1474,11 +1118,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Finds the first data row matching an index and the corresponding index values
-     *
-     * @param name   name of index
-     * @param values index values
-     * @return rows found
+     * @inheritDoc
      */
     @Override
     public DataRow findFirstByIndex(String name, Comparable... values) {
@@ -1487,9 +1127,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Returns a collection of all columns in this data frame
-     *
-     * @return collection of columns
+     * @inheritDoc
      */
     @Override
     public Collection<DataFrameColumn> getColumns() {
@@ -1502,9 +1140,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Returns the indices of this data frame
-     *
-     * @return data frame indices
+     * @inheritDoc
      */
     protected Indices getIndices() {
         return indices;
@@ -1532,10 +1168,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * Returns an iterator over the rows in this data frame.
-     * {@link Iterator#remove()} is not supported.
-     *
-     * @return row iterator
+     * @inheritDoc
      */
     @Override
     public Iterator<DataRow> iterator() {
