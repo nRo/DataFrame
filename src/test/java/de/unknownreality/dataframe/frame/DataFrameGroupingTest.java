@@ -151,6 +151,11 @@ public class DataFrameGroupingTest {
                 .agg("x_25", Aggregate.quantile("x",0.25))
                 .agg("desc",group -> group.getGroupDescription());
 
+        for(DataRow row : grouping){
+            DataGroup group = grouping.getGroup(row.getIndex());
+            System.out.println(group.getGroupDescription());
+        }
+
         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(System.out));
         writer.write("test");
         writer.newLine();
