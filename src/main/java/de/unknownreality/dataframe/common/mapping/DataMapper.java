@@ -34,6 +34,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Created by Alex on 08.03.2016.
@@ -47,6 +48,7 @@ public class DataMapper<T> implements Iterable<T> {
     private DataMapper(DataContainer<? extends Header, ? extends Row> reader, Class<T> cl) {
         this.reader = reader;
         this.cl = cl;
+        initFields(reader.getHeader());
     }
 
     /**
@@ -64,17 +66,17 @@ public class DataMapper<T> implements Iterable<T> {
     }
 
     /**
-     * Returns an iterator over mapped entities from the data container
+     * Returns an iterable over mapped entities from the data container
      * The specified type of entities must have {@link MappedColumn} annotated fields.
      *
      * @param reader the data container
      * @param cl     class of mapped entities
      * @param <T>    type if mapped entities
-     * @return iterator over mapped entities
+     * @return iterable over mapped entities
      */
-    public static <T> Iterator<T> mapEach(DataContainer<? extends Header, ? extends Row> reader, Class<T> cl) {
+    public static <T> Iterable<T> mapEach(DataContainer<? extends Header, ? extends Row> reader, Class<T> cl) {
         DataMapper<T> mapper = new DataMapper<>(reader, cl);
-        return mapper.iterator();
+        return mapper;
     }
 
 
@@ -87,7 +89,7 @@ public class DataMapper<T> implements Iterable<T> {
         List<T> result = new ArrayList<>();
         initFields(reader.getHeader());
         for (Row row : reader) {
-            result.add(processRow(row));
+            result.add((T)processRow(row));
         }
         return result;
     }
@@ -183,6 +185,9 @@ public class DataMapper<T> implements Iterable<T> {
 
             @Override
             public T next() {
+                if(!rowIterator.hasNext()){
+                    throw new NoSuchElementException("index out of bounds");
+                }
                 return processRow(rowIterator.next());
             }
         };
