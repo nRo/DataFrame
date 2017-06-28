@@ -62,7 +62,7 @@ Version 0.7
 - The read and write functions have been rewritten from scratch for this version.
 Some existing methods have beed removed.
 
-- Data grouping has been refactored and aggregation function can now be applied to data groupings.
+- Data grouping has been refactored and aggregation functions can now be applied to data groupings.
 In general, data groupings can now be used like normal DataFrames.
 
 - This library now requires Java 8.
@@ -228,6 +228,18 @@ for(DataGroup group : grouping)
     for(DataRow row : group){
         System.out.println(row);
     }
+}
+
+//iterate through all found groups
+for(DataRow row : grouping){
+    DataGroup group = grouping.getGroup(row.getIndex());
+    //print the group description (group values)
+    System.out.println(group.getGroupDescription());
+   
+    //iterate through all rows from the respective groups
+    for(DataRow groupRow : group){
+            System.out.println(row);
+     }
 }
 ```
 Direct access to groups in a grouping.
