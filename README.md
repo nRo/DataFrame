@@ -24,7 +24,7 @@ Add this to you pom.xml
     <dependency>
         <groupId>de.unknownreality</groupId>
         <artifactId>dataframe</artifactId>
-        <version>0.6.1</version>
+        <version>0.7</version>
     </dependency>
 ...
 </dependencies>
@@ -51,30 +51,45 @@ To build the library from sources:
     <dependency>
         <groupId>de.unknownreality</groupId>
         <artifactId>dataframe</artifactId>
-        <version>0.6.1-SNAPSHOT</version>
+        <version>0.7-SNAPSHOT</version>
     </dependency>
 ...
 </dependencies>
 ```
 
+Version 0.7
+-----
+- The read and write functions have been rewritten from scratch for this version.
+Some existing methods have beed removed.
+
+- Data grouping has been refactored and aggregation function can now be applied to data groupings.
+In general, data groupings can now be used like normal DataFrames.
+
+- This library now requires Java 8.
+
 Usage
 -----
 Load DataFrame from a CSV file.
+Column types will be detected automatically. (String, Double, Integer, Boolean)
 ```java
 File file = new File("person.csv");
-CSVReader reader = CSVReaderBuilder.create(file)
-        .withSeparator(';')
-        .withHeaderPrefix("#")
-        .containsHeader(true)
-        .build();
+DataFrame users = DataFrame.fromCSV(file, ';', true);
+```
 
-DataFrame users = reader.buildDataFrame()
-        .addColumn(new IntegerColumn("person_id"))
-        .addColumn(new StringColumn("first_name"))
-        .addColumn(new StringColumn("last_name"))
-        .addColumn(new StringColumn("address"))
-        .addColumn(new IntegerColumn("age"))
-        .build();
+Load a DataFrame with custom options and predefined column types.
+```java
+File file = new File("person.csv");
+
+CSVReader csvReader = CSVReaderBuilder.create()
+                .containsHeader(true)
+                .withHeaderPrefix("#")
+                .withSeparator(';')
+                .setColumnType("person_id", Integer.class)
+                .setColumnType("first_name", String.class)
+                .setColumnType("last_name", String.class)
+                .setColumnType("age", Integer.class).build();
+
+DataFrame users = DataFrame.load(file,csvReader);
         
 System.out.println(users.getHeader());
 for(DataRow row : users)
@@ -82,10 +97,28 @@ for(DataRow row : users)
     System.out.println(row);
 }
 ```
-Load DataFrame from a file and the corresponding meta file
+DataFrames can be written using default formats (CSV or TSV).
+Additionally it is possible to set different options when writing DataFrames.
 ```java
-File meta = new File("person.csv.dfm");
-DataFrame dataFrame = DataFrameLoader.load(file,meta);
+dataFrame.write(file); // TSV per default
+
+dataFrame.write(file, FileFormat.CSV);
+
+dataFrame.writeCSV(file, ';',true); // use ';' as separator and include the header
+
+
+CSVWriter csvWriter = CSVWriterBuilder.create()
+                .withHeader(true)
+                .withSeparator('\t')
+                .useGzip(true).build();
+dataFrame.write(file, csvWriter);
+ ```
+If a meta file is written for a DataFrame, it can simply be loaded by pointing at the DataFrame file.
+The meta has the same path as the DataFrame file with '.dfm' extension
+```java
+File file = new File("dataFrame.csv");
+dataFrame.write(file);
+DataFrame loadedDataFrame = DataFrame.load(file);
 ```
 Use indices for fast row access.
 Indices must always be unique.
@@ -206,7 +239,26 @@ DataGrouping grouping = users.groupBy("age","first_name");
 //Get all users that are called John and are 18 years old
 DataGroup group = grouping.findByGroupValues(18, "John");
 ```
+It is possible to apply aggregation function to data groups.
+In this example, a column "max_age" is added to the grouping DataFrame. 
+This column contains the maximum value of the "age" column of the respective rows in the original DataFrame.
+The resulting grouping DataFrame contains two columns: "first_name" and "max_age"
+```java
+DataGrouping grouping = users.groupBy("first_name").agg("max_age", Aggregate.max("age"));
 
+//some other aggregate functions
+grouping.agg("mean_age", Aggregate.mean("age"));
+
+grouping.agg("median_age", Aggregate.median("age"));
+
+grouping.agg("25quantile_age", Aggregate.quantile("age", 0.25));
+
+grouping.agg("older_30_count", Aggregate.filterCount("age > 30"));
+
+//custom aggregate function
+grouping.agg("org_percentage", group -> group.size() / users.size());
+
+```
 Join two dataframes using one or more columns.
 ```java
 //join DataFrames users and visits by columns users.person_id == visits.person_id
