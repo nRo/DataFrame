@@ -62,6 +62,7 @@ public class DataMapper<T> implements Iterable<T> {
      */
     public static <T> List<T> map(DataContainer<? extends Header, ? extends Row> reader, Class<T> cl) {
         DataMapper<T> mapper = new DataMapper<>(reader, cl);
+
         return mapper.map();
     }
 
