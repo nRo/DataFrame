@@ -12,10 +12,7 @@ import de.unknownreality.dataframe.join.JoinedDataFrame;
 import de.unknownreality.dataframe.sort.SortColumn;
 import de.unknownreality.dataframe.transform.DataFrameTransform;
 
-import java.io.File;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Writer;
+import java.io.*;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Comparator;
@@ -127,6 +124,72 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      */
     <T extends Comparable<T>, C extends DataFrameColumn<T, C>> DataFrame addColumn(Class<C> type, String name, ColumnAppender<T> appender);
 
+
+
+    /**
+     * Adds a new {@link BooleanColumn} to the dataframe.
+     *
+     * @param name name of the column
+     * @return <tt>self</tt> for method chaining
+     */
+    DataFrame addBooleanColumn(String name);
+
+    /**
+     * Adds a new {@link ByteColumn} to the dataframe.
+     *
+     * @param name name of the column
+     * @return <tt>self</tt> for method chaining
+     */
+    DataFrame addByteColumn(String name);
+
+    /**
+     * Adds a new {@link DoubleColumn} to the dataframe.
+     *
+     * @param name name of the column
+     * @return <tt>self</tt> for method chaining
+     */
+    DataFrame addDoubleColumn(String name);
+
+    /**
+     * Adds a new {@link FloatColumn} to the dataframe.
+     *
+     * @param name name of the column
+     * @return <tt>self</tt> for method chaining
+     */
+    DataFrame addFloatColumn(String name);
+
+    /**
+     * Adds a new {@link IntegerColumn} to the dataframe.
+     *
+     * @param name name of the column
+     * @return <tt>self</tt> for method chaining
+     */
+    DataFrame addIntegerColumn(String name);
+
+    /**
+     * Adds a new {@link LongColumn} to the dataframe.
+     *
+     * @param name name of the column
+     * @return <tt>self</tt> for method chaining
+     */
+    DataFrame addLongColumn(String name);
+
+    /**
+     * Adds a new {@link ShortColumn} to the dataframe.
+     *
+     * @param name name of the column
+     * @return <tt>self</tt> for method chaining
+     */
+    DataFrame addShortColumn(String name);
+
+    /**
+     * Adds a new {@link StringColumn} to the dataframe.
+     *
+     * @param name name of the column
+     * @return <tt>self</tt> for method chaining
+     */
+    DataFrame addStringColumn(String name);
+
     /**
      * Adds a collection of columns to this data frame
      *
@@ -168,7 +231,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
 
     /**
      * Appends a new data row.
-
+     *
      * @param row row containing the new values
      * @return <tt>self</tt> for method chaining
      */
@@ -777,6 +840,15 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
 
 
     /**
+     * Creates a new {@link DefaultDataFrame} instance
+     *
+     * @return new dataframe
+     */
+    static DataFrame create() {
+        return new DefaultDataFrame();
+    }
+
+    /**
      * Loads a data frame from a file.
      * The matching data frame meta file must be present.
      * <code>file+'.dfm'</code>
@@ -840,6 +912,16 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      */
     static DataFrame load(InputStream is) {
         return DataFrameLoader.load(is);
+    }
+
+    /**
+     * Loads a data frame from a {@link Reader} using the default tab separated format ({@link de.unknownreality.dataframe.csv.TSVFormat}).
+     *
+     * @param reader input reader
+     * @return resulting dataframe
+     */
+    static DataFrame load(Reader reader) {
+        return DataFrameLoader.load(reader);
     }
 
 
@@ -918,6 +1000,18 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
 
 
     /**
+     * Loads a data frame from a {@link Reader} using a specified {@link ReadFormat}.
+     *
+     * @param reader     input stream
+     * @param readFormat read format
+     * @return resulting dataframe
+     */
+    static DataFrame load(Reader reader, ReadFormat readFormat) {
+        return DataFrameLoader.load(reader, readFormat);
+    }
+
+
+    /**
      * Loads a data frame from a file using a specified {@link DataReader}
      *
      * @param file   input file
@@ -989,6 +1083,18 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     static DataFrame load(InputStream is, DataReader reader) {
         return DataFrameLoader.load(is, reader);
     }
+
+    /**
+     * Loads a data frame from a {@link Reader} using a specified {@link DataReader}
+     *
+     * @param r      input reader
+     * @param reader data reader
+     * @return resulting dataframe
+     */
+    static DataFrame load(Reader r, DataReader reader) {
+        return DataFrameLoader.load(r, reader);
+    }
+
 
     /**
      * Loads a data frame from a {@link DataIterator}
@@ -1095,6 +1201,19 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     }
 
     /**
+     * Loads a data frame from a {@link Reader} using the CSV format ({@link de.unknownreality.dataframe.csv.CSVFormat}).
+     * The column separator can be specified. If the CSV contains no header, the columns are named V1, V2,...
+     *
+     * @param reader    input reader
+     * @param separator column separator
+     * @param header    specifies wether the csv contains a header or not
+     * @return resulting dataframe
+     */
+    static DataFrame fromCSV(Reader reader, char separator, boolean header) {
+        return DataFrameLoader.fromCSV(reader, separator, header);
+    }
+
+    /**
      * Loads a data frame from a file string using the CSV format ({@link de.unknownreality.dataframe.csv.CSVFormat}).
      * The column separator can be specified.
      * If the header starts with a certain prefix it can be specified, otherwise the prefix should be set to "" or null
@@ -1181,6 +1300,20 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      */
     static DataFrame fromCSV(InputStream is, char separator, String headerPrefix) {
         return DataFrameLoader.fromCSV(is, separator, headerPrefix);
+    }
+
+    /**
+     * Loads a data frame from a {@link Reader} using the CSV format ({@link de.unknownreality.dataframe.csv.CSVFormat}).
+     * The column separator can be specified.
+     * If the header starts with a certain prefix it can be specified, otherwise the prefix should be set to "" or null
+     *
+     * @param r            input reader
+     * @param separator    column separator
+     * @param headerPrefix header prefix
+     * @return resulting dataframe
+     */
+    static DataFrame fromCSV(Reader r, char separator, String headerPrefix) {
+        return DataFrameLoader.fromCSV(r, separator, headerPrefix);
     }
 
 
@@ -1274,7 +1407,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * Writes this dataframe to a file using the default write format ({@link DataFrameWriter#DEFAULT_WRITE_FORMAT}).
      * A meta file is written automatically.
      *
-     * @param file      target file
+     * @param file target file
      */
     default void write(File file) {
         DataFrameWriter.write(file, this);
@@ -1294,7 +1427,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     /**
      * Writes this dataframe to a {@link Writer} using the default write format ({@link DataFrameWriter#DEFAULT_WRITE_FORMAT}).
      *
-     * @param writer    target writer
+     * @param writer target writer
      */
     default void write(Writer writer) {
         DataFrameWriter.write(writer, this);
@@ -1415,7 +1548,6 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
 
     /**
      * Prints this dataframe to {@link System#out}  using the default print format ({@link DataFrameWriter#DEFAULT_WRITE_FORMAT}).
-     *
      */
     default void print() {
         DataFrameWriter.print(this);

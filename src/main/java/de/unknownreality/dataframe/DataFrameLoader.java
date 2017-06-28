@@ -32,6 +32,7 @@ import de.unknownreality.dataframe.meta.DataFrameMetaReader;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.Reader;
 import java.net.URL;
 
 /**
@@ -152,6 +153,23 @@ public class DataFrameLoader {
     }
 
     /**
+     * Loads a data frame from a {@link Reader} using the CSV format ({@link de.unknownreality.dataframe.csv.CSVFormat}).
+     * The column separator can be specified.
+     * If the header starts with a certain prefix it can be specified, otherwise the prefix should be set to "" or null
+     * @param r input reader
+     * @param  separator column separator
+     * @param headerPrefix header prefix
+     * @return resulting dataframe
+     */
+    public static DataFrame fromCSV(Reader r, char separator, String headerPrefix) {
+        return load(r, CSVReaderBuilder.create()
+                .withHeader(true)
+                .withSeparator(separator)
+                .withHeaderPrefix(headerPrefix)
+                .build());
+    }
+
+    /**
      * Loads a data frame from a file using the CSV format ({@link de.unknownreality.dataframe.csv.CSVFormat}).
      * The column separator can be specified. If the CSV contains no header, the columns are named V1, V2,...
      * @param file input file
@@ -247,6 +265,20 @@ public class DataFrameLoader {
                 .build());
     }
 
+    /**
+     * Loads a data frame from a {@link Reader} using the CSV format ({@link de.unknownreality.dataframe.csv.CSVFormat}).
+     * The column separator can be specified. If the CSV contains no header, the columns are named V1, V2,...
+     * @param r input reader
+     * @param  separator column separator
+     * @param header specifies wether the csv contains a header or not
+     * @return resulting dataframe
+     */
+    public static DataFrame fromCSV(Reader r, char separator, boolean header) {
+        return load(r, CSVReaderBuilder.create()
+                .withHeader(header)
+                .withSeparator(separator)
+                .build());
+    }
 
 
     /**
@@ -302,6 +334,16 @@ public class DataFrameLoader {
      */
     public static DataFrame load(InputStream is) {
         return load(is, DEFAULT_READ_FORMAT);
+    }
+
+    /**
+     * Loads a data frame from a {@link Reader} using the default tab separated format ({@link de.unknownreality.dataframe.csv.TSVFormat}).
+     *
+     * @param reader input reader
+     * @return resulting dataframe
+     */
+    public static DataFrame load(Reader reader) {
+        return load(reader, DEFAULT_READ_FORMAT);
     }
 
 
@@ -380,6 +422,18 @@ public class DataFrameLoader {
 
 
     /**
+     * Loads a data frame from a {@link Reader} using a specified {@link ReadFormat}.
+     *
+     * @param r         input reader
+     * @param readFormat read format
+     * @return resulting dataframe
+     */
+    public static DataFrame load(Reader r, ReadFormat readFormat) {
+        return load(r, readFormat.getReaderBuilder().build());
+    }
+
+
+    /**
      * Loads a data frame from a file using a specified {@link DataReader}
      *
      * @param file   input file
@@ -449,6 +503,17 @@ public class DataFrameLoader {
      */
     public static DataFrame load(InputStream is, DataReader reader) {
         return load(reader.load(is));
+    }
+
+    /**
+     * Loads a data frame from a {@link Reader} using a specified {@link DataReader}
+     *
+     * @param r     input reader
+     * @param reader data reader
+     * @return resulting dataframe
+     */
+    public static DataFrame load(Reader r, DataReader reader) {
+        return load(reader.load(r));
     }
 
     /**

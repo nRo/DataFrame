@@ -76,7 +76,7 @@ public class DefaultDataFrame implements DataFrame {
      * @inheritDoc
      */
     @Override
-    public DataFrame setPrimaryKey(String... colNames) {
+    public DefaultDataFrame setPrimaryKey(String... colNames) {
         DataFrameColumn[] columns = new DataFrameColumn[colNames.length];
         for (int i = 0; i < columns.length; i++) {
             columns[i] = getColumn(colNames[i]);
@@ -88,7 +88,7 @@ public class DefaultDataFrame implements DataFrame {
      * @inheritDoc
      */
     @Override
-    public DataFrame setPrimaryKey(DataFrameColumn... cols) {
+    public DefaultDataFrame setPrimaryKey(DataFrameColumn... cols) {
         this.indices.setPrimaryKey(cols);
         return this;
     }
@@ -97,7 +97,7 @@ public class DefaultDataFrame implements DataFrame {
      * @inheritDoc
      */
     @Override
-    public DataFrame removePrimaryKey() {
+    public DefaultDataFrame removePrimaryKey() {
         indices.removeIndex(Indices.PRIMARY_KEY_NAME);
         return this;
     }
@@ -106,7 +106,7 @@ public class DefaultDataFrame implements DataFrame {
      * @inheritDoc
      */
     @Override
-    public DataFrame removeIndex(String name) {
+    public DefaultDataFrame removeIndex(String name) {
         indices.removeIndex(name);
         return this;
     }
@@ -115,7 +115,7 @@ public class DefaultDataFrame implements DataFrame {
      * @inheritDoc
      */
     @Override
-    public DataFrame renameColumn(String name, String newName) {
+    public DefaultDataFrame renameColumn(String name, String newName) {
         DataFrameColumn column = columnsMap.get(name);
         if (column == null) {
             return this;
@@ -130,7 +130,7 @@ public class DefaultDataFrame implements DataFrame {
     /**
      * @inheritDoc
      */
-    public DataFrame replaceColumn(String existing, DataFrameColumn replacement) {
+    public DefaultDataFrame replaceColumn(String existing, DataFrameColumn replacement) {
         DataFrameColumn existingColumn = getColumn(existing);
         return replaceColumn(existingColumn, replacement);
     }
@@ -138,7 +138,7 @@ public class DefaultDataFrame implements DataFrame {
     /**
      * @inheritDoc
      */
-    public DataFrame replaceColumn(DataFrameColumn existing, DataFrameColumn replacement) {
+    public DefaultDataFrame replaceColumn(DataFrameColumn existing, DataFrameColumn replacement) {
         int existingIndex = header.getIndex(existing.getName());
         columnList.set(existingIndex, replacement);
         header.replace(existing, replacement);
@@ -153,7 +153,7 @@ public class DefaultDataFrame implements DataFrame {
      */
     @Override
     @SuppressWarnings("unchecked")
-    public DataFrame addColumn(DataFrameColumn column) {
+    public DefaultDataFrame addColumn(DataFrameColumn column) {
         if (!columnList.isEmpty() && column.size() != size) {
             throw new DataFrameRuntimeException("column lengths must be equal");
         }
@@ -176,89 +176,65 @@ public class DefaultDataFrame implements DataFrame {
 
 
     /**
-     * Adds a new {@link BooleanColumn} to the dataframe.
-     *
-     * @param name name of the column
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
-    public DataFrame addBooleanColumn(String name) {
+    public DefaultDataFrame addBooleanColumn(String name) {
         BooleanColumn column = new BooleanColumn(name);
         return addColumn(column);
     }
 
     /**
-     * Adds a new {@link ByteColumn} to the dataframe.
-     *
-     * @param name name of the column
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
-    public DataFrame addByteColumn(String name) {
+    public DefaultDataFrame addByteColumn(String name) {
         ByteColumn column = new ByteColumn(name);
         return addColumn(column);
     }
 
     /**
-     * Adds a new {@link DoubleColumn} to the dataframe.
-     *
-     * @param name name of the column
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
-    public DataFrame addDoubleColumn(String name) {
+    public DefaultDataFrame addDoubleColumn(String name) {
         DoubleColumn column = new DoubleColumn(name);
         return addColumn(column);
     }
 
     /**
-     * Adds a new {@link FloatColumn} to the dataframe.
-     *
-     * @param name name of the column
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
-    public DataFrame addFloatColumn(String name) {
+    public DefaultDataFrame addFloatColumn(String name) {
         FloatColumn column = new FloatColumn(name);
         return addColumn(column);
     }
 
     /**
-     * Adds a new {@link IntegerColumn} to the dataframe.
-     *
-     * @param name name of the column
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
-    public DataFrame addIntegerColumn(String name) {
+    public DefaultDataFrame addIntegerColumn(String name) {
         IntegerColumn column = new IntegerColumn(name);
         return addColumn(column);
     }
 
     /**
-     * Adds a new {@link LongColumn} to the dataframe.
-     *
-     * @param name name of the column
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
-    public DataFrame addLongColumn(String name) {
+    public DefaultDataFrame addLongColumn(String name) {
         LongColumn column = new LongColumn(name);
         return addColumn(column);
     }
 
     /**
-     * Adds a new {@link ShortColumn} to the dataframe.
-     *
-     * @param name name of the column
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
-    public DataFrame addShortColumn(String name) {
+    public DefaultDataFrame addShortColumn(String name) {
         ShortColumn column = new ShortColumn(name);
         return addColumn(column);
     }
 
     /**
-     * Adds a new {@link StringColumn} to the dataframe.
-     *
-     * @param name name of the column
-     * @return <tt>self</tt> for method chaining
+     * @inheritDoc
      */
-    public DataFrame addStringColumn(String name) {
+    public DefaultDataFrame addStringColumn(String name) {
         StringColumn column = new StringColumn(name);
         return addColumn(column);
     }
@@ -334,7 +310,7 @@ public class DefaultDataFrame implements DataFrame {
      */
 
     @Override
-    public DataFrame addColumns(Collection<DataFrameColumn> columns) {
+    public DefaultDataFrame addColumns(Collection<DataFrameColumn> columns) {
         for (DataFrameColumn column : columns) {
             addColumn(column);
         }
@@ -345,7 +321,7 @@ public class DefaultDataFrame implements DataFrame {
      * @inheritDoc
      */
     @Override
-    public DataFrame addColumns(DataFrameColumn... columns) {
+    public DefaultDataFrame addColumns(DataFrameColumn... columns) {
         for (DataFrameColumn column : columns) {
             addColumn(column);
         }
@@ -356,7 +332,7 @@ public class DefaultDataFrame implements DataFrame {
      * @inheritDoc If the wrong number of values or a wrong type is found a {@link DataFrameRuntimeException} is thrown.
      */
     @Override
-    public DataFrame append(Comparable... values) {
+    public DefaultDataFrame append(Comparable... values) {
         if (values.length != columnList.size()) {
             throw new DataFrameRuntimeException("value for each column required");
         }
@@ -394,7 +370,7 @@ public class DefaultDataFrame implements DataFrame {
      */
     @Override
     @SuppressWarnings("unchecked")
-    public DataFrame append(DataRow row) {
+    public DefaultDataFrame append(DataRow row) {
         for (String h : header) {
             DataFrameColumn column = columnsMap.get(h);
             column.startDataFrameAppend();
@@ -415,7 +391,7 @@ public class DefaultDataFrame implements DataFrame {
      * @inheritDoc
      */
     @Override
-    public DataFrame update(DataRow dataRow) {
+    public DefaultDataFrame update(DataRow dataRow) {
         for (String h : header) {
             DataFrameColumn column = getColumn(h);
             Comparable newValue = dataRow.get(h);
@@ -435,7 +411,7 @@ public class DefaultDataFrame implements DataFrame {
      * @inheritDoc
      */
     @Override
-    public DataFrame set(Collection<DataRow> rows) {
+    public DefaultDataFrame set(Collection<DataRow> rows) {
         this.size = 0;
         this.indices.clearValues();
         for (DataFrameColumn column : columnsMap.values()) {
@@ -451,14 +427,14 @@ public class DefaultDataFrame implements DataFrame {
      * @inheritDoc
      */
     @Override
-    public DataFrame set(DataFrameHeader header, Collection<DataRow> rows) {
+    public DefaultDataFrame set(DataFrameHeader header, Collection<DataRow> rows) {
         return set(header, rows, null);
     }
 
     /**
      * @inheritDoc
      */
-    protected DataFrame set(DataFrameHeader header, Collection<DataRow> rows, Indices indices) {
+    protected DefaultDataFrame set(DataFrameHeader header, Collection<DataRow> rows, Indices indices) {
         this.header = header;
         this.columnsMap.clear();
         this.columnList.clear();
@@ -489,7 +465,7 @@ public class DefaultDataFrame implements DataFrame {
      * @inheritDoc
      */
     @Override
-    public DataFrame removeColumn(String header) {
+    public DefaultDataFrame removeColumn(String header) {
         DataFrameColumn column = getColumn(header);
         if (column == null) {
             log.error("error column not found {}", header);
@@ -502,7 +478,7 @@ public class DefaultDataFrame implements DataFrame {
      * @inheritDoc
      */
     @Override
-    public DataFrame removeColumn(DataFrameColumn column) {
+    public DefaultDataFrame removeColumn(DataFrameColumn column) {
         try {
             column.setDataFrame(null);
         } catch (DataFrameException e) {
@@ -521,7 +497,7 @@ public class DefaultDataFrame implements DataFrame {
      * @inheritDoc
      */
     @Override
-    public DataFrame sort(SortColumn... columns) {
+    public DefaultDataFrame sort(SortColumn... columns) {
         List<DataRow> rows = getRows(0, size);
         Collections.sort(rows, new RowColumnComparator(columns));
         set(rows);
@@ -532,7 +508,7 @@ public class DefaultDataFrame implements DataFrame {
      * @inheritDoc
      */
     @Override
-    public DataFrame sort(Comparator<DataRow> comp) {
+    public DefaultDataFrame sort(Comparator<DataRow> comp) {
         List<DataRow> rows = getRows(0, size);
         Collections.sort(rows, comp);
         set(rows);
@@ -543,7 +519,7 @@ public class DefaultDataFrame implements DataFrame {
      * @inheritDoc
      */
     @Override
-    public DataFrame sort(String name) {
+    public DefaultDataFrame sort(String name) {
         return sort(name, SortColumn.Direction.Ascending);
     }
 
@@ -551,7 +527,7 @@ public class DefaultDataFrame implements DataFrame {
      * @inheritDoc
      */
     @Override
-    public DataFrame sort(String name, SortColumn.Direction dir) {
+    public DefaultDataFrame sort(String name, SortColumn.Direction dir) {
         List<DataRow> rows = getRows(0, size);
         Collections.sort(rows, new RowColumnComparator(new SortColumn[]{new SortColumn(name, dir)}));
         set(rows);
@@ -563,7 +539,7 @@ public class DefaultDataFrame implements DataFrame {
      * @inheritDoc
      */
     @Override
-    public DataFrame shuffle() {
+    public DefaultDataFrame shuffle() {
         List<DataRow> rows = getRows(0, size);
         Collections.shuffle(rows);
         set(rows);
@@ -575,7 +551,7 @@ public class DefaultDataFrame implements DataFrame {
      * @inheritDoc
      */
     @Override
-    public DataFrame select(String colName, Comparable value) {
+    public DefaultDataFrame select(String colName, Comparable value) {
         return select(FilterPredicate.eq(colName, value));
     }
 
@@ -615,7 +591,7 @@ public class DefaultDataFrame implements DataFrame {
      * @inheritDoc
      */
     @Override
-    public DataFrame select(FilterPredicate predicate) {
+    public DefaultDataFrame select(FilterPredicate predicate) {
         List<DataRow> rows = selectRows(predicate);
         DefaultDataFrame df = new DefaultDataFrame();
         df.set(header.copy(), rows, indices);
@@ -627,7 +603,7 @@ public class DefaultDataFrame implements DataFrame {
      * @inheritDoc
      */
     @Override
-    public DataFrame select(String predicateString) {
+    public DefaultDataFrame select(String predicateString) {
         return select(PredicateCompiler.compile(predicateString));
     }
 
@@ -636,7 +612,7 @@ public class DefaultDataFrame implements DataFrame {
      * @inheritDoc
      */
     @Override
-    public DataFrame filter(String predicateString) {
+    public DefaultDataFrame filter(String predicateString) {
         filter(FilterPredicate.compile(predicateString));
         return this;
     }
@@ -645,7 +621,7 @@ public class DefaultDataFrame implements DataFrame {
      * @inheritDoc
      */
     @Override
-    public DataFrame filter(FilterPredicate predicate) {
+    public DefaultDataFrame filter(FilterPredicate predicate) {
         set(selectRows(predicate));
         return this;
     }
@@ -678,7 +654,7 @@ public class DefaultDataFrame implements DataFrame {
      * @inheritDoc
      */
     @Override
-    public DataFrame transform(DataFrameTransform transformer) {
+    public DefaultDataFrame transform(DataFrameTransform transformer) {
         return transformer.transform(this);
     }
 
@@ -698,7 +674,7 @@ public class DefaultDataFrame implements DataFrame {
      * @inheritDoc
      */
     @Override
-    public DataFrame reverse() {
+    public DefaultDataFrame reverse() {
         for (DataFrameColumn col : columnList) {
             col.doReverse();
         }
@@ -709,7 +685,7 @@ public class DefaultDataFrame implements DataFrame {
      * @inheritDoc
      */
     @Override
-    public DataFrame addIndex(String indexName, String... columnNames) {
+    public DefaultDataFrame addIndex(String indexName, String... columnNames) {
         DataFrameColumn[] columns = new DataFrameColumn[columnNames.length];
         for (int i = 0; i < columns.length; i++) {
             columns[i] = getColumn(columnNames[i]);
@@ -722,7 +698,7 @@ public class DefaultDataFrame implements DataFrame {
      * @inheritDoc
      */
     @Override
-    public DataFrame addIndex(String indexName, DataFrameColumn... columns) {
+    public DefaultDataFrame addIndex(String indexName, DataFrameColumn... columns) {
         indices.addIndex(indexName, columns);
         return this;
     }
@@ -740,7 +716,7 @@ public class DefaultDataFrame implements DataFrame {
      * @inheritDoc
      */
     @Override
-    public DataFrame subset(int from, int to) {
+    public DefaultDataFrame subset(int from, int to) {
         set(getRows(from, to));
         return this;
     }
@@ -749,7 +725,7 @@ public class DefaultDataFrame implements DataFrame {
      * @inheritDoc
      */
     @Override
-    public DataFrame createSubset(int from, int to) {
+    public DefaultDataFrame createSubset(int from, int to) {
         DefaultDataFrame newFrame = new DefaultDataFrame();
         newFrame.set(header.copy(), getRows(from, to), indices);
         return newFrame;
@@ -788,7 +764,7 @@ public class DefaultDataFrame implements DataFrame {
      * @inheritDoc
      */
     @Override
-    public DataFrame concat(DataFrame other) {
+    public DefaultDataFrame concat(DataFrame other) {
         if (!header.equals(other.getHeader())) {
             throw new DataFrameRuntimeException("data frames not compatible");
         }
@@ -802,7 +778,7 @@ public class DefaultDataFrame implements DataFrame {
      * @inheritDoc
      */
     @Override
-    public DataFrame concat(Collection<DataFrame> dataFrames) {
+    public DefaultDataFrame concat(Collection<DataFrame> dataFrames) {
         for (DataFrame dataFrame : dataFrames) {
             if (!header.equals(dataFrame.getHeader())) {
                 throw new DataFrameRuntimeException("data frames not compatible");
@@ -818,7 +794,7 @@ public class DefaultDataFrame implements DataFrame {
      * @inheritDoc
      */
     @Override
-    public DataFrame concat(DataFrame... dataFrames) {
+    public DefaultDataFrame concat(DataFrame... dataFrames) {
         return concat(Arrays.asList(dataFrames));
     }
 
@@ -1060,7 +1036,7 @@ public class DefaultDataFrame implements DataFrame {
      * @inheritDoc
      */
     @Override
-    public DataFrame copy() {
+    public DefaultDataFrame copy() {
         List<DataRow> rows = getRows(0, size);
         DefaultDataFrame copy = new DefaultDataFrame();
         copy.set(header.copy(), rows, indices);
