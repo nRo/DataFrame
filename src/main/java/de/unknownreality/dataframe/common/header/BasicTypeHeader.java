@@ -47,6 +47,7 @@ public abstract class BasicTypeHeader<T> implements Header<T> {
     /**
      * Adds a new data frame column to this header
      *
+     * @param headerName name of the added column
      * @param column new data frame column
      * @return <tt>self</tt> for method chaining
      */
@@ -94,7 +95,7 @@ public abstract class BasicTypeHeader<T> implements Header<T> {
      * Replaces an existing header with a new one.
      *
      * @param existing  existing column name
-     * @param existing  replacement column name
+     * @param replacement  replacement column name
      * @param colClass replacement column class
      * @param type     replacement column value type
      * @return <tt>self</tt> for method chaining

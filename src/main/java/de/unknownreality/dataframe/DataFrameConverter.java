@@ -70,6 +70,7 @@ public class DataFrameConverter {
      * Column information specified by the dataIterator is used.
      * Only rows validated by the filter are appended to the resulting data frame
      *
+     * @param <R> row type
      * @param dataIterator    parent data container
      * @param filterPredicate row filter
      * @return created data frame
@@ -83,7 +84,7 @@ public class DataFrameConverter {
      * The required column information is provided by a column information object.
      * If no column information is defined, the one specified by the dataIterator is used.
      * Only rows validated by the filter are appended to the resulting data frame
-     *
+     * @param <R> row type
      * @param dataIterator       parent data container
      * @param columnsInformation column information
      * @param filterPredicate    row filter
@@ -262,6 +263,7 @@ public class DataFrameConverter {
      * Keys in this map are name of the column in the parent data container.
      * Values are the corresponding data frame columns.
      *
+     * @param <R> row type
      * @param dataIterator parent data container
      * @return created data frame
      */

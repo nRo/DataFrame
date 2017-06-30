@@ -53,6 +53,7 @@ public class StringUtil {
      *
      * @param input input string
      * @param split char used to split
+     * @return string array containing all splitted parts
      */
     public static String[] splitQuoted(String input, Character split) {
         List<String> parts = new ArrayList<>();
@@ -69,6 +70,7 @@ public class StringUtil {
      *
      * @param input input string
      * @param split char used to split
+     * @param parts string array that is filled with the resulting parts
      */
     public static void splitQuoted(String input, Character split, String[] parts) {
         splitQuoted(input, split, new ArrayParts(parts));

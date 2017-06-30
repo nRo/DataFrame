@@ -216,7 +216,6 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * <p>There must be <b>exactly one value for each column</b>.</p>
      * <p><b>The object types have to match the column types</b>.</p>
      * If the wrong number of values or a wrong type is found a {@link DataFrameRuntimeException} is thrown.
-     * <p>
      * <p>If the data frame contains:<br>
      * <code>StringColumn,DoubleColumn,IntegerColumn</code><br>
      * The only correct call to this method is:<br>
@@ -576,7 +575,8 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
 
     /**
      * Returns a column based on its name
-     *
+     * @param <T> value type of the column
+     * @param <C> column type
      * @param name column name
      * @return column
      */
@@ -596,7 +596,8 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     /**
      * Returns a {@link NumberColumn}
      * If the column is not found or has the wrong type a {@link DataFrameRuntimeException} is thrown.
-     *
+     * @param <T> value type of the column
+     * @param <C> column type
      * @param name column name
      * @return found column
      */

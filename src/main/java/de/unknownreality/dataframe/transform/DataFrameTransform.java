@@ -32,6 +32,8 @@ import de.unknownreality.dataframe.DefaultDataFrame;
 public interface DataFrameTransform {
     /**
      * Transforms an input dataframe into a new data frame
+     *
+     * @param <D> DataFrame type
      * @param source input dataframe
      * @return resulting dataframe
      */
