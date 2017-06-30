@@ -33,20 +33,22 @@ import java.util.*;
 /**
  * Created by Alex on 27.05.2016.
  */
-public class TreeIndex implements Index{
+public class TreeIndex implements Index {
     private final Map<Integer, TreeNode> indexNodeMap = new HashMap<>();
     private TreeNode root = new TreeNode(null, null);
 
     private final Map<DataFrameColumn, Integer> columnIndexMap = new LinkedHashMap<>();
     private final String name;
     private boolean unique = false;
+
     /**
      * Creates a multi index using more that one column
      *
      * @param indexName name of index
+     * @param unique    defines whether this index only allows unique values
      * @param columns   index columns
      */
-    protected TreeIndex(String indexName,boolean unique, DataFrameColumn... columns) {
+    protected TreeIndex(String indexName, boolean unique, DataFrameColumn... columns) {
         int i = 0;
         for (DataFrameColumn column : columns) {
             columnIndexMap.put(column, i++);
@@ -55,8 +57,8 @@ public class TreeIndex implements Index{
         this.unique = unique;
     }
 
-    protected TreeIndex(String indexName,DataFrameColumn... columns) {
-        this(indexName,false,columns);
+    protected TreeIndex(String indexName, DataFrameColumn... columns) {
+        this(indexName, false, columns);
     }
 
     @Override
@@ -86,13 +88,13 @@ public class TreeIndex implements Index{
     }
 
     @Override
-    public void replaceColumn(DataFrameColumn existing, DataFrameColumn replacement){
+    public void replaceColumn(DataFrameColumn existing, DataFrameColumn replacement) {
         Integer index = columnIndexMap.get(existing);
-        if(index == null){
-            throw new DataFrameRuntimeException(String.format("column not found: %s",existing.getName()));
+        if (index == null) {
+            throw new DataFrameRuntimeException(String.format("column not found: %s", existing.getName()));
         }
         columnIndexMap.remove(existing);
-        columnIndexMap.put(replacement,index);
+        columnIndexMap.put(replacement, index);
     }
 
     @Override
@@ -109,10 +111,10 @@ public class TreeIndex implements Index{
 
     private void addRec(TreeNode node, int index, Comparable[] values, Integer rowIndex) {
         if (index == values.length) {
-            if(unique && node.hasIndices()){
+            if (unique && node.hasIndices()) {
                 throw new DataFrameRuntimeException(String.format("error adding row to index: duplicated values found '%s'", Arrays.toString(values)));
             }
-            indexNodeMap.put(rowIndex,node);
+            indexNodeMap.put(rowIndex, node);
             node.addIndex(rowIndex);
             return;
         }

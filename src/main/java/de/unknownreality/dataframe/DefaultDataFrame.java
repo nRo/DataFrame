@@ -72,9 +72,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DefaultDataFrame setPrimaryKey(String... colNames) {
         DataFrameColumn[] columns = new DataFrameColumn[colNames.length];
@@ -84,36 +82,28 @@ public class DefaultDataFrame implements DataFrame {
         return setPrimaryKey(columns);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DefaultDataFrame setPrimaryKey(DataFrameColumn... cols) {
         this.indices.setPrimaryKey(cols);
         return this;
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DefaultDataFrame removePrimaryKey() {
         indices.removeIndex(Indices.PRIMARY_KEY_NAME);
         return this;
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DefaultDataFrame removeIndex(String name) {
         indices.removeIndex(name);
         return this;
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DefaultDataFrame renameColumn(String name, String newName) {
         DataFrameColumn column = columnsMap.get(name);
@@ -127,17 +117,13 @@ public class DefaultDataFrame implements DataFrame {
         return this;
     }
 
-    /**
-     * @inheritDoc
-     */
+
     public DefaultDataFrame replaceColumn(String existing, DataFrameColumn replacement) {
         DataFrameColumn existingColumn = getColumn(existing);
         return replaceColumn(existingColumn, replacement);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     public DefaultDataFrame replaceColumn(DataFrameColumn existing, DataFrameColumn replacement) {
         int existingIndex = header.getIndex(existing.getName());
         columnList.set(existingIndex, replacement);
@@ -148,9 +134,7 @@ public class DefaultDataFrame implements DataFrame {
         return this;
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     @SuppressWarnings("unchecked")
     public DefaultDataFrame addColumn(DataFrameColumn column) {
@@ -175,92 +159,70 @@ public class DefaultDataFrame implements DataFrame {
     }
 
 
-    /**
-     * @inheritDoc
-     */
+
     public DefaultDataFrame addBooleanColumn(String name) {
         BooleanColumn column = new BooleanColumn(name);
         return addColumn(column);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     public DefaultDataFrame addByteColumn(String name) {
         ByteColumn column = new ByteColumn(name);
         return addColumn(column);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     public DefaultDataFrame addDoubleColumn(String name) {
         DoubleColumn column = new DoubleColumn(name);
         return addColumn(column);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     public DefaultDataFrame addFloatColumn(String name) {
         FloatColumn column = new FloatColumn(name);
         return addColumn(column);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     public DefaultDataFrame addIntegerColumn(String name) {
         IntegerColumn column = new IntegerColumn(name);
         return addColumn(column);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     public DefaultDataFrame addLongColumn(String name) {
         LongColumn column = new LongColumn(name);
         return addColumn(column);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     public DefaultDataFrame addShortColumn(String name) {
         ShortColumn column = new ShortColumn(name);
         return addColumn(column);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     public DefaultDataFrame addStringColumn(String name) {
         StringColumn column = new StringColumn(name);
         return addColumn(column);
     }
 
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public <T extends Comparable<T>> DataFrame addColumn(Class<T> type, String name) {
         return addColumn(type, name, ColumnTypeMap.create());
     }
 
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     @SuppressWarnings("unchecked")
     public <T extends Comparable<T>> DataFrame addColumn(Class<T> type, String name, ColumnTypeMap columnTypeMap) {
         return addColumn(type, name, columnTypeMap, null);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public <T extends Comparable<T>, C extends DataFrameColumn<T, C>> DataFrame addColumn(Class<T> type, String name, ColumnTypeMap columnTypeMap, ColumnAppender<T> appender) {
         Class<C> columnType = columnTypeMap.getColumnType(type);
@@ -272,7 +234,8 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * @inheritDoc If no column appender is specified, the column is filled with {@link Values#NA NA} values.
+     * {@inheritDoc}
+     * If no column appender is specified, the column is filled with {@link Values#NA NA} values.
      * If the column can not be created or added a {@link DataFrameRuntimeException} is thrown.
      */
     @Override
@@ -305,9 +268,7 @@ public class DefaultDataFrame implements DataFrame {
         return this;
     }
 
-    /**
-     * @inheritDoc
-     */
+
 
     @Override
     public DefaultDataFrame addColumns(Collection<DataFrameColumn> columns) {
@@ -317,9 +278,7 @@ public class DefaultDataFrame implements DataFrame {
         return this;
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DefaultDataFrame addColumns(DataFrameColumn... columns) {
         for (DataFrameColumn column : columns) {
@@ -329,7 +288,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     /**
-     * @inheritDoc If the wrong number of values or a wrong type is found a {@link DataFrameRuntimeException} is thrown.
+     * {@inheritDoc} If the wrong number of values or a wrong type is found a {@link DataFrameRuntimeException} is thrown.
      */
     @Override
     public DefaultDataFrame append(Comparable... values) {
@@ -366,7 +325,7 @@ public class DefaultDataFrame implements DataFrame {
     /**
      * @param row row containing the new values
      * @return <tt>self</tt> for method chaining
-     * @inheritDoc {@link Values#NA NA} is added for all columns with no value in the provided row.
+     * {@inheritDoc} {@link Values#NA NA} is added for all columns with no value in the provided row.
      */
     @Override
     @SuppressWarnings("unchecked")
@@ -387,9 +346,7 @@ public class DefaultDataFrame implements DataFrame {
         return this;
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DefaultDataFrame update(DataRow dataRow) {
         for (String h : header) {
@@ -407,9 +364,7 @@ public class DefaultDataFrame implements DataFrame {
         return this;
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DefaultDataFrame set(Collection<DataRow> rows) {
         this.size = 0;
@@ -423,17 +378,13 @@ public class DefaultDataFrame implements DataFrame {
         return this;
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DefaultDataFrame set(DataFrameHeader header, Collection<DataRow> rows) {
         return set(header, rows, null);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     protected DefaultDataFrame set(DataFrameHeader header, Collection<DataRow> rows, Indices indices) {
         this.header = header;
         this.columnsMap.clear();
@@ -461,9 +412,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DefaultDataFrame removeColumn(String header) {
         DataFrameColumn column = getColumn(header);
@@ -474,9 +423,7 @@ public class DefaultDataFrame implements DataFrame {
         return removeColumn(column);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DefaultDataFrame removeColumn(DataFrameColumn column) {
         try {
@@ -493,9 +440,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DefaultDataFrame sort(SortColumn... columns) {
         List<DataRow> rows = getRows(0, size);
@@ -504,9 +449,7 @@ public class DefaultDataFrame implements DataFrame {
         return this;
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DefaultDataFrame sort(Comparator<DataRow> comp) {
         List<DataRow> rows = getRows(0, size);
@@ -515,17 +458,13 @@ public class DefaultDataFrame implements DataFrame {
         return this;
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DefaultDataFrame sort(String name) {
         return sort(name, SortColumn.Direction.Ascending);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DefaultDataFrame sort(String name, SortColumn.Direction dir) {
         List<DataRow> rows = getRows(0, size);
@@ -535,9 +474,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DefaultDataFrame shuffle() {
         List<DataRow> rows = getRows(0, size);
@@ -547,35 +484,27 @@ public class DefaultDataFrame implements DataFrame {
     }
 
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DefaultDataFrame select(String colName, Comparable value) {
         return select(FilterPredicate.eq(colName, value));
     }
 
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DataRow selectFirst(String colName, Comparable value) {
         return selectFirst(FilterPredicate.eq(colName, value));
     }
 
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DataRow selectFirst(String predicateString) {
         return selectFirst(FilterPredicate.compile(predicateString));
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DataRow selectFirst(FilterPredicate predicate) {
         for (DataRow row : this) {
@@ -587,9 +516,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DefaultDataFrame select(FilterPredicate predicate) {
         List<DataRow> rows = selectRows(predicate);
@@ -599,27 +526,21 @@ public class DefaultDataFrame implements DataFrame {
     }
 
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DefaultDataFrame select(String predicateString) {
         return select(PredicateCompiler.compile(predicateString));
     }
 
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DefaultDataFrame filter(String predicateString) {
         filter(FilterPredicate.compile(predicateString));
         return this;
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DefaultDataFrame filter(FilterPredicate predicate) {
         set(selectRows(predicate));
@@ -627,17 +548,13 @@ public class DefaultDataFrame implements DataFrame {
     }
 
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public List<DataRow> selectRows(String predicateString) {
         return selectRows(FilterPredicate.compile(predicateString));
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public List<DataRow> selectRows(FilterPredicate predicate) {
         List<DataRow> rows = new ArrayList<>();
@@ -650,17 +567,13 @@ public class DefaultDataFrame implements DataFrame {
     }
 
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DefaultDataFrame transform(DataFrameTransform transformer) {
         return transformer.transform(this);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DataRow findByPrimaryKey(Comparable... keyValues) {
         Integer index = this.indices.findByPrimaryKey(keyValues);
@@ -670,9 +583,7 @@ public class DefaultDataFrame implements DataFrame {
         return getRow(index);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DefaultDataFrame reverse() {
         for (DataFrameColumn col : columnList) {
@@ -681,9 +592,7 @@ public class DefaultDataFrame implements DataFrame {
         return this;
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DefaultDataFrame addIndex(String indexName, String... columnNames) {
         DataFrameColumn[] columns = new DataFrameColumn[columnNames.length];
@@ -694,36 +603,28 @@ public class DefaultDataFrame implements DataFrame {
         return addIndex(indexName, columns);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DefaultDataFrame addIndex(String indexName, DataFrameColumn... columns) {
         indices.addIndex(indexName, columns);
         return this;
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public int size() {
         return size;
     }
 
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DefaultDataFrame subset(int from, int to) {
         set(getRows(from, to));
         return this;
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DefaultDataFrame createSubset(int from, int to) {
         DefaultDataFrame newFrame = new DefaultDataFrame();
@@ -731,9 +632,7 @@ public class DefaultDataFrame implements DataFrame {
         return newFrame;
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public List<DataRow> getRows(int from, int to) {
         List<DataRow> rows = new ArrayList<>();
@@ -743,26 +642,20 @@ public class DefaultDataFrame implements DataFrame {
         return rows;
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public List<DataRow> getRows() {
         return getRows(0, size);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DataFrameHeader getHeader() {
         return header;
     }
 
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DefaultDataFrame concat(DataFrame other) {
         if (!header.equals(other.getHeader())) {
@@ -774,9 +667,7 @@ public class DefaultDataFrame implements DataFrame {
         return this;
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DefaultDataFrame concat(Collection<DataFrame> dataFrames) {
         for (DataFrame dataFrame : dataFrames) {
@@ -790,33 +681,25 @@ public class DefaultDataFrame implements DataFrame {
         return this;
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DefaultDataFrame concat(DataFrame... dataFrames) {
         return concat(Arrays.asList(dataFrames));
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public boolean isCompatible(DataFrame input) {
         return header.equals(input.getHeader());
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DataRow getRow(int i) {
         return new DataRow(header, getRowValues(i), i);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public Comparable[] getRowValues(int i) {
         if (i >= size) {
@@ -834,26 +717,20 @@ public class DefaultDataFrame implements DataFrame {
         return values;
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public Collection<String> getColumnNames() {
         return new ArrayList<>(columnsMap.keySet());
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @SuppressWarnings("unchecked")
     @Override
     public <T extends Comparable<T>, C extends DataFrameColumn<T, C>> DataFrameColumn<T, C> getColumn(String name) {
         return columnsMap.get(name);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public <T extends DataFrameColumn> T getColumn(String name, Class<T> cl) {
         DataFrameColumn column = columnsMap.get(name);
@@ -866,91 +743,69 @@ public class DefaultDataFrame implements DataFrame {
         return cl.cast(column);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @SuppressWarnings("unchecked")
     @Override
     public <T extends Number & Comparable<T>, C extends NumberColumn<T, C>> NumberColumn<T, C> getNumberColumn(String name) {
         return getColumn(name, NumberColumn.class);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public StringColumn getStringColumn(String name) {
         return getColumn(name, StringColumn.class);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DoubleColumn getDoubleColumn(String name) {
         return getColumn(name, DoubleColumn.class);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public IntegerColumn getIntegerColumn(String name) {
         return getColumn(name, IntegerColumn.class);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public FloatColumn getFloatColumn(String name) {
         return getColumn(name, FloatColumn.class);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public BooleanColumn getBooleanColumn(String name) {
         return getColumn(name, BooleanColumn.class);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public ByteColumn getByteColumn(String name) {
         return getColumn(name, ByteColumn.class);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public LongColumn getLongColumn(String name) {
         return getColumn(name, LongColumn.class);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public ShortColumn getShortColumn(String name) {
         return getColumn(name, ShortColumn.class);
     }
 
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DataGrouping groupBy(String... column) {
         return groupUtil.groupBy(this, column);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public JoinedDataFrame joinLeft(DataFrame dataFrame, String... joinColumns) {
         JoinColumn[] joinColumnsArray = new JoinColumn[joinColumns.length];
@@ -960,25 +815,19 @@ public class DefaultDataFrame implements DataFrame {
         return joinLeft(dataFrame, joinColumnsArray);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public JoinedDataFrame joinLeft(DataFrame dataFrame, JoinColumn... joinColumns) {
         return joinUtil.leftJoin(this, dataFrame, joinColumns);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public JoinedDataFrame joinLeft(DataFrame dataFrame, String suffixA, String suffixB, JoinColumn... joinColumns) {
         return joinUtil.leftJoin(this, dataFrame, suffixA, suffixB, joinColumns);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public JoinedDataFrame joinRight(DataFrame dataFrame, String... joinColumns) {
         JoinColumn[] joinColumnsArray = new JoinColumn[joinColumns.length];
@@ -988,25 +837,19 @@ public class DefaultDataFrame implements DataFrame {
         return joinRight(dataFrame, joinColumnsArray);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public JoinedDataFrame joinRight(DataFrame dataFrame, JoinColumn... joinColumns) {
         return joinUtil.rightJoin(this, dataFrame, joinColumns);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public JoinedDataFrame joinRight(DataFrame dataFrame, String suffixA, String suffixB, JoinColumn... joinColumns) {
         return joinUtil.rightJoin(this, dataFrame, suffixA, suffixB, joinColumns);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public JoinedDataFrame joinInner(DataFrame dataFrame, String... joinColumns) {
         JoinColumn[] joinColumnsArray = new JoinColumn[joinColumns.length];
@@ -1016,25 +859,19 @@ public class DefaultDataFrame implements DataFrame {
         return joinInner(dataFrame, joinColumnsArray);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public JoinedDataFrame joinInner(DataFrame dataFrame, JoinColumn... joinColumns) {
         return joinUtil.innerJoin(this, dataFrame, joinColumns);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public JoinedDataFrame joinInner(DataFrame dataFrame, String suffixA, String suffixB, JoinColumn... joinColumns) {
         return joinUtil.innerJoin(this, dataFrame, suffixA, suffixB, joinColumns);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DefaultDataFrame copy() {
         List<DataRow> rows = getRows(0, size);
@@ -1043,43 +880,33 @@ public class DefaultDataFrame implements DataFrame {
         return copy;
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public boolean containsColumn(DataFrameColumn column) {
         return this.columnList.contains(column);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     protected void notifyColumnValueChanged(DataFrameColumn column, int index, Comparable value) {
         if (indices.isIndexColumn(column)) {
             indices.updateValue(column, getRow(index));
         }
     }
 
-    /**
-     * @inheritDoc
-     */
+
     protected void notifyColumnChanged(DataFrameColumn column) {
         if (indices.isIndexColumn(column)) {
             indices.updateColumn(column);
         }
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public boolean isIndexColumn(DataFrameColumn column) {
         return indices.isIndexColumn(column);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public List<DataRow> findByIndex(String name, Comparable... values) {
         Collection<Integer> rowIndices = indices.find(name, values);
@@ -1093,18 +920,14 @@ public class DefaultDataFrame implements DataFrame {
         return new ArrayList<>(0);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public DataRow findFirstByIndex(String name, Comparable... values) {
         Integer idx = indices.findFirst(name, values);
         return idx == null ? null : getRow(idx);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public Collection<DataFrameColumn> getColumns() {
         return columnList;
@@ -1115,9 +938,7 @@ public class DefaultDataFrame implements DataFrame {
         return this;
     }
 
-    /**
-     * @inheritDoc
-     */
+
     protected Indices getIndices() {
         return indices;
     }
@@ -1143,9 +964,7 @@ public class DefaultDataFrame implements DataFrame {
         return DataMapper.map(this, cl);
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     public Iterator<DataRow> iterator() {
         return new Iterator<DataRow>() {

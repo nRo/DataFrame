@@ -36,9 +36,13 @@ public class StringColumnConverter {
     /**
      * Converts a StringColumn to a other column type by parsing all values
      *
+     * @param <V> value type of resulting column
+     * @param <C> type of resulting column
      * @param column  original column
      * @param colType target column type
-     * @return
+     * @return resulting converted column
+     *
+     * @throws DataFrameException thrown if conversion not possible
      */
     public static <V extends Comparable<V>, C extends DataFrameColumn<V, C>> C convert(StringColumn column, Class<C> colType) throws DataFrameException {
         if (colType == StringColumn.class) {

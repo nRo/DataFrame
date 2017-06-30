@@ -24,7 +24,7 @@ Add this to you pom.xml
     <dependency>
         <groupId>de.unknownreality</groupId>
         <artifactId>dataframe</artifactId>
-        <version>0.7</version>
+        <version>0.6.1</version>
     </dependency>
 ...
 </dependencies>
@@ -65,7 +65,7 @@ Some existing methods have beed removed.
 - Data grouping has been refactored and aggregation functions can now be applied to data groupings.
 In general, data groupings can now be used like normal DataFrames.
 
-- This library now requires Java 8.
+- Java 8 is now required.
 
 Usage
 -----

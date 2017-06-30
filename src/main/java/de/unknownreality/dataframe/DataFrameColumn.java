@@ -329,7 +329,7 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
     /**
      * A new value is appended at the end of this column using {@link #doAppend(Comparable)}.
      * <p>Calls{@link #validateAppend()} to ensure data frame index consistency</p>
-     *
+     * @param <H> header value type
      * @param row row containing the value
      * @param headerName headerName of the value within the row
      * @return <tt>true</tt> if the value is successfully appended
