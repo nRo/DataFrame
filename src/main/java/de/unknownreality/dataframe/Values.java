@@ -39,11 +39,18 @@ public class Values {
     private Values(){}
 
 
-
+    /**
+     * Representation for 'not available'.
+     * Null values in a row are returned as <tt>NA</tt>
+     */
     public static class NA implements Comparable {
 
 
-
+        /**
+         * checks whether the input object is of type NA.
+         * @param o input object
+         * @return true if the object is of type NA
+         */
         public boolean isNA(Object o){
             if(o == null){
                 return false;
@@ -60,6 +67,12 @@ public class Values {
 
         }
 
+        /**
+         * Compares NA to other objects.
+         * Result is always -1 if the other object is not NA
+         * @param o other object
+         * @return 0 or -1  (if the other object is not NA)
+         */
         @Override
         public int compareTo(Object o) {
             if (o == this) {
