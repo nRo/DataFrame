@@ -25,6 +25,7 @@
 package de.unknownreality.dataframe.common;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -97,13 +98,16 @@ public class StringUtil {
         String p;
         boolean startOrSplit = true;
         boolean partQuoted = false;
+        boolean containsEscapeChar = false;
         for (int i = 0; i < chars.length; i++) {
             c = chars[i];
             boolean escape = escapeNext;
             escapeNext = false;
             if (!escape && c == '\\') {
+                chars[i] = Character.MIN_VALUE;
                 escapeNext = true;
-            } else if (c == '\'') {
+                containsEscapeChar = true;
+            } else if (!escape && c == '\'') {
                 if (inQuotation && !escape) {
                     inQuotation = false;
                     partQuoted = true;
@@ -111,9 +115,10 @@ public class StringUtil {
                 }
                 if (!inDoubleQuotation && startOrSplit) {
                     inQuotation = true;
+                    currentStart++;
                 }
                 startOrSplit = false;
-            } else if (c == '\"') {
+            } else if (!escape && c == '\"') {
                 if (inDoubleQuotation && !escape) {
                     inDoubleQuotation = false;
                     partQuoted = true;
@@ -124,7 +129,7 @@ public class StringUtil {
                     currentStart++;
                 }
                 startOrSplit = false;
-            } else if (c == split && !inDoubleQuotation && !inQuotation) {
+            } else if (!escape && c == split && !inDoubleQuotation && !inQuotation) {
                 int length = i - currentStart;
                 if(partQuoted){
                     length = length - 1;
@@ -133,7 +138,10 @@ public class StringUtil {
                 if (length == 0) {
                     p = "";
                 } else {
-                    p = input.substring(currentStart, currentStart + length);
+                    p = new String(chars,currentStart, length);
+                    if(containsEscapeChar){
+                        p = p.replace(Character.toString(Character.MIN_VALUE),"");
+                    }
                 }
                 parts.add(p);
                 currentStart = i + 1;
@@ -148,12 +156,15 @@ public class StringUtil {
             if(partQuoted){
                 length = length - 1;
             }
-            p = input.substring(currentStart,currentStart + length);
+            p = new String(chars,currentStart, length);
+            if(containsEscapeChar){
+                p = p.replace(Character.toString(Character.MIN_VALUE),"");
+            }
             parts.add(p);
         }
     }
 
-    private static interface Parts{
+    private interface Parts{
         void add(String part);
     }
     private static class ListParts implements Parts{
