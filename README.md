@@ -41,6 +41,7 @@ To build the library from sources:
 2) Change to the created folder and run `mvn install`
 
     $ cd DataFrame
+    
     $ mvn install
 
 3) Include it by adding the following to your project's `pom.xml`:
@@ -66,6 +67,8 @@ Some existing methods have beed removed.
 In general, data groupings can now be used like normal DataFrames.
 
 - Java 8 is now required.
+
+- Empty DataFrame instances are now created using DataFrame.create()
 
 Usage
 -----
