@@ -640,7 +640,6 @@ public class DataFrameLoader {
         }
         DataReader<?, ?> reader = getDataReader(dataFrameMeta);
         DataIterator<?> dataIterator = reader.load(path, classLoader);
-        ;
         return DataFrameConverter.fromDataIterator(dataIterator, dataFrameMeta.getColumnInformation(), filterPredicate);
     }
 
