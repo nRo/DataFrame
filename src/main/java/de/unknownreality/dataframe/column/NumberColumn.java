@@ -77,7 +77,7 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
      * returns the specified quantile.
      * This calculation requires sorting of the values each time.
      * If more than one quantile should be calculated, use {@link #getQuantiles()}.
-     * @param percent
+     * @param percent quantile percent
      * @return quantile
      */
     public T getQuantile(double percent) {
