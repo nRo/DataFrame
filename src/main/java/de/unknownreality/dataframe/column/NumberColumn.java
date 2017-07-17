@@ -25,10 +25,12 @@
 package de.unknownreality.dataframe.column;
 
 import de.unknownreality.dataframe.common.NumberUtil;
+import de.unknownreality.dataframe.common.math.Quantiles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.Comparator;
 
 /**
  * Created by Alex on 11.03.2016.
@@ -53,10 +55,6 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
     }
 
 
-    private T[] sorted = null;
-    private boolean requiresSorting = true;
-    private boolean enableSortedCache = true;
-
     @Override
     public T get(int index) {
         return super.values[index];
@@ -69,16 +67,35 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
      * @return median of all values
      */
     public T median() {
-        Comparable[] array = getSortedValues();
-        return NumberUtil.convert((Number) array[size() / 2], getType());
+        return new Quantiles<T>(
+                getSortedValues(),
+                getType(), true).median();
     }
 
 
-    public T getQuantile(double quantile) {
-        T[] array = getSortedValues();
-        int index = (int) Math.ceil(quantile * array.length) - 1;
-        index = index < 0 ? 0 : index;
-        return array[index];
+    /**
+     * returns the specified quantile.
+     * This calculation requires sorting of the values each time.
+     * If more than one quantile should be calculated, use {@link #getQuantiles()}.
+     * @param percent
+     * @return quantile
+     */
+    public T getQuantile(double percent) {
+        return new Quantiles<T>(
+                getSortedValues(),
+                getType(), true)
+                .getQuantile(percent);
+
+    }
+
+    /**
+     * Returns a {@link Quantiles} object that can be used to calculate <tt>max</tt>, <tt>min</tt>, , <tt>median</tt> and quantiles.
+     * The values are sorted only once. When the values in the column have changed. A new {@link Quantiles} object should be created.
+     * @return quantiles object
+     */
+
+    public Quantiles<T> getQuantiles() {
+        return new Quantiles<>(getSortedValues(), getType(), true);
     }
 
 
@@ -112,9 +129,6 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
      * @return minimum of all values
      */
     public T min() {
-        if (!requireSorting()) {
-            return sorted[0];
-        }
         Double min = Double.MAX_VALUE;
         int naCount = 0;
         int size = size();
@@ -137,9 +151,6 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
      * @return maximum of all values
      */
     public T max() {
-        if (!requireSorting()) {
-            return sorted[sorted.length - 1];
-        }
         double max = Double.NEGATIVE_INFINITY;
         int naCount = 0;
         int size = size();
@@ -205,61 +216,25 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
     }
 
     protected T[] getSortedValues() {
-        if(!enableSortedCache){
-            T[] sortedValues = (T[]) toArray();
-            Arrays.sort(sortedValues);
-            return sortedValues;
-        }
-        if (requireSorting()) {
-            sorted = (T[]) toArray();
-            Arrays.sort(sorted);
-            requiresSorting = false;
-        }
-        return sorted;
+        T[] sortedValues = (T[]) toArray();
+        Arrays.sort(sortedValues, new Comparator<T>() {
+            @Override
+            public int compare(T o1, T o2) {
+                if(o1 == null && o2 == null){
+                    return 0;
+                }
+                if(o1 == null){
+                    return -1;
+                }
+                if(o2 == null){
+                    return 1;
+                }
+                return   o1.compareTo(o2);
+            }
+        });
+        return sortedValues;
     }
 
-    protected boolean requireSorting() {
-        return requiresSorting || sorted == null;
-    }
-
-    protected void setRequireSorting() {
-        requiresSorting = true;
-        sorted = null;
-    }
-
-    public void setEnableSortedCache(boolean enable){
-        enableSortedCache = enable;
-        if(!enable){
-            setRequireSorting();
-        }
-    }
-    public void clearSortedCache(){
-        setRequireSorting();
-    }
-
-    @Override
-    public void notifyDataFrameColumnChanged() {
-        super.notifyDataFrameColumnChanged();
-        setRequireSorting();
-    }
-
-    @Override
-    public void notifyDataFrameValueChanged(int index) {
-        super.notifyDataFrameValueChanged(index);
-        setRequireSorting();
-    }
-
-    @Override
-    protected boolean doAppend(T t) {
-        setRequireSorting();
-        return super.doAppend(t);
-    }
-
-    @Override
-    protected boolean doAppendNA() {
-        setRequireSorting();
-        return super.doAppendNA();
-    }
 
     /**
      * Subtracts the values of another {@link NumberColumn} from the values in this column.
