@@ -70,6 +70,9 @@ public class DataFrameLoaderTest {
         DataFrame res = DataFrame.fromCSV("loader_test.csv", DataFrameLoaderTest.class.getClassLoader(), ';', false);
         Assert.assertEquals(5, res.size());
         Assert.assertEquals(3, res.getColumns().size());
+        CSVReader csvReader = CSVReaderBuilder.create().withSeparator(';').withHeader(false).build();
+        DataFrame test = DataFrame.load("loader_test.csv",DataFrameLoaderTest.class.getClassLoader(),csvReader);
+        Assert.assertEquals(res,test);
 
         File tmpFile = File.createTempFile("dataframe", ".csv");
         res.writeCSV(tmpFile,';', false);
