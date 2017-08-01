@@ -24,10 +24,16 @@
 
 package de.unknownreality.dataframe.common;
 
+import de.unknownreality.dataframe.DataFrameRuntimeException;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
 /**
  * Created by Alex on 07.07.2016.
  */
 public class NumberUtil {
+    private NumberUtil(){}
     public static <T extends Number> T add(Number a, Number b, Class<T> cl) {
         return convert(a.doubleValue() + b.doubleValue(), cl);
     }
@@ -44,20 +50,90 @@ public class NumberUtil {
         return convert(a.doubleValue() / b.doubleValue(), cl);
     }
 
+
+    public static boolean le(Number a, Number b) {
+        return (compare(a, b) <= 0);
+    }
+
+    public static boolean lt(Number a, Number b) {
+        return (compare(a, b) < 0);
+    }
+
+    public static boolean ge(Number a, Number b) {
+        return (compare(a, b) >= 0);
+    }
+
+    public static boolean gt(Number a, Number b) {
+        return (compare(a, b) > 0);
+    }
+
+
+    public static boolean eq(Number a, Number b) {
+        return (compare(a, b) == 0);
+    }
+
+
+    public static Number max(Number a, Number b) {
+        int c = compare(a, b);
+        if (c > 0) {
+            return a;
+        }
+        return b;
+    }
+
+    public static Number min(Number a, Number b) {
+        int c = compare(a, b);
+        if (c < 0) {
+            return a;
+        }
+        return b;
+    }
+
+    public static int compare(Number a, Number b) {
+        if (isSpecialNumber(a) || isSpecialNumber(b))
+            return Double.compare(a.doubleValue(), b.doubleValue());
+        else
+            return toBigDecimal(a).compareTo(toBigDecimal(b));
+    }
+
+    public static boolean isSpecialNumber(Number number) {
+        if(number instanceof Double && !Double.isFinite((Double)number)){
+            return true;
+        }
+        return number instanceof Float && !Float.isFinite((Float)number);
+    }
+
+    public static BigDecimal toBigDecimal(Number number) {
+        if (number instanceof BigDecimal)
+            return (BigDecimal) number;
+        if (number instanceof BigInteger)
+            return new BigDecimal((BigInteger) number);
+        if (number instanceof Byte || number instanceof Short
+                || number instanceof Integer || number instanceof Long)
+            return BigDecimal.valueOf(number.longValue());
+        if (number instanceof Float || number instanceof Double)
+            return BigDecimal.valueOf(number.doubleValue());
+        try {
+            return new BigDecimal(number.toString());
+        } catch (final NumberFormatException e) {
+            throw new DataFrameRuntimeException("\"" + number + "\" of class " + number.getClass().getName() + " can not be converted to String", e);
+        }
+    }
+
     @SuppressWarnings("unchecked")
     public static <T extends Number> T convert(Number n, Class<T> cl) {
         if (cl == Double.class) {
-            return (T) new Double(n.doubleValue());
+            return (T) Double.valueOf(n.doubleValue());
         } else if (cl == Integer.class) {
-            return (T) new Integer(n.intValue());
+            return (T) Integer.valueOf(n.intValue());
         } else if (cl == Float.class) {
-            return (T) new Float(n.floatValue());
+            return (T) Float.valueOf(n.floatValue());
         } else if (cl == Long.class) {
-            return (T) new Long(n.longValue());
+            return (T) Long.valueOf(n.longValue());
         } else if (cl == Short.class) {
-            return (T) new Short(n.shortValue());
+            return (T) Short.valueOf(n.shortValue());
         } else if (cl == Byte.class) {
-            return (T) new Byte(n.byteValue());
+            return (T) Byte.valueOf(n.byteValue());
         }
         return null;
     }
