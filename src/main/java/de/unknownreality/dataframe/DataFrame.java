@@ -5,6 +5,7 @@ import de.unknownreality.dataframe.common.DataContainer;
 import de.unknownreality.dataframe.filter.FilterPredicate;
 import de.unknownreality.dataframe.group.DataGrouping;
 import de.unknownreality.dataframe.group.GroupUtil;
+import de.unknownreality.dataframe.index.Index;
 import de.unknownreality.dataframe.io.*;
 import de.unknownreality.dataframe.join.JoinColumn;
 import de.unknownreality.dataframe.join.JoinUtil;
@@ -463,6 +464,14 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @return <tt>self</tt> for method chaining
      */
     DataFrame addIndex(String indexName, DataFrameColumn... columns);
+
+    /**
+     * Adds a new index to the dataframe
+     *
+     * @param index index to add
+     * @return <tt>self</tt> for method chaining
+     */
+    DataFrame addIndex(Index index);
 
     /**
      * Returns the number of rows in this data frame
