@@ -31,6 +31,7 @@ import de.unknownreality.dataframe.filter.compile.PredicateCompiler;
 import de.unknownreality.dataframe.group.DataGrouping;
 import de.unknownreality.dataframe.group.GroupUtil;
 import de.unknownreality.dataframe.group.impl.DefaultGroupUtil;
+import de.unknownreality.dataframe.index.Index;
 import de.unknownreality.dataframe.index.Indices;
 import de.unknownreality.dataframe.join.JoinColumn;
 import de.unknownreality.dataframe.join.JoinUtil;
@@ -610,6 +611,11 @@ public class DefaultDataFrame implements DataFrame {
         return this;
     }
 
+    @Override
+    public DefaultDataFrame addIndex(Index index) {
+        indices.addIndex(index);
+        return this;
+    }
 
     @Override
     public int size() {

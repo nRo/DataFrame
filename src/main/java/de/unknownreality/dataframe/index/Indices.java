@@ -180,13 +180,22 @@ public class Indices {
      * @param columns columns the index is based on
      */
     public void addIndex(String name, boolean unique,DataFrameColumn... columns) {
-        if (indexMap.containsKey(name)) {
-            throw new DataFrameRuntimeException(String.format("error adding index: index name already exists'%s'", name));
-        }
+
         Index index = new TreeIndex(name,columns);
         index.setUnique(unique);
-        indexMap.put(name, index);
-        for (DataFrameColumn column : columns) {
+        addIndex(index);
+    }
+
+    /**
+     * Adds a new index using one or more columns
+     * @param index index to add
+     */
+    public void addIndex(Index index){
+        if (indexMap.containsKey(index.getName())) {
+            throw new DataFrameRuntimeException(String.format("error adding index: index name already exists'%s'", index.getName()));
+        }
+        indexMap.put(index.getName(), index);
+        for (DataFrameColumn column : index.getColumns()) {
             List<Index> indexList = columnIndexMap.get(column);
             if (indexList == null) {
                 indexList = new ArrayList<>();
