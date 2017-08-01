@@ -25,6 +25,7 @@
 package de.unknownreality.dataframe.filter;
 
 import de.unknownreality.dataframe.DataFrameRuntimeException;
+import de.unknownreality.dataframe.common.NumberUtil;
 import de.unknownreality.dataframe.common.Row;
 
 /**
@@ -137,7 +138,7 @@ public class ComparePredicate extends FilterPredicate {
         int c = 0;
         if (numberCompare) {
             //could be better to convert to BigDecimal for comparison
-            c = Double.compare(Number.class.cast(valueA).doubleValue(), Number.class.cast(valueB).doubleValue());
+            c = NumberUtil.compare((Number) valueA, (Number) valueB);
         } else if (valueA instanceof Comparable && valueB instanceof Comparable) {
             c = ((Comparable) valueA).compareTo(valueB);
         }
