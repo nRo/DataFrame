@@ -153,12 +153,7 @@ dc1.add(dc2);
 dc1.multiply(2);
 
 //Use MapFunction to convert all values in a row
-dataFrame.getIntegerColumn("age").map(new MapFunction<Integer>() {
-    @Override
-    public Integer map(Integer value) {
-        return value + 2;
-    }
-});
+dataFrame.getIntegerColumn("age").map(value -> value + 2);
 ```
 
 Filter and select rows using predicates.
