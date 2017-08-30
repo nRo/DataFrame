@@ -33,16 +33,14 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by Alex on 04.06.2015.
  */
 public class ParserUtil {
-    private static Map<Class<?>, Parser<?>> parserMap;
-
-    private static Map<Class<?>, Parser<?>> getParserMap() {
-        if (parserMap == null) {
-            parserMap = new ConcurrentHashMap<>();
-            init();
-        }
-        return parserMap;
+    private final static Map<Class<?>, Parser<?>> parserMap = new ConcurrentHashMap<>();
+    static{
+        init();
     }
 
+    private static Map<Class<?>, Parser<?>> getParserMap() {
+        return parserMap;
+    }
 
     /**
      * Adds the default parsers
