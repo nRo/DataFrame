@@ -52,7 +52,7 @@ To build the library from sources:
     <dependency>
         <groupId>de.unknownreality</groupId>
         <artifactId>dataframe</artifactId>
-        <version>0.7-SNAPSHOT</version>
+        <version>0.7.1-SNAPSHOT</version>
     </dependency>
 ...
 </dependencies>
