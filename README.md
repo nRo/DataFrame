@@ -141,8 +141,8 @@ List<DataRow> user = users.findByIndex("name-address","Smith","Example-Street 15
 It is possible to define and use other index types.
 The following example shows interval indices.
 This index type requires two number columns, start and end.
-The index can then be used to find rows that where start and end value overlap with a region specified
-by two number values. It is also possible to find rows where region defined by start and end contains a certain value.
+The index can then be used to find rows where start and end value overlap with a region specified
+by two number values. It is also possible to find rows where the region defined by start and end contains a certain value.
 ```java
  DataFrame dataFrame = DataFrame.create()
                 .addStringColumn("name")
