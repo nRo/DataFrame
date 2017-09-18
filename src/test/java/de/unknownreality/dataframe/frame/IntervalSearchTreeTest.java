@@ -40,6 +40,7 @@ import static org.junit.Assert.assertEquals;
 public class IntervalSearchTreeTest {
     @Test
     public void intervalSearchTreeTest(){
+        //TODO remove random tests
         List<Interval> intervalList = new ArrayList<Interval>();
         IntervalSearchTree<Integer> intervalSearchTree = new IntervalSearchTree<Integer>();
         Random random = new Random();

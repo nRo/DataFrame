@@ -108,6 +108,10 @@ public class IntervalIndexTest {
 
         rows = dataFrame.findByIndex("idx",10d,12d);
         Assert.assertEquals(1,rows.size());
+
+        rows = dataFrame.findByIndex("idx",3);
+        Assert.assertEquals(3,rows.size());
+
     }
     @Test(expected=DataFrameRuntimeException.class)
     public void testMissingIndex() {
