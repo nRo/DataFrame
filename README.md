@@ -138,6 +138,37 @@ users.addIndex("name-address","last_name","address");
 //returns all users with the last name Smith in the Example-Street 15
 List<DataRow> user = users.findByIndex("name-address","Smith","Example-Street 15")
 ```
+It is possible to define and use other index types.
+The following example shows interval indices.
+This index type requires two number columns, start and end.
+The index can then be used to find rows that where start and end value overlap with a region specified
+by two number values. It is also possible to find rows where region defined by start and end contains a certain value.
+```java
+ DataFrame dataFrame = DataFrame.create()
+                .addStringColumn("name")
+                .addIntegerColumn("start")
+                .addIntegerColumn("end");
+dataFrame.append("A",1,3);
+dataFrame.append("B",2,3);
+dataFrame.append("C",4,5);
+dataFrame.append("D",6,7);
+IntervalIndex index = new IntervalIndex("idx",
+    dataFrame.getNumberColumn("start"),
+    dataFrame.getNumberColumn("end"));
+dataFrame.addIndex(index);
+
+//returns rows where (start,end) overlaps with (1,3)
+// -> A, B
+dataFrame.findByIndex("idx",1,3);
+
+//returns rows where (start,end) overlaps with (4,5)
+// -> C
+dataFrame.findByIndex("idx",4,5);
+
+//returns rows where (start,end) contains 2.5
+// -> A, B
+dataFrame.findByIndex("idx",2.5);
+```
 
 Perform operations on columns.
 ```java
