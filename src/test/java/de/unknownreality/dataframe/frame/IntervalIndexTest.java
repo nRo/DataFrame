@@ -25,7 +25,10 @@
 package de.unknownreality.dataframe.frame;
 
 import de.unknownreality.dataframe.DataFrame;
+import de.unknownreality.dataframe.DataFrameRuntimeException;
 import de.unknownreality.dataframe.DataRow;
+import de.unknownreality.dataframe.filter.compile.PredicateCompiler;
+import de.unknownreality.dataframe.filter.compile.PredicateCompilerException;
 import de.unknownreality.dataframe.index.interval.IntervalIndex;
 import org.junit.Assert;
 import org.junit.Test;
@@ -76,6 +79,7 @@ public class IntervalIndexTest {
 
         IntervalIndex index = new IntervalIndex("idx",dataFrame.getNumberColumn("start"),dataFrame.getNumberColumn("end"));
         dataFrame.addIndex(index);
+        Assert.assertEquals(2,index.getColumns().size());
 
         List<DataRow> rows;
 
@@ -83,7 +87,62 @@ public class IntervalIndexTest {
         Assert.assertEquals(4,rows.size());
 
 
-        rows = dataFrame.findByIndex("idx",2d,3d);
-        //Assert.assertEquals(3,rows.size());
+        rows = dataFrame.findByIndex("idx",9d,10d);
+        Assert.assertEquals(1,rows.size());
+
+
+        dataFrame = dataFrame.filter("name != 'G'");
+
+        rows = dataFrame.findByIndex("idx",9d,10d);
+        Assert.assertEquals(0,rows.size());
+
+        rows = dataFrame.findByIndex("idx",8d,10d);
+        Assert.assertEquals(1,rows.size());
+
+        DataRow row =rows.get(0);
+        row.set("start",11d);
+        row.set("end",12);
+        dataFrame.update(row);
+        rows = dataFrame.findByIndex("idx",8d,10d);
+        Assert.assertEquals(0,rows.size());
+
+        rows = dataFrame.findByIndex("idx",10d,12d);
+        Assert.assertEquals(1,rows.size());
+    }
+    @Test(expected=DataFrameRuntimeException.class)
+    public void testMissingIndex() {
+        DataFrame dataFrame = DataFrame.create()
+                .addStringColumn("name")
+                .addDoubleColumn("start")
+                .addIntegerColumn("end");
+       dataFrame.findByIndex("idx",9d,10d);
+
+
+        Double[] starts = new Double[]{
+                1d,
+        };
+        Integer[] ends = new Integer[]{
+                2,
+        };
+
+        String[] names = new String[]{
+                "A"
+        };
+
+        for(int i  = 0; i < starts.length; i++){
+            dataFrame.append(names[i],starts[i],ends[i]);
+        }
+
+
+        IntervalIndex index = new IntervalIndex("idx",dataFrame.getNumberColumn("start"),dataFrame.getNumberColumn("end"));
+        dataFrame.addIndex(index);
+
+        List<DataRow> rows;
+
+        rows = dataFrame.findByIndex("idx",1d,3d);
+        Assert.assertEquals(1,rows.size());
+
+        dataFrame.removeColumn("start");
+        dataFrame.findByIndex("idx",1d,3d);
     }
 }
