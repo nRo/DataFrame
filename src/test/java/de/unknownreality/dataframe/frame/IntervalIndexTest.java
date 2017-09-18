@@ -100,7 +100,7 @@ public class IntervalIndexTest {
         Assert.assertEquals(1,rows.size());
 
         DataRow row =rows.get(0);
-        row.set("start",11d);
+        row.set("start",11);
         row.set("end",12);
         dataFrame.update(row);
         rows = dataFrame.findByIndex("idx",8d,10d);
@@ -117,21 +117,7 @@ public class IntervalIndexTest {
                 .addIntegerColumn("end");
        dataFrame.findByIndex("idx",9d,10d);
 
-
-        Double[] starts = new Double[]{
-                1d,
-        };
-        Integer[] ends = new Integer[]{
-                2,
-        };
-
-        String[] names = new String[]{
-                "A"
-        };
-
-        for(int i  = 0; i < starts.length; i++){
-            dataFrame.append(names[i],starts[i],ends[i]);
-        }
+        dataFrame.append("A",1,2);
 
 
         IntervalIndex index = new IntervalIndex("idx",dataFrame.getNumberColumn("start"),dataFrame.getNumberColumn("end"));
