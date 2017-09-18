@@ -317,8 +317,8 @@ public class Indices {
         if (!isIndexColumn(column)) {
             return;
         }
-        List<Index> columnIndices = columnIndexMap.get(column);
-        for (Index index : columnIndices) {
+        List<Index> columnIndices = new ArrayList<>(columnIndexMap.get(column));
+        for(Index index : columnIndices){
             removeIndex(index.getName());
         }
         columnIndexMap.remove(column);

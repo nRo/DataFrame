@@ -29,6 +29,7 @@ import de.unknownreality.dataframe.DataFrameColumn;
 import de.unknownreality.dataframe.DataFrameRuntimeException;
 import de.unknownreality.dataframe.MapFunction;
 import de.unknownreality.dataframe.Values;
+import de.unknownreality.dataframe.common.NumberUtil;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -62,12 +63,12 @@ public abstract class BasicColumn<T extends Comparable<T>, C extends BasicColumn
     }
 
     public BasicColumn(String name, T[] values) {
-       this(name,values,values.length);
+        this(name, values, values.length);
     }
 
     @Override
     public C setCapacity(int capacity) {
-        if(capacity < size){
+        if (capacity < size) {
             throw new DataFrameRuntimeException("capacity can not be lower than current size");
         }
         values = Arrays.copyOf(values, capacity);
@@ -87,11 +88,15 @@ public abstract class BasicColumn<T extends Comparable<T>, C extends BasicColumn
 
 
     @Override
-    protected final void doSet(int index, T value) {
+    protected void doSet(int index, T value) {
         if (value == Values.NA) {
             doSetNA(index);
             return;
         }
+        setValue(index, value);
+    }
+
+    protected void setValue(int index, T value) {
         values[index] = value;
     }
 
@@ -160,8 +165,8 @@ public abstract class BasicColumn<T extends Comparable<T>, C extends BasicColumn
 
             @Override
             public T next() {
-                if(index >= values.length){
-                    throw new NoSuchElementException(String.format("element not found: index out of bounds %s >= %s]",index,values.length));
+                if (index >= values.length) {
+                    throw new NoSuchElementException(String.format("element not found: index out of bounds %s >= %s]", index, values.length));
                 }
                 return values[index++];
             }
@@ -170,10 +175,11 @@ public abstract class BasicColumn<T extends Comparable<T>, C extends BasicColumn
 
     /**
      * Returns a set containing all values in this column
+     *
      * @return set of values in this column
      */
-    public Set<T> uniq(){
-        Set<T> u =  new HashSet<>(Arrays.asList(values));
+    public Set<T> uniq() {
+        Set<T> u = new HashSet<>(Arrays.asList(values));
         u.remove(null);
         return u;
     }

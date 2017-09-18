@@ -24,6 +24,7 @@
 
 package de.unknownreality.dataframe.column;
 
+import de.unknownreality.dataframe.Values;
 import de.unknownreality.dataframe.common.NumberUtil;
 import de.unknownreality.dataframe.common.math.Quantiles;
 import org.slf4j.Logger;
@@ -420,5 +421,11 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
         }
         notifyDataFrameColumnChanged();
         return getThis();
+    }
+
+
+    @Override
+    protected void setValue(int index, T value) {
+        values[index] = NumberUtil.convert(value,getType());
     }
 }

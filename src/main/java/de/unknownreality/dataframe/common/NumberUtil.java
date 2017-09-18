@@ -122,6 +122,9 @@ public class NumberUtil {
 
     @SuppressWarnings("unchecked")
     public static <T extends Number> T convert(Number n, Class<T> cl) {
+        if(n.getClass() == cl){
+            return (T)n;
+        }
         if (cl == Double.class) {
             return (T) Double.valueOf(n.doubleValue());
         } else if (cl == Integer.class) {
