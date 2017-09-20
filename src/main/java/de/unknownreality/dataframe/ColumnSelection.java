@@ -51,6 +51,19 @@ public class ColumnSelection<T extends DataFrame> {
     }
 
     /**
+     * Returns a dataframe containing the selected columns and rows found using a specified index
+     * an input value.
+     *
+     * @param indexName name of index
+     * @param values index values
+     * @return new dataframe
+     */
+    public T whereIndex(String indexName, Comparable... values){
+        List<DataRow> rows = dataFrame.selectRowsByIndex(indexName, values);
+        return createDataFrame(rows);
+    }
+
+    /**
      * Returns a dataframe containing the selected columns and all rows from the original dataframe.
      *
      * @return new dataframe

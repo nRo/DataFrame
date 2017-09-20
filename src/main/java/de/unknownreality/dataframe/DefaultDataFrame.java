@@ -73,7 +73,6 @@ public class DefaultDataFrame implements DataFrame {
     }
 
 
-
     @Override
     public DefaultDataFrame setPrimaryKey(String... colNames) {
         DataFrameColumn[] columns = new DataFrameColumn[colNames.length];
@@ -137,9 +136,9 @@ public class DefaultDataFrame implements DataFrame {
 
     @Override
     @SuppressWarnings("unchecked")
-    public ColumnSelection<DefaultDataFrame> selectColumns(String... columnNames){
+    public ColumnSelection<DefaultDataFrame> selectColumns(String... columnNames) {
         DataFrameColumn[] columns = new DataFrameColumn[columnNames.length];
-        for(int i = 0; i < columnNames.length; i++){
+        for (int i = 0; i < columnNames.length; i++) {
             columns[i] = getColumn(columnNames[i]);
         }
         return selectColumns(columns);
@@ -147,10 +146,9 @@ public class DefaultDataFrame implements DataFrame {
 
     @Override
     @SuppressWarnings("unchecked")
-    public ColumnSelection<DefaultDataFrame> selectColumns(DataFrameColumn... columns){
-        return new ColumnSelection(this,columns);
+    public ColumnSelection<DefaultDataFrame> selectColumns(DataFrameColumn... columns) {
+        return new ColumnSelection(this, columns);
     }
-
 
 
     @Override
@@ -175,7 +173,6 @@ public class DefaultDataFrame implements DataFrame {
         columnsMap.put(column.getName(), column);
         return this;
     }
-
 
 
     public DefaultDataFrame addBooleanColumn(String name) {
@@ -226,12 +223,10 @@ public class DefaultDataFrame implements DataFrame {
     }
 
 
-
     @Override
     public <T extends Comparable<T>> DataFrame addColumn(Class<T> type, String name) {
         return addColumn(type, name, ColumnTypeMap.create());
     }
-
 
 
     @Override
@@ -285,7 +280,6 @@ public class DefaultDataFrame implements DataFrame {
         }
         return this;
     }
-
 
 
     @Override
@@ -430,7 +424,6 @@ public class DefaultDataFrame implements DataFrame {
     }
 
 
-
     @Override
     public DefaultDataFrame removeColumn(String header) {
         DataFrameColumn column = getColumn(header);
@@ -456,7 +449,6 @@ public class DefaultDataFrame implements DataFrame {
         this.columnList.remove(column);
         return this;
     }
-
 
 
     @Override
@@ -492,7 +484,6 @@ public class DefaultDataFrame implements DataFrame {
     }
 
 
-
     @Override
     public DefaultDataFrame shuffle() {
         List<DataRow> rows = getRows(0, size);
@@ -502,19 +493,16 @@ public class DefaultDataFrame implements DataFrame {
     }
 
 
-
     @Override
     public DefaultDataFrame select(String colName, Comparable value) {
         return select(FilterPredicate.eq(colName, value));
     }
 
 
-
     @Override
     public DataRow selectFirst(String colName, Comparable value) {
         return selectFirst(FilterPredicate.eq(colName, value));
     }
-
 
 
     @Override
@@ -534,7 +522,6 @@ public class DefaultDataFrame implements DataFrame {
     }
 
 
-
     @Override
     public DefaultDataFrame select(FilterPredicate predicate) {
         List<DataRow> rows = selectRows(predicate);
@@ -544,12 +531,10 @@ public class DefaultDataFrame implements DataFrame {
     }
 
 
-
     @Override
     public DefaultDataFrame select(String predicateString) {
         return select(PredicateCompiler.compile(predicateString));
     }
-
 
 
     @Override
@@ -570,6 +555,7 @@ public class DefaultDataFrame implements DataFrame {
     public List<DataRow> selectRows(String colName, Comparable value) {
         return selectRows(FilterPredicate.eq(colName, value));
     }
+
     @Override
     public List<DataRow> selectRows(String predicateString) {
         return selectRows(FilterPredicate.compile(predicateString));
@@ -588,15 +574,18 @@ public class DefaultDataFrame implements DataFrame {
     }
 
 
-
     @Override
     public DefaultDataFrame transform(DataFrameTransform transformer) {
         return transformer.transform(this);
     }
 
-
     @Override
     public DataRow findByPrimaryKey(Comparable... keyValues) {
+        return findByPrimaryKey(keyValues);
+    }
+
+    @Override
+    public DataRow selectByPrimaryKey(Comparable... keyValues) {
         Integer index = this.indices.findByPrimaryKey(keyValues);
         if (index == null || index < 0) {
             return null;
@@ -643,7 +632,6 @@ public class DefaultDataFrame implements DataFrame {
     }
 
 
-
     @Override
     public DefaultDataFrame subset(int from, int to) {
         set(getRows(from, to));
@@ -679,7 +667,6 @@ public class DefaultDataFrame implements DataFrame {
     public DataFrameHeader getHeader() {
         return header;
     }
-
 
 
     @Override
@@ -825,7 +812,6 @@ public class DefaultDataFrame implements DataFrame {
     }
 
 
-
     @Override
     public DataGrouping groupBy(String... column) {
         return groupUtil.groupBy(this, column);
@@ -932,9 +918,13 @@ public class DefaultDataFrame implements DataFrame {
         return indices.isIndexColumn(column);
     }
 
-
     @Override
     public List<DataRow> findByIndex(String name, Comparable... values) {
+        return selectRowsByIndex(name, values);
+    }
+
+    @Override
+    public List<DataRow> selectRowsByIndex(String name, Comparable... values) {
         Collection<Integer> rowIndices = indices.find(name, values);
         if (!rowIndices.isEmpty()) {
             List<DataRow> rows = new ArrayList<>();
@@ -946,11 +936,23 @@ public class DefaultDataFrame implements DataFrame {
         return new ArrayList<>(0);
     }
 
-
     @Override
     public DataRow findFirstByIndex(String name, Comparable... values) {
+        return selectFirstRowByIndex(name, values);
+    }
+
+    @Override
+    public DataRow selectFirstRowByIndex(String name, Comparable... values) {
         Integer idx = indices.findFirst(name, values);
         return idx == null ? null : getRow(idx);
+    }
+
+    @Override
+    public DataFrame selectByIndex(String name, Comparable... values) {
+        List<DataRow> rows = selectRowsByIndex(name, values);
+        DefaultDataFrame df = new DefaultDataFrame();
+        df.set(header.copy(), rows, indices);
+        return df;
     }
 
 

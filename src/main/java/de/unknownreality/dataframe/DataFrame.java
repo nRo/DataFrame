@@ -463,8 +463,19 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      *
      * @param keyValues input key values
      * @return found data row
+     *
+     * @deprecated use {@link DataFrame#selectByPrimaryKey} instead.
      */
+    @Deprecated
     DataRow findByPrimaryKey(Comparable... keyValues);
+
+    /**
+     * Finds a data row using the primary key
+     *
+     * @param keyValues input key values
+     * @return found data row
+     */
+    DataRow selectByPrimaryKey(Comparable... keyValues);
 
     /**
      * Reverses all columns
@@ -845,13 +856,42 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     boolean isIndexColumn(DataFrameColumn column);
 
     /**
+
+     */
+
+    /**
      * Finds matching data rows using an index and the corresponding index values
      *
      * @param name   name of index
      * @param values index values
      * @return rows found
-     */
+
+     * @deprecated use {@link DataFrame#selectRowsByIndex} instead.
+     *
+     * */
+    @Deprecated
     List<DataRow> findByIndex(String name, Comparable... values);
+
+    /**
+     * Finds matching data rows using an index and the corresponding index values
+     *
+     * @param name   name of index
+     * @param values index values
+     * @return rows found
+     *
+     * */
+    List<DataRow> selectRowsByIndex(String name, Comparable... values);
+
+    /**
+     * Finds the first data row matching an index and the corresponding index values
+     *
+     * @param name   name of index
+     * @param values index values
+     * @return rows found
+     * @deprecated use {@link DataFrame#selectFirstRowByIndex} instead.
+     */
+    @Deprecated
+    DataRow findFirstByIndex(String name, Comparable... values);
 
     /**
      * Finds the first data row matching an index and the corresponding index values
@@ -860,7 +900,17 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param values index values
      * @return rows found
      */
-    DataRow findFirstByIndex(String name, Comparable... values);
+    DataRow selectFirstRowByIndex(String name, Comparable... values);
+
+    /**
+     * Returns a new dataframe containing data rows found using an index and the corresponding index values
+     *
+     * @param name   name of index
+     * @param values index values
+     * @return dataframe containing found rows
+     *
+     * */
+    DataFrame selectByIndex(String name, Comparable... values);
 
     /**
      * Returns a collection of all columns in this data frame
