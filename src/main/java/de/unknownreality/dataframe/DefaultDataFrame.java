@@ -582,7 +582,7 @@ public class DefaultDataFrame implements DataFrame {
     @Deprecated
     @Override
     public DataRow findByPrimaryKey(Comparable... keyValues) {
-        return findByPrimaryKey(keyValues);
+        return selectByPrimaryKey(keyValues);
     }
 
     @Override
