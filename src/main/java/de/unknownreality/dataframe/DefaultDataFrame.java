@@ -135,6 +135,23 @@ public class DefaultDataFrame implements DataFrame {
         return this;
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public ColumnSelection<DefaultDataFrame> selectColumns(String... columnNames){
+        DataFrameColumn[] columns = new DataFrameColumn[columnNames.length];
+        for(int i = 0; i < columnNames.length; i++){
+            columns[i] = getColumn(columnNames[i]);
+        }
+        return selectColumns(columns);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public ColumnSelection<DefaultDataFrame> selectColumns(DataFrameColumn... columns){
+        return new ColumnSelection(this,columns);
+    }
+
+
 
     @Override
     @SuppressWarnings("unchecked")
@@ -549,7 +566,10 @@ public class DefaultDataFrame implements DataFrame {
     }
 
 
-
+    @Override
+    public List<DataRow> selectRows(String colName, Comparable value) {
+        return selectRows(FilterPredicate.eq(colName, value));
+    }
     @Override
     public List<DataRow> selectRows(String predicateString) {
         return selectRows(FilterPredicate.compile(predicateString));

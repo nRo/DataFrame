@@ -65,6 +65,24 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     DataFrame renameColumn(String name, String newName);
 
     /**
+     * Returns a {@link ColumnSelection} for the selected columns.
+     * The rows can be filtered using {@link ColumnSelection#where}.
+     *
+     * @param columnNames selected columns
+     * @return {@link ColumnSelection} for row selection
+     */
+    ColumnSelection<? extends DataFrame> selectColumns(String... columnNames);
+
+    /**
+     * Returns a {@link ColumnSelection} for the selected columns.
+     * The rows can be filtered using {@link ColumnSelection#where}.
+     *
+     * @param columns selected columns
+     * @return {@link ColumnSelection} for row selection
+     */
+    ColumnSelection<? extends DataFrame> selectColumns(DataFrameColumn... columns);
+
+    /**
      * Adds a column to the data frame.
      * If the column is already part of another data frame a {@link DataFrameRuntimeException} is thrown.
      *
@@ -405,6 +423,16 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @return <tt>self</tt> for method chaining
      */
     DataFrame filter(FilterPredicate predicate);
+
+    /**
+     * Finds data rows from this data frame where a specified column value equals
+     * an input value.
+     *
+     * @param colName column name
+     * @param value   input value
+     * @return list of found data rows
+     */
+    List<DataRow> selectRows(String colName, Comparable value);
 
     /**
      * Finds data rows using a {@link FilterPredicate}.

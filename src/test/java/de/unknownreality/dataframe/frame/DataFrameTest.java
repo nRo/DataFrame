@@ -394,8 +394,75 @@ public class DataFrameTest {
 
     }
 
+    @Test
+    public void columnSelectionTest(){
+        DataFrame dataFrame = DataFrame.create()
+                .addStringColumn("name")
+                .addDoubleColumn("a")
+                .addIntegerColumn("b")
+                .addBooleanColumn("c");
+
+        dataFrame.append("A",1d,5, true);
+        dataFrame.append("B",2d,4, true);
+        dataFrame.append("C",3d,3, false);
+        dataFrame.append("D",4d,2, false);
+
+        DataFrame test = dataFrame
+                .selectColumns("a")
+                .where("b > 3");
+        Assert.assertEquals(1,test.getColumns().size());
+        Assert.assertEquals(2,test.size());
+        Assert.assertEquals(1d,test.getRow(0).get("a"));
+        Assert.assertEquals(2d,test.getRow(1).get("a"));
+
+        test = dataFrame
+                .selectColumns(
+                        dataFrame.getColumn("name"),
+                        dataFrame.getColumn("a"),
+                        dataFrame.getColumn("b"))
+                .where("c",true);
+        Assert.assertEquals(3,test.getColumns().size());
+        Assert.assertEquals(2,test.size());
+        Assert.assertEquals("A",test.getRow(0).get("name"));
+        Assert.assertEquals("B",test.getRow(1).get("name"));
+        Assert.assertEquals(1d,test.getRow(0).get("a"));
+        Assert.assertEquals(2d,test.getRow(1).get("a"));
 
 
+        test = dataFrame
+                .selectColumns(
+                        dataFrame.getColumn("name"),
+                        dataFrame.getColumn("c"))
+                .where(FilterPredicate.leColumn("b","a"));
+        Assert.assertEquals(2,test.getColumns().size());
+        Assert.assertEquals(2,test.size());
+        Assert.assertEquals("C",test.getRow(0).get("name"));
+        Assert.assertEquals("D",test.getRow(1).get("name"));
+        Assert.assertEquals(false,test.getRow(0).get("c"));
+        Assert.assertEquals(false,test.getRow(1).get("c"));
+
+        test = dataFrame
+                .selectColumns("name").allRows();
+        Assert.assertEquals(1,test.getColumns().size());
+        Assert.assertEquals(4,test.size());
+        Assert.assertEquals("A",test.getRow(0).get("name"));
+        Assert.assertEquals("B",test.getRow(1).get("name"));
+        Assert.assertEquals("C",test.getRow(2).get("name"));
+        Assert.assertEquals("D",test.getRow(3).get("name"));
+    }
+
+    @Test(expected = DataFrameRuntimeException.class)
+    public void testColumnSelectErrors(){
+        DataFrame df = NoConstructorDataFrame.create();
+        df.append("A",1d,5, true);
+        df.selectColumns("name").allRows();
+    }
+    private static class NoConstructorDataFrame extends DefaultDataFrame{
+        private NoConstructorDataFrame(){}
+        public static NoConstructorDataFrame create(){
+            return new NoConstructorDataFrame();
+        }
+    }
 
 
     private String createCSV(String[] head, Object[]... cols) {
