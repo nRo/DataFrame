@@ -579,6 +579,7 @@ public class DefaultDataFrame implements DataFrame {
         return transformer.transform(this);
     }
 
+    @Deprecated
     @Override
     public DataRow findByPrimaryKey(Comparable... keyValues) {
         return findByPrimaryKey(keyValues);
@@ -633,14 +634,24 @@ public class DefaultDataFrame implements DataFrame {
 
 
     @Override
+    @Deprecated
     public DefaultDataFrame subset(int from, int to) {
+        return filterSubset(from, to);
+    }
+
+    @Override
+    public DefaultDataFrame filterSubset(int from, int to) {
         set(getRows(from, to));
         return this;
     }
 
-
     @Override
+    @Deprecated
     public DefaultDataFrame createSubset(int from, int to) {
+        return selectSubset(from, to);
+    }
+    @Override
+    public DefaultDataFrame selectSubset(int from, int to) {
         DefaultDataFrame newFrame = new DefaultDataFrame();
         newFrame.set(header.copy(), getRows(from, to), indices);
         return newFrame;

@@ -526,8 +526,31 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param from lowest remaining row index
      * @param to   highest remaining row index
      * @return <tt>self</tt> for method chaining
+     * @deprecated use {@link DataFrame#filterSubset} instead.
      */
     DataFrame subset(int from, int to);
+
+    /**
+     * Sets this data frame to a subset of itself.
+     * Only rows between <tt>from</tt> and <tt>to</tt> remain in this data frame
+     *
+     * @param from lowest remaining row index
+     * @param to   highest remaining row index
+     * @return <tt>self</tt> for method chaining
+     */
+    DataFrame filterSubset(int from, int to);
+
+    /**
+     * Creates a new data frame from a subset of this data frame.
+     * Rows between <tt>from</tt> and <tt>to</tt> are added to the new data frame.
+     *
+     * @param from lowest row index
+     * @param to   highest row index
+     * @return created subset data frame
+     * @deprecated use {@link DataFrame#selectSubset} instead.
+     */
+    @Deprecated
+    DataFrame createSubset(int from, int to);
 
     /**
      * Creates a new data frame from a subset of this data frame.
@@ -537,7 +560,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param to   highest row index
      * @return created subset data frame
      */
-    DataFrame createSubset(int from, int to);
+    DataFrame selectSubset(int from, int to);
 
     /**
      * Returns a list the list of rows between <tt>from</tt> and <tt>to</tt>.
