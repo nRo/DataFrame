@@ -82,7 +82,7 @@ public abstract class DataWriter {
 
 
     public void write(File file, DataContainer<?, ?> dataContainer) {
-        if (!file.getParentFile().isDirectory()) {
+        if (file.getParentFile() != null && !file.getParentFile().isDirectory()) {
             file.getParentFile().mkdirs();
         }
         try(BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
