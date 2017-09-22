@@ -39,6 +39,8 @@ public class JoinInfo {
     private final DataFrameHeader header;
     private final WeakReference<DataFrame> dataFrameA;
     private final WeakReference<DataFrame> dataFrameB;
+    private final Map<String, String> dataFrameAHeaderMap = new HashMap<>();
+    private final Map<String, String> dataFrameBHeaderMap = new HashMap<>();
 
     /**
      * Creates a join information using both data frames and the joined data frame header.<br>
@@ -76,9 +78,6 @@ public class JoinInfo {
         return ((df = dataFrameB.get()) != null && df.equals(dataFrame));
     }
 
-
-    private final Map<String, String> dataFrameAHeaderMap = new HashMap<>();
-    private final Map<String, String> dataFrameBHeaderMap = new HashMap<>();
 
     /**
      * Adds a original - joined header information for the first data frame.

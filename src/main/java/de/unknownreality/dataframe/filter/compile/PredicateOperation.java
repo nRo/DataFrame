@@ -36,6 +36,8 @@ public enum PredicateOperation {
     NOR("NOR","nor"),
     XOR("XOR","xor");
 
+    private static final Map<String,PredicateOperation> ALIASES_MAP = new HashMap<>();
+
     private String[] aliases;
 
     PredicateOperation(String... aliases){
@@ -47,7 +49,6 @@ public enum PredicateOperation {
     }
 
 
-    private static final Map<String,PredicateOperation> ALIASES_MAP = new HashMap<>();
     static{
         for(PredicateOperation predicateOperation : values()){
             for(String alias : predicateOperation.aliases){

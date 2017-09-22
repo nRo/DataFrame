@@ -50,23 +50,19 @@ import java.util.TreeMap;
 public class DataFrameMetaReader {
     private static Logger logger = LoggerFactory.getLogger(DataFrameMetaReader.class);
 
-
-    private DataFrameMetaReader(){}
-
-
-
     /**
      * Map containing legacy package names.
      * This map is used to rename Reader and Column classes in an old Meta file.
      */
     private static final Map<String, String> LEGACY_PACKAGES = new TreeMap<>((o1, o2) -> -Integer.compare(o1.length(), o2.length()));
-
     static {
         LEGACY_PACKAGES.put("de.unknownreality.data.", "de.unknownreality.dataframe.");
         LEGACY_PACKAGES.put("de.unknownreality.data.frame.", "de.unknownreality.dataframe.");
         LEGACY_PACKAGES.put("de.unknownreality.data.csv.CSVReaderBuilder", "de.unknownreality.dataframe.csv.CSVFormat");
         LEGACY_PACKAGES.put("de.unknownreality.dataframe.csv.CSVReaderBuilder", "de.unknownreality.dataframe.csv.CSVFormat");
     }
+
+    private DataFrameMetaReader(){}
 
     /**
      * Renames classes based in legacy packages

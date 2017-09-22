@@ -52,12 +52,6 @@ public class DefaultJoinUtil implements JoinUtil {
     public static final InnerJoin INNER = new InnerJoin();
 
 
-
-    public DefaultJoinUtil(){
-
-    }
-
-
     /**
      * Joins two data frames using the <tt>LEFT JOIN</tt> method and the default header name suffixes
      *

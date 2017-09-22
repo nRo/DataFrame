@@ -30,8 +30,8 @@ public class IntervalNode<T> {
     private T value;
     private IntervalNode<T> left;
     private IntervalNode<T> right;
-    long subtreeSize;
-    Number max;
+    private long subtreeSize;
+    private Number max;
 
     IntervalNode(Interval interval, T value) {
         this.interval = interval;

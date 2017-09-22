@@ -33,6 +33,8 @@ public class IntervalSearchTree<T> {
 
     private IntervalNode<T> root;
 
+    private Random random = new Random();
+
 
     public long getSize() {
         return root.getSubtreeSize();
@@ -65,13 +67,9 @@ public class IntervalSearchTree<T> {
         return node.getValue();
     }
 
-
     public void add(Interval interval, T value) {
         root = recInsert(root, interval, value);
     }
-
-
-    private Random random = new Random();
 
     private IntervalNode<T> recInsert(IntervalNode<T> node, Interval interval, T value) {
         if (node == null) {

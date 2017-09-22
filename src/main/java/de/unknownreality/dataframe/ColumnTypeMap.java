@@ -36,7 +36,6 @@ public class ColumnTypeMap {
 
     private static final Map<Class<?>, Class<? extends DataFrameColumn>> DEFAULT_COLUMN_TYPES = new HashMap<>();
     private static final Map<Class<?>, Class<? extends DataFrameColumn>> ADDITIONAL_COLUMN_TYPES = new HashMap<>();
-
     static {
         DEFAULT_COLUMN_TYPES.put(String.class, StringColumn.class);
         DEFAULT_COLUMN_TYPES.put(Double.class, DoubleColumn.class);
@@ -48,8 +47,7 @@ public class ColumnTypeMap {
         DEFAULT_COLUMN_TYPES.put(Byte.class, ByteColumn.class);
     }
 
-
-
+    private static final ColumnTypeMap defaultInstance = create();
 
     private final Map<Class<?>, Class<? extends DataFrameColumn>> columnTypesMap = new HashMap<>();
 
@@ -58,7 +56,6 @@ public class ColumnTypeMap {
         ADDITIONAL_COLUMN_TYPES.put(cl,colType);
     }
 
-    private static final ColumnTypeMap defaultInstance = create();
 
     public static <T extends Comparable<T>, C extends DataFrameColumn<T, ?>> Class<C> get(Class<T> type){
         return  defaultInstance.getColumnType(type);
