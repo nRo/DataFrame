@@ -36,5 +36,5 @@ public interface ReaderBuilder<R extends Row,D extends DataReader<R,? extends Da
     D build();
 
     public ReaderBuilder<R,D> loadSettings(Map<String,String> map) throws Exception;
-    public CSVReaderBuilder selectColumn(String col);
+    public ReaderBuilder<R, D> selectColumn(String col);
 }
