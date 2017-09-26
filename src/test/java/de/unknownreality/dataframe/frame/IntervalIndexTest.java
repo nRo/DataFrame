@@ -124,8 +124,7 @@ public class IntervalIndexTest {
         dataFrame.append("A",1,2);
 
 
-        IntervalIndex index = new IntervalIndex("idx",dataFrame.getNumberColumn("start"),dataFrame.getNumberColumn("end"));
-        dataFrame.addIndex(index);
+        dataFrame.addIndex(IntervalIndex.create(dataFrame, "idx","start","end"));
 
         List<DataRow> rows;
 

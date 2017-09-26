@@ -24,6 +24,7 @@
 
 package de.unknownreality.dataframe.index.interval;
 
+import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.DataFrameColumn;
 import de.unknownreality.dataframe.DataFrameRuntimeException;
 import de.unknownreality.dataframe.DataRow;
@@ -40,6 +41,13 @@ public class IntervalIndex implements Index {
     private NumberColumn<?, ?> startColumn;
     private NumberColumn<?, ?> endColumn;
     private String name;
+
+    public static IntervalIndex create(DataFrame dataFrame, String name, String startColumn, String endColumn){
+        return new IntervalIndex(name, dataFrame.getNumberColumn(startColumn), dataFrame.getNumberColumn(endColumn));
+    }
+    public static IntervalIndex create(String name, NumberColumn<?,?> startColumn, NumberColumn<?,?> endColumn){
+        return new IntervalIndex(name, startColumn, endColumn);
+    }
 
     public IntervalIndex(String name, NumberColumn<?,?> startColumn, NumberColumn<?,?> endColumn){
         this.name = name;
