@@ -52,23 +52,24 @@ public class DataFrameMeta {
      * @return data frame meta information
      */
     public static DataFrameMeta create(DataFrame dataFrame, Class<? extends ReadFormat> readFormatClass, DataWriter dataWriterBuilder) {
-        return create(dataFrame, readFormatClass, dataWriterBuilder.getSettings());
+        return create(readFormatClass,dataWriterBuilder.getMetaColumns(dataFrame), dataWriterBuilder.getSettings(dataFrame));
     }
 
     /**
      * Creates data frame meta information
      *
-     * @param dataFrame          source data frame
      * @param readFormatClass class of used read format
+     * @param columns columns contained in meta file
      * @param writerAttributes   attributes of the used data writer
      * @return data frame meta information
      */
-    public static DataFrameMeta create(DataFrame dataFrame, Class<? extends ReadFormat> readFormatClass, Map<String, String> writerAttributes) {
+    public static DataFrameMeta create(Class<? extends ReadFormat> readFormatClass,List<DataFrameColumn> columns, Map<String, String> writerAttributes) {
         DataFrameMeta dataFrameMetaFile = new DataFrameMeta();
         dataFrameMetaFile.readFormatClass = readFormatClass;
         dataFrameMetaFile.attributes = writerAttributes;
-        for (String header : dataFrame.getHeader()) {
-            dataFrameMetaFile.columns.put(header, dataFrame.getHeader().getColumnType(header));
+        for(DataFrameColumn column : columns){
+            dataFrameMetaFile.columns.put(column.getName(), column.getClass());
+
         }
         return dataFrameMetaFile;
     }
