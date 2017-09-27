@@ -25,11 +25,13 @@
 package de.unknownreality.dataframe.io;
 
 import de.unknownreality.dataframe.DataFrame;
+import de.unknownreality.dataframe.DataFrameColumn;
 import de.unknownreality.dataframe.DataFrameRuntimeException;
 import de.unknownreality.dataframe.DataFrameWriter;
 import de.unknownreality.dataframe.common.DataContainer;
 
 import java.io.*;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -92,7 +94,9 @@ public abstract class DataWriter {
         }
     }
 
-    public abstract Map<String,String> getSettings();
+    public abstract Map<String,String> getSettings(DataFrame dataFrame);
+
+    public abstract List<DataFrameColumn> getMetaColumns(DataFrame dataFrame);
 
     public abstract ReadFormat getReadFormat();
 

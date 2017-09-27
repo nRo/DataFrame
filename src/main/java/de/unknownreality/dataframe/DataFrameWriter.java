@@ -344,7 +344,7 @@ public class DataFrameWriter {
     public static void writeMetaFile(File file, DataFrame dataFrame, DataWriter dataWriter) {
         File metaFile = new File(file.getAbsolutePath() + "." + DataFrameMeta.META_FILE_EXTENSION);
         DataFrameMeta meta = DataFrameMeta.create(
-                dataFrame, dataWriter.getReadFormat().getClass(), dataWriter.getSettings()
+                dataWriter.getReadFormat().getClass(),dataWriter.getMetaColumns(dataFrame), dataWriter.getSettings(dataFrame)
         );
         DataFrameMetaWriter.write(meta, metaFile);
     }

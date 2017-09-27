@@ -24,6 +24,8 @@
 
 package de.unknownreality.dataframe.csv;
 
+import de.unknownreality.dataframe.DataFrame;
+import de.unknownreality.dataframe.DataFrameColumn;
 import de.unknownreality.dataframe.common.DataContainer;
 import de.unknownreality.dataframe.common.Row;
 import de.unknownreality.dataframe.io.DataWriter;
@@ -31,7 +33,9 @@ import de.unknownreality.dataframe.io.FileFormat;
 import de.unknownreality.dataframe.io.ReadFormat;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
@@ -113,13 +117,18 @@ public class CSVWriter extends DataWriter {
 
 
     @Override
-    public Map<String, String> getSettings() {
+    public Map<String, String> getSettings(DataFrame dataFrame) {
         Map<String, String> attributes = new HashMap<>();
         attributes.put("separator", Character.toString(settings.getSeparator()));
         attributes.put("headerPrefix", settings.getHeaderPrefix());
         attributes.put("containsHeader", Boolean.toString(settings.isContainsHeader()));
         attributes.put("gzip", Boolean.toString(settings.isGzip()));
         return attributes;
+    }
+
+    @Override
+    public List<DataFrameColumn> getMetaColumns(DataFrame dataFrame) {
+        return new ArrayList<>(dataFrame.getColumns());
     }
 
 

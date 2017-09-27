@@ -62,7 +62,7 @@ public class DataFrameMetaTest {
        /* Assert.assertEquals("#", csvReaderBuilder.getHeaderPrefix());
         Assert.assertEquals(new Character('\t'), csvReaderBuilder.getSeparator());
         Assert.assertEquals(false, csvReaderBuilder.isContainsHeader());
-        Assert.assertEquals(3,meta.getColumns().size());*/
+        Assert.assertEquals(3,meta.getMetaColumns().size());*/
 
         Assert.assertEquals(IntegerColumn.class, meta.getColumns().get("id"));
         Assert.assertEquals(DoubleColumn.class, meta.getColumns().get("value"));
