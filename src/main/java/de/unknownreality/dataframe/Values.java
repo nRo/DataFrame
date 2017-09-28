@@ -47,13 +47,13 @@ public class Values {
 
 
         /**
-         * checks whether the input object is of type NA.
+         * checks whether the input object is of type NA or null.
          * @param o input object
-         * @return true if the object is of type NA
+         * @return true if the object is of type NA or null
          */
         public boolean isNA(Object o){
             if(o == null){
-                return false;
+                return true;
             }
             if(o == this){
                 return true;

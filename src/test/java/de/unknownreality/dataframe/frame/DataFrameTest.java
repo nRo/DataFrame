@@ -341,7 +341,7 @@ public class DataFrameTest {
 
         Assert.assertEquals(true, Values.NA.isNA(Values.NA));
         Assert.assertEquals(true, Values.NA.isNA("NA"));
-        Assert.assertEquals(false, Values.NA.isNA(null));
+        Assert.assertEquals(true, Values.NA.isNA(null));
         Assert.assertEquals(false, Values.NA.isNA(1));
         Assert.assertEquals(false, Values.NA.isNA("na"));
         Assert.assertEquals(0, Values.NA.compareTo(Values.NA));
