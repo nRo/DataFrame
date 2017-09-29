@@ -38,7 +38,7 @@ public class CSVSettings implements FormatSettings{
     private boolean containsHeader = true;
     private String headerPrefix = "";
     private boolean gzip = false;
-    private boolean quoteStrings = true;
+    private boolean quoteStrings = false;
 
     public boolean isGzip() {
         return gzip;

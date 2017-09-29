@@ -34,7 +34,7 @@ public class CSVWriterBuilder implements WriterBuilder<CSVWriter> {
     private String headerPrefix = "";
     private boolean containsHeader = true;
     private boolean gzip = false;
-
+    private boolean quoteStrings = false;
     private CSVWriterBuilder(){}
 
     public static CSVWriterBuilder create(){
@@ -62,6 +62,12 @@ public class CSVWriterBuilder implements WriterBuilder<CSVWriter> {
         this.containsHeader = header;
         return this;
     }
+
+    public CSVWriterBuilder quoteStrings(boolean quoteStrings) {
+        this.quoteStrings = quoteStrings;
+        return this;
+    }
+
     public CSVWriterBuilder useGzip(boolean gzip){
         this.gzip = gzip;
         return this;
@@ -76,6 +82,7 @@ public class CSVWriterBuilder implements WriterBuilder<CSVWriter> {
         settings.setHeaderPrefix(headerPrefix);
         settings.setContainsHeader(containsHeader);
         settings.setGzip(gzip);
+        settings.setQuoteStrings(quoteStrings);
         return new CSVWriter(settings);
     }
 }
