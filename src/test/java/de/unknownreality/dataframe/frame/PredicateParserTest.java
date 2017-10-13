@@ -164,6 +164,49 @@ public class PredicateParserTest {
         Assert.assertEquals(2,filtered.size());
     }
 
+    @Test
+    public void numberTest(){
+        DataFrame dataFrame = new DefaultDataFrame();
+        dataFrame.addColumn(new StringColumn("name"));
+        dataFrame.addColumn(new DoubleColumn("x"));
+        dataFrame.addColumn(new IntegerColumn("y"));
+        dataFrame.addColumn(new StringColumn("z"));
+
+        dataFrame.append("a",1d,5,"10");
+        dataFrame.append("b",2.3d,4,"2");
+        dataFrame.append("c",3.5d,3,null);
+        dataFrame.append("d",null,5,"4.5");
+        dataFrame.append("e",4.5,5,"5.4321");
+
+
+        DataFrame filtered = dataFrame.select("z == 10");
+        Assert.assertEquals(1,filtered.size());
+        Assert.assertEquals("a",filtered.getRow(0).getString("name"));
+
+        filtered = dataFrame.select("z > 6");
+        Assert.assertEquals(1,filtered.size());
+        Assert.assertEquals("a",filtered.getRow(0).getString("name"));
+
+        filtered = dataFrame.select("z >= 4.5");
+        Assert.assertEquals(3,filtered.size());
+        Assert.assertEquals("a",filtered.getRow(0).getString("name"));
+        Assert.assertEquals("d",filtered.getRow(1).getString("name"));
+        Assert.assertEquals("e",filtered.getRow(2).getString("name"));
+
+        filtered = dataFrame.select("z >= 4.5 && z < 5.5");
+        Assert.assertEquals(2,filtered.size());
+        Assert.assertEquals("d",filtered.getRow(0).getString("name"));
+        Assert.assertEquals("e",filtered.getRow(1).getString("name"));
+
+        filtered = dataFrame.select("z == 5.4321");
+        Assert.assertEquals(1,filtered.size());
+        Assert.assertEquals("e",filtered.getRow(0).getString("name"));
+
+        filtered = dataFrame.select("z == null");
+        Assert.assertEquals(1,filtered.size());
+        Assert.assertEquals("c",filtered.getRow(0).getString("name"));
+    }
+
     @Test(expected=PredicateCompilerException.class)
     public void testWrongOperation() {
         PredicateCompiler.compile("((name != 'a') X (x < 3.5)) OR (y == 2)");

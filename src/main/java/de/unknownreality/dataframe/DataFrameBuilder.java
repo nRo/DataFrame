@@ -185,6 +185,11 @@ public class DataFrameBuilder {
         return this;
     }
 
+    public DataFrameBuilder withFilterPredicate(String predicate) {
+        this.filterPredicate = FilterPredicate.compile(predicate);
+        return this;
+    }
+
     public DataFrameBuilder withFilterPredicate(FilterPredicate predicate) {
         this.filterPredicate = predicate;
         return this;

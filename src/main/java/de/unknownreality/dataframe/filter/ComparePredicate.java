@@ -130,6 +130,15 @@ public class ComparePredicate extends FilterPredicate {
         if (operation == Operation.EQ && valueA.equals(valueB)) {
             return true;
         }
+        if(valueA instanceof String && valueB instanceof Number){
+            Number n ;
+            if((n = NumberUtil.parseNumberOrNull(valueA.toString())) != null){
+                valueA = n;
+            }
+            else{
+                valueB = NumberUtil.toString((Number)valueB);
+            }
+        }
 
         boolean numberCompare = (valueA instanceof Number && valueB instanceof Number);
         if (!valueA.getClass().equals(valueB.getClass()) && !numberCompare) {
@@ -137,7 +146,6 @@ public class ComparePredicate extends FilterPredicate {
         }
         int c = 0;
         if (numberCompare) {
-            //could be better to convert to BigDecimal for comparison
             c = NumberUtil.compare((Number) valueA, (Number) valueB);
         } else if (valueA instanceof Comparable && valueB instanceof Comparable) {
             c = ((Comparable) valueA).compareTo(valueB);

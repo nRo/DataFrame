@@ -28,11 +28,17 @@ import de.unknownreality.dataframe.DataFrameRuntimeException;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.Locale;
 
 /**
  * Created by Alex on 07.07.2016.
  */
 public class NumberUtil {
+    //default Number format (US locale)
+    private static NumberFormat NUMBER_FORMAT = NumberFormat.getInstance(Locale.US);
+
     private NumberUtil(){}
     public static <T extends Number> T add(Number a, Number b, Class<T> cl) {
         return convert(a.doubleValue() + b.doubleValue(), cl);
@@ -118,6 +124,21 @@ public class NumberUtil {
         } catch (final NumberFormatException e) {
             throw new DataFrameRuntimeException("\"" + number + "\" of class " + number.getClass().getName() + " can not be converted to String", e);
         }
+    }
+
+    public static Number parseNumber(String numberStr) throws ParseException {
+        return NUMBER_FORMAT.parse(numberStr);
+    }
+    public static Number parseNumberOrNull(String numberStr) {
+        try {
+            return parseNumber(numberStr);
+        } catch (ParseException e) {
+            return null;
+        }
+    }
+
+    public static String toString(Number number){
+        return NUMBER_FORMAT.format(number);
     }
 
     @SuppressWarnings("unchecked")
