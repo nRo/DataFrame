@@ -31,6 +31,7 @@ import de.unknownreality.dataframe.filter.compile.PredicateCompiler;
 import de.unknownreality.dataframe.group.DataGrouping;
 import de.unknownreality.dataframe.group.GroupUtil;
 import de.unknownreality.dataframe.group.impl.DefaultGroupUtil;
+import de.unknownreality.dataframe.group.impl.TreeGroupUtil;
 import de.unknownreality.dataframe.index.Index;
 import de.unknownreality.dataframe.index.Indices;
 import de.unknownreality.dataframe.join.JoinColumn;
@@ -56,7 +57,7 @@ public class DefaultDataFrame implements DataFrame {
     private DataFrameHeader header = new DataFrameHeader();
     private final Indices indices = new Indices(this);
     private JoinUtil joinUtil = new DefaultJoinUtil();
-    private GroupUtil groupUtil = new DefaultGroupUtil();
+    private GroupUtil groupUtil = new TreeGroupUtil();
 
     public DefaultDataFrame() {
 
