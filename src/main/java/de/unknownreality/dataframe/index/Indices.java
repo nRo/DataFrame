@@ -209,6 +209,14 @@ public class Indices {
     }
 
     /**
+     * returns the number of indices
+     * @return number of indices
+     */
+    public int indicesCount(){
+        return indexMap.size();
+    }
+
+    /**
      * sets the primary key using one or more columns
      *
      * @param columns columns the index is based on
