@@ -231,6 +231,19 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
 
 
     /**
+     * Appends a new row based on {@link Comparable} values from another dataframe.
+     * <p>There must be <b>exactly one value for each column</b>.</p>
+     * <p><b>The object types have to match the column types</b>.</p>
+     * If the wrong number of values or a wrong type is found a {@link DataFrameRuntimeException} is thrown.
+     * </p>
+     *
+     * @param dataFrame other dataframe
+     * @param rowIndex row in other dataframe
+     * @return <tt>self</tt> for method chaining
+     */
+    DefaultDataFrame append(DataFrame dataFrame, int rowIndex);
+
+    /**
      * Appends a new row based on {@link Comparable} values.
      * <p>There must be <b>exactly one value for each column</b>.</p>
      * <p><b>The object types have to match the column types</b>.</p>
@@ -1671,7 +1684,6 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      */
     default void print(DataWriter dataWriter) {
         DataFrameWriter.print(this, dataWriter);
-
     }
 
     /**
@@ -1682,4 +1694,6 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     default void print(WriteFormat writeFormat) {
         DataFrameWriter.print(this, writeFormat);
     }
+
+    Comparable get(int col, int row);
 }

@@ -34,6 +34,7 @@ import de.unknownreality.dataframe.group.GroupRow;
 import de.unknownreality.dataframe.group.aggr.Aggregate;
 import de.unknownreality.dataframe.csv.CSVReader;
 import de.unknownreality.dataframe.csv.CSVReaderBuilder;
+import de.unknownreality.dataframe.group.impl.TreeGroupUtil;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -51,7 +52,7 @@ public class DataFrameGroupingTest {
     public final ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void testReader() throws IOException {
+    public void testGroupUtil() throws IOException {
         /*
         ID;NAME;VALUE
             1;A;1
@@ -74,7 +75,6 @@ public class DataFrameGroupingTest {
                 .build();
 
         DataFrame dataFrame = DataFrameLoader.load("data_grouping.csv", DataFrameGroupingTest.class.getClassLoader(), csvReader);
-
         Assert.assertEquals(8, dataFrame.size());
 
         /*
@@ -86,7 +86,76 @@ public class DataFrameGroupingTest {
         2;C  (1)
         4;B  (1)
          */
-        DataGrouping dataGroups = dataFrame.groupBy("ID", "NAME").agg("MAX", Aggregate.max("VALUE")).agg("MIN",Aggregate.max("VALUE"));
+        DataGrouping dataGroups = dataFrame.groupBy("ID", "NAME")
+                .agg("MAX", Aggregate.max("VALUE"))
+                .agg("MIN",Aggregate.max("VALUE"));
+        Assert.assertEquals(6, dataGroups.size());
+
+        Assert.assertEquals(IntegerColumn.class, dataGroups.getColumn("MIN").getClass());
+        Assert.assertEquals(IntegerColumn.class, dataGroups.getColumn("MAX").getClass());
+
+
+        testGroup(dataGroups.findByGroupValues(1, "A"), 1, 6);
+        testGroup(dataGroups.findByGroupValues(1, "B"), 2);
+        testGroup(dataGroups.findByGroupValues(2, "A"), 3);
+        testGroup(dataGroups.findByGroupValues(3, "B"), 4, 8);
+        testGroup(dataGroups.findByGroupValues(2, "C"), 5);
+        testGroup(dataGroups.findByGroupValues(4, "B"), 7);
+
+
+        dataGroups.agg("count2",(DataGroup::size));
+        Assert.assertEquals((Integer)2,dataGroups.findByGroupValues(1, "A").getInteger("count2"));
+        Assert.assertEquals((Integer)1,dataGroups.findByGroupValues(1, "B").getInteger("count2"));
+        Assert.assertEquals((Integer)1,dataGroups.findByGroupValues(2, "A").getInteger("count2"));
+        Assert.assertEquals((Integer)2,dataGroups.findByGroupValues(3, "B").getInteger("count2"));
+        Assert.assertEquals((Integer)1,dataGroups.findByGroupValues(2, "C").getInteger("count2"));
+        Assert.assertEquals((Integer)1,dataGroups.findByGroupValues(4, "B").getInteger("count2"));
+
+        DataFrame grouping2 = dataGroups.select(FilterPredicate.and(FilterPredicate.lt("ID", 4), FilterPredicate.in("NAME", new String[]{"A", "B"})));
+        Assert.assertEquals(4, grouping2.size());
+
+
+    }
+
+    @Test
+    public void testNewGroupUtil() throws IOException {
+        /*
+        ID;NAME;VALUE
+            1;A;1
+            1;B;2
+            2;A;3
+            3;B;4
+            2;C;5
+            1;A;6
+            4;B;7
+            3;B;8
+         */
+
+        CSVReader csvReader = CSVReaderBuilder.create()
+                .withHeader(true)
+                .withHeaderPrefix("")
+                .withSeparator(';')
+                .setColumnType("ID",Integer.class)
+                .setColumnType("NAME",String.class)
+                .setColumnType("VALUE",Integer.class)
+                .build();
+
+        DataFrame dataFrame = DataFrameLoader.load("data_grouping.csv", DataFrameGroupingTest.class.getClassLoader(), csvReader);
+        ((DefaultDataFrame)dataFrame).setGroupUtil(new TreeGroupUtil());
+        Assert.assertEquals(8, dataFrame.size());
+
+        /*
+        Groups:
+        1;A  (2)
+        1;B  (1)
+        2;A  (1)
+        3;B  (2)
+        2;C  (1)
+        4;B  (1)
+         */
+        DataGrouping dataGroups = dataFrame.groupBy("ID", "NAME")
+                .agg("MAX", Aggregate.max("VALUE"))
+                .agg("MIN",Aggregate.max("VALUE"));
         Assert.assertEquals(6, dataGroups.size());
 
         Assert.assertEquals(IntegerColumn.class, dataGroups.getColumn("MIN").getClass());
