@@ -30,8 +30,6 @@ import de.unknownreality.dataframe.DataFrameRuntimeException;
 import de.unknownreality.dataframe.DataRow;
 import de.unknownreality.dataframe.column.NumberColumn;
 import de.unknownreality.dataframe.index.Index;
-import de.unknownreality.dataframe.index.interval.Interval;
-import de.unknownreality.dataframe.index.interval.IntervalSearchTree;
 
 import java.util.*;
 

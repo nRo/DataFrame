@@ -24,7 +24,10 @@
 
 package de.unknownreality.dataframe.frame;
 
-import de.unknownreality.dataframe.*;
+import de.unknownreality.dataframe.DataFrame;
+import de.unknownreality.dataframe.DataRow;
+import de.unknownreality.dataframe.MapFunction;
+import de.unknownreality.dataframe.Values;
 import de.unknownreality.dataframe.column.*;
 import org.junit.Assert;
 import org.junit.Test;

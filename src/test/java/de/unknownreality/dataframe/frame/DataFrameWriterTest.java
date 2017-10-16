@@ -25,26 +25,14 @@
 package de.unknownreality.dataframe.frame;
 
 import de.unknownreality.dataframe.DataFrame;
-import de.unknownreality.dataframe.DataFrameException;
-import de.unknownreality.dataframe.DataFrameLoader;
-import de.unknownreality.dataframe.DataRow;
-import de.unknownreality.dataframe.column.DoubleColumn;
-import de.unknownreality.dataframe.column.IntegerColumn;
-import de.unknownreality.dataframe.column.StringColumn;
-import de.unknownreality.dataframe.csv.CSVReader;
-import de.unknownreality.dataframe.csv.CSVReaderBuilder;
-import de.unknownreality.dataframe.csv.CSVWriter;
-import de.unknownreality.dataframe.filter.FilterPredicate;
 import de.unknownreality.dataframe.io.FileFormat;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.net.URI;
 
 /**
  * Created by Alex on 12.03.2016.

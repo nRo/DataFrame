@@ -49,7 +49,7 @@ public class JoinedDataFrame extends DefaultDataFrame {
     @Override
     public JoinedDataFrame copy() {
         JoinedDataFrame joinedDataFrame = new JoinedDataFrame(joinInfo);
-        joinedDataFrame.set(getHeader(),getRows(),getIndices());
+        joinedDataFrame.set(getRows(),getIndices());
         return joinedDataFrame;
     }
 

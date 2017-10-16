@@ -25,7 +25,9 @@
 package de.unknownreality.dataframe.index.interval;
 
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 import static de.unknownreality.dataframe.common.NumberUtil.*;
 

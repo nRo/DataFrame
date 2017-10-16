@@ -26,11 +26,12 @@ package de.unknownreality.dataframe.frame;
 
 import de.unknownreality.dataframe.index.interval.Interval;
 import de.unknownreality.dataframe.index.interval.IntervalSearchTree;
-import static de.unknownreality.dataframe.common.NumberUtil.*;
 import org.junit.Test;
 
 import java.util.*;
 
+import static de.unknownreality.dataframe.common.NumberUtil.ge;
+import static de.unknownreality.dataframe.common.NumberUtil.le;
 import static org.junit.Assert.assertEquals;
 
 

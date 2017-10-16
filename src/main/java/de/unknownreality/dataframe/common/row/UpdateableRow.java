@@ -30,9 +30,9 @@ import de.unknownreality.dataframe.common.Header;
 /**
  * Created by Alex on 19.05.2017.
  */
-public abstract class UpdateableRow<T,H extends Header<T>,V> extends BasicRow<T,H,V> {
-    public UpdateableRow(H header, V[] values, int index) {
-        super(header, values, index);
+public abstract class UpdateableRow<T,H extends Header<T>,V> extends AbstractHeaderRow<T,H,V> {
+    public UpdateableRow(H header, int index) {
+        super(header, index);
     }
     /**
      * Sets a new value.
@@ -49,7 +49,8 @@ public abstract class UpdateableRow<T,H extends Header<T>,V> extends BasicRow<T,
         if (!isCompatible(value,headerName)) {
             throw new DataFrameRuntimeException(String.format("the value (%s) is not compatible with this column (%s)", value.getClass(), headerName));
         }
-        getValues()[getHeader().getIndex(headerName)] = value;
+        setValue(getHeader().getIndex(headerName),value);
+
     }
 
     public abstract boolean isCompatible(V value, T headerName);
@@ -72,6 +73,8 @@ public abstract class UpdateableRow<T,H extends Header<T>,V> extends BasicRow<T,
         if (!isCompatible(value,index)) {
             throw new DataFrameRuntimeException(String.format("the value (%s) is not compatible with this column (%s)", value.getClass(), index));
         }
-        getValues()[index] = value;
+        setValue(index,value);
     }
+
+    protected abstract void setValue(int index, V value);
 }

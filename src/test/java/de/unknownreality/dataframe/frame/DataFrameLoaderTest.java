@@ -29,18 +29,18 @@ import de.unknownreality.dataframe.DataRow;
 import de.unknownreality.dataframe.column.DoubleColumn;
 import de.unknownreality.dataframe.column.IntegerColumn;
 import de.unknownreality.dataframe.column.StringColumn;
-import de.unknownreality.dataframe.csv.CSVWriter;
-import de.unknownreality.dataframe.csv.CSVWriterBuilder;
-import de.unknownreality.dataframe.filter.FilterPredicate;
 import de.unknownreality.dataframe.csv.CSVReader;
 import de.unknownreality.dataframe.csv.CSVReaderBuilder;
-import de.unknownreality.dataframe.io.FileFormat;
+import de.unknownreality.dataframe.filter.FilterPredicate;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 

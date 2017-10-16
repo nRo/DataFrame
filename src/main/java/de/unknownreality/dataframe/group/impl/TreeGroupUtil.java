@@ -24,13 +24,17 @@
 
 package de.unknownreality.dataframe.group.impl;
 
-import de.unknownreality.dataframe.*;
+import de.unknownreality.dataframe.DataFrame;
+import de.unknownreality.dataframe.DataFrameColumn;
+import de.unknownreality.dataframe.DataFrameHeader;
+import de.unknownreality.dataframe.DefaultDataFrame;
 import de.unknownreality.dataframe.group.DataGroup;
 import de.unknownreality.dataframe.group.DataGrouping;
 import de.unknownreality.dataframe.group.GroupUtil;
-import de.unknownreality.dataframe.sort.SortColumn;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by Alex on 10.03.2016.
@@ -70,14 +74,14 @@ public class TreeGroupUtil implements GroupUtil {
                         groupColumns,
                         groupValues
                 );
-                group.set(header.copy(),new ArrayList<>(0));
+                group.set(header.copy());
                 groups.add(group);
                 node.setGroup(group);
             }
             node.addRow(df,rowIndex);
             return;
         }
-        Comparable value = df.get(groupColumnIndices[index],rowIndex);
+        Comparable value = df.getValue(groupColumnIndices[index],rowIndex);
         groupValues[index] = value;
         GroupNode child;
         if ((child = node.getChild(value)) == null) {

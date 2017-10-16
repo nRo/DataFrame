@@ -28,6 +28,7 @@ import de.unknownreality.dataframe.column.StringColumn;
 import de.unknownreality.dataframe.common.Row;
 import de.unknownreality.dataframe.common.parser.Parser;
 import de.unknownreality.dataframe.common.parser.ParserUtil;
+import de.unknownreality.dataframe.common.row.BasicRow;
 import de.unknownreality.dataframe.filter.FilterPredicate;
 import de.unknownreality.dataframe.io.ColumnInformation;
 import de.unknownreality.dataframe.io.DataIterator;
@@ -35,7 +36,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * Created by Alex on 09.03.2016.
@@ -155,9 +158,8 @@ public class DataFrameConverter {
                 }
                 rowValues[i] = val;
             }
-            DataRow dataRow = new DataRow(dataFrame.getHeader(), rowValues, dataFrame.size() - 1);
-            if (hasAutodetect || filterPredicate.valid(dataRow)) {
-                dataFrame.append(dataRow);
+            if (hasAutodetect || filterPredicate.valid(new BasicRow(dataFrame.getHeader(),rowValues,dataFrame.size() - 1))) {
+                dataFrame.append(rowValues);
             }
             r++;
         }

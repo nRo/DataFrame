@@ -26,7 +26,6 @@ import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.DataFrameLoader;
 import de.unknownreality.dataframe.DataRow;
 import de.unknownreality.dataframe.Values;
-
 import de.unknownreality.dataframe.io.FileFormat;
 import de.unknownreality.dataframe.transform.CountTransformer;
 import org.junit.Assert;

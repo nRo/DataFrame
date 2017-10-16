@@ -1,6 +1,5 @@
 package de.unknownreality.dataframe.group;
 
-import de.unknownreality.dataframe.DataFrameHeader;
 import de.unknownreality.dataframe.DataRow;
 
 /**
@@ -8,8 +7,8 @@ import de.unknownreality.dataframe.DataRow;
  */
 public class GroupRow extends DataRow {
     private DataGroup group;
-    public GroupRow(DataGroup group, DataFrameHeader header, Comparable[] values, int index) {
-        super(header, values, index);
+    public GroupRow(DataGroup group, DataGrouping grouping,int index) {
+        super(grouping, index);
         this.group = group;
     }
 

@@ -33,9 +33,6 @@ import de.unknownreality.dataframe.join.JoinColumn;
 import de.unknownreality.dataframe.join.JoinInfo;
 import de.unknownreality.dataframe.join.JoinedDataFrame;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by Alex on 10.07.2016.
  */
@@ -56,9 +53,10 @@ public abstract class DirectionJoin extends AbstractJoinOperation {
         for (int i = 0; i < joinColumns.length; i++) {
             groupColumns[i] = joinColumns[i].getColumnB();
         }
-        List<DataRow> joinedRows = new ArrayList<>();
         Comparable[] groupValues = new Comparable[joinColumns.length];
         DataGrouping joinedGroups = dfB.groupBy(groupColumns);
+        JoinedDataFrame joinedDataFrame = new JoinedDataFrame(joinInfo);
+        joinedDataFrame.set(joinHeader);
         for (DataRow row : dfA) {
             if (joinInfo.isA(dfA)) {
                 setGroupValuesA(groupValues, row, joinColumns);
@@ -70,14 +68,11 @@ public abstract class DirectionJoin extends AbstractJoinOperation {
                 Comparable[] joinedRowValues = new Comparable[joinHeader.size()];
                 fillValues(dfA, row, joinInfo, joinedRowValues);
                 fillNA(joinedRowValues);
-                DataRow joinedRow = new DataRow(joinHeader, joinedRowValues, joinedRows.size());
-                joinedRows.add(joinedRow);
+                joinedDataFrame.append(joinedRowValues);
             } else {
-                appendGroupJoinedRows(groupRow.getGroup(), dfA, dfB, row, joinInfo, joinHeader, joinedRows);
+                appendGroupJoinedRows(groupRow.getGroup(), dfA, dfB, row, joinInfo, joinHeader, joinedDataFrame);
             }
         }
-        JoinedDataFrame joinedDataFrame = new JoinedDataFrame(joinInfo);
-        joinedDataFrame.set(joinHeader, joinedRows);
         return joinedDataFrame;
     }
 
