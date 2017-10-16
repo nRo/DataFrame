@@ -120,7 +120,7 @@ public class DataGrouping extends DefaultDataFrame {
 
     @Override
     public GroupRow getRow(int i) {
-        return new GroupRow(getGroup(i), getHeader(), getRowValues(i), i);
+        return new GroupRow(getGroup(i), this, i);
     }
 
 }

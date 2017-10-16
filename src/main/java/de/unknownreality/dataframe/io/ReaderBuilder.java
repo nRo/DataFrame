@@ -25,7 +25,6 @@
 package de.unknownreality.dataframe.io;
 
 import de.unknownreality.dataframe.common.Row;
-import de.unknownreality.dataframe.csv.CSVReaderBuilder;
 
 import java.util.Map;
 

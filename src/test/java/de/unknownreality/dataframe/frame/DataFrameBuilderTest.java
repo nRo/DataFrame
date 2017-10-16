@@ -3,12 +3,9 @@ package de.unknownreality.dataframe.frame;
 import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.DataFrameBuilder;
 import de.unknownreality.dataframe.DataFrameColumn;
-import de.unknownreality.dataframe.DataFrameLoader;
-import de.unknownreality.dataframe.csv.CSVReader;
-import de.unknownreality.dataframe.csv.CSVReaderBuilder;
 import de.unknownreality.dataframe.group.DataGrouping;
 import de.unknownreality.dataframe.group.GroupUtil;
-import de.unknownreality.dataframe.group.impl.DefaultGroupUtil;
+import de.unknownreality.dataframe.group.impl.TreeGroupUtil;
 import de.unknownreality.dataframe.join.JoinColumn;
 import de.unknownreality.dataframe.join.JoinUtil;
 import de.unknownreality.dataframe.join.JoinedDataFrame;
@@ -24,7 +21,7 @@ public class DataFrameBuilderTest {
     public void builderTest(){
         AtomicInteger groupCount = new AtomicInteger(0);
 
-        GroupUtil groupUtil = new DefaultGroupUtil(){
+        GroupUtil groupUtil = new TreeGroupUtil(){
             @Override
             public DataGrouping groupBy(DataFrame df, String... columns) {
                 groupCount.incrementAndGet();

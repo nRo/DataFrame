@@ -23,20 +23,20 @@
 package de.unknownreality.dataframe.frame;
 
 import de.unknownreality.dataframe.*;
-import de.unknownreality.dataframe.column.*;
-
-import de.unknownreality.dataframe.filter.FilterPredicate;
+import de.unknownreality.dataframe.column.BooleanColumn;
+import de.unknownreality.dataframe.column.DoubleColumn;
+import de.unknownreality.dataframe.column.IntegerColumn;
+import de.unknownreality.dataframe.column.StringColumn;
 import de.unknownreality.dataframe.csv.CSVReader;
 import de.unknownreality.dataframe.csv.CSVReaderBuilder;
+import de.unknownreality.dataframe.filter.FilterPredicate;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by Alex on 12.03.2016.

@@ -332,5 +332,9 @@ public class Indices {
         columnIndexMap.remove(column);
     }
 
+    public void clear(){
+        this.columnIndexMap.clear();
+        this.indexMap.clear();
+    }
 
 }

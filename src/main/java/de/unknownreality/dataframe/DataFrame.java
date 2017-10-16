@@ -17,7 +17,6 @@ import java.io.*;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.List;
 
 /**
  * Created by algru on 12.06.2017.
@@ -144,7 +143,6 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     <T extends Comparable<T>, C extends DataFrameColumn<T, C>> DataFrame addColumn(Class<C> type, String name, ColumnAppender<T> appender);
 
 
-
     /**
      * Adds a new {@link BooleanColumn} to the dataframe.
      *
@@ -238,7 +236,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * </p>
      *
      * @param dataFrame other dataframe
-     * @param rowIndex row in other dataframe
+     * @param rowIndex  row in other dataframe
      * @return <tt>self</tt> for method chaining
      */
     DefaultDataFrame append(DataFrame dataFrame, int rowIndex);
@@ -278,23 +276,18 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      */
     DataFrame update(DataRow dataRow);
 
+    DefaultDataFrame set(DataFrameHeader header);
+
     /**
-     * Clears all rows in this data frame and sets new rows using the provided {@link DataRow} collection.
+     * Clears all rows in this data frame and sets new rows using the provided {@link DataRows}.
      *
      * @param rows new collection of rows
      * @return <tt>self</tt> for method chaining
      */
-    DataFrame set(Collection<DataRow> rows);
+    DataFrame set(DataRows rows);
 
-    /**
-     * Removes all columns and rows from this data frame.
-     * New columns are created using the specified data frame header an populated with the provided data rows.
-     *
-     * @param header new header
-     * @param rows   new rows
-     * @return <tt>self</tt> for method chaining
-     */
-    DataFrame set(DataFrameHeader header, Collection<DataRow> rows);
+
+
 
     /**
      * Removes a column from this data frame
@@ -445,7 +438,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param value   input value
      * @return list of found data rows
      */
-    List<DataRow> selectRows(String colName, Comparable value);
+    DataRows selectRows(String colName, Comparable value);
 
     /**
      * Finds data rows using a {@link FilterPredicate}.
@@ -453,7 +446,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param predicateString input predicate string
      * @return list of found data rows
      */
-    List<DataRow> selectRows(String predicateString);
+    DataRows selectRows(String predicateString);
 
     /**
      * Finds data rows using a {@link FilterPredicate}.
@@ -461,7 +454,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param predicate input predicate
      * @return list of found data rows
      */
-    List<DataRow> selectRows(FilterPredicate predicate);
+    DataRows selectRows(FilterPredicate predicate);
 
     /**
      * Converts this dataframe into another dataframe using a specified transformer
@@ -476,7 +469,6 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      *
      * @param keyValues input key values
      * @return found data row
-     *
      * @deprecated use {@link DataFrame#selectByPrimaryKey} instead.
      */
     @Deprecated
@@ -582,14 +574,15 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param to   highest row index
      * @return list of rows between <tt>from</tt> and <tt>to</tt>
      */
-    List<DataRow> getRows(int from, int to);
+    DataRows getRows(int from, int to);
 
     /**
      * Returns all rows in this data frame
      *
      * @return list of all rows
      */
-    List<DataRow> getRows();
+    DataRows getRows();
+
 
     /**
      * Returns the header of this data frame
@@ -643,14 +636,6 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     DataRow getRow(int i);
 
     /**
-     * Returns the values of a row at a specified index
-     *
-     * @param i index of data row
-     * @return values in data row
-     */
-    Comparable[] getRowValues(int i);
-
-    /**
      * Returns a collection of the column names in this data frame
      *
      * @return column names
@@ -659,8 +644,9 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
 
     /**
      * Returns a column based on its name
-     * @param <T> value type of the column
-     * @param <C> column type
+     *
+     * @param <T>  value type of the column
+     * @param <C>  column type
      * @param name column name
      * @return column
      */
@@ -680,8 +666,9 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     /**
      * Returns a {@link NumberColumn}
      * If the column is not found or has the wrong type a {@link DataFrameRuntimeException} is thrown.
-     * @param <T> value type of the column
-     * @param <C> column type
+     *
+     * @param <T>  value type of the column
+     * @param <C>  column type
      * @param name column name
      * @return found column
      */
@@ -895,18 +882,6 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
 
      */
 
-    /**
-     * Finds matching data rows using an index and the corresponding index values
-     *
-     * @param name   name of index
-     * @param values index values
-     * @return rows found
-
-     * @deprecated use {@link DataFrame#selectRowsByIndex} instead.
-     *
-     * */
-    @Deprecated
-    List<DataRow> findByIndex(String name, Comparable... values);
 
     /**
      * Finds matching data rows using an index and the corresponding index values
@@ -914,9 +889,8 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param name   name of index
      * @param values index values
      * @return rows found
-     *
-     * */
-    List<DataRow> selectRowsByIndex(String name, Comparable... values);
+     */
+    DataRows selectRowsByIndex(String name, Comparable... values);
 
     /**
      * Finds the first data row matching an index and the corresponding index values
@@ -944,8 +918,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param name   name of index
      * @param values index values
      * @return dataframe containing found rows
-     *
-     * */
+     */
     DataFrame selectByIndex(String name, Comparable... values);
 
     /**
@@ -1695,5 +1668,10 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
         DataFrameWriter.print(this, writeFormat);
     }
 
-    Comparable get(int col, int row);
+    Comparable getValue(int col, int row);
+
+    void setValue(int col, int row, Comparable newValue);
+
+    boolean isNA(int col, int row);
+
 }

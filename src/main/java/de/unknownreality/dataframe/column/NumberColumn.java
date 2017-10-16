@@ -24,7 +24,6 @@
 
 package de.unknownreality.dataframe.column;
 
-import de.unknownreality.dataframe.Values;
 import de.unknownreality.dataframe.common.NumberUtil;
 import de.unknownreality.dataframe.common.math.Quantiles;
 import org.slf4j.Logger;

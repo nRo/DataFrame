@@ -27,8 +27,6 @@ package de.unknownreality.dataframe.frame;
 import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.DataFrameRuntimeException;
 import de.unknownreality.dataframe.DataRow;
-import de.unknownreality.dataframe.filter.compile.PredicateCompiler;
-import de.unknownreality.dataframe.filter.compile.PredicateCompilerException;
 import de.unknownreality.dataframe.index.interval.IntervalIndex;
 import org.junit.Assert;
 import org.junit.Test;
@@ -83,33 +81,33 @@ public class IntervalIndexTest {
 
         List<DataRow> rows;
 
-        rows = dataFrame.findByIndex("idx",1d,3d);
+        rows = dataFrame.selectRowsByIndex("idx",1d,3d);
         Assert.assertEquals(4,rows.size());
 
 
-        rows = dataFrame.findByIndex("idx",9d,10d);
+        rows = dataFrame.selectRowsByIndex("idx",9d,10d);
         Assert.assertEquals(1,rows.size());
 
 
         dataFrame = dataFrame.filter("name != 'G'");
 
-        rows = dataFrame.findByIndex("idx",9d,10d);
+        rows = dataFrame.selectRowsByIndex("idx",9d,10d);
         Assert.assertEquals(0,rows.size());
 
-        rows = dataFrame.findByIndex("idx",8d,10d);
+        rows = dataFrame.selectRowsByIndex("idx",8d,10d);
         Assert.assertEquals(1,rows.size());
 
         DataRow row =rows.get(0);
         row.set("start",11);
         row.set("end",12);
-        dataFrame.update(row);
-        rows = dataFrame.findByIndex("idx",8d,10d);
+        //dataFrame.update(row);
+        rows = dataFrame.selectRowsByIndex("idx",8d,10d);
         Assert.assertEquals(0,rows.size());
 
-        rows = dataFrame.findByIndex("idx",10d,12d);
+        rows = dataFrame.selectRowsByIndex("idx",10d,12d);
         Assert.assertEquals(1,rows.size());
 
-        rows = dataFrame.findByIndex("idx",3);
+        rows = dataFrame.selectRowsByIndex("idx",3);
         Assert.assertEquals(3,rows.size());
 
     }
@@ -119,7 +117,7 @@ public class IntervalIndexTest {
                 .addStringColumn("name")
                 .addDoubleColumn("start")
                 .addIntegerColumn("end");
-       dataFrame.findByIndex("idx",9d,10d);
+       dataFrame.selectRowsByIndex("idx",9d,10d);
 
         dataFrame.append("A",1,2);
 
@@ -128,10 +126,10 @@ public class IntervalIndexTest {
 
         List<DataRow> rows;
 
-        rows = dataFrame.findByIndex("idx",1d,3d);
+        rows = dataFrame.selectRowsByIndex("idx",1d,3d);
         Assert.assertEquals(1,rows.size());
 
         dataFrame.removeColumn("start");
-        dataFrame.findByIndex("idx",1d,3d);
+        dataFrame.selectRowsByIndex("idx",1d,3d);
     }
 }

@@ -2,8 +2,6 @@ package de.unknownreality.dataframe;
 
 import de.unknownreality.dataframe.filter.FilterPredicate;
 
-import java.util.List;
-
 public class ColumnSelection<T extends DataFrame> {
     private DataFrameColumn[] columns;
     private T dataFrame;
@@ -22,7 +20,7 @@ public class ColumnSelection<T extends DataFrame> {
      * @return new dataframe
      */
     public T where(String colName, Comparable value){
-        List<DataRow> rows = dataFrame.selectRows(colName,value);
+        DataRows rows = dataFrame.selectRows(colName,value);
         return createDataFrame(rows);
     }
 
@@ -34,7 +32,7 @@ public class ColumnSelection<T extends DataFrame> {
      * @return new dataframe
      */
     public T where(FilterPredicate predicate){
-        List<DataRow> rows = dataFrame.selectRows(predicate);
+        DataRows rows = dataFrame.selectRows(predicate);
         return createDataFrame(rows);
     }
 
@@ -46,7 +44,7 @@ public class ColumnSelection<T extends DataFrame> {
      * @return new dataframe
      */
     public T where(String predicateString){
-        List<DataRow> rows = dataFrame.selectRows(predicateString);
+        DataRows rows = dataFrame.selectRows(predicateString);
         return createDataFrame(rows);
     }
 
@@ -59,7 +57,7 @@ public class ColumnSelection<T extends DataFrame> {
      * @return new dataframe
      */
     public T whereIndex(String indexName, Comparable... values){
-        List<DataRow> rows = dataFrame.selectRowsByIndex(indexName, values);
+        DataRows rows = dataFrame.selectRowsByIndex(indexName, values);
         return createDataFrame(rows);
     }
 
@@ -69,12 +67,12 @@ public class ColumnSelection<T extends DataFrame> {
      * @return new dataframe
      */
     public T allRows(){
-        List<DataRow> rows = dataFrame.getRows();
+        DataRows rows = dataFrame.getRows();
         return createDataFrame(rows);
     }
 
     @SuppressWarnings("unchecked")
-    private T createDataFrame(List<DataRow> rows){
+    private T createDataFrame(DataRows rows){
         T df;
         try {
             df = (T)dataFrame.getClass().newInstance();
@@ -84,7 +82,8 @@ public class ColumnSelection<T extends DataFrame> {
         for(DataFrameColumn column : columns){
             df.addColumn(column.copyEmpty());
         }
-        df.set(rows);
+        DataRows newRows = new DataRows(df,rows);
+        df.set(newRows);
         return df;
     }
 

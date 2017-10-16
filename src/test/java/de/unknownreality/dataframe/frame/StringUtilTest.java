@@ -25,13 +25,9 @@
 package de.unknownreality.dataframe.frame;
 
 import de.unknownreality.dataframe.DataFrameException;
-import de.unknownreality.dataframe.common.NumberUtil;
 import de.unknownreality.dataframe.common.StringUtil;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Alex on 28.06.2017.
