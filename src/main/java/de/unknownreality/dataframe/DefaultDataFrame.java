@@ -52,7 +52,6 @@ public class DefaultDataFrame implements DataFrame {
     private static final Logger log = LoggerFactory.getLogger(DefaultDataFrame.class);
     private int size;
     private final Map<String, DataFrameColumn> columnsMap = new LinkedHashMap<>();
-    //private final List<DataFrameColumn> columnList = new ArrayList<>();
     private DataFrameColumn[] columns = null;
     private DataFrameHeader header = new DataFrameHeader();
     private final Indices indices = new Indices(this);
@@ -118,7 +117,6 @@ public class DefaultDataFrame implements DataFrame {
     public DefaultDataFrame replaceColumn(DataFrameColumn existing, DataFrameColumn replacement) {
         int existingIndex = header.getIndex(existing.getName());
         columns[existingIndex] = replacement;
-        //columnList.set(existingIndex, replacement);
         header.replace(existing, replacement);
         columnsMap.remove(existing.getName());
         columnsMap.put(replacement.getName(), replacement);
@@ -440,6 +438,11 @@ public class DefaultDataFrame implements DataFrame {
 
     protected DefaultDataFrame set(DataRows dataRows, Indices indices) {
         DataFrame temp = dataRows.toDataFrame();
+        set(temp,indices);
+        return this;
+    }
+
+    protected DefaultDataFrame set(DataFrame dataFrame, Indices indices){
         this.columnsMap.clear();
         this.columns = null;
 
@@ -454,7 +457,7 @@ public class DefaultDataFrame implements DataFrame {
         else{
             this.indices.clear();
         }
-        for (DataFrameColumn column : temp.getColumns()) {
+        for (DataFrameColumn column : dataFrame.getColumns()) {
             try {
                 column.setDataFrame(null);
                 addColumn(column);
@@ -596,9 +599,14 @@ public class DefaultDataFrame implements DataFrame {
 
     @Override
     public DefaultDataFrame select(FilterPredicate predicate) {
-        DataRows rows = selectRows(predicate);
         DefaultDataFrame df = new DefaultDataFrame();
-        df.set(rows, indices);
+        df.set(getHeader());
+        indices.copyTo(df);
+        for(DataRow row : this){
+            if(predicate.valid(row)){
+                df.append(row);
+            }
+        }
         return df;
     }
 
@@ -618,7 +626,7 @@ public class DefaultDataFrame implements DataFrame {
 
     @Override
     public DefaultDataFrame filter(FilterPredicate predicate) {
-        set(selectRows(predicate), getIndices());
+        set(select(predicate), getIndices());
         return this;
     }
 
@@ -713,7 +721,7 @@ public class DefaultDataFrame implements DataFrame {
 
     @Override
     public DefaultDataFrame filterSubset(int from, int to) {
-        set(getRows(from, to));
+        set(selectSubset(from,to),indices);
         return this;
     }
 
@@ -733,11 +741,11 @@ public class DefaultDataFrame implements DataFrame {
 
     @Override
     public DataRows getRows(int from, int to) {
-        List<DataRow> rows = new ArrayList<>();
+        DataRows rows = new DataRows(this);
         for (int i = from; i < to; i++) {
             rows.add(getRow(i));
         }
-        return new DataRows(this, rows);
+        return rows;
     }
 
 
