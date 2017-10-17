@@ -389,22 +389,47 @@ public class DefaultDataFrame implements DataFrame {
     @Override
     @SuppressWarnings("unchecked")
     public DefaultDataFrame append(DataRow row) {
+        Comparable value;
         for (String h : header) {
             DataFrameColumn column = columnsMap.get(h);
             column.startDataFrameAppend();
-            if (row.isNA(h)) {
+            value = row.get(h);
+            if (value == null || value == Values.NA) {
                 column.appendNA();
             } else {
-                column.append(row.get(h));
+                column.append(value);
             }
             column.endDataFrameAppend();
 
         }
         this.size++;
-        indices.update(getRow(size - 1));
+        if(indices.indicesCount() > 0) {
+            indices.update(getRow(size - 1));
+        }
         return this;
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public DefaultDataFrame appendMatchingRow(DataRow row) {
+        Comparable value;
+        for (int i  = 0; i < row.size(); i++) {
+            DataFrameColumn column = columns[i];
+            column.startDataFrameAppend();
+            value = row.get(i);
+            if (value == null || value == Values.NA) {
+                column.appendNA();
+            } else {
+                column.append(value);
+            }
+            column.endDataFrameAppend();
+        }
+        this.size++;
+        if(indices.indicesCount() > 0) {
+            indices.update(getRow(size - 1));
+        }
+        return this;
+    }
 
     @Override
     public DefaultDataFrame update(DataRow dataRow) {

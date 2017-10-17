@@ -261,13 +261,23 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     DataFrame append(Comparable... values);
 
     /**
-     * Appends a new data row.
+     * Appends a new data row. Only row values matching a dataframe column are appended
      *
      * @param row row containing the new values
      * @return <tt>self</tt> for method chaining
      */
     @SuppressWarnings("unchecked")
     DataFrame append(DataRow row);
+
+    /**
+     * Appends a new data row. The row must contain a value for all dataframe columns.
+     * The order of the row values must match the column order in the dataframe.
+     *
+     * @param row row containing the new values
+     * @return <tt>self</tt> for method chaining
+     */
+    @SuppressWarnings("unchecked")
+    DefaultDataFrame appendMatchingRow(DataRow row);
 
     /**
      * Persists the updated values of a data row.

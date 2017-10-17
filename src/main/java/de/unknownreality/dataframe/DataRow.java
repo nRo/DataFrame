@@ -29,10 +29,15 @@ public class DataRow extends UpdateableRow<String,DataFrameHeader,Comparable> {
     @Override
     public Comparable get(int index) {
         checkValidity();
-        if(dataFrame.isNA(index,getIndex())){
+        Comparable val = dataFrame.getValue(index,getIndex());
+        if(val == null){
             return Values.NA;
         }
-        return dataFrame.getValue(index,getIndex());
+        return val;
+    }
+
+    public DataFrame getDataFrame() {
+        return dataFrame;
     }
 
     @Override

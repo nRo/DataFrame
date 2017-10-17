@@ -20,8 +20,20 @@ public class DataRows extends ArrayList<DataRow>{
     public DataFrame toDataFrame(){
         DataFrame df = DataFrame.create();
         df.set(dataFrame.getHeader().copy());
+        if(isEmpty()){
+            return df;
+        }
+        boolean compatible = df.isCompatible(
+                get(0).getDataFrame()
+        );
         for(DataRow row : this){
-            df.append(row);
+            if(compatible){
+                df.appendMatchingRow(row);
+            }
+            else{
+                df.append(row);
+            }
+
         }
         return df;
     }
