@@ -241,7 +241,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param rowIndex  row in other dataframe
      * @return <tt>self</tt> for method chaining
      */
-    DefaultDataFrame append(DataFrame dataFrame, int rowIndex);
+    DataFrame append(DataFrame dataFrame, int rowIndex);
 
     /**
      * Appends a new row based on {@link Comparable} values.
@@ -277,7 +277,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @return <tt>self</tt> for method chaining
      */
     @SuppressWarnings("unchecked")
-    DefaultDataFrame appendMatchingRow(DataRow row);
+    DataFrame appendMatchingRow(DataRow row);
 
     /**
      * Persists the updated values of a data row.
@@ -288,7 +288,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      */
     DataFrame update(DataRow dataRow);
 
-    DefaultDataFrame set(DataFrameHeader header);
+    DataFrame set(DataFrameHeader header);
 
     /**
      * Clears all rows in this data frame and sets new rows using the provided {@link DataRows}.
@@ -476,15 +476,6 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      */
     DataFrame transform(DataFrameTransform transformer);
 
-    /**
-     * Finds a data row using the primary key
-     *
-     * @param keyValues input key values
-     * @return found data row
-     * @deprecated use {@link DataFrame#selectByPrimaryKey} instead.
-     */
-    @Deprecated
-    DataRow findByPrimaryKey(Comparable... keyValues);
 
     /**
      * Finds a data row using the primary key
@@ -543,7 +534,6 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param from lowest remaining row index
      * @param to   highest remaining row index
      * @return <tt>self</tt> for method chaining
-     * @deprecated use {@link DataFrame#filterSubset} instead.
      */
     DataFrame subset(int from, int to);
 
@@ -557,17 +547,6 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      */
     DataFrame filterSubset(int from, int to);
 
-    /**
-     * Creates a new data frame from a subset of this data frame.
-     * Rows between <tt>from</tt> and <tt>to</tt> are added to the new data frame.
-     *
-     * @param from lowest row index
-     * @param to   highest row index
-     * @return created subset data frame
-     * @deprecated use {@link DataFrame#selectSubset} instead.
-     */
-    @Deprecated
-    DataFrame createSubset(int from, int to);
 
     /**
      * Creates a new data frame from a subset of this data frame.
@@ -904,16 +883,6 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      */
     DataRows selectRowsByIndex(String name, Comparable... values);
 
-    /**
-     * Finds the first data row matching an index and the corresponding index values
-     *
-     * @param name   name of index
-     * @param values index values
-     * @return rows found
-     * @deprecated use {@link DataFrame#selectFirstRowByIndex} instead.
-     */
-    @Deprecated
-    DataRow findFirstByIndex(String name, Comparable... values);
 
     /**
      * Finds the first data row matching an index and the corresponding index values
