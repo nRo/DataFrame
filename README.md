@@ -52,11 +52,23 @@ To build the library from sources:
     <dependency>
         <groupId>de.unknownreality</groupId>
         <artifactId>dataframe</artifactId>
-        <version>0.7.2-SNAPSHOT</version>
+        <version>0.7.5-SNAPSHOT</version>
     </dependency>
 ...
 </dependencies>
 ```
+Version 0.7.5
+-----
+-  **direct value access for DataRow object.**
+
+   DataRows now directly access the respective values from the columns.  
+   This improves runtime and memory footprint for most DataFrame operations.
+   DataRow objects are invalidated once the source DataFrame is changed.  
+   Accessing an invalidated row results in an exception
+- Row collections are now return as DataRows object.  
+    DataRows can be converted to a new DataFrame
+- improved 'groupBy' method
+
 
 Version 0.7
 -----
@@ -123,20 +135,69 @@ File file = new File("dataFrame.csv");
 dataFrame.write(file);
 DataFrame loadedDataFrame = DataFrame.load(file);
 ```
+
+Values within a DataFrame are accessed using DataRow objects.
+If the source DataFrame changes after a DataRow object is created, the DataRow is invalidated and can no
+longer be accessed.
+
+```java
+DataRows rows = dataFrame.getRows();
+
+//returns the value within the id column in the first row
+rows.get(0).getInteger("id");
+
+dataFrame.sort("name");
+
+//The DataFrame was sorted after the DataRows were obtained.
+//The first row can now differ. 
+//To avoid these effects, a RuntimeException is thrown
+//if a row that was created before the DataFrame is altered is accessed
+
+rows.get(0).getInteger("id"); //throws exception
+
+rows = dataFrame.getRows();
+
+//The DataRows is now valid again and rows can be accessed
+rows.get(0).getInteger("id");
+
+
+//DataRows can be converted to a new independet DataFrame.
+//changes to the original DataFrame have no effect on the new DataFrame.
+DataFrame dataFrame2 = rows.toDataFrame();
+
+dataFrame.sort("id");
+
+dataFrame.getRow(0).getInteger("id"); // no exception
+```
+
+DataRows can be used to change values within a DataFrame
+
+```java
+DataRows rows = dataFrame.getRows();
+
+//sets the value in the second row in the name column to 'A'
+rows.get(1).set("name","A");
+
+//sets the value in the second row in the first column to 'A'
+rows.get(1).set(0,"A");
+
+
+```
+
 Use indices for fast row access.
 Indices must always be unique.
 ```java
 
 //set the primary key of a data frame
 users.setPrimaryKey("person_id");
-DataRow firstUser = users.findByPrimaryKey(1)
+DataRow firstUser = users.selectByPrimaryKey(1)
 
 //add a multi-column index
 
 users.addIndex("name-address","last_name","address");
 
-//returns all users with the last name Smith in the Example-Street 15
-List<DataRow> user = users.findByIndex("name-address","Smith","Example-Street 15")
+//returns rows containing all users with the last name Smith in the Example-Street 15
+DataRows user = users.selectRowsByIndex("name-address","Smith","Example-Street 15")
 ```
 It is possible to define and use other index types.
 The following example shows interval indices.
@@ -157,17 +218,17 @@ IntervalIndex index = new IntervalIndex("idx",
     dataFrame.getNumberColumn("end"));
 dataFrame.addIndex(index);
 
-//returns rows where (start,end) overlaps with (1,3)
+//returns a new dataframe containing all rows where (start,end) overlaps with (1,3)
 // -> A, B
-dataFrame.findByIndex("idx",1,3);
+dataFrame.selectByIndex("idx",1,3);
 
-//returns rows where (start,end) overlaps with (4,5)
+//rows where (start,end) overlaps with (4,5)
 // -> C
-dataFrame.findByIndex("idx",4,5);
+dataFrame.selectByIndex("idx",4,5);
 
-//returns rows where (start,end) contains 2.5
+//rows where (start,end) contains 2.5
 // -> A, B
-dataFrame.findByIndex("idx",2.5);
+dataFrame.selectByIndex("idx",2.5);
 ```
 
 Perform operations on columns.
