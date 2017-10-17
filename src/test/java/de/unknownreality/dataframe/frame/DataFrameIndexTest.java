@@ -72,14 +72,14 @@ public class DataFrameIndexTest {
 
         dataFrame.setPrimaryKey("UID");
 
-        Assert.assertEquals(1, (int) dataFrame.findByPrimaryKey(1).getInteger("ID"));
-        Assert.assertEquals("A", dataFrame.findByPrimaryKey(1).getString("NAME"));
+        Assert.assertEquals(1, (int) dataFrame.selectByPrimaryKey(1).getInteger("ID"));
+        Assert.assertEquals("A", dataFrame.selectByPrimaryKey(1).getString("NAME"));
 
-        Assert.assertEquals(1, (int) dataFrame.findByPrimaryKey(2).getInteger("ID"));
-        Assert.assertEquals("B", dataFrame.findByPrimaryKey(2).getString("NAME"));
+        Assert.assertEquals(1, (int) dataFrame.selectByPrimaryKey(2).getInteger("ID"));
+        Assert.assertEquals("B", dataFrame.selectByPrimaryKey(2).getString("NAME"));
 
-        Assert.assertEquals(2, (int) dataFrame.findByPrimaryKey(3).getInteger("ID"));
-        Assert.assertEquals("A", dataFrame.findByPrimaryKey(3).getString("NAME"));
+        Assert.assertEquals(2, (int) dataFrame.selectByPrimaryKey(3).getInteger("ID"));
+        Assert.assertEquals("A", dataFrame.selectByPrimaryKey(3).getString("NAME"));
 
 
         dataFrame.addIndex("ID_NAME", "ID", "NAME");
@@ -108,11 +108,11 @@ public class DataFrameIndexTest {
         dataFrame.append(3, "A", 12);
 
 
-        Assert.assertEquals(1, (int) dataFrame.findByPrimaryKey(9).getInteger("ID"));
-        Assert.assertEquals("D", dataFrame.findByPrimaryKey(9).getString("NAME"));
+        Assert.assertEquals(1, (int) dataFrame.selectByPrimaryKey(9).getInteger("ID"));
+        Assert.assertEquals("D", dataFrame.selectByPrimaryKey(9).getString("NAME"));
 
-        Assert.assertEquals(5, (int) dataFrame.findByPrimaryKey(11).getInteger("ID"));
-        Assert.assertEquals("A", dataFrame.findByPrimaryKey(11).getString("NAME"));
+        Assert.assertEquals(5, (int) dataFrame.selectByPrimaryKey(11).getInteger("ID"));
+        Assert.assertEquals("A", dataFrame.selectByPrimaryKey(11).getString("NAME"));
 
         dataFrame.getIntegerColumn("ID").map(new MapFunction<Integer>() {
             @Override
@@ -121,18 +121,18 @@ public class DataFrameIndexTest {
             }
         });
 
-        Assert.assertEquals(3, (int) dataFrame.findByPrimaryKey(9).getInteger("ID"));
+        Assert.assertEquals(3, (int) dataFrame.selectByPrimaryKey(9).getInteger("ID"));
 
 
         Assert.assertEquals(1,  dataFrame.selectRowsByIndex("ID_NAME", 3, "B").size());
         Assert.assertEquals(2, (int) dataFrame.selectRowsByIndex("ID_NAME", 3, "B").iterator().next().getInteger("UID"));
         Assert.assertEquals(3, (int) dataFrame.selectRowsByIndex("ID_NAME", 4, "A").iterator().next().getInteger("UID"));
 
-        Assert.assertEquals(3, (int) dataFrame.findByPrimaryKey(9).getInteger("ID"));
-        Assert.assertEquals("D", dataFrame.findByPrimaryKey(9).getString("NAME"));
+        Assert.assertEquals(3, (int) dataFrame.selectByPrimaryKey(9).getInteger("ID"));
+        Assert.assertEquals("D", dataFrame.selectByPrimaryKey(9).getString("NAME"));
 
-        Assert.assertEquals(7, (int) dataFrame.findByPrimaryKey(11).getInteger("ID"));
-        Assert.assertEquals("A", dataFrame.findByPrimaryKey(11).getString("NAME"));
+        Assert.assertEquals(7, (int) dataFrame.selectByPrimaryKey(11).getInteger("ID"));
+        Assert.assertEquals("A", dataFrame.selectByPrimaryKey(11).getString("NAME"));
 
         DataRow row = dataFrame.selectRowsByIndex("ID_NAME", 3, "B").iterator().next();
         row.set("UID",999);
@@ -157,14 +157,14 @@ public class DataFrameIndexTest {
         integerColumn.map(value -> value + 100);
         integerColumn.setName("UID2");
         dataFrame.replaceColumn("UID",integerColumn);
-        Assert.assertEquals(3, (int) dataFrame.findByPrimaryKey(101).getInteger("ID"));
-        Assert.assertEquals("A", dataFrame.findByPrimaryKey(101).getString("NAME"));
+        Assert.assertEquals(3, (int) dataFrame.selectByPrimaryKey(101).getInteger("ID"));
+        Assert.assertEquals("A", dataFrame.selectByPrimaryKey(101).getString("NAME"));
 
-        Assert.assertEquals(3, (int) dataFrame.findByPrimaryKey(102).getInteger("ID"));
-        Assert.assertEquals("B", dataFrame.findByPrimaryKey(102).getString("NAME"));
+        Assert.assertEquals(3, (int) dataFrame.selectByPrimaryKey(102).getInteger("ID"));
+        Assert.assertEquals("B", dataFrame.selectByPrimaryKey(102).getString("NAME"));
 
-        Assert.assertEquals(4, (int) dataFrame.findByPrimaryKey(103).getInteger("ID"));
-        Assert.assertEquals("A", dataFrame.findByPrimaryKey(103).getString("NAME"));
+        Assert.assertEquals(4, (int) dataFrame.selectByPrimaryKey(103).getInteger("ID"));
+        Assert.assertEquals("A", dataFrame.selectByPrimaryKey(103).getString("NAME"));
 
         exception.expect(DataFrameRuntimeException.class);
         //UUID is primarykey -> must be unique

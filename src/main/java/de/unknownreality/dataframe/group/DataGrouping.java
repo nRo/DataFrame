@@ -114,7 +114,7 @@ public class DataGrouping extends DefaultDataFrame {
      * @return found data group. or <tt>null</tt> if no group was found
      */
     public GroupRow findByGroupValues(Comparable... values) {
-        return (GroupRow) findFirstByIndex(GROUP_INDEX, values);
+        return (GroupRow) selectFirstRowByIndex(GROUP_INDEX, values);
     }
 
 

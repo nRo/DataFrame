@@ -62,17 +62,17 @@ public class DataFrameTransformTest {
         counts = df.getColumn("B").transform(new CountTransformer(false));
         counts.setPrimaryKey("B");
         Assert.assertEquals(4,counts.size());
-        Assert.assertEquals(2,(int)counts.findByPrimaryKey(2d).getInteger(CountTransformer.COUNTS_COLUMN));
-        Assert.assertEquals(1,(int)counts.findByPrimaryKey(3d).getInteger(CountTransformer.COUNTS_COLUMN));
-        Assert.assertEquals(1,(int)counts.findByPrimaryKey(5d).getInteger(CountTransformer.COUNTS_COLUMN));
-        Assert.assertEquals(1,(int)counts.findByPrimaryKey(5d).getInteger(CountTransformer.COUNTS_COLUMN));
-        Assert.assertEquals(1,(int)counts.findByPrimaryKey(Values.NA).getInteger(CountTransformer.COUNTS_COLUMN));
+        Assert.assertEquals(2,(int)counts.selectByPrimaryKey(2d).getInteger(CountTransformer.COUNTS_COLUMN));
+        Assert.assertEquals(1,(int)counts.selectByPrimaryKey(3d).getInteger(CountTransformer.COUNTS_COLUMN));
+        Assert.assertEquals(1,(int)counts.selectByPrimaryKey(5d).getInteger(CountTransformer.COUNTS_COLUMN));
+        Assert.assertEquals(1,(int)counts.selectByPrimaryKey(5d).getInteger(CountTransformer.COUNTS_COLUMN));
+        Assert.assertEquals(1,(int)counts.selectByPrimaryKey(Values.NA).getInteger(CountTransformer.COUNTS_COLUMN));
 
         counts = df.getColumn("C").transform(new CountTransformer(true));
         counts.setPrimaryKey("C");
         Assert.assertEquals(2,counts.size());
-        Assert.assertEquals(3,(int)counts.findByPrimaryKey("X").getInteger(CountTransformer.COUNTS_COLUMN));
-        Assert.assertEquals(1,(int)counts.findByPrimaryKey("Y").getInteger(CountTransformer.COUNTS_COLUMN));
+        Assert.assertEquals(3,(int)counts.selectByPrimaryKey("X").getInteger(CountTransformer.COUNTS_COLUMN));
+        Assert.assertEquals(1,(int)counts.selectByPrimaryKey("Y").getInteger(CountTransformer.COUNTS_COLUMN));
 
     }
 

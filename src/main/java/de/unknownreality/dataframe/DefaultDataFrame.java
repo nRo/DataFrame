@@ -699,12 +699,6 @@ public class DefaultDataFrame implements DataFrame {
         return transformer.transform(this);
     }
 
-    @Deprecated
-    @Override
-    public DataRow findByPrimaryKey(Comparable... keyValues) {
-        return selectByPrimaryKey(keyValues);
-    }
-
     @Override
     public DataRow selectByPrimaryKey(Comparable... keyValues) {
         Integer index = this.indices.findByPrimaryKey(keyValues);
@@ -764,12 +758,6 @@ public class DefaultDataFrame implements DataFrame {
     public DefaultDataFrame filterSubset(int from, int to) {
         set(selectSubset(from, to), indices);
         return this;
-    }
-
-    @Override
-    @Deprecated
-    public DefaultDataFrame createSubset(int from, int to) {
-        return selectSubset(from, to);
     }
 
     @Override
@@ -1050,11 +1038,6 @@ public class DefaultDataFrame implements DataFrame {
             return new DataRows(this, rows);
         }
         return new DataRows(this, new ArrayList<>(0));
-    }
-
-    @Override
-    public DataRow findFirstByIndex(String name, Comparable... values) {
-        return selectFirstRowByIndex(name, values);
     }
 
     @Override
