@@ -141,6 +141,12 @@ If the source DataFrame changes after a DataRow object is created, the DataRow i
 longer be accessed.
 
 ```java
+
+for(DataRow row : dataFrame){
+    ... = row.getInteger("id");
+}
+
+
 DataRows rows = dataFrame.getRows();
 
 //returns the value within the id column in the first row
@@ -219,7 +225,7 @@ dataFrame.addIndex(index);
 
 //returns a new dataframe containing all rows where (start,end) overlaps with (1,3)
 // -> A, B
-dataFrame.selectByIndex("idx",1,3);
+DataFrame df = dataFrame.selectByIndex("idx",1,3);
 
 //rows where (start,end) overlaps with (4,5)
 // -> C
