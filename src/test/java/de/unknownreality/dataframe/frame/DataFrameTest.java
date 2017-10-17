@@ -60,19 +60,9 @@ public class DataFrameTest {
         dataFrame.addColumn(Double.class, "value");
         dataFrame.append(1, "A", "B", 1d);
         Assert.assertEquals(1, dataFrame.size());
-        dataFrame.addColumn(StringColumn.class, "full", new ColumnAppender<String>() {
-            @Override
-            public String createRowValue(DataRow row) {
-                return row.getString("first") + "-" + row.getString("last");
-            }
-        });
+        dataFrame.addColumn(StringColumn.class, "full", row -> row.getString("first") + "-" + row.getString("last"));
         Assert.assertEquals("A-B", dataFrame.getRow(0).getString("full"));
-        dataFrame.addColumn(Integer.class, "int_value", ColumnTypeMap.create(), new ColumnAppender<Integer>() {
-            @Override
-            public Integer createRowValue(DataRow row) {
-                return row.getNumber("value").intValue();
-            }
-        });
+        dataFrame.addColumn(Integer.class, "int_value", ColumnTypeMap.create(), row -> row.getNumber("value").intValue());
         Assert.assertEquals(1, (int) dataFrame.getRow(0).getInteger("int_value"));
         dataFrame.removeColumn(dataFrame.getIntegerColumn("int_value"));
         dataFrame.addColumn(Integer.class, "int_value");
@@ -479,6 +469,9 @@ public class DataFrameTest {
         } catch (DataFrameRuntimeException dataFrameRuntimeException) {
             assertEquals(dataFrameRuntimeException.getMessage(), "row is no longer valid, the dataframe changed since the row object was created");
         }
+        rows = dataFrame.getRows();
+        Assert.assertEquals("B", rows.get(0).get("name"));
+
     }
 
     @Test(expected = DataFrameRuntimeException.class)
