@@ -44,6 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by Alex on 09.03.2016.
@@ -57,11 +58,16 @@ public class DefaultDataFrame implements DataFrame {
     private final Indices indices = new Indices(this);
     private JoinUtil joinUtil = new DefaultJoinUtil();
     private GroupUtil groupUtil = new TreeGroupUtil();
+    private AtomicInteger version = new AtomicInteger(0);
 
     public DefaultDataFrame() {
 
     }
 
+    @Override
+    public int getVersion() {
+        return version.get();
+    }
 
     @Override
     public DefaultDataFrame setPrimaryKey(String... colNames) {
@@ -121,6 +127,7 @@ public class DefaultDataFrame implements DataFrame {
         columnsMap.remove(existing.getName());
         columnsMap.put(replacement.getName(), replacement);
         indices.replace(existing, replacement);
+        version.incrementAndGet();
         return this;
     }
 
@@ -237,7 +244,9 @@ public class DefaultDataFrame implements DataFrame {
 
 
     @Override
-    public <T extends Comparable<T>, C extends DataFrameColumn<T, C>> DataFrame addColumn(Class<T> type, String name, ColumnTypeMap columnTypeMap, ColumnAppender<T> appender) {
+    public <T extends Comparable<T>, C extends DataFrameColumn<T, C>> DataFrame addColumn(Class<T> type, String name,
+                                                                                          ColumnTypeMap columnTypeMap,
+                                                                                          ColumnAppender<T> appender) {
         Class<C> columnType = columnTypeMap.getColumnType(type);
         if (columnType == null) {
             throw new DataFrameRuntimeException(String.format("no  column type found for %s", type.getName()));
@@ -252,7 +261,8 @@ public class DefaultDataFrame implements DataFrame {
      * If the column can not be created or added a {@link DataFrameRuntimeException} is thrown.
      */
     @Override
-    public <T extends Comparable<T>, C extends DataFrameColumn<T, C>> DataFrame addColumn(Class<C> type, String name, ColumnAppender<T> appender) {
+    public <T extends Comparable<T>, C extends DataFrameColumn<T, C>> DataFrame addColumn(Class<C> type, String name,
+                                                                                          ColumnAppender<T> appender) {
         try {
             C col = type.newInstance();
             col.setName(name);
@@ -273,10 +283,14 @@ public class DefaultDataFrame implements DataFrame {
             addColumn(col);
         } catch (InstantiationException e) {
             log.error("error creating instance of column [{}], empty constructor required", type, e);
-            throw new DataFrameRuntimeException(String.format("error creating instance of column [%s], empty constructor required", type), e);
+            throw new DataFrameRuntimeException(
+                    String.format("error creating instance of column [%s], empty constructor required", type),
+                    e);
 
         } catch (IllegalAccessException e) {
-            throw new DataFrameRuntimeException(String.format("error creating instance of column [%s], empty constructor required", type), e);
+            throw new DataFrameRuntimeException(
+                    String.format("error creating instance of column [%s], empty constructor required", type),
+                    e);
         }
         return this;
     }
@@ -412,6 +426,7 @@ public class DefaultDataFrame implements DataFrame {
 
     @Override
     public DefaultDataFrame set(DataFrameHeader header) {
+        this.version.incrementAndGet();
         this.columns = null;
         this.header.clear();
         this.size = 0;
@@ -438,23 +453,22 @@ public class DefaultDataFrame implements DataFrame {
 
     protected DefaultDataFrame set(DataRows dataRows, Indices indices) {
         DataFrame temp = dataRows.toDataFrame();
-        set(temp,indices);
+        set(temp, indices);
         return this;
     }
 
-    protected DefaultDataFrame set(DataFrame dataFrame, Indices indices){
+    protected DefaultDataFrame set(DataFrame dataFrame, Indices indices) {
+        this.version.incrementAndGet();
         this.columnsMap.clear();
         this.columns = null;
 
         this.size = 0;
         this.header = new DataFrameHeader();
-        if(indices == this.indices){
+        if (indices == this.indices) {
             this.indices.clearValues();
-        }
-        else if (indices != null ) {
+        } else if (indices != null) {
             indices.copyTo(this);
-        }
-        else{
+        } else {
             this.indices.clear();
         }
         for (DataFrameColumn column : dataFrame.getColumns()) {
@@ -465,8 +479,8 @@ public class DefaultDataFrame implements DataFrame {
                 log.error("error adding column", e);
             }
         }
-        if(this.indices.indicesCount() > 0){
-            for(DataRow row : this){
+        if (this.indices.indicesCount() > 0) {
+            for (DataRow row : this) {
                 this.indices.update(row);
             }
         }
@@ -493,6 +507,7 @@ public class DefaultDataFrame implements DataFrame {
             throw new DataFrameRuntimeException("error removing column", e);
 
         }
+        this.version.incrementAndGet();
         removeFromColumns(column);
         this.header.remove(column.getName());
         this.indices.removeColumn(column);
@@ -602,8 +617,8 @@ public class DefaultDataFrame implements DataFrame {
         DefaultDataFrame df = new DefaultDataFrame();
         df.set(getHeader());
         indices.copyTo(df);
-        for(DataRow row : this){
-            if(predicate.valid(row)){
+        for (DataRow row : this) {
+            if (predicate.valid(row)) {
                 df.append(row);
             }
         }
@@ -677,6 +692,7 @@ public class DefaultDataFrame implements DataFrame {
 
     @Override
     public DefaultDataFrame reverse() {
+        this.version.incrementAndGet();
         for (DataFrameColumn col : columns) {
             col.doReverse();
         }
@@ -721,7 +737,7 @@ public class DefaultDataFrame implements DataFrame {
 
     @Override
     public DefaultDataFrame filterSubset(int from, int to) {
-        set(selectSubset(from,to),indices);
+        set(selectSubset(from, to), indices);
         return this;
     }
 
@@ -1117,7 +1133,7 @@ public class DefaultDataFrame implements DataFrame {
         } else {
             columns[col].set(row, newValue);
         }
-        if(indices.indicesCount() > 0){
+        if (indices.indicesCount() > 0) {
             indices.update(getRow(row));
         }
     }

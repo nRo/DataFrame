@@ -22,6 +22,8 @@ import java.util.Comparator;
  * Created by algru on 12.06.2017.
  */
 public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
+    int getVersion();
+
     /**
      * Sets the primary key columns using column names
      *

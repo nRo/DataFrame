@@ -8,14 +8,27 @@ import de.unknownreality.dataframe.common.row.UpdateableRow;
 public class DataRow extends UpdateableRow<String,DataFrameHeader,Comparable> {
     private DataFrame dataFrame;
     private int size;
+    private int rowVersion;
     public DataRow(DataFrame dataFrame, int index) {
         super(dataFrame.getHeader(),index);
+        this.rowVersion = dataFrame.getVersion();
         this.size = getHeader().size();
         this.dataFrame = dataFrame;
     }
 
+    public boolean isVersionValid(){
+        return rowVersion == dataFrame.getVersion();
+    }
+
+    private void checkValidity(){
+        if(!isVersionValid()){
+            throw new DataFrameRuntimeException("row is no longer valid, the dataframe changed since the row object was created");
+        }
+    }
+
     @Override
     public Comparable get(int index) {
+        checkValidity();
         if(dataFrame.isNA(index,getIndex())){
             return Values.NA;
         }
@@ -58,6 +71,7 @@ public class DataRow extends UpdateableRow<String,DataFrameHeader,Comparable> {
 
     @Override
     protected void setValue(int index, Comparable value) {
+        checkValidity();
         dataFrame.setValue(index,getIndex(),value);
     }
 
@@ -69,6 +83,7 @@ public class DataRow extends UpdateableRow<String,DataFrameHeader,Comparable> {
      * @return values in data row
      */
     public Comparable[] getRowValues(int i) {
+        checkValidity();
         if (i >= dataFrame.size()) {
             throw new DataFrameRuntimeException("index out of bounds");
         }
