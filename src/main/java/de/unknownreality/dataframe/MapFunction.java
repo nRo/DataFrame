@@ -27,6 +27,7 @@ package de.unknownreality.dataframe;
 /**
  * Created by Alex on 10.03.2016.
  */
+@FunctionalInterface
 public interface MapFunction<T> {
     /**
      * Applies a function to an input value and returns the resulting value.

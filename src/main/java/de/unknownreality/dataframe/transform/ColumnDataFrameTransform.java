@@ -30,11 +30,12 @@ import de.unknownreality.dataframe.DataFrameColumn;
 /**
  * Created by algru on 06.09.2016.
  */
+@FunctionalInterface
 public interface ColumnDataFrameTransform<I extends DataFrameColumn> {
     /**
      * Transforms an input column into a data frame
      * @param source input column
      * @return resulting dataframe
      */
-    public DataFrame transform(I source);
+    DataFrame transform(I source);
 }

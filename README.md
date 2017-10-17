@@ -185,7 +185,6 @@ rows.get(1).set(0,"A");
 ```
 
 Use indices for fast row access.
-Indices must always be unique.
 ```java
 
 //set the primary key of a data frame
