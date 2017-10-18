@@ -73,7 +73,7 @@ Version 0.7.5
 Version 0.7
 -----
 - The read and write functions have been rewritten from scratch for this version.
-Some existing methods have beed removed.
+Some existing methods have been removed.
 
 - Data grouping has been refactored and aggregation functions can now be applied to data groupings.
 In general, data groupings can now be used like normal DataFrames.
@@ -84,7 +84,7 @@ In general, data groupings can now be used like normal DataFrames.
 
 Examples
 -----
-Select all users with name Meier or Smith, group by age and add column that contains the number of users with the respective age.
+Select all users called Meier or Schmitt from Germany, group by age and add column that contains the number of users with the respective age.
 Then sort by age and print
 ```java
 URL csvUrl = new URL("https://raw.githubusercontent.com/nRo/DataFrame/master/src/test/resources/users.csv");
