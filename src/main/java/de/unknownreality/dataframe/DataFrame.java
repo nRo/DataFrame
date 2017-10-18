@@ -235,7 +235,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * <p>There must be <b>exactly one value for each column</b>.</p>
      * <p><b>The object types have to match the column types</b>.</p>
      * If the wrong number of values or a wrong type is found a {@link DataFrameRuntimeException} is thrown.
-     * </p>
+     *
      *
      * @param dataFrame other dataframe
      * @param rowIndex  row in other dataframe

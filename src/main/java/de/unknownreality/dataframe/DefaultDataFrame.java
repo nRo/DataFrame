@@ -570,7 +570,7 @@ public class DefaultDataFrame implements DataFrame {
     public DefaultDataFrame sort(SortColumn... columns) {
         DataRows rows = getRows(0, size);
         Collections.sort(rows, new RowColumnComparator(columns));
-        set(rows);
+        set(rows,indices);
         return this;
     }
 
@@ -579,7 +579,7 @@ public class DefaultDataFrame implements DataFrame {
     public DefaultDataFrame sort(Comparator<DataRow> comp) {
         DataRows rows = getRows(0, size);
         Collections.sort(rows, comp);
-        set(rows);
+        set(rows,indices);
         return this;
     }
 
@@ -594,7 +594,7 @@ public class DefaultDataFrame implements DataFrame {
     public DefaultDataFrame sort(String name, SortColumn.Direction dir) {
         DataRows rows = getRows(0, size);
         Collections.sort(rows, new RowColumnComparator(new SortColumn[]{new SortColumn(name, dir)}));
-        set(rows);
+        set(rows,indices);
         return this;
     }
 
@@ -603,7 +603,7 @@ public class DefaultDataFrame implements DataFrame {
     public DefaultDataFrame shuffle() {
         DataRows rows = getRows(0, size);
         Collections.shuffle(rows);
-        set(rows);
+        set(rows, indices);
         return this;
     }
 
