@@ -87,7 +87,7 @@ Examples
 Select all users with name Meier or Smith, group by age and add column that contains the number of users with the respective age.
 Then sort by age and print
 ```java
-URL csvUrl = new URL("https://raw.githubusercontent.com/nRo/DataFrame/develop/src/test/resources/users.csv");
+URL csvUrl = new URL("https://raw.githubusercontent.com/nRo/DataFrame/master/src/test/resources/users.csv");
 
 DataFrame users = DataFrame.load(csvUrl, FileFormat.CSV);
 
@@ -107,7 +107,7 @@ users.select("(name == 'Schmitt' || name == 'Meier') && country == 'Germany'")
 Load a csv file, set a unique column as primary key and add an index for two other columns.
 Select rows using the previously created index, change the values in their NAME column and join them with the original DataFrame.
 ```java
-URL csvUrl = new URL("https://raw.githubusercontent.com/nRo/DataFrame/develop/src/test/resources/data_index.csv");
+URL csvUrl = new URL("https://raw.githubusercontent.com/nRo/DataFrame/master/src/test/resources/data_index.csv");
 
 DataFrame dataFrame = DataFrame.load(csvUrl, FileFormat.CSV);
 
