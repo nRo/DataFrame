@@ -82,6 +82,67 @@ In general, data groupings can now be used like normal DataFrames.
 
 - Empty DataFrame instances are now created using DataFrame.create()
 
+Examples
+-----
+Select all users with name Meier or Smith, group by age and add column that contains the number of users with the respective age.
+Then sort by age and print
+```java
+URL csvUrl = new URL("https://raw.githubusercontent.com/nRo/DataFrame/develop/src/test/resources/users.csv");
+
+DataFrame users = DataFrame.load(csvUrl, FileFormat.CSV);
+
+users.select("(name == 'Schmitt' || name == 'Meier') && country == 'Germany'")
+        .groupBy("age").agg("count",Aggregate.count())
+        .sort("age")
+        .print();
+
+/*
+    age count
+    20   1
+    24   2
+    30   2
+ */
+
+```
+Load a csv file, set a unique column as primary key and add an index for two other columns.
+Select rows using the previously created index, change the values in their NAME column and join them with the original DataFrame.
+```java
+URL csvUrl = new URL("https://raw.githubusercontent.com/nRo/DataFrame/develop/src/test/resources/data_index.csv");
+
+DataFrame dataFrame = DataFrame.load(csvUrl, FileFormat.CSV);
+
+dataFrame.setPrimaryKey("UID");
+dataFrame.addIndex("id_name_idx","ID","NAME");
+
+DataRow row = dataFrame.selectByPrimaryKey(1);
+System.out.println(row);
+//1;A;1
+
+DataFrame idxExample = dataFrame.selectByIndex("id_name_idx",3,"A");
+
+idxExample.print();
+/*
+    ID	NAME	UID
+    3	A	4
+    3	A	8
+ */
+idxExample.getStringColumn("NAME").map((value -> value + "_idx_example"));
+idxExample.print();
+/*
+    ID	NAME	UID
+    3	A_idx_example	4
+    3	A_idx_example	8
+ */
+
+dataFrame.joinInner(idxExample,"UID").print();
+/*
+    ID.A    NAME.A	UID	ID.B	NAME.B
+    3   A   4	3   A_idx_example
+    3   A   8	3   A_idx_example
+ */
+
+```
+
 Usage
 -----
 Load DataFrame from a CSV file.
