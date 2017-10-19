@@ -208,7 +208,6 @@ public class ParserUtil {
         try {
             return getParser(cl);
         } catch (ParserNotFoundException e) {
-            e.printStackTrace();
         }
         return null;
     }
