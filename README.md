@@ -224,11 +224,11 @@ rows.get(0).getInteger("id"); //throws exception
 
 rows = dataFrame.getRows();
 
-//The DataRows is now valid again and rows can be accessed
+//rows is now valid again and rows can be accessed
 rows.get(0).getInteger("id");
 
 
-//DataRows can be converted to a new independet DataFrame.
+//DataRows can be converted to a new independent DataFrame.
 //changes to the original DataFrame have no effect on the new DataFrame.
 DataFrame dataFrame2 = rows.toDataFrame();
 
