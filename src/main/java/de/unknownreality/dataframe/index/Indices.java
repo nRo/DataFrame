@@ -113,8 +113,23 @@ public class Indices {
      * @param dataRow data row to update
      */
     public void update(DataRow dataRow) {
+        if(indicesCount() == 0){
+            return;
+        }
         for (Index index : indexMap.values()) {
             index.update(dataRow);
+        }
+    }
+
+    /**
+     * Updates all rows in all available indices
+     */
+    public void updateAllRows(){
+        if(indicesCount() == 0){
+            return;
+        }
+        for(DataRow row : dataFrame){
+            update(row);
         }
     }
 
@@ -256,6 +271,9 @@ public class Indices {
      * @param dataRow row to update
      */
     public void updateValue(DataFrameColumn column, DataRow dataRow) {
+        if(indicesCount() == 0){
+            return;
+        }
         if (!isIndexColumn(column)) {
             return;
         }
@@ -271,6 +289,9 @@ public class Indices {
      * @param column update column
      */
     public void updateColumn(DataFrameColumn column) {
+        if(indicesCount() == 0){
+            return;
+        }
         if (!isIndexColumn(column)) {
             return;
         }
@@ -291,6 +312,9 @@ public class Indices {
      * @param dataRow row to remove
      */
     public void remove(DataRow dataRow) {
+        if(indicesCount() == 0){
+            return;
+        }
         for (Index index : indexMap.values()) {
             index.remove(dataRow);
         }
@@ -322,6 +346,10 @@ public class Indices {
      * @param column column to remove
      */
     public void removeColumn(DataFrameColumn column) {
+        if(indicesCount() == 0){
+            return;
+        }
+
         if (!isIndexColumn(column)) {
             return;
         }

@@ -335,9 +335,7 @@ public class DefaultDataFrame implements DataFrame {
             column.endDataFrameAppend();
         }
         size++;
-        if (indices.indicesCount() > 0) {
-            indices.update(getRow(size - 1));
-        }
+        indices.update(getRow(size - 1));
         return this;
     }
 
@@ -375,9 +373,7 @@ public class DefaultDataFrame implements DataFrame {
             i++;
         }
         size++;
-        if (indices.indicesCount() > 0) {
-            indices.update(getRow(size - 1));
-        }
+        indices.update(getRow(size - 1));
         return this;
     }
 
@@ -403,9 +399,7 @@ public class DefaultDataFrame implements DataFrame {
 
         }
         this.size++;
-        if(indices.indicesCount() > 0) {
-            indices.update(getRow(size - 1));
-        }
+        indices.update(getRow(size - 1));
         return this;
     }
 
@@ -425,9 +419,7 @@ public class DefaultDataFrame implements DataFrame {
             column.endDataFrameAppend();
         }
         this.size++;
-        if(indices.indicesCount() > 0) {
-            indices.update(getRow(size - 1));
-        }
+        indices.update(getRow(size - 1));
         return this;
     }
 
@@ -489,13 +481,6 @@ public class DefaultDataFrame implements DataFrame {
 
         this.size = 0;
         this.header = new DataFrameHeader();
-        if (indices == this.indices) {
-            this.indices.clearValues();
-        } else if (indices != null) {
-            indices.copyTo(this);
-        } else {
-            this.indices.clear();
-        }
         for (DataFrameColumn column : dataFrame.getColumns()) {
             try {
                 column.setDataFrame(null);
@@ -504,11 +489,15 @@ public class DefaultDataFrame implements DataFrame {
                 log.error("error adding column", e);
             }
         }
-        if (this.indices.indicesCount() > 0) {
-            for (DataRow row : this) {
-                this.indices.update(row);
-            }
+        if (indices == this.indices) {
+            this.indices.clearValues();
+        } else if (indices != null) {
+            indices.copyTo(this);
+        } else {
+            this.indices.clear();
         }
+
+        this.indices.updateAllRows();
         return this;
     }
 
@@ -715,6 +704,7 @@ public class DefaultDataFrame implements DataFrame {
         for (DataFrameColumn col : columns) {
             col.doReverse();
         }
+        this.indices.updateAllRows();
         return this;
     }
 
@@ -1141,9 +1131,7 @@ public class DefaultDataFrame implements DataFrame {
         } else {
             columns[col].set(row, newValue);
         }
-        if (indices.indicesCount() > 0) {
-            indices.update(getRow(row));
-        }
+        indices.update(getRow(row));
     }
 
     @Override

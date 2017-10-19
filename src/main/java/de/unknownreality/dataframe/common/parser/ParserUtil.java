@@ -87,14 +87,21 @@ public class ParserUtil {
             @Override
             public Boolean parse(String s) throws ParseException {
                 if (s == null || !(
-                        "false".equals(s.toLowerCase())
-                                || "true".equals(s.toLowerCase())
-                                || "f".equals(s.toLowerCase())
-                                || "t".equals(s.toLowerCase())
+                        "false".equals((s = s.toLowerCase()))
+                                || "true".equals(s)
+                                || "f".equals(s)
+                                || "t".equals(s)
                 )) {
                     throw new ParseException(String.format("illegal boolean value: %s", s), 0);
                 }
-                return Boolean.parseBoolean(s);
+                if(s.equals("f")){
+                    return false;
+                }
+                switch (s){
+                    case "f":return false;
+                    case "t":return true;
+                    default: return Boolean.parseBoolean(s);
+                }
             }
         });
 

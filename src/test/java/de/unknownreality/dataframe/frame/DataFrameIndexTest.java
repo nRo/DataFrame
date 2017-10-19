@@ -173,6 +173,52 @@ public class DataFrameIndexTest {
     }
 
     @Test
+    public void testIndexExistence(){
+        DefaultDataFrame dataFrame = new DefaultDataFrame()
+                .addStringColumn("name")
+                .addDoubleColumn("a")
+                .addIntegerColumn("b")
+                .addBooleanColumn("c");
+
+        dataFrame.append("A",1d,5, true);
+        dataFrame.append("B",2d,4, true);
+        dataFrame.append("C",3d,3, false);
+        dataFrame.append("D",4d,2, false);
+        dataFrame.addIndex("idx","name");
+        Assert.assertEquals("A",dataFrame.selectFirstRowByIndex("idx","A").getString("name"));
+
+        dataFrame = dataFrame.sort("b");
+        Assert.assertEquals("A",dataFrame.selectFirstRowByIndex("idx","A").getString("name"));
+
+        dataFrame = dataFrame.select("a != 'D'");
+        Assert.assertEquals("A",dataFrame.selectFirstRowByIndex("idx","A").getString("name"));
+
+        dataFrame.filter("a != 'C'");
+        Assert.assertEquals("A",dataFrame.selectFirstRowByIndex("idx","A").getString("name"));
+
+        dataFrame.reverse();
+        Assert.assertEquals("A",dataFrame.selectFirstRowByIndex("idx","A").getString("name"));
+
+        dataFrame.shuffle();
+        Assert.assertEquals("A",dataFrame.selectFirstRowByIndex("idx","A").getString("name"));
+
+        dataFrame.append("C",3d,3, false);
+        dataFrame.append("D",4d,2, false);
+        dataFrame.sort("a");
+
+        dataFrame.filterSubset(0,3);
+        Assert.assertEquals("A",dataFrame.selectFirstRowByIndex("idx","A").getString("name"));
+
+
+        dataFrame = dataFrame.selectSubset(0,2);
+        Assert.assertEquals("A",dataFrame.selectFirstRowByIndex("idx","A").getString("name"));
+
+        dataFrame = dataFrame.copy();
+        Assert.assertEquals("A",dataFrame.selectFirstRowByIndex("idx","A").getString("name"));
+
+    }
+
+    @Test
     public void testSelectIndex(){
         DataFrame dataFrame = DataFrame.create()
                 .addStringColumn("name")

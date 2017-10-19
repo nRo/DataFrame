@@ -31,7 +31,7 @@ public class ParserTest {
         }
 
         try {
-            ParserUtil.parse(Double.class,"1.5");
+            ParserUtil.parse(Double.class,"x");
             fail("Expected a ParseException to be thrown");
         } catch (ParseException parseException) {
         }
@@ -60,14 +60,14 @@ public class ParserTest {
         try {
             ParserUtil.parse(ParserTest.class,"x");
             fail("Expected a ParserNotFoundException to be thrown");
-        } catch (ParserNotFoundException parseException) {
+        } catch (ParseException parseException) {
         }
 
-        Integer[] integers = ParserUtil.parse(Integer[].class,"[1,2,3]");
+        Integer[] integers = ParserUtil.parse(Integer[].class,"1,2,3");
         Assert.assertEquals(3,integers.length);
         Assert.assertEquals((Integer)1,integers[0]);
         Assert.assertEquals((Integer)2,integers[1]);
-        Assert.assertEquals((Integer)3,integers[3]);
+        Assert.assertEquals((Integer)3,integers[2]);
 
         try {
             ParserUtil.parse(ParserTest[].class,"x");
