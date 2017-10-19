@@ -453,7 +453,7 @@ public class DataFrameTest {
                 .addIntegerColumn("b")
                 .addBooleanColumn("c");
 
-        dataFrame.append("A",1d,5, true);
+        dataFrame.append("A",1,5, true);
         dataFrame.append("B",2d,4, true);
 
         DataRows rows = dataFrame.getRows();

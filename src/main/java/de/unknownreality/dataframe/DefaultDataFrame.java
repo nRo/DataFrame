@@ -352,7 +352,14 @@ public class DefaultDataFrame implements DataFrame {
         }
         int i = 0;
         for (DataFrameColumn column : columns) {
-            if (values[i] != null && values[i] != Values.NA && !column.getType().isAssignableFrom(values[i].getClass())) {
+            if (    values[i] != null
+                    && values[i] != Values.NA
+                    && !column.getType().isAssignableFrom(values[i].getClass())
+                    && !(
+                            Number.class.isAssignableFrom(column.getType())
+                            && Number.class.isAssignableFrom(values[i].getClass())
+                    )
+            ) {
                 throw new DataFrameRuntimeException(
                         String.format("value %d has wrong type (%s != %s)", i,
                                 values[i].getClass().getName(),
