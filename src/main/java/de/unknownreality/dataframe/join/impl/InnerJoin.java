@@ -33,9 +33,6 @@ import de.unknownreality.dataframe.join.JoinColumn;
 import de.unknownreality.dataframe.join.JoinInfo;
 import de.unknownreality.dataframe.join.JoinedDataFrame;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by Alex on 10.07.2016.
  */
@@ -62,18 +59,17 @@ public class InnerJoin extends AbstractJoinOperation {
         for (int i = 0; i < joinColumns.length; i++) {
             groupColumns[i] = joinColumns[i].getColumnB();
         }
-        List<DataRow> joinedRows = new ArrayList<>();
         Comparable[] groupValues = new Comparable[joinColumns.length];
+        JoinedDataFrame joinedDataFrame = new JoinedDataFrame(joinInfo);
+        joinedDataFrame.set(joinHeader);
         DataGrouping joinedGroups = dfB.groupBy(groupColumns);
         for (DataRow row : dfA) {
             setGroupValuesA(groupValues, row, joinColumns);
             GroupRow groupRow = joinedGroups.findByGroupValues((Comparable[]) groupValues);
             if (groupRow != null) {
-                appendGroupJoinedRows(groupRow.getGroup(), dfA, dfB, row, joinInfo, joinHeader, joinedRows);
+                appendGroupJoinedRows(groupRow.getGroup(), dfA, dfB, row, joinInfo, joinHeader, joinedDataFrame);
             }
         }
-        JoinedDataFrame joinedDataFrame = new JoinedDataFrame(joinInfo);
-        joinedDataFrame.set(joinHeader, joinedRows);
         return joinedDataFrame;
     }
 

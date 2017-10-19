@@ -34,7 +34,10 @@ import de.unknownreality.dataframe.join.JoinColumn;
 import de.unknownreality.dataframe.join.JoinInfo;
 import de.unknownreality.dataframe.join.JoinedDataFrame;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Alex on 10.07.2016.
@@ -165,16 +168,15 @@ public abstract class AbstractJoinOperation {
      * @param rowA       row from the other data frame  (not the same as the data group)
      * @param joinInfo   info about the join
      * @param joinHeader resulting data frame header
-     * @param joinedRows list of rows for the joined data frame
+     * @param joinedDataFrame resulting joined data frame
      */
-    public void appendGroupJoinedRows(DataGroup group, DataFrame dfA, DataFrame dfB, DataRow rowA, JoinInfo joinInfo, DataFrameHeader joinHeader, List<DataRow> joinedRows) {
+    public void appendGroupJoinedRows(DataGroup group, DataFrame dfA, DataFrame dfB, DataRow rowA, JoinInfo joinInfo, DataFrameHeader joinHeader, DataFrame joinedDataFrame) {
         for (DataRow rowB : group) {
             Comparable[] joinedRowValues = new Comparable[joinHeader.size()];
             fillValues(dfA, rowA, joinInfo, joinedRowValues);
             fillValues(dfB, rowB, joinInfo, joinedRowValues);
             fillNA(joinedRowValues);
-            DataRow joinedRow = new DataRow(joinHeader, joinedRowValues, joinedRows.size());
-            joinedRows.add(joinedRow);
+            joinedDataFrame.append(joinedRowValues);
         }
     }
 }

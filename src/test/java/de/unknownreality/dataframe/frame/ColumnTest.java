@@ -24,7 +24,9 @@
 
 package de.unknownreality.dataframe.frame;
 
-import de.unknownreality.dataframe.*;
+import de.unknownreality.dataframe.DataFrame;
+import de.unknownreality.dataframe.DataRow;
+import de.unknownreality.dataframe.Values;
 import de.unknownreality.dataframe.column.*;
 import org.junit.Assert;
 import org.junit.Test;
@@ -32,7 +34,6 @@ import org.junit.Test;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -52,12 +53,11 @@ public class ColumnTest {
 
         Integer[] a = new Integer[10];
         basicColumn.toArray(a);
-        for(int i = 0; i < a.length;i++){
-            if(i >= 4){
-                Assert.assertEquals(null,a[i]);
+        for (int i = 0; i < a.length; i++) {
+            if (i >= 4) {
+                Assert.assertEquals(null, a[i]);
             }
         }
-
 
 
         Assert.assertEquals(false, basicColumn.isEmpty());
@@ -65,53 +65,41 @@ public class ColumnTest {
         Assert.assertEquals(true, basicColumn.contains(1));
         Assert.assertEquals(false, basicColumn.contains(5));
         Assert.assertEquals(true,
-                basicColumn.containsAll(Arrays.asList(new Integer[]{1,2}))
+                basicColumn.containsAll(Arrays.asList(1, 2))
         );
         Assert.assertEquals(false,
-                basicColumn.containsAll(Arrays.asList(new Integer[]{1,2,5}))
+                basicColumn.containsAll(Arrays.asList(1, 2, 5))
         );
 
-        basicColumn.sort(new Comparator<Integer>() {
-            @Override
-            public int compare(Integer o1, Integer o2) {
-                return Double.compare(o1,o2);
-            }
-        });
+        basicColumn.sort(Comparator.comparingDouble(o -> o));
 
 
         Integer[] values = basicColumn.toArray(new Integer[0]);
-        Assert.assertEquals((Integer)1,values[0]);
-        Assert.assertEquals((Integer)2,values[1]);
-        Assert.assertEquals((Integer)3,values[2]);
-        Assert.assertEquals((Integer)4,values[3]);
+        Assert.assertEquals((Integer) 1, values[0]);
+        Assert.assertEquals((Integer) 2, values[1]);
+        Assert.assertEquals((Integer) 3, values[2]);
+        Assert.assertEquals((Integer) 4, values[3]);
 
 
         Integer itCount = 1;
-        Iterator<Integer> it = basicColumn.iterator();
-        while(it.hasNext()){
-            Integer v = it.next();
-            Assert.assertEquals(itCount++,v);
+        for (Integer v : basicColumn) {
+            Assert.assertEquals(itCount++, v);
         }
 
 
         basicColumn.reverse();
         values = basicColumn.toArray(new Integer[0]);
-        Assert.assertEquals((Integer)1,values[3]);
-        Assert.assertEquals((Integer)2,values[2]);
-        Assert.assertEquals((Integer)3,values[1]);
-        Assert.assertEquals((Integer)4,values[0]);
+        Assert.assertEquals((Integer) 1, values[3]);
+        Assert.assertEquals((Integer) 2, values[2]);
+        Assert.assertEquals((Integer) 3, values[1]);
+        Assert.assertEquals((Integer) 4, values[0]);
 
-        basicColumn.map(new MapFunction<Integer>() {
-            @Override
-            public Integer map(Integer value) {
-                return 10+value;
-            }
-        });
+        basicColumn.map(value -> 10 + value);
         values = basicColumn.toArray(new Integer[0]);
-        Assert.assertEquals((Integer)11,values[3]);
-        Assert.assertEquals((Integer)12,values[2]);
-        Assert.assertEquals((Integer)13,values[1]);
-        Assert.assertEquals((Integer)14,values[0]);
+        Assert.assertEquals((Integer) 11, values[3]);
+        Assert.assertEquals((Integer) 12, values[2]);
+        Assert.assertEquals((Integer) 13, values[1]);
+        Assert.assertEquals((Integer) 14, values[0]);
 
         int orgSize = basicColumn.size();
         basicColumn.append(14);
@@ -125,156 +113,151 @@ public class ColumnTest {
         Assert.assertEquals(orgSize + 3, basicColumn.size());
 
 
-       BasicColumn b = basicColumn;
-       b.set(3,Values.NA);
+        BasicColumn b = basicColumn;
+        b.set(3, Values.NA);
 
-       Assert.assertEquals(true, basicColumn.isNA(3));
-        basicColumn.map(new MapFunction<Integer>() {
-            @Override
-            public Integer map(Integer value) {
-                return value - 10;
-            }
-        });
+        Assert.assertEquals(true, basicColumn.isNA(3));
+        basicColumn.map(value -> value - 10);
 
-        b.set(3,1);
+        b.set(3, 1);
 
         orgSize = basicColumn.size();
-        for(int i = 0; i < BasicColumn.INIT_SIZE;i++){
+        for (int i = 0; i < BasicColumn.INIT_SIZE; i++) {
             basicColumn.append(i);
         }
         Assert.assertEquals(orgSize + BasicColumn.INIT_SIZE, basicColumn.size());
-        Assert.assertEquals((Integer)(BasicColumn.INIT_SIZE - 1), basicColumn.get(orgSize + BasicColumn.INIT_SIZE - 1));
+        Assert.assertEquals((Integer) (BasicColumn.INIT_SIZE - 1), basicColumn.get(orgSize + BasicColumn.INIT_SIZE - 1));
 
         orgSize = basicColumn.size();
-        basicColumn.appendAll(Arrays.asList(new Integer[]{1,2,3}));
-        Assert.assertEquals(orgSize+3,basicColumn.size());
-        Assert.assertEquals((Integer)3,basicColumn.get(basicColumn.size() - 1));
+        basicColumn.appendAll(Arrays.asList(new Integer[]{1, 2, 3}));
+        Assert.assertEquals(orgSize + 3, basicColumn.size());
+        Assert.assertEquals((Integer) 3, basicColumn.get(basicColumn.size() - 1));
 
     }
 
-    @Test(expected=UnsupportedOperationException.class)
+    @Test(expected = UnsupportedOperationException.class)
     public void testErrors() {
         IntegerColumn basicColumn = new IntegerColumn("test");
         basicColumn.iterator().remove();
     }
 
     @Test
-    public void testBooleanColumn(){
+    public void testBooleanColumn() {
         BooleanColumn column = new BooleanColumn();
         column.append(true);
         column.append(false);
-        column.appendAll(Arrays.asList(new Boolean[]{true,true,false}));
+        column.appendAll(Arrays.asList(new Boolean[]{true, true, false}));
         Assert.assertEquals(5, column.size());
         BooleanColumn copyColumn = column.copyEmpty();
-        Assert.assertEquals(0,copyColumn.size());
+        Assert.assertEquals(0, copyColumn.size());
 
-         copyColumn = column.copy();
-        Assert.assertArrayEquals(column.toArray(),copyColumn.toArray());
+        copyColumn = column.copy();
+        Assert.assertArrayEquals(column.toArray(), copyColumn.toArray());
 
-        copyColumn.set(0,false);
-        Assert.assertNotEquals(column.get(0),copyColumn.get(0));
-
-
-        copyColumn = new BooleanColumn("test",column.toArray(new Boolean[0]));
-        Assert.assertArrayEquals(column.toArray(),copyColumn.toArray());
-        copyColumn.set(0,false);
-        Assert.assertNotEquals(column.get(0),copyColumn.get(0));
-
-        copyColumn = new BooleanColumn("test",column.toArray(new Boolean[0]), 2);
-        Assert.assertEquals(2,copyColumn.size());
-        Assert.assertEquals(column.get(0),copyColumn.get(0));
-        Assert.assertEquals(column.get(1),copyColumn.get(1));
+        copyColumn.set(0, false);
+        Assert.assertNotEquals(column.get(0), copyColumn.get(0));
 
 
-        BooleanColumn a = new BooleanColumn("a",new Boolean[]{true,true,false, false});
+        copyColumn = new BooleanColumn("test", column.toArray(new Boolean[0]));
+        Assert.assertArrayEquals(column.toArray(), copyColumn.toArray());
+        copyColumn.set(0, false);
+        Assert.assertNotEquals(column.get(0), copyColumn.get(0));
 
-        BooleanColumn b = new BooleanColumn("b",new Boolean[]{true,false,false, true});
+        copyColumn = new BooleanColumn("test", column.toArray(new Boolean[0]), 2);
+        Assert.assertEquals(2, copyColumn.size());
+        Assert.assertEquals(column.get(0), copyColumn.get(0));
+        Assert.assertEquals(column.get(1), copyColumn.get(1));
+
+
+        BooleanColumn a = new BooleanColumn("a", new Boolean[]{true, true, false, false});
+
+        BooleanColumn b = new BooleanColumn("b", new Boolean[]{true, false, false, true});
 
         Assert.assertArrayEquals(
-                new Boolean[]{true, false ,false ,false}
+                new Boolean[]{true, false, false, false}
                 , a.copy().and(b)
                         .toArray());
 
         Assert.assertArrayEquals(
-                new Boolean[]{false, true ,false ,false}
+                new Boolean[]{false, true, false, false}
                 , a.copy().andNot(b)
                         .toArray());
 
         Assert.assertArrayEquals(
-                new Boolean[]{true, true ,false ,true}
+                new Boolean[]{true, true, false, true}
                 , a.copy().or(b)
                         .toArray());
 
         Assert.assertArrayEquals(
-                new Boolean[]{false, true ,false ,true}
+                new Boolean[]{false, true, false, true}
                 , a.copy().xor(b)
                         .toArray());
 
         Assert.assertArrayEquals(
-                new Boolean[]{false, false ,true ,true}
+                new Boolean[]{false, false, true, true}
                 , a.copy().flip()
                         .toArray());
 
         try {
             Assert.assertEquals(
-                    (Boolean)true,column.getParser().parse("true")
+                    (Boolean) true, column.getParser().parse("true")
             );
             Assert.assertEquals(
-                    (Boolean)false,column.getParser().parse("false")
+                    (Boolean) false, column.getParser().parse("false")
             );
             Assert.assertEquals(
-                    (Boolean)true,column.getParser().parse("TRUE")
+                    (Boolean) true, column.getParser().parse("TRUE")
             );
             Assert.assertEquals(
-                    (Boolean)false,column.getParser().parse("FALSE")
+                    (Boolean) false, column.getParser().parse("FALSE")
             );
             Assert.assertEquals(
-                    null,column.getParser().parseOrNull("false1")
+                    null, column.getParser().parseOrNull("false1")
             );
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
     }
+
     @Test
-    public void testByteColumn(){
+    public void testByteColumn() {
         ByteColumn column = new ByteColumn();
         column.append((byte) 1);
         column.append((byte) 0);
         Assert.assertEquals(2, column.size());
         ByteColumn copyColumn = column.copyEmpty();
-        Assert.assertEquals(0,copyColumn.size());
+        Assert.assertEquals(0, copyColumn.size());
 
         copyColumn = column.copy();
-        Assert.assertArrayEquals(column.toArray(),copyColumn.toArray());
+        Assert.assertArrayEquals(column.toArray(), copyColumn.toArray());
 
-        copyColumn.set(0,(byte)0);
-        Assert.assertNotEquals(column.get(0),copyColumn.get(0));
+        copyColumn.set(0, (byte) 0);
+        Assert.assertNotEquals(column.get(0), copyColumn.get(0));
 
 
-        copyColumn = new ByteColumn("test",column.toArray(new Byte[0]));
-        Assert.assertArrayEquals(column.toArray(),copyColumn.toArray());
-        copyColumn.set(0,(byte)0);
-        Assert.assertNotEquals(column.get(0),copyColumn.get(0));
+        copyColumn = new ByteColumn("test", column.toArray(new Byte[0]));
+        Assert.assertArrayEquals(column.toArray(), copyColumn.toArray());
+        copyColumn.set(0, (byte) 0);
+        Assert.assertNotEquals(column.get(0), copyColumn.get(0));
 
-        copyColumn = new ByteColumn("test",column.toArray(new Byte[0]), 1);
-        Assert.assertEquals(1,copyColumn.size());
-        Assert.assertEquals(column.get(0),copyColumn.get(0));
-
+        copyColumn = new ByteColumn("test", column.toArray(new Byte[0]), 1);
+        Assert.assertEquals(1, copyColumn.size());
+        Assert.assertEquals(column.get(0), copyColumn.get(0));
 
 
         try {
             Assert.assertEquals(
-                    new Byte((byte)1),column.getParser().parse("1")
+                    new Byte((byte) 1), column.getParser().parse("1")
             );
             Assert.assertEquals(
-                    new Byte((byte)2),column.getParser().parse("2")
+                    new Byte((byte) 2), column.getParser().parse("2")
             );
             Assert.assertEquals(
-                    null,column.getParser().parseOrNull("x")
+                    null, column.getParser().parseOrNull("x")
             );
             Assert.assertEquals(
-                    null,column.getParser().parseOrNull("10000000")
+                    null, column.getParser().parseOrNull("10000000")
             );
         } catch (ParseException e) {
             e.printStackTrace();
@@ -282,44 +265,43 @@ public class ColumnTest {
     }
 
     @Test
-    public void testDoubleColumn(){
+    public void testDoubleColumn() {
         DoubleColumn column = new DoubleColumn();
         column.append(1d);
         column.append(0d);
         Assert.assertEquals(2, column.size());
         DoubleColumn copyColumn = column.copyEmpty();
-        Assert.assertEquals(0,copyColumn.size());
+        Assert.assertEquals(0, copyColumn.size());
 
         copyColumn = column.copy();
-        Assert.assertArrayEquals(column.toArray(),copyColumn.toArray());
+        Assert.assertArrayEquals(column.toArray(), copyColumn.toArray());
 
-        copyColumn.set(0,0d);
-        Assert.assertNotEquals(column.get(0),copyColumn.get(0));
-
-
-        copyColumn = new DoubleColumn("test",column.toArray(new Double[0]));
-        Assert.assertArrayEquals(column.toArray(),copyColumn.toArray());
         copyColumn.set(0, 0d);
-        Assert.assertNotEquals(column.get(0),copyColumn.get(0));
+        Assert.assertNotEquals(column.get(0), copyColumn.get(0));
 
-        copyColumn = new DoubleColumn("test",column.toArray(new Double[0]), 1);
-        Assert.assertEquals(1,copyColumn.size());
-        Assert.assertEquals(column.get(0),copyColumn.get(0));
 
+        copyColumn = new DoubleColumn("test", column.toArray(new Double[0]));
+        Assert.assertArrayEquals(column.toArray(), copyColumn.toArray());
+        copyColumn.set(0, 0d);
+        Assert.assertNotEquals(column.get(0), copyColumn.get(0));
+
+        copyColumn = new DoubleColumn("test", column.toArray(new Double[0]), 1);
+        Assert.assertEquals(1, copyColumn.size());
+        Assert.assertEquals(column.get(0), copyColumn.get(0));
 
 
         try {
             Assert.assertEquals(
-                    (Double)1d,column.getParser().parse("1")
+                    (Double) 1d, column.getParser().parse("1")
             );
             Assert.assertEquals(
-                    (Double)1.5d,column.getParser().parse("1.5")
+                    (Double) 1.5d, column.getParser().parse("1.5")
             );
             Assert.assertEquals(
-                    (Double)(-1.5d),column.getParser().parse("-1.5")
+                    (Double) (-1.5d), column.getParser().parse("-1.5")
             );
             Assert.assertEquals(
-                    null,column.getParser().parseOrNull("abc")
+                    null, column.getParser().parseOrNull("abc")
             );
         } catch (ParseException e) {
             e.printStackTrace();
@@ -327,211 +309,210 @@ public class ColumnTest {
     }
 
     @Test
-    public void testFloatColumn(){
+    public void testFloatColumn() {
         FloatColumn column = new FloatColumn();
         column.append(1f);
         column.append(0f);
         Assert.assertEquals(2, column.size());
         FloatColumn copyColumn = column.copyEmpty();
-        Assert.assertEquals(0,copyColumn.size());
+        Assert.assertEquals(0, copyColumn.size());
 
         copyColumn = column.copy();
-        Assert.assertArrayEquals(column.toArray(),copyColumn.toArray());
+        Assert.assertArrayEquals(column.toArray(), copyColumn.toArray());
 
-        copyColumn.set(0,0f);
-        Assert.assertNotEquals(column.get(0),copyColumn.get(0));
-
-
-        copyColumn = new FloatColumn("test",column.toArray(new Float[0]));
-        Assert.assertArrayEquals(column.toArray(),copyColumn.toArray());
         copyColumn.set(0, 0f);
-        Assert.assertNotEquals(column.get(0),copyColumn.get(0));
+        Assert.assertNotEquals(column.get(0), copyColumn.get(0));
 
-        copyColumn = new FloatColumn("test",column.toArray(new Float[0]), 1);
-        Assert.assertEquals(1,copyColumn.size());
-        Assert.assertEquals(column.get(0),copyColumn.get(0));
 
+        copyColumn = new FloatColumn("test", column.toArray(new Float[0]));
+        Assert.assertArrayEquals(column.toArray(), copyColumn.toArray());
+        copyColumn.set(0, 0f);
+        Assert.assertNotEquals(column.get(0), copyColumn.get(0));
+
+        copyColumn = new FloatColumn("test", column.toArray(new Float[0]), 1);
+        Assert.assertEquals(1, copyColumn.size());
+        Assert.assertEquals(column.get(0), copyColumn.get(0));
 
 
         try {
             Assert.assertEquals(
-                    (Float)1f,column.getParser().parse("1")
+                    (Float) 1f, column.getParser().parse("1")
             );
             Assert.assertEquals(
-                    (Float)1.5f,column.getParser().parse("1.5")
+                    (Float) 1.5f, column.getParser().parse("1.5")
             );
             Assert.assertEquals(
-                    (Float)(-1.5f),column.getParser().parse("-1.5")
+                    (Float) (-1.5f), column.getParser().parse("-1.5")
             );
             Assert.assertEquals(
-                    null,column.getParser().parseOrNull("abc")
+                    null, column.getParser().parseOrNull("abc")
             );
         } catch (ParseException e) {
             e.printStackTrace();
         }
     }
+
     @Test
-    public void testIntegerColumn(){
+    public void testIntegerColumn() {
         IntegerColumn column = new IntegerColumn();
         column.append(1);
         column.append(0);
         Assert.assertEquals(2, column.size());
         IntegerColumn copyColumn = column.copyEmpty();
-        Assert.assertEquals(0,copyColumn.size());
+        Assert.assertEquals(0, copyColumn.size());
 
         copyColumn = column.copy();
-        Assert.assertArrayEquals(column.toArray(),copyColumn.toArray());
+        Assert.assertArrayEquals(column.toArray(), copyColumn.toArray());
 
-        copyColumn.set(0,0);
-        Assert.assertNotEquals(column.get(0),copyColumn.get(0));
-
-
-        copyColumn = new IntegerColumn("test",column.toArray(new Integer[0]));
-        Assert.assertArrayEquals(column.toArray(),copyColumn.toArray());
         copyColumn.set(0, 0);
-        Assert.assertNotEquals(column.get(0),copyColumn.get(0));
+        Assert.assertNotEquals(column.get(0), copyColumn.get(0));
 
-        copyColumn = new IntegerColumn("test",column.toArray(new Integer[0]), 1);
-        Assert.assertEquals(1,copyColumn.size());
-        Assert.assertEquals(column.get(0),copyColumn.get(0));
 
+        copyColumn = new IntegerColumn("test", column.toArray(new Integer[0]));
+        Assert.assertArrayEquals(column.toArray(), copyColumn.toArray());
+        copyColumn.set(0, 0);
+        Assert.assertNotEquals(column.get(0), copyColumn.get(0));
+
+        copyColumn = new IntegerColumn("test", column.toArray(new Integer[0]), 1);
+        Assert.assertEquals(1, copyColumn.size());
+        Assert.assertEquals(column.get(0), copyColumn.get(0));
 
 
         try {
             Assert.assertEquals(
-                    (Integer)1,column.getParser().parse("1")
+                    (Integer) 1, column.getParser().parse("1")
             );
             Assert.assertEquals(
-                    (Integer)(-1),column.getParser().parse("-1")
+                    (Integer) (-1), column.getParser().parse("-1")
             );
             Assert.assertEquals(
-                    null,column.getParser().parseOrNull("1.5")
+                    null, column.getParser().parseOrNull("1.5")
             );
             Assert.assertEquals(
-                    null,column.getParser().parseOrNull("abc")
+                    null, column.getParser().parseOrNull("abc")
             );
         } catch (ParseException e) {
             e.printStackTrace();
         }
     }
+
     @Test
-    public void testLongColumn(){
+    public void testLongColumn() {
         LongColumn column = new LongColumn();
-        column.append(1l);
-        column.append(0l);
+        column.append(1L);
+        column.append(0L);
         Assert.assertEquals(2, column.size());
         LongColumn copyColumn = column.copyEmpty();
-        Assert.assertEquals(0,copyColumn.size());
+        Assert.assertEquals(0, copyColumn.size());
 
         copyColumn = column.copy();
-        Assert.assertArrayEquals(column.toArray(),copyColumn.toArray());
+        Assert.assertArrayEquals(column.toArray(), copyColumn.toArray());
 
-        copyColumn.set(0,0l);
-        Assert.assertNotEquals(column.get(0),copyColumn.get(0));
+        copyColumn.set(0, 0L);
+        Assert.assertNotEquals(column.get(0), copyColumn.get(0));
 
 
-        copyColumn = new LongColumn("test",column.toArray(new Long[0]));
-        Assert.assertArrayEquals(column.toArray(),copyColumn.toArray());
-        copyColumn.set(0, 0l);
-        Assert.assertNotEquals(column.get(0),copyColumn.get(0));
+        copyColumn = new LongColumn("test", column.toArray(new Long[0]));
+        Assert.assertArrayEquals(column.toArray(), copyColumn.toArray());
+        copyColumn.set(0, 0L);
+        Assert.assertNotEquals(column.get(0), copyColumn.get(0));
 
-        copyColumn = new LongColumn("test",column.toArray(new Long[0]), 1);
-        Assert.assertEquals(1,copyColumn.size());
-        Assert.assertEquals(column.get(0),copyColumn.get(0));
-
+        copyColumn = new LongColumn("test", column.toArray(new Long[0]), 1);
+        Assert.assertEquals(1, copyColumn.size());
+        Assert.assertEquals(column.get(0), copyColumn.get(0));
 
 
         try {
             Assert.assertEquals(
-                    (Long)1l,column.getParser().parse("1")
+                    (Long) 1L, column.getParser().parse("1")
             );
             Assert.assertEquals(
-                    (Long)(-1l),column.getParser().parse("-1")
+                    (Long) (-1L), column.getParser().parse("-1")
             );
             Assert.assertEquals(
-                    null,column.getParser().parseOrNull("1.5")
+                    null, column.getParser().parseOrNull("1.5")
             );
             Assert.assertEquals(
-                    null,column.getParser().parseOrNull("abc")
+                    null, column.getParser().parseOrNull("abc")
             );
         } catch (ParseException e) {
             e.printStackTrace();
         }
     }
+
     @Test
-    public void testShortColumn(){
+    public void testShortColumn() {
         ShortColumn column = new ShortColumn();
-        column.append((short)1);
-        column.append((short)0);
+        column.append((short) 1);
+        column.append((short) 0);
         Assert.assertEquals(2, column.size());
         ShortColumn copyColumn = column.copyEmpty();
-        Assert.assertEquals(0,copyColumn.size());
+        Assert.assertEquals(0, copyColumn.size());
 
         copyColumn = column.copy();
-        Assert.assertArrayEquals(column.toArray(),copyColumn.toArray());
+        Assert.assertArrayEquals(column.toArray(), copyColumn.toArray());
 
-        copyColumn.set(0,(short)0);
-        Assert.assertNotEquals(column.get(0),copyColumn.get(0));
+        copyColumn.set(0, (short) 0);
+        Assert.assertNotEquals(column.get(0), copyColumn.get(0));
 
 
-        copyColumn = new ShortColumn("test",column.toArray(new Short[0]));
-        Assert.assertArrayEquals(column.toArray(),copyColumn.toArray());
-        copyColumn.set(0, (short)0);
-        Assert.assertNotEquals(column.get(0),copyColumn.get(0));
+        copyColumn = new ShortColumn("test", column.toArray(new Short[0]));
+        Assert.assertArrayEquals(column.toArray(), copyColumn.toArray());
+        copyColumn.set(0, (short) 0);
+        Assert.assertNotEquals(column.get(0), copyColumn.get(0));
 
-        copyColumn = new ShortColumn("test",column.toArray(new Short[0]), 1);
-        Assert.assertEquals(1,copyColumn.size());
-        Assert.assertEquals(column.get(0),copyColumn.get(0));
-
+        copyColumn = new ShortColumn("test", column.toArray(new Short[0]), 1);
+        Assert.assertEquals(1, copyColumn.size());
+        Assert.assertEquals(column.get(0), copyColumn.get(0));
 
 
         try {
             Assert.assertEquals(
-                    (Short)(short)1,column.getParser().parse("1")
+                    (Short) (short) 1, column.getParser().parse("1")
             );
             Assert.assertEquals(
-                    (Short)(short)(-1),column.getParser().parse("-1")
+                    (Short) (short) (-1), column.getParser().parse("-1")
             );
             Assert.assertEquals(
-                    null,column.getParser().parseOrNull("1.5")
+                    null, column.getParser().parseOrNull("1.5")
             );
             Assert.assertEquals(
-                    null,column.getParser().parseOrNull("abc")
+                    null, column.getParser().parseOrNull("abc")
             );
         } catch (ParseException e) {
             e.printStackTrace();
         }
     }
+
     @Test
-    public void testStringColumn(){
+    public void testStringColumn() {
         StringColumn column = new StringColumn();
         column.append("1");
         column.append("2");
         Assert.assertEquals(2, column.size());
         StringColumn copyColumn = column.copyEmpty();
-        Assert.assertEquals(0,copyColumn.size());
+        Assert.assertEquals(0, copyColumn.size());
 
         copyColumn = column.copy();
-        Assert.assertArrayEquals(column.toArray(),copyColumn.toArray());
+        Assert.assertArrayEquals(column.toArray(), copyColumn.toArray());
 
-        copyColumn.set(0,"2");
-        Assert.assertNotEquals(column.get(0),copyColumn.get(0));
-
-
-        copyColumn = new StringColumn("test",column.toArray(new String[0]));
-        Assert.assertArrayEquals(column.toArray(),copyColumn.toArray());
         copyColumn.set(0, "2");
-        Assert.assertNotEquals(column.get(0),copyColumn.get(0));
+        Assert.assertNotEquals(column.get(0), copyColumn.get(0));
 
-        copyColumn = new StringColumn("test",column.toArray(new String[0]), 1);
-        Assert.assertEquals(1,copyColumn.size());
-        Assert.assertEquals(column.get(0),copyColumn.get(0));
 
+        copyColumn = new StringColumn("test", column.toArray(new String[0]));
+        Assert.assertArrayEquals(column.toArray(), copyColumn.toArray());
+        copyColumn.set(0, "2");
+        Assert.assertNotEquals(column.get(0), copyColumn.get(0));
+
+        copyColumn = new StringColumn("test", column.toArray(new String[0]), 1);
+        Assert.assertEquals(1, copyColumn.size());
+        Assert.assertEquals(column.get(0), copyColumn.get(0));
 
 
         try {
             Assert.assertEquals(
-                    "1",column.getParser().parse("1")
+                    "1", column.getParser().parse("1")
             );
         } catch (ParseException e) {
             e.printStackTrace();
@@ -550,7 +531,7 @@ public class ColumnTest {
         dataFrame.addShortColumn("short");
         dataFrame.addStringColumn("string");
 
-        Comparable[] values = new Comparable[]{true, (byte) 1, 2.5d, 3.5f, 4, 5l, (short) 6, "7"};
+        Comparable[] values = new Comparable[]{true, (byte) 1, 2.5d, 3.5f, 4, 5L, (short) 6, "7"};
 
         dataFrame.append(values);
         DataRow row = dataFrame.getRow(0);

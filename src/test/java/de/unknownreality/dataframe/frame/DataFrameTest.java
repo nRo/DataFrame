@@ -23,20 +23,24 @@
 package de.unknownreality.dataframe.frame;
 
 import de.unknownreality.dataframe.*;
-import de.unknownreality.dataframe.column.*;
-
-import de.unknownreality.dataframe.filter.FilterPredicate;
+import de.unknownreality.dataframe.column.BooleanColumn;
+import de.unknownreality.dataframe.column.DoubleColumn;
+import de.unknownreality.dataframe.column.IntegerColumn;
+import de.unknownreality.dataframe.column.StringColumn;
 import de.unknownreality.dataframe.csv.CSVReader;
 import de.unknownreality.dataframe.csv.CSVReaderBuilder;
+import de.unknownreality.dataframe.filter.FilterPredicate;
+import de.unknownreality.dataframe.sort.SortColumn;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * Created by Alex on 12.03.2016.
@@ -56,19 +60,9 @@ public class DataFrameTest {
         dataFrame.addColumn(Double.class, "value");
         dataFrame.append(1, "A", "B", 1d);
         Assert.assertEquals(1, dataFrame.size());
-        dataFrame.addColumn(StringColumn.class, "full", new ColumnAppender<String>() {
-            @Override
-            public String createRowValue(DataRow row) {
-                return row.getString("first") + "-" + row.getString("last");
-            }
-        });
+        dataFrame.addColumn(StringColumn.class, "full", row -> row.getString("first") + "-" + row.getString("last"));
         Assert.assertEquals("A-B", dataFrame.getRow(0).getString("full"));
-        dataFrame.addColumn(Integer.class, "int_value", ColumnTypeMap.create(), new ColumnAppender<Integer>() {
-            @Override
-            public Integer createRowValue(DataRow row) {
-                return row.getNumber("value").intValue();
-            }
-        });
+        dataFrame.addColumn(Integer.class, "int_value", ColumnTypeMap.create(), row -> row.getNumber("value").intValue());
         Assert.assertEquals(1, (int) dataFrame.getRow(0).getInteger("int_value"));
         dataFrame.removeColumn(dataFrame.getIntegerColumn("int_value"));
         dataFrame.addColumn(Integer.class, "int_value");
@@ -449,6 +443,35 @@ public class DataFrameTest {
         Assert.assertEquals("B",test.getRow(1).get("name"));
         Assert.assertEquals("C",test.getRow(2).get("name"));
         Assert.assertEquals("D",test.getRow(3).get("name"));
+    }
+
+    @Test
+    public void checkRowValidity(){
+        DataFrame dataFrame = DataFrame.create()
+                .addStringColumn("name")
+                .addDoubleColumn("a")
+                .addIntegerColumn("b")
+                .addBooleanColumn("c");
+
+        dataFrame.append("A",1,5, true);
+        dataFrame.append("B",2d,4, true);
+
+        DataRows rows = dataFrame.getRows();
+        DataFrame dataFrameB = rows.toDataFrame();
+        Assert.assertEquals("A", rows.get(0).get("name"));
+        dataFrame.sort("a", SortColumn.Direction.Descending);
+        Assert.assertEquals("A", dataFrameB.getValue(0,0));
+        Assert.assertEquals("B", dataFrame.getValue(0,0));
+
+        try {
+            Assert.assertEquals("B", rows.get(0).get("name"));
+            fail("Expected a DataFrameRuntimeException to be thrown");
+        } catch (DataFrameRuntimeException dataFrameRuntimeException) {
+            assertEquals(dataFrameRuntimeException.getMessage(), "row is no longer valid, the dataframe changed since the row object was created");
+        }
+        rows = dataFrame.getRows();
+        Assert.assertEquals("B", rows.get(0).get("name"));
+
     }
 
     @Test(expected = DataFrameRuntimeException.class)

@@ -29,6 +29,7 @@ import de.unknownreality.dataframe.group.DataGroup;
 /**
  * Created by Alex on 13.06.2017.
  */
+@FunctionalInterface
 public interface AggregateFunction<T> {
     T aggregate(DataGroup group);
 }

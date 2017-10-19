@@ -29,6 +29,7 @@ import de.unknownreality.dataframe.DefaultDataFrame;
 /**
  * Created by algru on 06.09.2016.
  */
+@FunctionalInterface
 public interface DataFrameTransform {
     /**
      * Transforms an input dataframe into a new data frame
@@ -37,5 +38,5 @@ public interface DataFrameTransform {
      * @param source input dataframe
      * @return resulting dataframe
      */
-    public <D extends DefaultDataFrame> D transform(D source);
+    <D extends DefaultDataFrame> D transform(D source);
 }

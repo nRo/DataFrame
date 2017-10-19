@@ -24,7 +24,6 @@
 
 package de.unknownreality.dataframe.column;
 
-import de.unknownreality.dataframe.Values;
 import de.unknownreality.dataframe.common.NumberUtil;
 import de.unknownreality.dataframe.common.math.Quantiles;
 import org.slf4j.Logger;
@@ -78,6 +77,7 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
      * returns the specified quantile.
      * This calculation requires sorting of the values each time.
      * If more than one quantile should be calculated, use {@link #getQuantiles()}.
+     *
      * @param percent quantile percent
      * @return quantile
      */
@@ -92,6 +92,7 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
     /**
      * Returns a {@link Quantiles} object that can be used to calculate <tt>max</tt>, <tt>min</tt>, , <tt>median</tt> and quantiles.
      * The values are sorted only once. When the values in the column have changed. A new {@link Quantiles} object should be created.
+     *
      * @return quantiles object
      */
 
@@ -221,16 +222,16 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
         Arrays.sort(sortedValues, new Comparator<T>() {
             @Override
             public int compare(T o1, T o2) {
-                if(o1 == null && o2 == null){
+                if (o1 == null && o2 == null) {
                     return 0;
                 }
-                if(o1 == null){
+                if (o1 == null) {
                     return -1;
                 }
-                if(o2 == null){
+                if (o2 == null) {
                     return 1;
                 }
-                return   o1.compareTo(o2);
+                return o1.compareTo(o2);
             }
         });
         return sortedValues;
@@ -423,9 +424,17 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
         return getThis();
     }
 
+    @Override
+    protected boolean doAppend(T t) {
+        if (t != null
+                && t.getClass() != getType()) {
+            t = NumberUtil.convert(t, getType());
+        }
+        return super.doAppend(t);
+    }
 
     @Override
     protected void setValue(int index, T value) {
-        values[index] = NumberUtil.convert(value,getType());
+        values[index] = NumberUtil.convert(value, getType());
     }
 }

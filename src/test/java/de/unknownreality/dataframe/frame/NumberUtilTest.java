@@ -24,12 +24,8 @@
 
 package de.unknownreality.dataframe.frame;
 
-import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.DataFrameException;
-import de.unknownreality.dataframe.column.DoubleColumn;
-import de.unknownreality.dataframe.column.IntegerColumn;
 import de.unknownreality.dataframe.common.NumberUtil;
-import de.unknownreality.dataframe.transform.StringColumnConverter;
 import org.junit.Assert;
 import org.junit.Test;
 

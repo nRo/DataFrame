@@ -24,13 +24,17 @@
 
 package de.unknownreality.dataframe.group.impl;
 
-import de.unknownreality.dataframe.*;
+import de.unknownreality.dataframe.DataFrame;
+import de.unknownreality.dataframe.DataFrameColumn;
+import de.unknownreality.dataframe.DataFrameHeader;
+import de.unknownreality.dataframe.DefaultDataFrame;
 import de.unknownreality.dataframe.group.DataGroup;
 import de.unknownreality.dataframe.group.DataGrouping;
 import de.unknownreality.dataframe.group.GroupUtil;
-import de.unknownreality.dataframe.sort.SortColumn;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by Alex on 10.03.2016.
@@ -50,46 +54,46 @@ public class TreeGroupUtil implements GroupUtil {
         DataFrameColumn[] dfColumns = new DataFrameColumn[df.getHeader().size()];
         df.getColumns().toArray(dfColumns);
         int[] groupColumnIndices = new int[columns.length];
-        for(int i = 0; i < columns.length; i++){
+        for (int i = 0; i < columns.length; i++) {
             groupColumnIndices[i] = header.getIndex(columns[i]);
         }
         Comparable[] groupValues = new Comparable[columns.length];
         for (int i = 0; i < df.size(); i++) {
-            addRec(groupList,root,0,columns,groupColumnIndices,groupValues,header,df,i);
+            addRec(groupList, root, 0, columns, groupColumnIndices, groupValues, header, df, i);
         }
         root.clear();
         return new DataGrouping(groupList, createGroupColumns(df, columns));
     }
 
-    private void addRec(List<DataGroup> groups,GroupNode node, int index,String[] groupColumns, int[] groupColumnIndices,
-                        Comparable[] groupValues,DataFrameHeader header,
+    private void addRec(List<DataGroup> groups, GroupNode node, int index, String[] groupColumns, int[] groupColumnIndices,
+                        Comparable[] groupValues, DataFrameHeader header,
                         DataFrame df, int rowIndex) {
         if (index == groupColumns.length) {
-            if(!node.hasGroup()){
+            if (!node.hasGroup()) {
                 DataGroup group = new DataGroup(
                         groupColumns,
                         groupValues
                 );
-                group.set(header.copy(),new ArrayList<>(0));
+                group.set(header.copy());
                 groups.add(group);
                 node.setGroup(group);
             }
-            node.addRow(df,rowIndex);
+            node.addRow(df, rowIndex);
             return;
         }
-        Comparable value = df.get(groupColumnIndices[index],rowIndex);
+        Comparable value = df.getValue(groupColumnIndices[index], rowIndex);
         groupValues[index] = value;
         GroupNode child;
         if ((child = node.getChild(value)) == null) {
             child = new GroupNode(value);
             node.addChild(child);
         }
-        addRec(groups,child, index + 1,groupColumns,groupColumnIndices, groupValues, header,df,rowIndex);
+        addRec(groups, child, index + 1, groupColumns, groupColumnIndices, groupValues, header, df, rowIndex);
     }
 
-    private static DataFrameColumn[] createGroupColumns(DataFrame df, String... columns){
+    private static DataFrameColumn[] createGroupColumns(DataFrame df, String... columns) {
         DataFrameColumn[] groupColumns = new DataFrameColumn[columns.length];
-        for(int i = 0; i < columns.length; i++){
+        for (int i = 0; i < columns.length; i++) {
             DataFrameColumn orgCol = df.getColumn(columns[i]);
             groupColumns[i] = orgCol.copyEmpty();
         }
@@ -102,7 +106,7 @@ public class TreeGroupUtil implements GroupUtil {
         private HashMap<Comparable, GroupNode> children;
         private DataGroup dataGroup;
 
-        public GroupNode( Comparable value) {
+        public GroupNode(Comparable value) {
             this.value = value;
         }
 
@@ -114,12 +118,14 @@ public class TreeGroupUtil implements GroupUtil {
                 dataGroup = null;
             }
         }
+
         private HashMap<Comparable, GroupNode> getChildrenMap() {
             if (children == null) {
                 children = new HashMap<>();
             }
             return children;
         }
+
         public Comparable getValue() {
             return value;
         }

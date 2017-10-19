@@ -26,11 +26,12 @@ package de.unknownreality.dataframe.frame;
 
 import de.unknownreality.dataframe.index.interval.Interval;
 import de.unknownreality.dataframe.index.interval.IntervalSearchTree;
-import static de.unknownreality.dataframe.common.NumberUtil.*;
 import org.junit.Test;
 
 import java.util.*;
 
+import static de.unknownreality.dataframe.common.NumberUtil.ge;
+import static de.unknownreality.dataframe.common.NumberUtil.le;
 import static org.junit.Assert.assertEquals;
 
 
@@ -38,24 +39,28 @@ import static org.junit.Assert.assertEquals;
  * Created by Alex on 28.10.2015.
  */
 public class IntervalSearchTreeTest {
+    private static final Random RANDOM = new Random(952489);
     @Test
     public void intervalSearchTreeTest(){
-        //TODO remove random tests
         List<Interval> intervalList = new ArrayList<Interval>();
         IntervalSearchTree<Integer> intervalSearchTree = new IntervalSearchTree<Integer>();
-        Random random = new Random();
-        for(int i = 0; i < 10000; i++){
-            int low = random.nextInt(9000);
-            int high = low + random.nextInt(10000 - low);
+        int c = 1000;
+        int lb = (int)((double)c * 0.9);
+        int hb = (int)((double)c * 0.1);
+
+        int t = (int)((double)c * 0.1);
+        for(int i = 0; i < c; i++){
+            int low = RANDOM.nextInt(lb);
+            int high = low + RANDOM.nextInt(c - low);
             Interval interval = new Interval(low,high);
             intervalList.add(interval);
             intervalSearchTree.add(interval,i);
         }
 
         List<Interval>searchList = new ArrayList<Interval>();
-        for(int i = 0; i < 1000; i++){
-            int low = random.nextInt(9000);
-            int high = low + random.nextInt(100);
+        for(int i = 0; i < t; i++){
+            int low = RANDOM.nextInt(lb);
+            int high = low + RANDOM.nextInt(hb);
             Interval interval = new Interval(low,high);
             searchList.add(interval);
         }
@@ -82,18 +87,21 @@ public class IntervalSearchTreeTest {
     public void intervalSearchTreeStabTest(){
         List<Interval> intervalList = new ArrayList<Interval>();
         IntervalSearchTree<Integer> intervalSearchTree = new IntervalSearchTree<Integer>();
-        Random random = new Random();
-        for(int i = 0; i < 10000; i++){
-            int low = random.nextInt(9000);
-            int high = low + random.nextInt(10000 - low);
+        int c = 1000;
+        int lb = (int)((double)c * 0.9);
+        int t = (int)((double)c * 0.1);
+
+        for(int i = 0; i < c; i++){
+            int low = RANDOM.nextInt(lb);
+            int high = low + RANDOM.nextInt(c - low);
             Interval interval = new Interval(low,high);
             intervalList.add(interval);
             intervalSearchTree.add(interval,i);
         }
 
         List<Integer>searchList = new ArrayList<Integer>();
-        for(int i = 0; i < 1000; i++){
-            int value = random.nextInt(9000);
+        for(int i = 0; i < t; i++){
+            int value = RANDOM.nextInt(lb);
             searchList.add(value);
         }
 

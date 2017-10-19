@@ -29,11 +29,12 @@ import de.unknownreality.dataframe.DataFrameColumn;
 /**
  * Created by algru on 06.09.2016.
  */
+@FunctionalInterface
 public interface ColumnTransform<I extends DataFrameColumn,R extends DataFrameColumn> {
     /**
      * Transforms an input column into a new column
      * @param source input column
      * @return resulting column
      */
-    public R transform(I source);
+    R transform(I source);
 }
