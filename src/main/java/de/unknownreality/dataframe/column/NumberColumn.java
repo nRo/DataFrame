@@ -434,6 +434,11 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
     }
 
     @Override
+    public boolean isValueValid(Comparable value) {
+        return super.isValueValid(value) || (value != null && Number.class.isAssignableFrom(value.getClass()));
+    }
+
+    @Override
     protected void setValue(int index, T value) {
         values[index] = NumberUtil.convert(value, getType());
     }

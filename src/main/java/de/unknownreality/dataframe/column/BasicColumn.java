@@ -127,6 +127,11 @@ public abstract class BasicColumn<T extends Comparable<T>, C extends BasicColumn
     }
 
     @Override
+    public boolean isValueValid(Comparable value) {
+        return Values.NA.isNA(value) || getType().isAssignableFrom(value.getClass());
+    }
+
+    @Override
     public int size() {
         return size;
     }

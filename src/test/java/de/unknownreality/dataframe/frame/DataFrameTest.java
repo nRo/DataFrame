@@ -85,6 +85,13 @@ public class DataFrameTest {
         DoubleColumn valueColumn = new DoubleColumn("value");
         dataFrame2.addColumn(valueColumn);
         dataFrame2.append(2, "A", "C", "A-C", 2d);
+        try{
+            dataFrame2.append("x","A","C","A-B",2d);
+            fail("error expected");
+        }
+        catch (Exception e){
+
+        }
         dataFrame = dataFrame.concat(dataFrame2);
         Assert.assertEquals(2, dataFrame.size());
         Assert.assertEquals(2d, dataFrame.getRow(1).toDouble("value"), 0d);

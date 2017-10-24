@@ -304,6 +304,13 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
      */
     protected abstract boolean doAppend(T value);
 
+    /**
+     * returns true if the input value is compatible with this column
+     * @param value tested value
+     * @return true if value is compatible
+     */
+    public abstract boolean isValueValid(Comparable value);
+
     public abstract<H> T getValueFromRow(Row<?,H> row,H headerName);
 
     public abstract T getValueFromRow(Row<?,?> row, int headerIndex);
