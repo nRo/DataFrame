@@ -32,7 +32,9 @@ import java.util.List;
  */
 public class StringUtil {
 
-    private StringUtil(){}
+    private StringUtil() {
+    }
+
     /**
      * Puts a string in quotes.
      * All occurrences of quotes chars in the string are escaped.
@@ -88,87 +90,68 @@ public class StringUtil {
      */
     @SuppressWarnings("ConstantConditions")
     public static void splitQuoted(String input, Character split, Parts parts) {
+        if (input.length() == 0) {
+            return;
+        }
         boolean inQuotation = false;
         boolean inDoubleQuotation = false;
         boolean escapeNext = false;
-        int currentStart = 0;
-        char[] chars = input.trim().toCharArray();
         char c;
-        String p;
         boolean startOrSplit = true;
-        boolean partQuoted = false;
-        boolean containsEscapeChar = false;
-        for (int i = 0; i < chars.length; i++) {
-            c = chars[i];
-            boolean escape = escapeNext;
-            escapeNext = false;
-            if (!escape && c == '\\') {
-                chars[i] = Character.MIN_VALUE;
+        final StringBuilder sb = new StringBuilder(input.length());
+        for (int i = 0; i < input.length(); i++) {
+            c = input.charAt(i);
+            if (escapeNext) {
+                sb.append(c);
+                escapeNext = false;
+                continue;
+            } else if (c == '\\') {
                 escapeNext = true;
-                containsEscapeChar = true;
-            } else if (!escape && c == '\'') {
-                if (inQuotation && !escape) {
+                continue;
+            } else if (c == '\'') {
+                if (inQuotation) {
                     inQuotation = false;
-                    partQuoted = true;
-                    continue;
-                }
-                if (!inDoubleQuotation && startOrSplit) {
+                } else if (!inDoubleQuotation && startOrSplit) {
                     inQuotation = true;
-                    currentStart++;
-                }
-                startOrSplit = false;
-            } else if (!escape && c == '\"') {
-                if (inDoubleQuotation && !escape) {
-                    inDoubleQuotation = false;
-                    partQuoted = true;
-                    continue;
-                }
-                if (!inDoubleQuotation && startOrSplit) {
-                    inDoubleQuotation = true;
-                    currentStart++;
-                }
-                startOrSplit = false;
-            } else if (!escape && c == split && !inDoubleQuotation && !inQuotation) {
-                int length = i - currentStart;
-                if(partQuoted){
-                    length = length - 1;
-                    partQuoted = false;
-                }
-                if (length == 0) {
-                    p = "";
+                    startOrSplit = false;
                 } else {
-                    p = new String(chars,currentStart, length);
-                    if(containsEscapeChar){
-                        p = p.replace(Character.toString(Character.MIN_VALUE),"");
-                    }
+                    sb.append(c);
                 }
-                parts.add(p);
-                currentStart = i + 1;
+                continue;
+            } else if (c == '\"') {
+                if (inDoubleQuotation) {
+                    inDoubleQuotation = false;
+                } else if (!inDoubleQuotation && startOrSplit) {
+                    inDoubleQuotation = true;
+                    startOrSplit = false;
+                } else {
+                    sb.append(c);
+                }
+                continue;
+            } else if (c == split && !inDoubleQuotation && !inQuotation) {
+
+                parts.add(sb.toString());
+                sb.setLength(0);
                 startOrSplit = true;
-            }
-            else{
+                continue;
+            } else {
                 startOrSplit = false;
             }
+            sb.append(c);
+
         }
-        if (currentStart < chars.length) {
-            int length = chars.length - currentStart;
-            if(partQuoted){
-                length = length - 1;
-            }
-            p = new String(chars,currentStart, length);
-            if(containsEscapeChar){
-                p = p.replace(Character.toString(Character.MIN_VALUE),"");
-            }
-            parts.add(p);
-        }
+        parts.add(sb.toString());
+
     }
 
-    private interface Parts{
+    private interface Parts {
         void add(String part);
     }
-    private static class ListParts implements Parts{
+
+    private static class ListParts implements Parts {
         private List<String> list;
-        public ListParts(List<String> list){
+
+        public ListParts(List<String> list) {
             this.list = list;
         }
 
@@ -178,10 +161,11 @@ public class StringUtil {
         }
     }
 
-    private static class ArrayParts implements Parts{
+    private static class ArrayParts implements Parts {
         private String[] array;
         private int p = 0;
-        public ArrayParts(String[] array){
+
+        public ArrayParts(String[] array) {
             this.array = array;
         }
 
