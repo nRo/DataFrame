@@ -350,34 +350,28 @@ public class DefaultDataFrame implements DataFrame {
         if (values.length != columns.length) {
             throw new DataFrameRuntimeException("value for each column required");
         }
-        int i = 0;
-        for (DataFrameColumn column : columns) {
-            if (    values[i] != null
-                    && values[i] != Values.NA
-                    && !column.getType().isAssignableFrom(values[i].getClass())
-                    && !(
-                            Number.class.isAssignableFrom(column.getType())
-                            && Number.class.isAssignableFrom(values[i].getClass())
-                    )
-            ) {
+        DataFrameColumn column;
+        Comparable value;
+        for (int i = 0; i< columns.length; i++) {
+            column = columns[i];
+            value = values[i];
+            if (!column.isValueValid(value)) {
                 throw new DataFrameRuntimeException(
                         String.format("value %d has wrong type (%s != %s)", i,
-                                values[i].getClass().getName(),
+                                value == null ? "null" : value.getClass().getName(),
                                 column.getType().getName()));
             }
-            i++;
         }
-        i = 0;
-        for (DataFrameColumn<?, ?> column : columns) {
+        for (int i = 0; i< columns.length; i++) {
+            column = columns[i];
             column.startDataFrameAppend();
-            Comparable<?> value = values[i];
+            value = values[i];
             if (value == null || value == Values.NA) {
                 column.appendNA();
             } else {
                 column.append(value);
             }
             column.endDataFrameAppend();
-            i++;
         }
         size++;
         indices.update(getRow(size - 1));
