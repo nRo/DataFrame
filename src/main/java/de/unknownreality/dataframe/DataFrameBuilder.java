@@ -45,6 +45,7 @@ public class DataFrameBuilder {
     private GroupUtil groupUtil = null;
     private DataIterator<?> dataIterator;
     private FilterPredicate filterPredicate = FilterPredicate.EMPTY_FILTER;
+    private String name;
 
     protected DataFrameBuilder() {
     }
@@ -75,6 +76,16 @@ public class DataFrameBuilder {
         return new DataFrameBuilder();
     }
 
+    /**
+     * Defines the name of the resulting dataframe
+     *
+     * @param name data frame name
+     * @return <tt>self</tt> for method chaining
+     */
+    public DataFrameBuilder withName(String name){
+        this.name = name;
+        return this;
+    }
     /**
      * Adds a new column to the builder.
      *
@@ -237,7 +248,7 @@ public class DataFrameBuilder {
             }
             return DataFrameConverter.fromDataIterator(dataIterator, columnInformationList, filterPredicate);
         }
-        DefaultDataFrame dataFrame = new DefaultDataFrame();
+        DefaultDataFrame dataFrame = new DefaultDataFrame(name);
         for (String n : columns.keySet()) {
             DataFrameColumn col = columns.get(n);
             col.setName(n);

@@ -59,9 +59,24 @@ public class DefaultDataFrame implements DataFrame {
     private JoinUtil joinUtil = new DefaultJoinUtil();
     private GroupUtil groupUtil = new TreeGroupUtil();
     private AtomicInteger version = new AtomicInteger(0);
+    private String name;
 
     public DefaultDataFrame() {
 
+    }
+
+    public DefaultDataFrame(String name){
+        this.name = name;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
