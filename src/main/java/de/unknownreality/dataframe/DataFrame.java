@@ -22,6 +22,23 @@ import java.util.Comparator;
  * Created by algru on 12.06.2017.
  */
 public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
+    /**
+     * Returns the name of this dataframe
+     * @return name
+     */
+    String getName();
+
+    /**
+     * Sets the name of this dataframe
+     * @param name dataframe name
+     */
+    void setName(String name);
+
+    /**
+     * Returns the version of this dataframe.
+     * The version is automatically increased on each function that alters the dataframe (sort,...)
+     * @return version
+     */
     int getVersion();
 
     /**
@@ -924,6 +941,25 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      */
     static DataFrame create() {
         return new DefaultDataFrame();
+    }
+
+    /**
+     * Creates a new {@link DefaultDataFrame} instance with a name
+     *
+     * @param name dataframe name
+     * @return new dataframe
+     */
+    static DataFrame create(String name) {
+        return new DefaultDataFrame(name);
+    }
+
+
+    /**
+     * Creates a new {@link DataFrameBuilder}
+     * @return dataframe builder
+     */
+    static DataFrameBuilder builder(){
+        return new DataFrameBuilder();
     }
 
     /**
