@@ -53,6 +53,7 @@ public class CSVIterator extends BufferedStreamIterator<CSVRow> implements DataI
     Map<String, Integer> selectedColumnsIndex = new HashMap<>();
     private List<ColumnInformation> columnInformations = new ArrayList<>();
     private CSVRow bufferedRow = null;
+    private boolean[] skipIndices;
     public CSVIterator(BufferedReader reader, CSVSettings csvSettings, ColumnSettings columnSettings) {
         super(reader);
         this.csvSettings = csvSettings;
@@ -64,7 +65,7 @@ public class CSVIterator extends BufferedStreamIterator<CSVRow> implements DataI
         for (String col : columnSettings.getSelectColumns()) {
             selectedColumnsIndex.put(col, j++);
         }
-        loadNext();
+        //loadNext();
         initHeader();
 
     }
@@ -84,7 +85,10 @@ public class CSVIterator extends BufferedStreamIterator<CSVRow> implements DataI
      */
     public void initHeader() {
         try {
-            CSVRow row = next();
+            CSVRow row = getNext();
+            skipIndices = new boolean[row.size()];
+
+            int skipIndex = 0;
             if (csvSettings.isContainsHeader()) {
                 if (!row.get(0).startsWith(csvSettings.getHeaderPrefix())) {
                     throw new CSVException("invalid header prefix in first line");
@@ -93,23 +97,29 @@ public class CSVIterator extends BufferedStreamIterator<CSVRow> implements DataI
                 name = csvSettings.getHeaderPrefix() == null ? name : name.substring(csvSettings.getHeaderPrefix().length());
                 if (includeColumn(name)) {
                     header.add(name);
+                    skipIndices[skipIndex++]  = false;
                 }
                 else{
                     header.incrementEmptyColumnIndex();
+                    skipIndices[skipIndex++]  = true;
                 }
                 for (int i = 1; i < row.size(); i++) {
                     name = row.get(i);
                     if (!includeColumn(name)) {
+                        skipIndices[skipIndex++]  = true;
                         continue;
                     }
+                    skipIndices[skipIndex++]  = false;
                     header.add(name);
                 }
             } else {
                 for (int i = 0; i < row.size(); i++) {
                     if (!includeColumn(header.getNextEmptyColumnName())) {
                         header.incrementEmptyColumnIndex();
+                        skipIndices[skipIndex++]  = true;
                         continue;
                     }
+                    skipIndices[skipIndex++]  = false;
                     header.add();
                 }
                 bufferedRow = row;
@@ -128,6 +138,7 @@ public class CSVIterator extends BufferedStreamIterator<CSVRow> implements DataI
         } catch (Exception e) {
             throw new CSVRuntimeException("error creating csv header", e);
         }
+        loadNext();
     }
 
     private boolean includeColumn(String col) {
@@ -170,12 +181,23 @@ public class CSVIterator extends BufferedStreamIterator<CSVRow> implements DataI
                 }
             }
             String[] values = StringUtil.splitQuoted(line, csvSettings.getSeparator());
+
             if (cols == -1) {
                 cols = values.length;
             } else {
                 if (values.length != cols) {
                     throw new CSVException(String.format("unequal number of column %d != %d in line %d", values.length, cols, lineNumber));
                 }
+            }
+            if(skipIndices != null && header.size() != values.length){
+                String[] filteredValues = new String[header.size()];
+                int j = 0;
+                for(int i = 0; i < values.length; i++){
+                    if(!skipIndices[i]){
+                        filteredValues[j++] = values[i];
+                    }
+                }
+                values = filteredValues;
             }
             return new CSVRow(header, values, lineNumber);
 
