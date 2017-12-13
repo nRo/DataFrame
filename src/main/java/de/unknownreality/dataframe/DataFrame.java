@@ -89,7 +89,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param columnNames selected columns
      * @return {@link ColumnSelection} for row selection
      */
-    ColumnSelection<? extends DataFrame> selectColumns(String... columnNames);
+    ColumnSelection selectColumns(String... columnNames);
 
     /**
      * Returns a {@link ColumnSelection} for the selected columns.
@@ -98,7 +98,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param columns selected columns
      * @return {@link ColumnSelection} for row selection
      */
-    ColumnSelection<? extends DataFrame> selectColumns(DataFrameColumn... columns);
+    ColumnSelection selectColumns(DataFrameColumn... columns);
 
     /**
      * Adds a column to the data frame.

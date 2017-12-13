@@ -2,11 +2,11 @@ package de.unknownreality.dataframe;
 
 import de.unknownreality.dataframe.filter.FilterPredicate;
 
-public class ColumnSelection<T extends DataFrame> {
+public class ColumnSelection{
     private DataFrameColumn[] columns;
-    private T dataFrame;
+    private DataFrame dataFrame;
 
-    public ColumnSelection(T dataFrame, DataFrameColumn... columns){
+    public ColumnSelection(DataFrame dataFrame, DataFrameColumn... columns){
         this.dataFrame = dataFrame;
         this.columns = columns;
     }
@@ -19,7 +19,7 @@ public class ColumnSelection<T extends DataFrame> {
      * @param value   input value
      * @return new dataframe
      */
-    public T where(String colName, Comparable value){
+    public DataFrame where(String colName, Comparable value){
         DataRows rows = dataFrame.selectRows(colName,value);
         return createDataFrame(rows);
     }
@@ -31,7 +31,7 @@ public class ColumnSelection<T extends DataFrame> {
      * @param predicate input predicate
      * @return new dataframe
      */
-    public T where(FilterPredicate predicate){
+    public DataFrame where(FilterPredicate predicate){
         DataRows rows = dataFrame.selectRows(predicate);
         return createDataFrame(rows);
     }
@@ -43,7 +43,7 @@ public class ColumnSelection<T extends DataFrame> {
      * @param predicateString input predicate string
      * @return new dataframe
      */
-    public T where(String predicateString){
+    public DataFrame where(String predicateString){
         DataRows rows = dataFrame.selectRows(predicateString);
         return createDataFrame(rows);
     }
@@ -56,7 +56,7 @@ public class ColumnSelection<T extends DataFrame> {
      * @param values index values
      * @return new dataframe
      */
-    public T whereIndex(String indexName, Comparable... values){
+    public DataFrame whereIndex(String indexName, Comparable... values){
         DataRows rows = dataFrame.selectRowsByIndex(indexName, values);
         return createDataFrame(rows);
     }
@@ -66,19 +66,14 @@ public class ColumnSelection<T extends DataFrame> {
      *
      * @return new dataframe
      */
-    public T allRows(){
+    public DataFrame allRows(){
         DataRows rows = dataFrame.getRows();
         return createDataFrame(rows);
     }
 
     @SuppressWarnings("unchecked")
-    private T createDataFrame(DataRows rows){
-        T df;
-        try {
-            df = (T)dataFrame.getClass().newInstance();
-        } catch (Exception e) {
-            throw new DataFrameRuntimeException("error creating dataframe instance",e);
-        }
+    private DataFrame createDataFrame(DataRows rows){
+        DataFrame df = new DefaultDataFrame();
         for(DataFrameColumn column : columns){
             df.addColumn(column.copyEmpty());
         }
