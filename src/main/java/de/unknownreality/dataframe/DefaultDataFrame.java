@@ -148,7 +148,7 @@ public class DefaultDataFrame implements DataFrame {
 
     @Override
     @SuppressWarnings("unchecked")
-    public ColumnSelection<DefaultDataFrame> selectColumns(String... columnNames) {
+    public ColumnSelection selectColumns(String... columnNames) {
         DataFrameColumn[] columns = new DataFrameColumn[columnNames.length];
         for (int i = 0; i < columnNames.length; i++) {
             columns[i] = getColumn(columnNames[i]);
@@ -158,7 +158,7 @@ public class DefaultDataFrame implements DataFrame {
 
     @Override
     @SuppressWarnings("unchecked")
-    public ColumnSelection<DefaultDataFrame> selectColumns(DataFrameColumn... columns) {
+    public ColumnSelection selectColumns(DataFrameColumn... columns) {
         return new ColumnSelection(this, columns);
     }
 
