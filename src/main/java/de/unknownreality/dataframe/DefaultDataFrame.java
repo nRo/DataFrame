@@ -1142,7 +1142,7 @@ public class DefaultDataFrame implements DataFrame {
         if (col >= columns.length || row > size) {
             throw new DataFrameRuntimeException("index out of bounds");
         }
-        if (newValue == Values.NA) {
+        if (newValue == null || newValue == Values.NA) {
             columns[col].setNA(row);
         } else {
             columns[col].set(row, newValue);
