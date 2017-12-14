@@ -176,10 +176,13 @@ public class DataFrameTest {
 
         DataRow row = df.getRow(1);
         row.set("A", 999);
-        df.update(row);
 
-        Assert.assertEquals(new Integer(999), df.getRow(1).getInteger("A"));
+        Assert.assertEquals(Integer.valueOf(999), df.getRow(1).getInteger("A"));
+        row.set("A", null);
+        Assert.assertEquals(true, df.getRow(1).isNA("A"));
 
+        row.set("A", Values.NA);
+        Assert.assertEquals(true, df.getRow(1).isNA("A"));
         df.getColumn("A").sort();
     }
 
