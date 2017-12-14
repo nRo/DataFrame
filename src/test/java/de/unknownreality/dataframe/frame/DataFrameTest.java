@@ -374,7 +374,13 @@ public class DataFrameTest {
         DataFrame df = DataFrameLoader.load(csv,csvReader);
         List<DataRow> r = df.getRows();
         int i = 0;
+        df.addStringColumn("test");
+        df.addDoubleColumn("test2");
+
         for (DataRow row : df.rows()) {
+            Assert.assertEquals(Values.NA, row.get("test"));
+            Assert.assertEquals(Values.NA, row.get("test2"));
+
             if (i == 2) {
                 Assert.assertEquals(true, row.isNA("B"));
             } else {

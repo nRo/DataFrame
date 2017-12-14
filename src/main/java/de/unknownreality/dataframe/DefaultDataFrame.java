@@ -166,6 +166,11 @@ public class DefaultDataFrame implements DataFrame {
     @Override
     @SuppressWarnings("unchecked")
     public DefaultDataFrame addColumn(DataFrameColumn column) {
+        if(column.size() == 0 && size != 0){
+            column.appendAll(
+                    Arrays.asList(new Values.NA[size])
+            );
+        }
         if (columns != null && column.size() != size) {
             throw new DataFrameRuntimeException("column lengths must be equal");
         }
