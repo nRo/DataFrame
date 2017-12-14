@@ -29,6 +29,7 @@ import de.unknownreality.dataframe.DataFrameColumn;
 import de.unknownreality.dataframe.DataFrameRuntimeException;
 import de.unknownreality.dataframe.MapFunction;
 import de.unknownreality.dataframe.Values;
+import de.unknownreality.dataframe.common.ValueComparator;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -82,13 +83,14 @@ public abstract class BasicColumn<T extends Comparable<T>, C extends BasicColumn
 
     @Override
     protected void doSort() {
-        Arrays.sort(values, 0, size());
+        Arrays.sort(values,0,size(), ValueComparator.COMPARATOR);
+
     }
 
 
     @Override
     protected void doSet(int index, T value) {
-        if (value == Values.NA) {
+        if (value == null || value == Values.NA) {
             doSetNA(index);
             return;
         }
