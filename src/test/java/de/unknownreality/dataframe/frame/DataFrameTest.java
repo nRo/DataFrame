@@ -93,8 +93,11 @@ public class DataFrameTest {
 
         }
         dataFrame = dataFrame.concat(dataFrame2);
+        dataFrame.addStringColumn("null_test");
         Assert.assertEquals(2, dataFrame.size());
         Assert.assertEquals(2d, dataFrame.getRow(1).toDouble("value"), 0d);
+        Assert.assertEquals("NA", dataFrame.getRow(1).getString("null_test"));
+        Assert.assertEquals(true, dataFrame.getRow(1).isNA("null_test"));
 
 
         Assert.assertEquals(valueColumn, dataFrame2.getDoubleColumn("value"));
