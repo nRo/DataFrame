@@ -24,7 +24,7 @@ Add this to you pom.xml
     <dependency>
         <groupId>de.unknownreality</groupId>
         <artifactId>dataframe</artifactId>
-        <version>0.7.5</version>
+        <version>0.7.5.1</version>
     </dependency>
 ...
 </dependencies>
@@ -52,7 +52,7 @@ To build the library from sources:
     <dependency>
         <groupId>de.unknownreality</groupId>
         <artifactId>dataframe</artifactId>
-        <version>0.7.5-SNAPSHOT</version>
+        <version>0.7.5.1-SNAPSHOT</version>
     </dependency>
 ...
 </dependencies>

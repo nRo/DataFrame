@@ -93,8 +93,11 @@ public class DataFrameTest {
 
         }
         dataFrame = dataFrame.concat(dataFrame2);
+        dataFrame.addStringColumn("null_test");
         Assert.assertEquals(2, dataFrame.size());
         Assert.assertEquals(2d, dataFrame.getRow(1).toDouble("value"), 0d);
+        Assert.assertEquals("NA", dataFrame.getRow(1).getString("null_test"));
+        Assert.assertEquals(true, dataFrame.getRow(1).isNA("null_test"));
 
 
         Assert.assertEquals(valueColumn, dataFrame2.getDoubleColumn("value"));
@@ -176,10 +179,13 @@ public class DataFrameTest {
 
         DataRow row = df.getRow(1);
         row.set("A", 999);
-        df.update(row);
 
-        Assert.assertEquals(new Integer(999), df.getRow(1).getInteger("A"));
+        Assert.assertEquals(Integer.valueOf(999), df.getRow(1).getInteger("A"));
+        row.set("A", null);
+        Assert.assertEquals(true, df.getRow(1).isNA("A"));
 
+        row.set("A", Values.NA);
+        Assert.assertEquals(true, df.getRow(1).isNA("A"));
         df.getColumn("A").sort();
     }
 
@@ -371,7 +377,13 @@ public class DataFrameTest {
         DataFrame df = DataFrameLoader.load(csv,csvReader);
         List<DataRow> r = df.getRows();
         int i = 0;
+        df.addStringColumn("test");
+        df.addDoubleColumn("test2");
+
         for (DataRow row : df.rows()) {
+            Assert.assertEquals(Values.NA, row.get("test"));
+            Assert.assertEquals(Values.NA, row.get("test2"));
+
             if (i == 2) {
                 Assert.assertEquals(true, row.isNA("B"));
             } else {

@@ -148,7 +148,7 @@ public class DefaultDataFrame implements DataFrame {
 
     @Override
     @SuppressWarnings("unchecked")
-    public ColumnSelection<DefaultDataFrame> selectColumns(String... columnNames) {
+    public ColumnSelection selectColumns(String... columnNames) {
         DataFrameColumn[] columns = new DataFrameColumn[columnNames.length];
         for (int i = 0; i < columnNames.length; i++) {
             columns[i] = getColumn(columnNames[i]);
@@ -158,7 +158,7 @@ public class DefaultDataFrame implements DataFrame {
 
     @Override
     @SuppressWarnings("unchecked")
-    public ColumnSelection<DefaultDataFrame> selectColumns(DataFrameColumn... columns) {
+    public ColumnSelection selectColumns(DataFrameColumn... columns) {
         return new ColumnSelection(this, columns);
     }
 
@@ -166,6 +166,11 @@ public class DefaultDataFrame implements DataFrame {
     @Override
     @SuppressWarnings("unchecked")
     public DefaultDataFrame addColumn(DataFrameColumn column) {
+        if(column.size() == 0 && size != 0){
+            column.appendAll(
+                    Arrays.asList(new Values.NA[size])
+            );
+        }
         if (columns != null && column.size() != size) {
             throw new DataFrameRuntimeException("column lengths must be equal");
         }
@@ -1142,7 +1147,7 @@ public class DefaultDataFrame implements DataFrame {
         if (col >= columns.length || row > size) {
             throw new DataFrameRuntimeException("index out of bounds");
         }
-        if (newValue == Values.NA) {
+        if (newValue == null || newValue == Values.NA) {
             columns[col].setNA(row);
         } else {
             columns[col].set(row, newValue);

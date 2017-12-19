@@ -54,6 +54,9 @@ public class DataRow extends UpdateableRow<String,DataFrameHeader,Comparable> {
      */
     @Override
     public boolean isCompatible(Comparable value, String headerName) {
+        if(value == null || value instanceof Values.NA){
+            return true;
+        }
         Class<? extends Comparable> type = getHeader().getType(headerName);
         if(Number.class.isAssignableFrom(type)){
             return Number.class.isAssignableFrom(value.getClass());
