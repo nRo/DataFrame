@@ -27,7 +27,7 @@ package de.unknownreality.dataframe.common;
 /**
  * Created by Alex on 10.03.2016.
  */
-public interface Row<V,H> {
+public interface Row<V,H> extends KeyValueGetter<H,V>{
 
     /**
      * Returns an entity using head name as a specified type.
