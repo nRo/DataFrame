@@ -758,6 +758,10 @@ public class DefaultDataFrame implements DataFrame {
         return size;
     }
 
+    @Override
+    public boolean isEmpty(){
+        return size == 0;
+    }
 
     @Override
     @Deprecated
