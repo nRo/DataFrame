@@ -217,6 +217,7 @@ public class DataFrameGroupingTest {
                 .agg("na_count", Aggregate.naCount("n"))
                 .agg("filter_count",Aggregate.filterCount("r ~= /[a-z].+/"))
                 .agg("first", Aggregate.first("x"))
+                .agg("nfirst", Aggregate.first("n"))
                 .agg("x_25", Aggregate.quantile("x",0.25))
                 .agg("desc",group -> group.getGroupDescription());
 
