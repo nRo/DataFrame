@@ -61,6 +61,10 @@ public class DataFrameMetaWriter {
             Element rootElement = doc.createElement("dataFrameMeta");
             doc.appendChild(rootElement);
 
+            Element dataFrameElement = doc.createElement("dataFrame");
+            dataFrameElement.setAttribute("size",Integer.toString(metaFile.getSize()));
+            rootElement.appendChild(dataFrameElement);
+
             Element readerBuilder = doc.createElement("readerBuilder");
             rootElement.appendChild(readerBuilder);
 

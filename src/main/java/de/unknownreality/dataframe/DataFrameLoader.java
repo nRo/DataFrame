@@ -605,7 +605,7 @@ public class DataFrameLoader {
         }
         DataReader<?, ?> reader = getDataReader(dataFrameMeta);
         DataIterator<?> dataIterator = reader.load(file);
-        return DataFrameConverter.fromDataIterator(dataIterator, dataFrameMeta.getColumnInformation(), filterPredicate);
+        return DataFrameConverter.fromDataIterator(dataIterator,dataFrameMeta.getSize(), dataFrameMeta.getColumnInformation(), filterPredicate);
     }
 
     /**
