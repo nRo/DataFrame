@@ -52,6 +52,11 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
      */
     protected abstract C getThis();
 
+    /**
+     * Sets the capacity of this column.
+     * Can be used during dataframe creation if the size is known.
+     * @param capacity capacity
+     */
     public abstract C setCapacity(int capacity);
 
     /**
@@ -448,6 +453,7 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
      * @return Number of values in this column
      */
     public abstract int size();
+
 
     /**
      * Returns <tt>true</tt> if this column contains no values.

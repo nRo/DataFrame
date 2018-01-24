@@ -32,6 +32,7 @@ import de.unknownreality.dataframe.column.StringColumn;
 import de.unknownreality.dataframe.csv.CSVReader;
 import de.unknownreality.dataframe.csv.CSVReaderBuilder;
 import de.unknownreality.dataframe.filter.FilterPredicate;
+import de.unknownreality.dataframe.meta.DataFrameMeta;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;

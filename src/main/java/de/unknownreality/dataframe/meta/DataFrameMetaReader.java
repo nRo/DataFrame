@@ -182,6 +182,33 @@ public class DataFrameMetaReader {
         return columnsMap;
     }
 
+    /**
+     * Returns the dataframe size from a document. Returns -1 if no size element is found
+     * @param doc input doc
+     * @return size of the respective dataframe
+     * @throws DataFrameException thrown if the size value can not be parsed
+     */
+    private static int getSize(Document doc) throws DataFrameException{
+        NodeList sizeElements = doc.getElementsByTagName("dataFrame");
+        int size = -1;
+        if (sizeElements.getLength() == 1) {
+            Node sizeNode = sizeElements.item(0);
+            if (sizeNode.getNodeType() == Node.ELEMENT_NODE) {
+                Element sizeElement = (Element) sizeNode;
+                String sizeStr = sizeElement.getAttribute("size");
+                if(sizeStr != null && !"".equals(sizeStr)){
+                    try {
+                        size = Integer.parseInt(sizeStr);
+                    }
+                    catch (Exception e){
+                        throw new DataFrameException(String.format("error parsing size attribute '%s'",sizeStr));
+                    }
+                }
+            }
+        }
+        return size;
+    }
+
 
     /**
      * Creates a data frame meta from an input file
@@ -221,6 +248,8 @@ public class DataFrameMetaReader {
         Map<String, String> readerBuilderAttributes;
         LinkedHashMap<String, Class<? extends DataFrameColumn>> columns;
 
+        int size = getSize(doc);
+
         NodeList readBuilderElements = doc.getElementsByTagName("readerBuilder");
         if (readBuilderElements.getLength() == 0) {
             throw new DataFrameException("no readerBuilder element found");
@@ -252,7 +281,7 @@ public class DataFrameMetaReader {
         } else {
             throw new DataFrameException("error parsing columns element");
         }
-        return new DataFrameMeta(columns, readFormatClass, readerBuilderAttributes);
+        return new DataFrameMeta(size,columns, readFormatClass, readerBuilderAttributes);
 
     }
 
