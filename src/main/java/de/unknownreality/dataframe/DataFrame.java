@@ -545,6 +545,12 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     int size();
 
     /**
+     * Returns true if the dataframe is empty (contains no rows)
+     * @return true if the dataframe is empty
+     */
+    boolean isEmpty();
+
+    /**
      * Sets this data frame to a subset of itself.
      * Only rows between <tt>from</tt> and <tt>to</tt> remain in this data frame
      *

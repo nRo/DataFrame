@@ -26,7 +26,9 @@ package de.unknownreality.dataframe.csv;
 
 import de.unknownreality.dataframe.io.FormatSettings;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -34,7 +36,7 @@ import java.util.Set;
  */
 public class CSVSettings implements FormatSettings{
     private char separator = '\t';
-    private Set<String> ignorePrefixes = new HashSet<>();
+    private List<String> skipPrefixes = new ArrayList<>();
     private boolean containsHeader = true;
     private String headerPrefix = "";
     private boolean gzip = false;
@@ -56,8 +58,8 @@ public class CSVSettings implements FormatSettings{
         this.headerPrefix = headerPrefix;
     }
 
-    public void setIgnorePrefixes(Set<String> ignorePrefixes) {
-        this.ignorePrefixes = ignorePrefixes;
+    public void setSkipPrefixes(List<String> skipPrefixes) {
+        this.skipPrefixes = skipPrefixes;
     }
 
     public void setSeparator(char separator) {
@@ -84,8 +86,7 @@ public class CSVSettings implements FormatSettings{
         return separator;
     }
 
-    public Set<String> getIgnorePrefixes() {
-        return ignorePrefixes;
+    public List<String> getSkipPrefixes() {
+        return skipPrefixes;
     }
-
 }

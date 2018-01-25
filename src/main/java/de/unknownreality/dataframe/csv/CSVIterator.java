@@ -175,7 +175,7 @@ public class CSVIterator extends BufferedStreamIterator<CSVRow> implements DataI
             if (line == null) {
                 return null;
             }
-            for (String prefix : csvSettings.getIgnorePrefixes()) {
+            for (String prefix : csvSettings.getSkipPrefixes()) {
                 if (prefix != null && !"".equals(prefix) && line.startsWith(prefix)) {
                     return getNext();
                 }

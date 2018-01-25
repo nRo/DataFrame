@@ -25,8 +25,8 @@
 package de.unknownreality.dataframe.filter;
 
 import de.unknownreality.dataframe.DataFrameRuntimeException;
+import de.unknownreality.dataframe.common.KeyValueGetter;
 import de.unknownreality.dataframe.common.NumberUtil;
-import de.unknownreality.dataframe.common.Row;
 
 /**
  * Created by Alex on 09.03.2016.
@@ -117,13 +117,13 @@ public class ComparePredicate extends FilterPredicate {
     /**
      * Returns <tt>true</tt> if the row is valid for this predicate
      *
-     * @param row tested row
+     * @param kv tested row
      * @return <tt>true</tt> if the row is valid
      */
     @SuppressWarnings("unchecked")
     @Override
-    public boolean valid(Row row) {
-        return compare(row.get(headerName),value);
+    public boolean valid(KeyValueGetter<String, ?> kv) {
+        return compare(kv.get(headerName),value);
     }
 
     protected boolean compare(Object valueA, Object valueB){
