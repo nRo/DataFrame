@@ -24,6 +24,7 @@
 
 package de.unknownreality.dataframe;
 
+import de.unknownreality.dataframe.column.BasicColumn;
 import de.unknownreality.dataframe.column.StringColumn;
 import de.unknownreality.dataframe.common.Row;
 import de.unknownreality.dataframe.common.parser.Parser;
@@ -81,7 +82,6 @@ public class DataFrameConverter {
     public static <R extends Row> DataFrame fromDataIterator(DataIterator<R> dataIterator, FilterPredicate filterPredicate) {
         return fromDataIterator(dataIterator, null, filterPredicate);
     }
-
     /**
      * Converts a parent data container to a data frame.
      * The required column information is provided by a column information object.
@@ -95,6 +95,22 @@ public class DataFrameConverter {
      */
     @SuppressWarnings("unchecked")
     public static <R extends Row> DataFrame fromDataIterator(DataIterator<R> dataIterator, List<ColumnInformation> columnsInformation, FilterPredicate filterPredicate) {
+        return fromDataIterator(dataIterator,-1,columnsInformation,filterPredicate);
+    }
+    /**
+     * Converts a parent data container to a data frame.
+     * The required column information is provided by a column information object.
+     * If no column information is defined, the one specified by the dataIterator is used.
+     * Only rows validated by the filter are appended to the resulting data frame
+     * @param <R> row type
+     * @param dataIterator       parent data container
+     * @param expectedSize       expected size of the resulting dataframe
+     * @param columnsInformation column information
+     * @param filterPredicate    row filter
+     * @return created data frame
+     */
+    @SuppressWarnings("unchecked")
+    public static <R extends Row> DataFrame fromDataIterator(DataIterator<R> dataIterator,int expectedSize, List<ColumnInformation> columnsInformation, FilterPredicate filterPredicate) {
 
         if (columnsInformation == null) {
             columnsInformation = new ArrayList<>(dataIterator.getColumnsInformation());
@@ -117,6 +133,9 @@ public class DataFrameConverter {
                 col = (DataFrameColumn<?, ?>) colType.newInstance();
             } catch (InstantiationException | IllegalAccessException | ClassCastException e) {
                 throw new DataFrameRuntimeException(String.format("error creating instance of column [%s], empty constructor required", colType.getCanonicalName()), e);
+            }
+            if(expectedSize > BasicColumn.INIT_SIZE){
+                col.setCapacity(expectedSize);
             }
             col.setName(columnInformation.getName());
             dataFrame.addColumn(col);

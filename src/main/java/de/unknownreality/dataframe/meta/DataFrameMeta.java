@@ -42,6 +42,7 @@ public class DataFrameMeta {
     private Class<? extends ReadFormat> readFormatClass;
     private Map<String, String> attributes = new HashMap<>();
     private Map<String, Class<? extends DataFrameColumn>> columns = new LinkedHashMap<>();
+    private int size = 0;
 
     /**
      * Creates data frame meta information
@@ -64,12 +65,29 @@ public class DataFrameMeta {
      * @return data frame meta information
      */
     public static DataFrameMeta create(Class<? extends ReadFormat> readFormatClass,List<DataFrameColumn> columns, Map<String, String> writerAttributes) {
+        int size = 0;
+        if(!columns.isEmpty()){
+            size = columns.get(0).size();
+        }
+        return create(size,readFormatClass,columns,writerAttributes);
+    }
+
+    /**
+     * Creates data frame meta information
+     *
+     * @param size size of the data frame
+     * @param readFormatClass class of used read format
+     * @param columns columns contained in meta file
+     * @param writerAttributes   attributes of the used data writer
+     * @return data frame meta information
+     */
+    public static DataFrameMeta create(int size, Class<? extends ReadFormat> readFormatClass,List<DataFrameColumn> columns, Map<String, String> writerAttributes) {
         DataFrameMeta dataFrameMetaFile = new DataFrameMeta();
         dataFrameMetaFile.readFormatClass = readFormatClass;
         dataFrameMetaFile.attributes = writerAttributes;
+        dataFrameMetaFile.size = size;
         for(DataFrameColumn column : columns){
             dataFrameMetaFile.columns.put(column.getName(), column.getClass());
-
         }
         return dataFrameMetaFile;
     }
@@ -102,6 +120,14 @@ public class DataFrameMeta {
         return attributes;
     }
 
+    /**
+     * Returns the size of the data frame
+     * @return size
+     */
+    public int getSize() {
+        return size;
+    }
+
     public List<ColumnInformation> getColumnInformation(){
         List<ColumnInformation> columnInformations = new ArrayList<>();
         int i = 0;
@@ -122,5 +148,10 @@ public class DataFrameMeta {
         this.columns = columns;
         this.readFormatClass = readFormatClass;
         this.attributes = attributes;
+    }
+    public DataFrameMeta(int size, Map<String, Class<? extends DataFrameColumn>> columns,
+                         Class<? extends ReadFormat> readFormatClass, Map<String, String> attributes) {
+        this(columns,readFormatClass,attributes);
+        this.size = size;
     }
 }

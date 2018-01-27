@@ -43,6 +43,7 @@ public class CSVReaderBuilder implements ReaderBuilder<CSVRow, CSVReader> {
     private boolean containsHeader = true;
     private List<String> ignoreColumns = new ArrayList();
     private List<String> selectColumns = new ArrayList<>();
+    private List<String> skipPrefixes = new ArrayList<>();
     private Map<String, Class<? extends Comparable>> columnTypeMap = new HashMap<>();
 
     public static CSVReaderBuilder create(){
@@ -51,6 +52,11 @@ public class CSVReaderBuilder implements ReaderBuilder<CSVRow, CSVReader> {
 
     public CSVReaderBuilder withSeparator(char separator) {
         this.separator = separator;
+        return this;
+    }
+
+    public CSVReaderBuilder addSkipPrefix(String prefix){
+        skipPrefixes.add(prefix);
         return this;
     }
 
@@ -160,7 +166,7 @@ public class CSVReaderBuilder implements ReaderBuilder<CSVRow, CSVReader> {
         settings.setContainsHeader(containsHeader);
         settings.setHeaderPrefix(headerPrefix);
         settings.setSeparator(separator);
-
+        settings.setSkipPrefixes(skipPrefixes);
         ColumnSettings columnSettings = new ColumnSettings();
         columnSettings.getColumnTypeMap().putAll(columnTypeMap);
         columnSettings.getIgnoreColumns().addAll(ignoreColumns);

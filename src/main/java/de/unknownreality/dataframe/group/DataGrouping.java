@@ -88,7 +88,7 @@ public class DataGrouping extends DefaultDataFrame {
         }
         aggCol.setName(columnName);
         for(T v : values){
-            if(v == null){
+            if(v == null || Values.NA.isNA(v)){
                 aggCol.appendNA();
                 continue;
             }

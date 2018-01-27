@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <dataFrameMeta>
+<dataFrame size="5"/>
 <readerBuilder class="de.unknownreality.dataframe.csv.CSVReaderBuilder">
 <readerAttribute name="headerPrefix" value="#"/>
 <readerAttribute name="gzip" value="false"/>
