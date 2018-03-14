@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.List;
 
 /**
  * Created by Alex on 11.03.2016.
@@ -284,6 +285,21 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
      * @return Object array with all column values
      */
     public abstract Comparable[] toArray();
+
+
+    /**
+     * Returns this column as an immutable {@link List<T>}.
+     *
+     * @return immutable list containing all values
+     */
+    public abstract List<T> asList();
+
+    /**
+     * Returns a {@link List<T>} that contains all values of this column.
+     *
+     * @return list with all column values
+     */
+    public abstract List<T> toList();
 
     /**
      * Returns <tt>true</tt> if <b>all</b> values of a specified collection are present in this column.

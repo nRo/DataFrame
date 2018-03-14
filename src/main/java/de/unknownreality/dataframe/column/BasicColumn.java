@@ -251,6 +251,18 @@ public abstract class BasicColumn<T extends Comparable<T>, C extends BasicColumn
         return true;
     }
 
+    @Override
+    public List<T> toList() {
+        return new ArrayList<>(Arrays.asList(values));
+    }
+
+    @Override
+    public List<T> asList() {
+        return Collections.unmodifiableList(
+                Arrays.asList(values)
+        );
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public void clear() {
