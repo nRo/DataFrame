@@ -1691,10 +1691,32 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
         DataFrameWriter.print(this, writeFormat);
     }
 
+    /**
+     * Returns a value as {@link Comparable} from the specified column and row
+     * @param col column
+     * @param row row
+     * @return value
+     */
     Comparable getValue(int col, int row);
 
+    /**
+     * Sets the value in the specified column and row
+     * @param col column
+     * @param row row
+     * @param newValue new value
+     */
     void setValue(int col, int row, Comparable newValue);
 
+    /**
+     * Returns true if the value in the specified column and row is NA
+     * @param col column
+     * @param row row
+     * @return true if value is NA
+     */
     boolean isNA(int col, int row);
 
+    /**
+     * Clears all columns
+     */
+    void clear();
 }
