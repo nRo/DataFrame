@@ -191,6 +191,20 @@ public class DataFrameTest {
     }
 
     @Test
+    public  void clearTest(){
+        DataFrame df = DataFrame.create()
+                .addIntegerColumn("x");
+        df.append(1).append(2);
+        Assert.assertEquals(2,df.size());
+        Assert.assertEquals(1,df.getColumns().size());
+        Assert.assertEquals(2,df.getIntegerColumn("x").size());
+        df.clear();
+        Assert.assertEquals(0,df.size());
+        Assert.assertEquals(1,df.getColumns().size());
+        Assert.assertEquals(0,df.getIntegerColumn("x").size());
+    }
+
+    @Test
     public void rowAccessTest() throws IOException {
         String[] header = new String[]{"A", "B", "C", "D", "E","F","G","H","I"};
         Integer[] col1 = new Integer[]{5, 3, 2, 4, 1};
