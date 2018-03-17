@@ -37,6 +37,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -187,6 +188,20 @@ public class DataFrameTest {
         row.set("A", Values.NA);
         Assert.assertEquals(true, df.getRow(1).isNA("A"));
         df.getColumn("A").sort();
+    }
+
+    @Test
+    public  void clearTest(){
+        DataFrame df = DataFrame.create()
+                .addIntegerColumn("x");
+        df.append(1).append(2);
+        Assert.assertEquals(2,df.size());
+        Assert.assertEquals(1,df.getColumns().size());
+        Assert.assertEquals(2,df.getIntegerColumn("x").size());
+        df.clear();
+        Assert.assertEquals(0,df.size());
+        Assert.assertEquals(1,df.getColumns().size());
+        Assert.assertEquals(0,df.getIntegerColumn("x").size());
     }
 
     @Test
@@ -491,6 +506,78 @@ public class DataFrameTest {
         rows = dataFrame.getRows();
         Assert.assertEquals("B", rows.get(0).get("name"));
 
+    }
+
+    @Test
+    public void listTest(){
+        DataFrame dataFrame = DataFrame.create()
+                .addStringColumn("name")
+                .addIntegerColumn("int");
+
+        dataFrame.append("A",1);
+        dataFrame.append("B",2);
+        dataFrame.append("C",3);
+
+        List<String> names = dataFrame.getStringColumn("name").toList();
+        List<Integer> values = dataFrame.getIntegerColumn("int").toList();
+
+        Assert.assertEquals(3,names.size());
+        Assert.assertEquals(3,values.size());
+        Assert.assertEquals("A",names.get(0));
+        Assert.assertEquals("B",names.get(1));
+        Assert.assertEquals("C",names.get(2));
+        Assert.assertEquals(1,(int)values.get(0));
+        Assert.assertEquals(2,(int)values.get(1));
+        Assert.assertEquals(3,(int)values.get(2));
+
+        names.remove("A");
+        values.remove(1);
+
+        Assert.assertEquals(2,names.size());
+        Assert.assertEquals(2,values.size());
+
+        Assert.assertEquals(3,dataFrame.getStringColumn("name").size());
+        Assert.assertEquals(3,dataFrame.getIntegerColumn("int").size());
+
+
+        List<String> namesIm = dataFrame.getStringColumn("name").asList();
+        List<Integer> valuesIm = dataFrame.getIntegerColumn("int").asList();
+
+        Assert.assertEquals(3,namesIm.size());
+        Assert.assertEquals(3,valuesIm.size());
+        Assert.assertEquals("A",namesIm.get(0));
+        Assert.assertEquals("B",namesIm.get(1));
+        Assert.assertEquals("C",namesIm.get(2));
+        Assert.assertEquals(1,(int)valuesIm.get(0));
+        Assert.assertEquals(2,(int)valuesIm.get(1));
+        Assert.assertEquals(3,(int)valuesIm.get(2));
+
+        Assert.assertEquals(1,valuesIm.indexOf(2));
+        Assert.assertEquals(-1,valuesIm.indexOf(5));
+
+        Object[] oArr = valuesIm.toArray();
+        Assert.assertEquals(3,oArr.length);
+        Assert.assertEquals(2,oArr[1]);
+
+        Integer[] iArr = valuesIm.toArray(new Integer[0]);
+        Assert.assertEquals(3,iArr.length);
+        Assert.assertEquals((Integer)2,iArr[1]);
+
+        iArr = valuesIm.toArray(new Integer[4]);
+        Assert.assertEquals(4,iArr.length);
+        Assert.assertEquals((Integer)2,iArr[1]);
+        Assert.assertEquals(null,iArr[3]);
+        try {
+            namesIm.add("D");
+            namesIm.remove("A");
+            Collections.sort(namesIm);
+
+            valuesIm.add(1);
+            valuesIm.remove(1);
+            Collections.sort(valuesIm);
+            fail("Expected an UnsupportedOperationException to be thrown");
+        } catch (UnsupportedOperationException e) {
+        }
     }
 
     @Test(expected = DataFrameRuntimeException.class)

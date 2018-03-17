@@ -83,7 +83,7 @@ public abstract class BasicColumn<T extends Comparable<T>, C extends BasicColumn
 
     @Override
     protected void doSort() {
-        Arrays.sort(values,0,size(), ValueComparator.COMPARATOR);
+        Arrays.sort(values, 0, size(), ValueComparator.COMPARATOR);
 
     }
 
@@ -251,6 +251,18 @@ public abstract class BasicColumn<T extends Comparable<T>, C extends BasicColumn
         return true;
     }
 
+    @Override
+    public List<T> toList() {
+        return new ArrayList<>(Arrays.asList(Arrays.copyOf(values, size)));
+    }
+
+    @Override
+    public List<T> asList() {
+        return Collections.unmodifiableList(
+                new BasicValueList<>(values,size)
+        );
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public void clear() {
@@ -258,4 +270,59 @@ public abstract class BasicColumn<T extends Comparable<T>, C extends BasicColumn
         size = 0;
     }
 
+
+    class BasicValueList<E> extends AbstractList<E>
+            implements RandomAccess, java.io.Serializable {
+        private static final long serialVersionUID = -2764017481108945198L;
+        private final E[] a;
+        private int size;
+
+        BasicValueList(E[] array, int size) {
+            a = Objects.requireNonNull(array);
+            this.size = size;
+        }
+
+        @Override
+        public int size() {
+            return size;
+        }
+
+        @Override
+        public Object[] toArray() {
+            return Arrays.copyOf(a, size, Object[].class);
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public <T> T[] toArray(T[] a) {
+            int size = size();
+            if (a.length < size)
+                return Arrays.copyOf(this.a, size,
+                        (Class<? extends T[]>) a.getClass());
+            System.arraycopy(this.a, 0, a, 0, size);
+            if (a.length > size)
+                a[size] = null;
+            return a;
+        }
+
+        @Override
+        public E get(int index) {
+            return a[index];
+        }
+
+        @Override
+        public int indexOf(Object o) {
+            E[] a = this.a;
+            if (o == null) {
+                for (int i = 0; i < size; i++)
+                    if (a[i] == null)
+                        return i;
+            } else {
+                for (int i = 0; i < size; i++)
+                    if (o.equals(a[i]))
+                        return i;
+            }
+            return -1;
+        }
+    }
 }

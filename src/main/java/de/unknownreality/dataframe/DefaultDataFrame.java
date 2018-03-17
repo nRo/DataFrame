@@ -1170,6 +1170,14 @@ public class DefaultDataFrame implements DataFrame {
         return columns[col].isNA(row);
     }
 
+
+    @Override
+    public void clear(){
+        for(DataFrameColumn<?,?> col : columns){
+            col.clear();
+        }
+        size = 0;
+    }
     @Override
     public boolean equals(Object o) {
         if (o == null || !(o instanceof DefaultDataFrame)) {
