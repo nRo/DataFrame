@@ -24,7 +24,7 @@ Add this to you pom.xml
     <dependency>
         <groupId>de.unknownreality</groupId>
         <artifactId>dataframe</artifactId>
-        <version>0.7.5.1</version>
+        <version>0.7.5.2</version>
     </dependency>
 ...
 </dependencies>
