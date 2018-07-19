@@ -2,8 +2,6 @@ package de.unknownreality.dataframe.print;
 
 import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.DataFrameColumn;
-import de.unknownreality.dataframe.DataFrameWriter;
-import de.unknownreality.dataframe.DataRow;
 import de.unknownreality.dataframe.common.DataContainer;
 import de.unknownreality.dataframe.common.Row;
 import de.unknownreality.dataframe.io.DataWriter;
@@ -34,53 +32,51 @@ public class Printer extends DataWriter {
 
     @Override
     public void write(BufferedWriter writer, DataContainer<?, ?> dataContainer) {
-        try{
-            StringBuilder line = new StringBuilder();
-            StringBuilder topLine = new StringBuilder();
-            StringBuilder lastLine = new StringBuilder();
+        try {
+            StringBuilder contentLineSb = new StringBuilder();
+            StringBuilder topLineSb = new StringBuilder();
+            StringBuilder lastLineSb = new StringBuilder();
             boolean first = true;
-            for(Row row :dataContainer){
-                line.setLength(0);
-                topLine.setLength(0);
-                lastLine.setLength(0);
-                for(int i = 0; i < row.size(); i++){
-                    if(i == 0){
-                        line.append(leftLine);
-                        topLine.append(first ? topLeftCorner : tRight);
-                        lastLine.append(bottomLeftCorner);
+            for (Row row : dataContainer) {
+                contentLineSb.setLength(0);
+                topLineSb.setLength(0);
+                lastLineSb.setLength(0);
+                for (int i = 0; i < row.size(); i++) {
+                    if (i == 0) {
+                        contentLineSb.append(leftLine);
+                        topLineSb.append(first ? topLeftCorner : tRight);
+                        lastLineSb.append(bottomLeftCorner);
 
                     }
                     Object v = row.get(i);
-                    String content = String.format("%-12.10s",v);
-                    line.append(content);
-                    for(int j = 0; j < content.length(); j++){
-                        topLine.append(first ? topLine : innerHorizontalLine);
-                        lastLine.append(bottomLine);
+                    String content = String.format("%-12.10s", v);
+                    contentLineSb.append(content);
+                    for (int j = 0; j < content.length(); j++) {
+                        topLineSb.append(first ? topLine : innerHorizontalLine);
+                        lastLineSb.append(bottomLine);
                     }
-                    if(i != row.size() - 1){
-                        line.append(innerVerticalLine);
-                        topLine.append(first ? tBottom : innerCrossConnection);
-                        lastLine.append(tTop);
-                    }
-                    else{
-                        line.append(rightLine);
-                        topLine.append(first ? topRightCorner : tLeft);
-                        lastLine.append(bottomRightCorner);
+                    if (i != row.size() - 1) {
+                        contentLineSb.append(innerVerticalLine);
+                        topLineSb.append(first ? tBottom : innerCrossConnection);
+                        lastLineSb.append(tTop);
+                    } else {
+                        contentLineSb.append(rightLine);
+                        topLineSb.append(first ? topRightCorner : tLeft);
+                        lastLineSb.append(bottomRightCorner);
                     }
                 }
-                writer.write(topLine.toString());
+                writer.write(topLineSb.toString());
                 writer.newLine();
-                writer.write(line.toString());
+                writer.write(contentLineSb.toString());
                 writer.newLine();
                 first = false;
 
             }
-            writer.write(lastLine.toString());
+            writer.write(lastLineSb.toString());
             writer.newLine();
             writer.flush();
 
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
