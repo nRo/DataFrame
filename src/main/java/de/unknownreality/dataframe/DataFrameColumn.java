@@ -57,6 +57,7 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
      * Sets the capacity of this column.
      * Can be used during dataframe creation if the size is known.
      * @param capacity capacity
+     * @return <tt>self</tt> for method chaining
      */
     public abstract C setCapacity(int capacity);
 
@@ -288,14 +289,14 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
 
 
     /**
-     * Returns this column as an immutable {@link List<T>}.
+     * Returns this column as an immutable {@link List}.
      *
      * @return immutable list containing all values
      */
     public abstract List<T> asList();
 
     /**
-     * Returns a {@link List<T>} that contains all values of this column.
+     * Returns a {@link List} that contains all values of this column.
      *
      * @return list with all column values
      */
