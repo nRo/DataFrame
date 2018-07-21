@@ -20,6 +20,6 @@ public class PrintTest {
             }
         });
         Printer printer = new Printer();
-        printer.write(System.out,df);
+        df.write(System.out,printer);
     }
 }
