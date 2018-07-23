@@ -1,5 +1,5 @@
 package de.unknownreality.dataframe.print;
 
-public interface ValueFormatter<T> {
-    String format(T value, int maxWidth);
+public interface ValueFormatter {
+    String format(Object value, int maxWidth);
 }

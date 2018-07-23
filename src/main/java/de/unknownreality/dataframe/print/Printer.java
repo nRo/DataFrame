@@ -2,8 +2,12 @@ package de.unknownreality.dataframe.print;
 
 import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.DataFrameColumn;
+import de.unknownreality.dataframe.DataFrameHeader;
+import de.unknownreality.dataframe.DataFrameRuntimeException;
 import de.unknownreality.dataframe.common.DataContainer;
+import de.unknownreality.dataframe.common.Header;
 import de.unknownreality.dataframe.common.Row;
+import de.unknownreality.dataframe.common.header.BasicTypeHeader;
 import de.unknownreality.dataframe.io.DataWriter;
 import de.unknownreality.dataframe.io.ReadFormat;
 
@@ -33,6 +37,11 @@ public class Printer extends DataWriter {
     private int defaultColumnWidth = 12;
     private int defaultMaxContentWidth = 10;
     private Map<Object, ColumnPrintSettings> columnSettings = new HashMap<>();
+    private ValueFormatter defaultValueFormatter =
+            (value, maxWidth) -> String.format("%."+maxWidth+"s", value);
+    private ValueFormatter defaultHeaderFormatter = (v, m) -> "#" + v.toString();
+    private ValueFormatter defaultNumberFormatter
+            = new DefaultNumberFormatter();
 
     @Override
     public void write(BufferedWriter writer, DataContainer<?, ?> dataContainer) {
@@ -50,6 +59,10 @@ public class Printer extends DataWriter {
                 topLineSb.setLength(0);
                 last = !it.hasNext();
                 for (int i = 0; i < row.size(); i++) {
+                    ColumnPrintSettings colSettings = settings[i];
+                    if (colSettings.getValueFormatter() == null) {
+                        colSettings.setValueFormatter(getDefaultValueFormatter(row.get(i)));
+                    }
                     if (i == 0) {
                         contentLineSb.append(leftLine);
                         topLineSb.append(tRight);
@@ -57,7 +70,7 @@ public class Printer extends DataWriter {
                             lastLineSb.append(bottomLeftCorner);
                         }
                     }
-                    String content = formatContent(row, i);
+                    String content = formatContent(colSettings, row, i);
                     contentLineSb.append(content);
                     for (int j = 0; j < content.length(); j++) {
                         topLineSb.append(innerHorizontalLine);
@@ -94,13 +107,17 @@ public class Printer extends DataWriter {
             writer.flush();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new DataFrameRuntimeException("error printing data container",e);
         }
     }
 
-    private String formatContent(Row<?, ?> row, int col) {
+    private String formatContent(ColumnPrintSettings columnPrintSettings, Row<?, ?> row, int col) {
         Object v = row.get(col);
-        return String.format("%-12.10s", v);
+        String valueString = columnPrintSettings
+                .getValueFormatter().format(v,
+                        columnPrintSettings.getMaxContentWidth());
+        String fmt = "%-" + columnPrintSettings.getWidth() + "." + columnPrintSettings.getMaxContentWidth() + "s";
+        return String.format(fmt, valueString);
     }
 
     private String formatHeaderContent(Object header, ColumnPrintSettings columnPrintSettings) {
@@ -145,26 +162,26 @@ public class Printer extends DataWriter {
         writer.newLine();
     }
 
-    private ColumnPrintSettings getSettings(DataContainer<?, ?> dataContainer, int colIdx){
+    private ColumnPrintSettings getSettings(DataContainer<?, ?> dataContainer, int colIdx) {
         Object header = dataContainer.getHeader().get(colIdx);
-        if(!columnSettings.containsKey(header)){
+        if (!columnSettings.containsKey(header)) {
             return getDefaultSettings(dataContainer, colIdx);
         }
         ColumnPrintSettings settings = columnSettings.get(header);
-        if(settings.getValueFormatter() == null){
+        if (settings.getValueFormatter() == null) {
             settings.setValueFormatter(
                     getDefaultValueFormatter(dataContainer, colIdx)
             );
         }
-        if(settings.getHeaderFormatter() == null){
+        if (settings.getHeaderFormatter() == null) {
             settings.setHeaderFormatter(
                     getDefaultHeaderFormatter(dataContainer, colIdx)
             );
         }
-        if(settings.getWidth() == null){
+        if (settings.getWidth() == null) {
             settings.setWidth(defaultColumnWidth);
         }
-        if(settings.getMaxContentWidth() == null){
+        if (settings.getMaxContentWidth() == null) {
             settings.setMaxContentWidth(defaultMaxContentWidth);
         }
         return settings;
@@ -174,20 +191,203 @@ public class Printer extends DataWriter {
         ColumnPrintSettings defaultSettings = new ColumnPrintSettings();
         defaultSettings.setMaxContentWidth(defaultMaxContentWidth);
         defaultSettings.setWidth(defaultColumnWidth);
-        defaultSettings.setValueFormatter((v, m) -> v.toString());
-        defaultSettings.setHeaderFormatter((v, m) -> "#"+v.toString());
+        defaultSettings.setValueFormatter(getDefaultValueFormatter(dataContainer, colIdx));
+        defaultSettings.setHeaderFormatter(defaultHeaderFormatter);
         return defaultSettings;
     }
 
-    private ValueFormatter<Object> getDefaultHeaderFormatter(DataContainer<?,?> dataContainer, int colIdx){
-        //TODO
+    private ValueFormatter getDefaultHeaderFormatter(DataContainer<?, ?> dataContainer, int colIdx) {
+        return defaultHeaderFormatter;
+    }
+
+    private ValueFormatter getDefaultValueFormatter(DataContainer<?, ?> dataContainer, int colIdx) {
+        Header<?> header = dataContainer.getHeader();
+        if (header instanceof BasicTypeHeader<?>) {
+            BasicTypeHeader<?> typeHeader = (BasicTypeHeader<?>) header;
+            Class<?> type = typeHeader.getType(colIdx);
+            return getDefaultValueFormatter(type);
+        }
         return null;
     }
 
-    private ValueFormatter<Object> getDefaultValueFormatter(DataContainer<?,?> dataContainer, int colIdx){
-        //TODO
-        return null;
+    private ValueFormatter getDefaultValueFormatter(Object val) {
+        if (val instanceof Number && defaultNumberFormatter != null) {
+            return defaultNumberFormatter;
+        }
+        return defaultValueFormatter;
     }
+
+    private ValueFormatter getDefaultValueFormatter(Class<?> type) {
+        if (Number.class.isAssignableFrom(type) && defaultNumberFormatter != null) {
+            return defaultNumberFormatter;
+        }
+        return defaultValueFormatter;
+    }
+
+    public String getTopLeftCorner() {
+        return topLeftCorner;
+    }
+
+    public void setTopLeftCorner(String topLeftCorner) {
+        this.topLeftCorner = topLeftCorner;
+    }
+
+    public String getTopRightCorner() {
+        return topRightCorner;
+    }
+
+    public void setTopRightCorner(String topRightCorner) {
+        this.topRightCorner = topRightCorner;
+    }
+
+    public String getBottomLeftCorner() {
+        return bottomLeftCorner;
+    }
+
+    public void setBottomLeftCorner(String bottomLeftCorner) {
+        this.bottomLeftCorner = bottomLeftCorner;
+    }
+
+    public String getBottomRightCorner() {
+        return bottomRightCorner;
+    }
+
+    public void setBottomRightCorner(String bottomRightCorner) {
+        this.bottomRightCorner = bottomRightCorner;
+    }
+
+    public String getTopLine() {
+        return topLine;
+    }
+
+    public void setTopLine(String topLine) {
+        this.topLine = topLine;
+    }
+
+    public String getBottomLine() {
+        return bottomLine;
+    }
+
+    public void setBottomLine(String bottomLine) {
+        this.bottomLine = bottomLine;
+    }
+
+    public String getLeftLine() {
+        return leftLine;
+    }
+
+    public void setLeftLine(String leftLine) {
+        this.leftLine = leftLine;
+    }
+
+    public String getRightLine() {
+        return rightLine;
+    }
+
+    public void setRightLine(String rightLine) {
+        this.rightLine = rightLine;
+    }
+
+    public String gettLeft() {
+        return tLeft;
+    }
+
+    public void settLeft(String tLeft) {
+        this.tLeft = tLeft;
+    }
+
+    public String gettRight() {
+        return tRight;
+    }
+
+    public void settRight(String tRight) {
+        this.tRight = tRight;
+    }
+
+    public String gettTop() {
+        return tTop;
+    }
+
+    public void settTop(String tTop) {
+        this.tTop = tTop;
+    }
+
+    public String gettBottom() {
+        return tBottom;
+    }
+
+    public void settBottom(String tBottom) {
+        this.tBottom = tBottom;
+    }
+
+    public String getInnerVerticalLine() {
+        return innerVerticalLine;
+    }
+
+    public void setInnerVerticalLine(String innerVerticalLine) {
+        this.innerVerticalLine = innerVerticalLine;
+    }
+
+    public String getInnerHorizontalLine() {
+        return innerHorizontalLine;
+    }
+
+    public void setInnerHorizontalLine(String innerHorizontalLine) {
+        this.innerHorizontalLine = innerHorizontalLine;
+    }
+
+    public String getInnerCrossConnection() {
+        return innerCrossConnection;
+    }
+
+    public void setInnerCrossConnection(String innerCrossConnection) {
+        this.innerCrossConnection = innerCrossConnection;
+    }
+
+    public int getDefaultColumnWidth() {
+        return defaultColumnWidth;
+    }
+
+    public void setDefaultColumnWidth(int defaultColumnWidth) {
+        this.defaultColumnWidth = defaultColumnWidth;
+    }
+
+    public int getDefaultMaxContentWidth() {
+        return defaultMaxContentWidth;
+    }
+
+    public void setDefaultMaxContentWidth(int defaultMaxContentWidth) {
+        this.defaultMaxContentWidth = defaultMaxContentWidth;
+    }
+
+    public ValueFormatter getDefaultValueFormatter() {
+        return defaultValueFormatter;
+    }
+
+    public void setDefaultValueFormatter(ValueFormatter defaultValueFormatter) {
+        this.defaultValueFormatter = defaultValueFormatter;
+    }
+
+    public ValueFormatter getDefaultHeaderFormatter() {
+        return defaultHeaderFormatter;
+    }
+
+    public void setDefaultHeaderFormatter(ValueFormatter defaultHeaderFormatter) {
+        this.defaultHeaderFormatter = defaultHeaderFormatter;
+    }
+
+    public ValueFormatter getDefaultNumberFormatter() {
+        return defaultNumberFormatter;
+    }
+
+    public void setDefaultNumberFormatter(ValueFormatter defaultNumberFormatter) {
+        this.defaultNumberFormatter = defaultNumberFormatter;
+    }
+
+    public Map<Object, ColumnPrintSettings> getColumnSettings() {
+        return columnSettings;
+    }
+
     @Override
     public Map<String, String> getSettings(DataFrame dataFrame) {
         return null;

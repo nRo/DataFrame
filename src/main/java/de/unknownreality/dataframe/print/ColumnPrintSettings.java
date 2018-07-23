@@ -2,11 +2,15 @@ package de.unknownreality.dataframe.print;
 
 public class ColumnPrintSettings {
     private Object columnHeader;
-    private ValueFormatter<Object> valueFormatter;
-    private ValueFormatter<Object> headerFormatter;
+    private ValueFormatter valueFormatter;
+    private ValueFormatter headerFormatter;
     private Integer width;
     private Integer maxContentWidth;
 
+    public ColumnPrintSettings(Object columnHeader){
+        this.columnHeader = columnHeader;
+    }
+    public ColumnPrintSettings(){};
 
     public Integer getMaxContentWidth() {
         return maxContentWidth;
@@ -32,11 +36,11 @@ public class ColumnPrintSettings {
         this.columnHeader = columnName;
     }
 
-    public ValueFormatter<Object> getValueFormatter() {
+    public ValueFormatter getValueFormatter() {
         return valueFormatter;
     }
 
-    public void setValueFormatter(ValueFormatter<Object> valueFormatter) {
+    public void setValueFormatter(ValueFormatter valueFormatter) {
         this.valueFormatter = valueFormatter;
     }
 
@@ -48,11 +52,11 @@ public class ColumnPrintSettings {
         this.columnHeader = columnHeader;
     }
 
-    public ValueFormatter<Object> getHeaderFormatter() {
+    public ValueFormatter getHeaderFormatter() {
         return headerFormatter;
     }
 
-    public void setHeaderFormatter(ValueFormatter<Object> headerFormatter) {
+    public void setHeaderFormatter(ValueFormatter headerFormatter) {
         this.headerFormatter = headerFormatter;
     }
 }
