@@ -1,9 +1,6 @@
 package de.unknownreality.dataframe.print;
 
-import de.unknownreality.dataframe.DataFrame;
-import de.unknownreality.dataframe.DataFrameColumn;
-import de.unknownreality.dataframe.DataFrameHeader;
-import de.unknownreality.dataframe.DataFrameRuntimeException;
+import de.unknownreality.dataframe.*;
 import de.unknownreality.dataframe.common.DataContainer;
 import de.unknownreality.dataframe.common.Header;
 import de.unknownreality.dataframe.common.Row;
@@ -112,9 +109,18 @@ public class Printer extends DataWriter {
 
     private String formatContent(ColumnPrintSettings columnPrintSettings, Row<?, ?> row, int col) {
         Object v = row.get(col);
-        String valueString = columnPrintSettings
-                .getValueFormatter().format(v,
-                        columnPrintSettings.getMaxContentWidth());
+        String valueString;
+        if(v == null){
+            valueString = "";
+        }
+        else if(Values.NA.isNA(v)){
+            valueString = "NA";
+        }
+        else{
+            valueString = columnPrintSettings
+                    .getValueFormatter().format(v,
+                    columnPrintSettings.getMaxContentWidth());
+        }
         String fmt = "%-" + columnPrintSettings.getWidth() + "." + columnPrintSettings.getMaxContentWidth() + "s";
         return String.format(fmt, valueString);
     }

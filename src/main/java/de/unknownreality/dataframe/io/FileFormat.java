@@ -26,6 +26,7 @@ package de.unknownreality.dataframe.io;
 
 import de.unknownreality.dataframe.csv.CSVFormat;
 import de.unknownreality.dataframe.csv.TSVFormat;
+import de.unknownreality.dataframe.print.PrintFormat;
 
 /**
  * Created by Alex on 17.06.2017.
@@ -33,5 +34,6 @@ import de.unknownreality.dataframe.csv.TSVFormat;
 public interface FileFormat {
     public static CSVFormat CSV = new CSVFormat();
     public static TSVFormat TSV = new TSVFormat();
+    public static PrintFormat Print = new PrintFormat();
 
 }
