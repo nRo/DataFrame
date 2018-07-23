@@ -19,8 +19,7 @@ public final class PrinterBuilder implements WriterBuilder<Printer> {
     private String innerCrossConnection = "┼";
     private int defaultColumnWidth = 12;
     private int defaultMaxContentWidth = 10;
-    private ValueFormatter defaultValueFormatter =
-            (value, maxWidth) -> String.format("%." + maxWidth + "s", value);
+    private ValueFormatter defaultValueFormatter = new DefaultValueFormatter();
     private ValueFormatter defaultHeaderFormatter = (v, m) -> "#" + v.toString();
     private ValueFormatter defaultNumberFormatter
             = new DefaultNumberFormatter();

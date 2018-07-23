@@ -37,8 +37,7 @@ public class Printer extends DataWriter {
     private int defaultColumnWidth = 12;
     private int defaultMaxContentWidth = 10;
     private Map<Object, ColumnPrintSettings> columnSettings = new HashMap<>();
-    private ValueFormatter defaultValueFormatter =
-            (value, maxWidth) -> String.format("%."+maxWidth+"s", value);
+    private ValueFormatter defaultValueFormatter = new DefaultValueFormatter();
     private ValueFormatter defaultHeaderFormatter = (v, m) -> "#" + v.toString();
     private ValueFormatter defaultNumberFormatter
             = new DefaultNumberFormatter();
