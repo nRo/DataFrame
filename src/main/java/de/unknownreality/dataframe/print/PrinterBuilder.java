@@ -17,6 +17,10 @@ public final class PrinterBuilder implements WriterBuilder<Printer> {
     private String innerVerticalLine = "│";
     private String innerHorizontalLine = "─";
     private String innerCrossConnection = "┼";
+    private String tLeft = "┤";
+    private String tRight = "├";
+    private String tTop = "┴";
+    private String tBottom = "┬";
     private int defaultColumnWidth = 12;
     private int defaultMaxContentWidth = 10;
     private ValueFormatter defaultValueFormatter = new DefaultValueFormatter();
@@ -61,6 +65,22 @@ public final class PrinterBuilder implements WriterBuilder<Printer> {
         return this;
     }
 
+    public PrinterBuilder withTTop(String tTop){
+        this.tTop = tTop;
+        return this;
+    }
+    public PrinterBuilder withTBottom(String tBottom){
+        this.tBottom = tBottom;
+        return this;
+    }
+    public PrinterBuilder withTLeft(String tLeft){
+        this.tLeft = tLeft;
+        return this;
+    }
+    public PrinterBuilder withTRight(String tRight){
+        this.tRight = tRight;
+        return this;
+    }
     public PrinterBuilder withColumnContentWidth(Object header, int contentWidth) {
         ColumnPrintSettings settings = columnSettings.computeIfAbsent(
                 header, (h) -> new ColumnPrintSettings(header)
@@ -103,6 +123,36 @@ public final class PrinterBuilder implements WriterBuilder<Printer> {
 
     public PrinterBuilder withBottomRightCorner(String bottomRightCorner) {
         this.bottomRightCorner = bottomRightCorner;
+        return this;
+    }
+
+    public PrinterBuilder withCorner(String corner){
+        withBottomLeftCorner(corner);
+        withBottomRightCorner(corner);
+        withTopRightCorner(corner);
+        withTopLeftCorner(corner);
+        return this;
+    }
+    public PrinterBuilder withVerticalLine(String vline){
+        withLeftLine(vline);
+        withRightLine(vline);
+        withInnerVerticalLine(vline);
+        return this;
+    }
+
+    public PrinterBuilder withHorizontalLine(String hline){
+        withTopLine(hline);
+        withBottomLine(hline);
+        withInnerHorizontalLine(hline);
+        return this;
+    }
+
+    public PrinterBuilder withJoint(String joint){
+        withInnerCrossConnection(joint);
+        withTLeft(joint);
+        withTRight(joint);
+        withTBottom(joint);
+        withTTop(joint);
         return this;
     }
 
@@ -177,6 +227,10 @@ public final class PrinterBuilder implements WriterBuilder<Printer> {
         printer.setBottomLine(bottomLine);
         printer.setLeftLine(leftLine);
         printer.setRightLine(rightLine);
+        printer.settTop(tTop);
+        printer.settRight(tRight);
+        printer.settLeft(tLeft);
+        printer.settBottom(tBottom);
         printer.setInnerVerticalLine(innerVerticalLine);
         printer.setInnerHorizontalLine(innerHorizontalLine);
         printer.setInnerCrossConnection(innerCrossConnection);
