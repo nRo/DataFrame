@@ -30,8 +30,8 @@ import de.unknownreality.dataframe.common.Header;
 /**
  * Created by Alex on 19.05.2017.
  */
-public abstract class UpdateableRow<T,H extends Header<T>,V> extends AbstractHeaderRow<T,H,V> {
-    public UpdateableRow(H header, int index) {
+public abstract class UpdatableRow<T,H extends Header<T>,V> extends AbstractHeaderRow<T,H,V> {
+    public UpdatableRow(H header, int index) {
         super(header, index);
     }
     /**
