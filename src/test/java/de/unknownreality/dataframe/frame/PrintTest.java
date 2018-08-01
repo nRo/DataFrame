@@ -34,7 +34,7 @@ public class PrintTest {
                 .withDefaultColumnWidth(width)
                 .withDefaultMaxContentWidth(cwidth)
                 .build();
-        df.getRow(2).set(0,"PARKERPARKER");
+        df.getRow(2).set(0,"ParkerParker");
         df.getRow(3).set(2,"GermanyGermany");
         StringWriter sw = new StringWriter();
         df.write(sw, printer);
