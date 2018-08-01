@@ -66,7 +66,7 @@ public class PrintTest {
             }
 
 
-            //Border line
+            //inner line
             if (i % 2 == 0) {
                 Assert.assertEquals(joint, String.valueOf(lines[i].charAt(0)));
                 Assert.assertEquals(joint, String.valueOf(lines[i].charAt(lines[i].length() - 1)));
