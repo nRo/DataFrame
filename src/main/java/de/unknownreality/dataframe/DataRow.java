@@ -1,11 +1,11 @@
 package de.unknownreality.dataframe;
 
-import de.unknownreality.dataframe.common.row.UpdateableRow;
+import de.unknownreality.dataframe.common.row.UpdatableRow;
 
 /**
  * Created by Alex on 12.06.2017.
  */
-public class DataRow extends UpdateableRow<String,DataFrameHeader,Comparable> {
+public class DataRow extends UpdatableRow<String,DataFrameHeader,Comparable> {
     private DataFrame dataFrame;
     private int size;
     private int rowVersion;

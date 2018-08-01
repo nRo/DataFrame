@@ -33,7 +33,7 @@ import java.util.Map;
  * Created by Alex on 17.06.2017.
  */
 public class ColumnSettings {
-    private List<String> ignoreColumns = new ArrayList();
+    private List<String> ignoreColumns = new ArrayList<>();
     private List<String> selectColumns = new ArrayList<>();
     private Map<String, Class<? extends Comparable>> columnTypeMap = new HashMap<>();
 
@@ -50,15 +50,4 @@ public class ColumnSettings {
         return columnTypeMap;
     }
 
-    public void setIgnoreColumns(List<String> ignoreColumns) {
-        this.ignoreColumns = ignoreColumns;
-    }
-
-    public void setColumnTypeMap(Map<String, Class<? extends Comparable>> columnTypeMap) {
-        this.columnTypeMap = columnTypeMap;
-    }
-
-    public void setSelectColumns(List<String> selectColumns) {
-        this.selectColumns = selectColumns;
-    }
 }

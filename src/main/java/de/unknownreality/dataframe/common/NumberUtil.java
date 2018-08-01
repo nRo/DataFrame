@@ -137,6 +137,9 @@ public class NumberUtil {
         }
     }
 
+    public static boolean isFloatOrDouble(Number number){
+        return number instanceof Float || number instanceof Double;
+    }
     public static String toString(Number number){
         return NUMBER_FORMAT.format(number);
     }

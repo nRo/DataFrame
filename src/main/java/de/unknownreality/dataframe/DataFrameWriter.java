@@ -31,6 +31,7 @@ import de.unknownreality.dataframe.io.FileFormat;
 import de.unknownreality.dataframe.io.WriteFormat;
 import de.unknownreality.dataframe.meta.DataFrameMeta;
 import de.unknownreality.dataframe.meta.DataFrameMetaWriter;
+import de.unknownreality.dataframe.print.PrintFormat;
 
 import java.io.File;
 import java.io.OutputStream;
@@ -51,7 +52,7 @@ public class DataFrameWriter {
      * Defines the default format used to print dataframes.
      * The tab separated file format is used per default.
      */
-    public final  static WriteFormat DEFAULT_PRINT_FORMAT = FileFormat.TSV;
+    public final  static WriteFormat DEFAULT_PRINT_FORMAT = FileFormat.Print;
     /**
      * Defines the default format used to write dataframes.
      * The tab separated file format is used per default.
