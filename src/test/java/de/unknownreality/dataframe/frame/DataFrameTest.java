@@ -580,6 +580,45 @@ public class DataFrameTest {
         }
     }
 
+    @Test
+    public void testHeadTail(){
+        DataFrame df = DataFrame.create()
+                .addIntegerColumn("id")
+                .addStringColumn("id_str");
+        for(int i = 0; i < 100; i++){
+            df.append(i,i+"s");
+        }
+        DataFrame head = df.head();
+        DataFrame tail = df.tail();
+
+        Assert.assertEquals(DefaultDataFrame.DEFAULT_HEAD_SIZE,head.size());
+        Assert.assertEquals(0,head.getValue(0,0));
+        Assert.assertEquals("0s",head.getValue(1,0));
+
+        Assert.assertEquals(19,head.getValue(0,head.size() - 1));
+        Assert.assertEquals("19s",head.getValue(1,head.size() - 1));
+
+        int tMin = 100 - DefaultDataFrame.DEFAULT_TAIL_SIZE;
+        Assert.assertEquals(tMin,tail.getValue(0,0));
+        Assert.assertEquals(tMin+"s",tail.getValue(1,0));
+
+        Assert.assertEquals(99,tail.getValue(0,tail.size()- 1));
+        Assert.assertEquals(99+"s",tail.getValue(1,tail.size() - 1));
+
+        Assert.assertEquals(DefaultDataFrame.DEFAULT_HEAD_SIZE,tail.size());
+
+        for(int i = 0; i  < DefaultDataFrame.DEFAULT_HEAD_SIZE;i++){
+            Assert.assertEquals(Integer.valueOf(i),head.getRow(i).getInteger(0));
+            Assert.assertEquals(i+"s",head.getRow(i).getString(1));
+        }
+
+        for(int i = 0; i  < DefaultDataFrame.DEFAULT_TAIL_SIZE;i++){
+            int idx = df.size() - DefaultDataFrame.DEFAULT_TAIL_SIZE + i;
+            Assert.assertEquals(Integer.valueOf(idx),tail.getRow(i).getInteger(0));
+            Assert.assertEquals(idx+"s",tail.getRow(i).getString(1));
+        }
+    }
+
     @Test(expected = DataFrameRuntimeException.class)
     public void testColumnSelectErrors(){
         DataFrame df = NoConstructorDataFrame.create();

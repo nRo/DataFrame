@@ -1716,6 +1716,32 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     boolean isNA(int col, int row);
 
     /**
+     * Returns the head (top rows) of the dataframe
+     * @param size number of rows
+     * @return head dataframe
+     */
+    DataFrame head(int size);
+
+    /**
+     * Returns the head (top rows) of the dataframe
+     * @return head dataframe
+     */
+    DataFrame head();
+
+    /**
+     * Returns the tail (bottom rows) of the dataframe
+     * @param size number of rows
+     * @return head dataframe
+     */
+    DataFrame tail(int size);
+
+    /**
+     * Returns the tail (bottom rows) of the dataframe
+     * @return head dataframe
+     */
+    DataFrame tail();
+
+    /**
      * Clears all columns
      */
     void clear();
