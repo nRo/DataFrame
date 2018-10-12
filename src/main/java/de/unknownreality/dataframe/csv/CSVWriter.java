@@ -27,6 +27,7 @@ package de.unknownreality.dataframe.csv;
 import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.DataFrameColumn;
 import de.unknownreality.dataframe.common.DataContainer;
+import de.unknownreality.dataframe.common.Header;
 import de.unknownreality.dataframe.common.Row;
 import de.unknownreality.dataframe.io.DataWriter;
 import de.unknownreality.dataframe.io.FileFormat;
@@ -65,41 +66,48 @@ public class CSVWriter extends DataWriter {
     @Override
     public void write(BufferedWriter bufferedWriter, DataContainer<?, ?> dataContainer) {
         try {
-            if (settings.isContainsHeader()) {
-                if (settings.getHeaderPrefix() != null) {
-                    bufferedWriter.write(settings.getHeaderPrefix());
-                }
-                for (int i = 0; i < dataContainer.getHeader().size(); i++) {
-                    bufferedWriter.write(dataContainer.getHeader().get(i).toString());
-                    if (i < dataContainer.getHeader().size() - 1) {
-                        bufferedWriter.write(settings.getSeparator());
-                    }
-                }
-                bufferedWriter.newLine();
-                bufferedWriter.flush();
-            }
+            writeHeader(bufferedWriter, dataContainer.getHeader());
             for (Row row : dataContainer) {
-                for (int i = 0; i < row.size(); i++) {
-                    Object v = row.get(i);
-                    String s;
-                    if(settings.isQuoteStrings() && v instanceof String){
-                        s = "\""+v+"\"";
-                    }
-                    else{
-                        s = v.toString();
-                    }
-                    bufferedWriter.write(s);
-                    if (i < row.size() - 1) {
-                        bufferedWriter.write(settings.getSeparator());
-                    }
-                }
-                bufferedWriter.newLine();
-                bufferedWriter.flush();
-
+                writeRow(bufferedWriter, row);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new CSVRuntimeException("error writing csv", e);
         }
+    }
+
+    public void writeHeader(BufferedWriter bufferedWriter, Header<?> header) throws Exception {
+        if (!settings.isContainsHeader()) {
+            return;
+        }
+        if (settings.getHeaderPrefix() != null) {
+            bufferedWriter.write(settings.getHeaderPrefix());
+        }
+        for (int i = 0; i < header.size(); i++) {
+            bufferedWriter.write(header.get(i).toString());
+            if (i < header.size() - 1) {
+                bufferedWriter.write(settings.getSeparator());
+            }
+        }
+        bufferedWriter.newLine();
+        bufferedWriter.flush();
+    }
+
+    public void writeRow(BufferedWriter bufferedWriter, Row row) throws Exception {
+        for (int i = 0; i < row.size(); i++) {
+            Object v = row.get(i);
+            String s;
+            if (settings.isQuoteStrings() && v instanceof String) {
+                s = "\"" + v + "\"";
+            } else {
+                s = v.toString();
+            }
+            bufferedWriter.write(s);
+            if (i < row.size() - 1) {
+                bufferedWriter.write(settings.getSeparator());
+            }
+        }
+        bufferedWriter.newLine();
+        bufferedWriter.flush();
     }
 
     @Override
