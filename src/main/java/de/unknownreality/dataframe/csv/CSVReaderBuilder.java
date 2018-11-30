@@ -41,6 +41,8 @@ public class CSVReaderBuilder implements ReaderBuilder<CSVRow, CSVReader> {
     private char separator = ';';
     private String headerPrefix = "";
     private boolean containsHeader = true;
+    private boolean quoteDetection = true;
+    private boolean singleQuoteDetection = true;
     private List<String> ignoreColumns = new ArrayList();
     private List<String> selectColumns = new ArrayList<>();
     private List<String> skipPrefixes = new ArrayList<>();
@@ -52,6 +54,26 @@ public class CSVReaderBuilder implements ReaderBuilder<CSVRow, CSVReader> {
 
     public CSVReaderBuilder withSeparator(char separator) {
         this.separator = separator;
+        return this;
+    }
+
+    /**
+     * Detect quoted values e.g. val1 "val 2" val3
+     * @param quoteDetection quoteDetection
+     * @return self for method chaining
+     */
+    public CSVReaderBuilder withQuoteDetection(boolean quoteDetection) {
+        this.quoteDetection = quoteDetection;
+        return this;
+    }
+
+    /**
+     * Detect single quoted values e.g. val1 'val 2' val3
+     * @param singleQuoteDetection singleQuoteDetection
+     * @return self for method chaining
+     */
+    public CSVReaderBuilder withSingleQuoteDetection(boolean singleQuoteDetection) {
+        this.singleQuoteDetection = singleQuoteDetection;
         return this;
     }
 
@@ -167,6 +189,8 @@ public class CSVReaderBuilder implements ReaderBuilder<CSVRow, CSVReader> {
         settings.setHeaderPrefix(headerPrefix);
         settings.setSeparator(separator);
         settings.setSkipPrefixes(skipPrefixes);
+        settings.setQuoteDetection(quoteDetection);
+        settings.setSingleQuoteDetection(singleQuoteDetection);
         ColumnSettings columnSettings = new ColumnSettings();
         columnSettings.getColumnTypeMap().putAll(columnTypeMap);
         columnSettings.getIgnoreColumns().addAll(ignoreColumns);

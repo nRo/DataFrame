@@ -30,9 +30,32 @@ import java.util.List;
 /**
  * Created by Alex on 15.03.2016.
  */
-public class StringUtil {
+public class StringSplitter {
 
-    private StringUtil() {
+    public static StringSplitter create(){
+        return new StringSplitter();
+    }
+    private boolean detectSingleQuotes = true;
+    private boolean detectQuotes = true;
+    public StringSplitter() {
+    }
+
+    public StringSplitter setDetectQuotes(boolean detectQuotes) {
+        this.detectQuotes = detectQuotes;
+        return this;
+    }
+
+    public StringSplitter setDetectSingleQuotes(boolean detectSingleQuotes) {
+        this.detectSingleQuotes = detectSingleQuotes;
+        return this;
+    }
+
+    public boolean isDetectQuotes() {
+        return detectQuotes;
+    }
+
+    public boolean isDetectSingleQuotes() {
+        return detectSingleQuotes;
     }
 
     /**
@@ -43,7 +66,7 @@ public class StringUtil {
      * @param quoteChar quote char
      * @return string between quote chars
      */
-    public static String putInQuotes(String input, Character quoteChar) {
+    public String putInQuotes(String input, Character quoteChar) {
         return quoteChar + input.replace(quoteChar.toString(), "\\" + quoteChar) + quoteChar;
     }
 
@@ -57,12 +80,13 @@ public class StringUtil {
      * @param split char used to split
      * @return string array containing all splitted parts
      */
-    public static String[] splitQuoted(String input, Character split) {
+    public String[] splitQuoted(String input, Character split) {
         List<String> parts = new ArrayList<>();
         splitQuoted(input, split, new ListParts(parts));
         String[] result = new String[parts.size()];
         return parts.toArray(result);
     }
+
 
     /**
      * Split an input string at a specified split-character  into several parts.
@@ -74,7 +98,7 @@ public class StringUtil {
      * @param split char used to split
      * @param parts string array that is filled with the resulting parts
      */
-    public static void splitQuoted(String input, Character split, String[] parts) {
+    public void splitQuoted(String input, Character split, String[] parts) {
         splitQuoted(input, split, new ArrayParts(parts));
     }
 
@@ -89,7 +113,7 @@ public class StringUtil {
      * @param parts list filled with the resulting parts
      */
     @SuppressWarnings("ConstantConditions")
-    public static void splitQuoted(String input, Character split, Parts parts) {
+    public void splitQuoted(String input, Character split, Parts parts) {
         if (input.length() == 0) {
             return;
         }
@@ -108,7 +132,7 @@ public class StringUtil {
             } else if (c == '\\') {
                 escapeNext = true;
                 continue;
-            } else if (c == '\'') {
+            } else if (detectSingleQuotes && c == '\'') {
                 if (inQuotation) {
                     inQuotation = false;
                 } else if (!inDoubleQuotation && startOrSplit) {
@@ -118,7 +142,7 @@ public class StringUtil {
                     sb.append(c);
                 }
                 continue;
-            } else if (c == '\"') {
+            } else if (detectQuotes && c == '\"') {
                 if (inDoubleQuotation) {
                     inDoubleQuotation = false;
                 } else if (!inDoubleQuotation && startOrSplit) {
