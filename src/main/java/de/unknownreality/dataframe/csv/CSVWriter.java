@@ -104,9 +104,10 @@ public class CSVWriter extends DataWriter {
                 char[] chars = s.toCharArray();
                 for (int j = 0; j < chars.length; j++) {
                     char c = chars[j];
-                    if (c == separator) {
+                    if (c == separator || c == '\'') {
                         putInQuotes = true;
                     } else if (c == '\"') {
+                        putInQuotes = true;
                         escapeQuotes = true;
                     }
                 }
@@ -116,7 +117,7 @@ public class CSVWriter extends DataWriter {
                 if (escapeQuotes) {
                     s = StringUtil.putInQuotes(s, '\"');
                 } else {
-                    s = "" + s + "";
+                    s = "\"" + s + "\"";
                 }
             }
             bufferedWriter.write(s);
