@@ -29,6 +29,7 @@ import de.unknownreality.dataframe.DataFrameColumn;
 import de.unknownreality.dataframe.common.DataContainer;
 import de.unknownreality.dataframe.common.Header;
 import de.unknownreality.dataframe.common.Row;
+import de.unknownreality.dataframe.common.StringUtil;
 import de.unknownreality.dataframe.io.DataWriter;
 import de.unknownreality.dataframe.io.FileFormat;
 import de.unknownreality.dataframe.io.ReadFormat;
@@ -93,13 +94,30 @@ public class CSVWriter extends DataWriter {
     }
 
     public void writeRow(BufferedWriter bufferedWriter, Row row) throws Exception {
+        char separator = settings.getSeparator();
         for (int i = 0; i < row.size(); i++) {
             Object v = row.get(i);
-            String s;
-            if (settings.isQuoteStrings() && v instanceof String) {
-                s = "\"" + v + "\"";
-            } else {
-                s = v.toString();
+            String s = v.toString();
+            boolean putInQuotes = false;
+            boolean escapeQuotes = false;
+            if (v instanceof String) {
+                char[] chars = s.toCharArray();
+                for (int j = 0; j < chars.length; j++) {
+                    char c = chars[j];
+                    if (c == separator) {
+                        putInQuotes = true;
+                    } else if (c == '\"') {
+                        escapeQuotes = true;
+                    }
+                }
+            }
+            putInQuotes = putInQuotes || (settings.isQuoteStrings() && v instanceof String);
+            if (putInQuotes) {
+                if (escapeQuotes) {
+                    s = StringUtil.putInQuotes(s, '\"');
+                } else {
+                    s = "" + s + "";
+                }
             }
             bufferedWriter.write(s);
             if (i < row.size() - 1) {

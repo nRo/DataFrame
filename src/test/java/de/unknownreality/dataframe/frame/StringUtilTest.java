@@ -26,6 +26,7 @@ package de.unknownreality.dataframe.frame;
 
 import de.unknownreality.dataframe.DataFrameException;
 import de.unknownreality.dataframe.common.StringSplitter;
+import de.unknownreality.dataframe.common.StringUtil;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -35,7 +36,8 @@ import org.junit.Test;
 public class StringUtilTest {
     @Test
     public void test() throws DataFrameException {
-        Assert.assertEquals("\"test\"", StringSplitter.create().putInQuotes("test", '"'));
+        Assert.assertEquals("\"test\"", StringUtil.putInQuotes("test", '"'));
+        Assert.assertEquals("\"te\\\"st\"", StringUtil.putInQuotes("te\"st", '"'));
         StringSplitter stringSplitter = StringSplitter.create();
         String splitTest1 = "testA,testB,testC";
         String[] result = new String[3];
