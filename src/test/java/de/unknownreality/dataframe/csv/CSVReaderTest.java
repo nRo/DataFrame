@@ -134,6 +134,20 @@ public class CSVReaderTest {
         }
     }
     @Test
+    public void testEmptyCols(){
+        String testCSV = "#A\tB\tC\n1\t\t3\n1\tX\t3\n";
+        CSVReader reader = CSVFormat.createReader()
+                .withHeaderPrefix("#")
+                .withHeader(true)
+                .withSeparator('\t')
+
+                .build();
+
+        CSVIterator csvRows = reader.load(testCSV);
+        DataFrame dataFrame = DataFrame.load(testCSV,reader);
+
+    }
+    @Test
     public void testSkipMid() throws IOException {
         String testCSV = "#A\tB\tC\n1\tX\t3\n1\tX\t3\n";
         CSVReader reader = CSVFormat.createReader()

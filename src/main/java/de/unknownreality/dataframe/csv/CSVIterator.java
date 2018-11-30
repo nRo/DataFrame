@@ -26,7 +26,7 @@ package de.unknownreality.dataframe.csv;
 
 import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.DataFrameBuilder;
-import de.unknownreality.dataframe.common.StringUtil;
+import de.unknownreality.dataframe.common.StringSplitter;
 import de.unknownreality.dataframe.io.BufferedStreamIterator;
 import de.unknownreality.dataframe.io.ColumnInformation;
 import de.unknownreality.dataframe.io.DataIterator;
@@ -54,6 +54,7 @@ public class CSVIterator extends BufferedStreamIterator<CSVRow> implements DataI
     private List<ColumnInformation> columnInformations = new ArrayList<>();
     private CSVRow bufferedRow = null;
     private boolean[] skipIndices;
+    private StringSplitter stringSplitter = new StringSplitter();
     public CSVIterator(BufferedReader reader, CSVSettings csvSettings, ColumnSettings columnSettings) {
         super(reader);
         this.csvSettings = csvSettings;
@@ -61,6 +62,8 @@ public class CSVIterator extends BufferedStreamIterator<CSVRow> implements DataI
         ignoredColumns = new HashSet<>(columnSettings.getIgnoreColumns());
         includedColumns = new HashSet<>(columnSettings.getSelectColumns());
         colTypes = new HashMap<>(columnSettings.getColumnTypeMap());
+        this.stringSplitter.setDetectQuotes(csvSettings.isQuoteDetection());
+        this.stringSplitter.setDetectSingleQuotes(csvSettings.isSingleQuoteDetection());
         int j = 0;
         for (String col : columnSettings.getSelectColumns()) {
             selectedColumnsIndex.put(col, j++);
@@ -180,7 +183,7 @@ public class CSVIterator extends BufferedStreamIterator<CSVRow> implements DataI
                     return getNext();
                 }
             }
-            String[] values = StringUtil.splitQuoted(line, csvSettings.getSeparator());
+            String[] values = stringSplitter.splitQuoted(line, csvSettings.getSeparator());
 
             if (cols == -1) {
                 cols = values.length;

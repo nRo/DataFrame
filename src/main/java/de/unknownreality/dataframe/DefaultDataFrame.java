@@ -51,6 +51,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class DefaultDataFrame implements DataFrame {
     private static final Logger log = LoggerFactory.getLogger(DefaultDataFrame.class);
+    public final static int DEFAULT_HEAD_SIZE = 20;
+    public final static int DEFAULT_TAIL_SIZE = 20;
     private int size;
     private final Map<String, DataFrameColumn> columnsMap = new LinkedHashMap<>();
     private DataFrameColumn[] columns = null;
@@ -1170,6 +1172,27 @@ public class DefaultDataFrame implements DataFrame {
         return columns[col].isNA(row);
     }
 
+    @Override
+    public DataFrame head(int size){
+        return selectSubset(0,Math.min(size(),size));
+    }
+
+
+    @Override
+    public DataFrame head(){
+        return head(DEFAULT_HEAD_SIZE);
+    }
+
+    @Override
+    public DataFrame tail(int size){
+        return selectSubset(Math.max(0,size() - size),size());
+    }
+
+
+    @Override
+    public DataFrame tail(){
+        return tail(DEFAULT_TAIL_SIZE);
+    }
 
     @Override
     public void clear(){

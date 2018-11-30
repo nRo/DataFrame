@@ -41,6 +41,24 @@ public class CSVSettings implements FormatSettings{
     private String headerPrefix = "";
     private boolean gzip = false;
     private boolean quoteStrings = false;
+    private boolean quoteDetection;
+    private boolean singleQuoteDetection;
+
+    public boolean isQuoteDetection() {
+        return quoteDetection;
+    }
+
+    public boolean isSingleQuoteDetection() {
+        return singleQuoteDetection;
+    }
+
+    public void setQuoteDetection(boolean quoteDetection) {
+        this.quoteDetection = quoteDetection;
+    }
+
+    public void setSingleQuoteDetection(boolean singleQuoteDetection) {
+        this.singleQuoteDetection = singleQuoteDetection;
+    }
 
     public boolean isGzip() {
         return gzip;

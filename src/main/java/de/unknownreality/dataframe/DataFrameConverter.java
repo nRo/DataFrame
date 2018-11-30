@@ -48,6 +48,7 @@ public class DataFrameConverter {
     private static final Logger log = LoggerFactory.getLogger(DataFrameConverter.class);
 
     public static boolean SAMPLE_ROW_DETECTION = true;
+
     @SuppressWarnings("unchecked")
     private static Class<? extends Comparable<?>>[] TYPES = new Class[]
             {
@@ -74,7 +75,7 @@ public class DataFrameConverter {
      * Column information specified by the dataIterator is used.
      * Only rows validated by the filter are appended to the resulting data frame
      *
-     * @param <R> row type
+     * @param <R>             row type
      * @param dataIterator    parent data container
      * @param filterPredicate row filter
      * @return created data frame
@@ -82,12 +83,14 @@ public class DataFrameConverter {
     public static <R extends Row> DataFrame fromDataIterator(DataIterator<R> dataIterator, FilterPredicate filterPredicate) {
         return fromDataIterator(dataIterator, null, filterPredicate);
     }
+
     /**
      * Converts a parent data container to a data frame.
      * The required column information is provided by a column information object.
      * If no column information is defined, the one specified by the dataIterator is used.
      * Only rows validated by the filter are appended to the resulting data frame
-     * @param <R> row type
+     *
+     * @param <R>                row type
      * @param dataIterator       parent data container
      * @param columnsInformation column information
      * @param filterPredicate    row filter
@@ -95,14 +98,16 @@ public class DataFrameConverter {
      */
     @SuppressWarnings("unchecked")
     public static <R extends Row> DataFrame fromDataIterator(DataIterator<R> dataIterator, List<ColumnInformation> columnsInformation, FilterPredicate filterPredicate) {
-        return fromDataIterator(dataIterator,-1,columnsInformation,filterPredicate);
+        return fromDataIterator(dataIterator, -1, columnsInformation, filterPredicate);
     }
+
     /**
      * Converts a parent data container to a data frame.
      * The required column information is provided by a column information object.
      * If no column information is defined, the one specified by the dataIterator is used.
      * Only rows validated by the filter are appended to the resulting data frame
-     * @param <R> row type
+     *
+     * @param <R>                row type
      * @param dataIterator       parent data container
      * @param expectedSize       expected size of the resulting dataframe
      * @param columnsInformation column information
@@ -110,7 +115,7 @@ public class DataFrameConverter {
      * @return created data frame
      */
     @SuppressWarnings("unchecked")
-    public static <R extends Row> DataFrame fromDataIterator(DataIterator<R> dataIterator,int expectedSize, List<ColumnInformation> columnsInformation, FilterPredicate filterPredicate) {
+    public static <R extends Row> DataFrame fromDataIterator(DataIterator<R> dataIterator, int expectedSize, List<ColumnInformation> columnsInformation, FilterPredicate filterPredicate) {
 
         if (columnsInformation == null) {
             columnsInformation = new ArrayList<>(dataIterator.getColumnsInformation());
@@ -134,7 +139,7 @@ public class DataFrameConverter {
             } catch (InstantiationException | IllegalAccessException | ClassCastException e) {
                 throw new DataFrameRuntimeException(String.format("error creating instance of column [%s], empty constructor required", colType.getCanonicalName()), e);
             }
-            if(expectedSize > BasicColumn.INIT_SIZE){
+            if (expectedSize > BasicColumn.INIT_SIZE) {
                 col.setCapacity(expectedSize);
             }
             col.setName(columnInformation.getName());
@@ -177,14 +182,14 @@ public class DataFrameConverter {
                 }
                 rowValues[i] = val;
             }
-            if (hasAutodetect || filterPredicate.valid(new BasicRow(dataFrame.getHeader(),rowValues,dataFrame.size() - 1))) {
+            if (hasAutodetect || filterPredicate.valid(new BasicRow(dataFrame.getHeader(), rowValues, dataFrame.size() - 1))) {
                 dataFrame.append(rowValues);
             }
             r++;
         }
         if (hasAutodetect) {
             replaceAutodetectColumns(dataFrame, autodetect, types);
-            if(filterPredicate != null && filterPredicate != FilterPredicate.EMPTY_FILTER){
+            if (filterPredicate != null && filterPredicate != FilterPredicate.EMPTY_FILTER) {
                 dataFrame.filter(filterPredicate);
             }
         }
@@ -192,7 +197,7 @@ public class DataFrameConverter {
         return dataFrame;
     }
 
-    private static boolean doSample(int row){
+    private static boolean doSample(int row) {
         if (row < 100) {
             return true;
         }
@@ -239,34 +244,31 @@ public class DataFrameConverter {
                 newColumns[i] = newColumn;
             }
         }
-        int currentRow = 0;
-        int currentCol = 0;
-        String currentVal = null;
-        try {
-            for (DataRow row : dataFrame) {
-                for (int j = 0; j < autodetect.length; j++) {
-                    if (newColumns[j] != null) {
-                        currentCol = j;
-
-                        if (row.isNA(j)) {
-                            newColumns[j].appendNA();
-                            continue;
-                        }
-                        currentVal = row.getString(j);
-                        newColumns[j].append(
-                                newColumns[j].getParser().parse(currentVal)
-                        );
-                    }
+        String currentVal;
+        Object currentParsedVal;
+        for (DataRow row : dataFrame) {
+            for (int j = 0; j < autodetect.length; j++) {
+                if(newColumns[j] == null){
+                    continue;
                 }
-                currentRow++;
+                if (row.isNA(j)) {
+                    newColumns[j].appendNA();
+                    continue;
+                }
+                currentVal = row.getString(j);
+                currentParsedVal = newColumns[j].getParser().parseOrNull(currentVal);
+
+                //Error parsing value, stop auto conversion for column j
+                if (currentParsedVal == null) {
+                    newColumns[j] = null;
+                    continue;
+                }
+                newColumns[j].append(
+                        currentParsedVal
+                );
             }
-        } catch (ParseException e) {
-            throw new DataFrameRuntimeException(
-                    String.format("error parsing value '%s in row %d col %d",
-                            currentVal,
-                            currentRow,
-                            currentCol));
         }
+
         int i = 0;
         List<DataFrameColumn> columns = new ArrayList<>(dataFrame.getColumns());
         for (DataFrameColumn column : columns) {
@@ -284,7 +286,7 @@ public class DataFrameConverter {
      * Keys in this map are name of the column in the parent data container.
      * Values are the corresponding data frame columns.
      *
-     * @param <R> row type
+     * @param <R>          row type
      * @param dataIterator parent data container
      * @return created data frame
      */
