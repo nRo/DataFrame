@@ -1,8 +1,5 @@
-package de.unknownreality.dataframe.frame;
+package de.unknownreality.dataframe;
 
-import de.unknownreality.dataframe.ColumnTypeMap;
-import de.unknownreality.dataframe.DataFrame;
-import de.unknownreality.dataframe.DataRow;
 import de.unknownreality.dataframe.print.Printer;
 import de.unknownreality.dataframe.print.PrinterBuilder;
 import org.junit.Assert;

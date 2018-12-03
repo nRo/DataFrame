@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package de.unknownreality.dataframe.frame;
+package de.unknownreality.dataframe.group;
 
 import de.unknownreality.dataframe.*;
 import de.unknownreality.dataframe.column.BooleanColumn;
@@ -30,9 +30,6 @@ import de.unknownreality.dataframe.column.StringColumn;
 import de.unknownreality.dataframe.csv.CSVReader;
 import de.unknownreality.dataframe.csv.CSVReaderBuilder;
 import de.unknownreality.dataframe.filter.FilterPredicate;
-import de.unknownreality.dataframe.group.DataGroup;
-import de.unknownreality.dataframe.group.DataGrouping;
-import de.unknownreality.dataframe.group.GroupRow;
 import de.unknownreality.dataframe.group.aggr.Aggregate;
 import de.unknownreality.dataframe.group.impl.TreeGroupUtil;
 import org.junit.Assert;

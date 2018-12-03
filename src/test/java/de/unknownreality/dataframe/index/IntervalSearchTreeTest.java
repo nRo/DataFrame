@@ -22,7 +22,7 @@
  *
  */
 
-package de.unknownreality.dataframe.frame;
+package de.unknownreality.dataframe.index;
 
 import de.unknownreality.dataframe.index.interval.Interval;
 import de.unknownreality.dataframe.index.interval.IntervalSearchTree;

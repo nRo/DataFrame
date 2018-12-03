@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package de.unknownreality.dataframe.frame;
+package de.unknownreality.dataframe.join;
 
 import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.DataFrameLoader;
@@ -28,6 +28,7 @@ import de.unknownreality.dataframe.DataRow;
 import de.unknownreality.dataframe.Values;
 import de.unknownreality.dataframe.csv.CSVReader;
 import de.unknownreality.dataframe.csv.CSVReaderBuilder;
+import de.unknownreality.dataframe.group.DataFrameGroupingTest;
 import de.unknownreality.dataframe.join.JoinedDataFrame;
 import de.unknownreality.dataframe.join.impl.DefaultJoinUtil;
 import org.junit.Assert;

@@ -1,4 +1,4 @@
-package de.unknownreality.dataframe.frame;
+package de.unknownreality.dataframe.common;
 
 import de.unknownreality.dataframe.common.parser.ParserNotFoundException;
 import de.unknownreality.dataframe.common.parser.ParserUtil;

@@ -20,19 +20,15 @@
  * SOFTWARE.
  */
 
-package de.unknownreality.dataframe.frame;
+package de.unknownreality.dataframe;
 
-import de.unknownreality.dataframe.DataFrame;
-import de.unknownreality.dataframe.DataFrameException;
-import de.unknownreality.dataframe.DataFrameLoader;
-import de.unknownreality.dataframe.DataRow;
 import de.unknownreality.dataframe.column.DoubleColumn;
 import de.unknownreality.dataframe.column.IntegerColumn;
 import de.unknownreality.dataframe.column.StringColumn;
 import de.unknownreality.dataframe.csv.CSVReader;
 import de.unknownreality.dataframe.csv.CSVReaderBuilder;
 import de.unknownreality.dataframe.filter.FilterPredicate;
-import de.unknownreality.dataframe.meta.DataFrameMeta;
+import de.unknownreality.dataframe.group.DataFrameGroupingTest;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
