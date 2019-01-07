@@ -20,12 +20,13 @@
  * SOFTWARE.
  */
 
-package de.unknownreality.dataframe.frame;
+package de.unknownreality.dataframe.index;
 
 import de.unknownreality.dataframe.*;
 import de.unknownreality.dataframe.column.IntegerColumn;
 import de.unknownreality.dataframe.csv.CSVReader;
 import de.unknownreality.dataframe.csv.CSVReaderBuilder;
+import de.unknownreality.dataframe.group.DataFrameGroupingTest;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;

@@ -65,6 +65,14 @@ public final class PrinterBuilder implements WriterBuilder<Printer> {
         return this;
     }
 
+    public PrinterBuilder withAutoWidth(Object header) {
+        ColumnPrintSettings settings = columnSettings.computeIfAbsent(
+                header, (h) -> new ColumnPrintSettings(header)
+        );
+        settings.setAutoWidth(true);
+        return this;
+    }
+
     public PrinterBuilder withTTop(String tTop){
         this.tTop = tTop;
         return this;

@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package de.unknownreality.dataframe.frame;
+package de.unknownreality.dataframe.filter;
 
 import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.DefaultDataFrame;

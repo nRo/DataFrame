@@ -22,7 +22,7 @@
  *
  */
 
-package de.unknownreality.dataframe.frame;
+package de.unknownreality.dataframe;
 
 import de.unknownreality.dataframe.column.DoubleColumn;
 import de.unknownreality.dataframe.column.FloatColumn;

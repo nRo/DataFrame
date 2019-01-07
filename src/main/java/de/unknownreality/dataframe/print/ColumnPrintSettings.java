@@ -6,6 +6,15 @@ public class ColumnPrintSettings {
     private ValueFormatter headerFormatter;
     private Integer width;
     private Integer maxContentWidth;
+    private boolean autoWidth;
+
+    public boolean isAutoWidth() {
+        return autoWidth;
+    }
+
+    public void setAutoWidth(boolean autoWidth) {
+        this.autoWidth = autoWidth;
+    }
 
     public ColumnPrintSettings(Object columnHeader){
         this.columnHeader = columnHeader;

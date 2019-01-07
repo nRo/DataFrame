@@ -1,8 +1,5 @@
-package de.unknownreality.dataframe.frame;
+package de.unknownreality.dataframe;
 
-import de.unknownreality.dataframe.ColumnTypeMap;
-import de.unknownreality.dataframe.DataFrame;
-import de.unknownreality.dataframe.DataRow;
 import de.unknownreality.dataframe.print.Printer;
 import de.unknownreality.dataframe.print.PrinterBuilder;
 import org.junit.Assert;
@@ -115,6 +112,33 @@ public class PrintTest {
                 assertContent(c,lines[i],width,j);
             }
         }
+    }
+
+    @Test
+    public void testAutoWidth(){
+        Printer printer = PrinterBuilder.create()
+                .build();
+
+        DataFrame df = DataFrame.create()
+                .addStringColumn("testA")
+                .addDoubleColumn("testB");
+        df.append("abc",1.5d);
+        df.append("abcdefgh",1.5d);
+        df.append("abcdef",1.5d);
+        df.append("abcdefghijklmnopqrstuvwxyz",1.5d);
+        df.append("ab",1.5d);
+        StringWriter sw = new StringWriter();
+        df.write(sw, printer);
+        String[] lines = sw.toString().split("\\r?\\n");
+        Assert.assertEquals("│abcdefg...  │1.50000000  │",lines[9]);
+
+        printer = PrinterBuilder.create()
+                .withAutoWidth("testA")
+                .build();
+        sw = new StringWriter();
+        df.write(sw, printer);
+        lines = sw.toString().split("\\r?\\n");
+        Assert.assertEquals("│abcdefghijklmnopqrstuvwxyz │1.50000000  │",lines[9]);
     }
     private void assertContent(String expected,  String line, int width, int col){
 

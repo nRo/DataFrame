@@ -5,6 +5,7 @@ import de.unknownreality.dataframe.common.DataContainer;
 import de.unknownreality.dataframe.common.Header;
 import de.unknownreality.dataframe.common.Row;
 import de.unknownreality.dataframe.common.header.BasicTypeHeader;
+import de.unknownreality.dataframe.io.DataIterator;
 import de.unknownreality.dataframe.io.DataWriter;
 import de.unknownreality.dataframe.io.ReadFormat;
 
@@ -33,17 +34,20 @@ public class Printer extends DataWriter {
     private String innerCrossConnection = "┼";
     private int defaultColumnWidth = 12;
     private int defaultMaxContentWidth = 10;
+    private int maxAutoWidth = 500;
     private Map<Object, ColumnPrintSettings> columnSettings = new HashMap<>();
     private ValueFormatter defaultValueFormatter = new DefaultValueFormatter();
     private ValueFormatter defaultHeaderFormatter = (v, m) -> "#" + v.toString();
     private ValueFormatter defaultNumberFormatter
             = new DefaultNumberFormatter();
 
+
     @Override
     public void write(BufferedWriter writer, DataContainer<?, ?> dataContainer) {
         try {
-            ColumnPrintSettings[] settings = new ColumnPrintSettings[dataContainer.getHeader().size()];
-            writeHeader(dataContainer, writer, settings);
+            ColumnPrintSettings[] settings = createPrintSettings(dataContainer);
+            ColumnWidth[] columnWidths = createColumnWidth(dataContainer, settings);
+            writeHeader(dataContainer, writer, settings, columnWidths);
             StringBuilder contentLineSb = new StringBuilder();
             StringBuilder topLineSb = new StringBuilder();
             StringBuilder lastLineSb = new StringBuilder();
@@ -56,6 +60,7 @@ public class Printer extends DataWriter {
                 last = !it.hasNext();
                 for (int i = 0; i < row.size(); i++) {
                     ColumnPrintSettings colSettings = settings[i];
+                    ColumnWidth columnWidth = columnWidths[i];
                     if (colSettings.getValueFormatter() == null) {
                         colSettings.setValueFormatter(getDefaultValueFormatter(row.get(i)));
                     }
@@ -66,7 +71,7 @@ public class Printer extends DataWriter {
                             lastLineSb.append(bottomLeftCorner);
                         }
                     }
-                    String content = formatContent(colSettings, row, i);
+                    String content = formatContent(colSettings, columnWidth, row, i);
                     contentLineSb.append(content);
                     for (int j = 0; j < content.length(); j++) {
                         topLineSb.append(innerHorizontalLine);
@@ -103,51 +108,110 @@ public class Printer extends DataWriter {
             writer.flush();
 
         } catch (Exception e) {
-            throw new DataFrameRuntimeException("error printing data container",e);
+            throw new DataFrameRuntimeException("error printing data container", e);
         }
     }
 
-    private String formatContent(ColumnPrintSettings columnPrintSettings, Row<?, ?> row, int col) {
+    private ColumnWidth[] createColumnWidth(DataContainer<?, ?> dataContainer, ColumnPrintSettings[] columnPrintSetting) {
+        ColumnWidth[] widths = new ColumnWidth[dataContainer.getHeader().size()];
+        int[] autoWidthCols = new int[widths.length];
+        int[] max = new int[widths.length];
+
+        int autoWidthColsCount = 0;
+        for (int i = 0; i < widths.length; i++) {
+            ColumnPrintSettings settings = columnPrintSetting[i];
+            ColumnWidth columnWidth = new ColumnWidth();
+            if (!settings.isAutoWidth()) {
+                columnWidth.width = settings.getWidth();
+                columnWidth.contentWidth = settings.getMaxContentWidth();
+            } else {
+                max[i] = getContentLength(dataContainer.getHeader().get(i), settings);
+                autoWidthCols[autoWidthColsCount++] = i;
+            }
+            widths[i] = columnWidth;
+        }
+        if (autoWidthColsCount == 0) {
+            return widths;
+        }
+        int c;
+        for (Row<?, ?> row : dataContainer) {
+            for (int i = 0; i < autoWidthColsCount; i++) {
+                ColumnPrintSettings settings = columnPrintSetting[i];
+                c = autoWidthCols[i];
+                Object v = row.get(c);
+                int length = getContentLength(v, settings);
+                max[i] = Math.max(max[i], length);
+            }
+        }
+        for (int i = 0; i < autoWidthColsCount; i++) {
+            ColumnWidth columnWidth = widths[autoWidthCols[i]];
+            int m = Math.min(maxAutoWidth, max[i]);
+            columnWidth.contentWidth = m;
+            columnWidth.width = m + 1;
+        }
+        return widths;
+    }
+
+    private int getContentLength(Object v, ColumnPrintSettings printSettings) {
+        int length;
+        if (v == null) {
+            return 0;
+        } else if (Values.NA.isNA(v)) {
+            length = 2;
+        } else {
+            length = printSettings
+                    .getValueFormatter().format(v, maxAutoWidth).length();
+        }
+        return length;
+    }
+
+    private String formatContent(ColumnPrintSettings columnPrintSettings, ColumnWidth columnWidth, Row<?, ?> row, int col) {
         Object v = row.get(col);
         String valueString;
-        if(v == null){
+        if (v == null) {
             valueString = "";
-        }
-        else if(Values.NA.isNA(v)){
+        } else if (Values.NA.isNA(v)) {
             valueString = "NA";
-        }
-        else{
+        } else {
             valueString = columnPrintSettings
                     .getValueFormatter().format(v,
-                    columnPrintSettings.getMaxContentWidth());
+                            columnWidth.contentWidth);
         }
-        String fmt = "%-" + columnPrintSettings.getWidth() + "." + columnPrintSettings.getMaxContentWidth() + "s";
+        String fmt = "%-" + columnWidth.width + "." + columnWidth.contentWidth + "s";
         return String.format(fmt, valueString);
     }
 
-    private String formatHeaderContent(Object header, ColumnPrintSettings columnPrintSettings) {
+    private String formatHeaderContent(Object header, ColumnPrintSettings columnPrintSettings, ColumnWidth columnWidth) {
         String headerString = columnPrintSettings
                 .getHeaderFormatter().format(header,
-                        columnPrintSettings.getMaxContentWidth());
+                        columnWidth.contentWidth);
 
-        String fmt = "%-" + columnPrintSettings.getWidth() + "." + columnPrintSettings.getMaxContentWidth() + "s";
+        String fmt = "%-" + columnWidth.width + "." + columnWidth.contentWidth + "s";
         return String.format(fmt, headerString);
     }
 
+    protected ColumnPrintSettings[] createPrintSettings(DataContainer<?, ?> dataContainer) {
+        ColumnPrintSettings[] settings = new ColumnPrintSettings[dataContainer.getHeader().size()];
+        for (int i = 0; i < dataContainer.getHeader().size(); i++) {
+            ColumnPrintSettings columnSettings = getSettings(dataContainer, i);
+            settings[i] = columnSettings;
+        }
+        return settings;
+    }
 
-    protected void writeHeader(DataContainer<?, ?> dataContainer, BufferedWriter writer, ColumnPrintSettings[] settings) throws IOException {
+    protected void writeHeader(DataContainer<?, ?> dataContainer, BufferedWriter writer, ColumnPrintSettings[] settings, ColumnWidth[] columnWidths) throws IOException {
         StringBuilder contentLineSb = new StringBuilder();
         StringBuilder topLineSb = new StringBuilder();
         topLineSb.append(topLeftCorner);
         int cols = dataContainer.getHeader().size();
         int colIdx = 0;
         for (Object header : dataContainer.getHeader()) {
-            ColumnPrintSettings columnSettings = getSettings(dataContainer, colIdx);
-            settings[colIdx] = columnSettings;
+            ColumnWidth columnWidth = columnWidths[colIdx];
+            ColumnPrintSettings columnSettings = settings[colIdx];
             if (contentLineSb.length() == 0) {
                 contentLineSb.append(leftLine);
             }
-            String content = formatHeaderContent(header, columnSettings);
+            String content = formatHeaderContent(header, columnSettings, columnWidth);
             contentLineSb.append(content);
             for (int i = 0; i < content.length(); i++) {
                 topLineSb.append(topLine);
@@ -406,5 +470,10 @@ public class Printer extends DataWriter {
     @Override
     public ReadFormat getReadFormat() {
         return null;
+    }
+
+    private class ColumnWidth {
+        public int contentWidth;
+        public int width;
     }
 }

@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package de.unknownreality.dataframe.frame;
+package de.unknownreality.dataframe;
 
 import de.unknownreality.dataframe.*;
 import de.unknownreality.dataframe.column.BooleanColumn;

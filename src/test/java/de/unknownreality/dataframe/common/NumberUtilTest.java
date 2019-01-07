@@ -22,7 +22,7 @@
  *
  */
 
-package de.unknownreality.dataframe.frame;
+package de.unknownreality.dataframe.common;
 
 import de.unknownreality.dataframe.DataFrameException;
 import de.unknownreality.dataframe.common.NumberUtil;
