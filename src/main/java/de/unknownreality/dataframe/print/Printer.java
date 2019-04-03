@@ -136,8 +136,9 @@ public class Printer extends DataWriter {
         int c;
         for (Row<?, ?> row : dataContainer) {
             for (int i = 0; i < autoWidthColsCount; i++) {
-                ColumnPrintSettings settings = columnPrintSetting[i];
                 c = autoWidthCols[i];
+                ColumnPrintSettings settings = columnPrintSetting[c];
+
                 Object v = row.get(c);
                 int length = getContentLength(v, settings);
                 max[i] = Math.max(max[i], length);
