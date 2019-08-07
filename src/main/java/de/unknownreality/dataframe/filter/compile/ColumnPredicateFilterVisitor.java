@@ -56,7 +56,6 @@ public class ColumnPredicateFilterVisitor extends PredicateBaseVisitor<FilterPre
                 return FilterPredicate.geColumn(colNameA, colNameB);
             case GT:
                 return FilterPredicate.gtColumn(colNameA, colNameB);
-
             default:
                 throw new PredicateCompilerException(String.format("unsupported filter operation '%s'", operation));
 
