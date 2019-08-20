@@ -72,7 +72,7 @@ fragment LE : ('LE' | 'le' | '<=');
 fragment LT : ('LT' | 'lt' | '<');
 fragment GE : ('GE' | 'ge' | '>=');
 fragment GT : ('GT' | 'gt' | '>');
-
+fragment LIKE : ('LIKE' | 'like');
 REGEX : '/' (~('/') | '\\/')+ '/';
 MATCH : ('~=' | '~' );
 
@@ -90,7 +90,7 @@ NEGATE: '!';
 
 PREDICATE_OPERATION : AND | OR | XOR | NOR;
 
-FIELD_OPERATION : EQ | NE |LE | LT | GT | GE;
+FIELD_OPERATION : EQ | NE |LE | LT | GT | GE | LIKE;
 
 NUMBER : '-'? DIGIT+([.,]DIGIT+)?;
 BOOLEAN_VALUE: 'true' | 'false';

@@ -164,6 +164,65 @@ public class PredicateParserTest {
         Assert.assertEquals(2,filtered.size());
     }
 
+
+    @Test
+    public void likeTest(){
+        DataFrame dataFrame = new DefaultDataFrame();
+        dataFrame.addColumn(new StringColumn("name"));
+        dataFrame.addColumn(new IntegerColumn("value"));
+        dataFrame.append("A B C",1);
+        dataFrame.append("A B C",2);
+        dataFrame.append("A D C",3);
+        dataFrame.append("C D E",4);
+        dataFrame.append("E F C",5);
+        dataFrame.append("A F C",6);
+        dataFrame.append("G C H",7);
+        DataFrame filtered = dataFrame.select("name LIKE 'A B C'");
+        Assert.assertEquals(2,filtered.size());
+
+        filtered = dataFrame.select("name LIKE 'A _ C'");
+        Assert.assertEquals(4,filtered.size());
+
+        filtered = dataFrame.select("name LIKE '%C'");
+        Assert.assertEquals(5,filtered.size());
+
+        filtered = dataFrame.select("name LIKE 'A%'");
+        Assert.assertEquals(4,filtered.size());
+
+        filtered = dataFrame.select("name LIKE 'E%'");
+        Assert.assertEquals(1,filtered.size());
+
+        filtered = dataFrame.select("name LIKE '% _ C'");
+        Assert.assertEquals(5,filtered.size());
+
+        filtered = dataFrame.select("name LIKE '% _ %'");
+        Assert.assertEquals(7,filtered.size());
+
+        filtered = dataFrame.select("name LIKE '%D%'");
+        Assert.assertEquals(2,filtered.size());
+
+        filtered = dataFrame.select("name LIKE '%D%'");
+        Assert.assertEquals(2,filtered.size());
+
+        filtered = dataFrame.select("name LIKE '%C%'");
+        Assert.assertEquals(7,filtered.size());
+
+        filtered = dataFrame.select("name LIKE 'A'");
+        Assert.assertEquals(0,filtered.size());
+
+        filtered = dataFrame.select("name LIKE '_'");
+        Assert.assertEquals(0,filtered.size());
+
+        filtered = dataFrame.select("name LIKE '%AAAAAAAA'");
+        Assert.assertEquals(0,filtered.size());
+
+        filtered = dataFrame.select("name LIKE '%AAAAAAAA%'");
+        Assert.assertEquals(0,filtered.size());
+
+        filtered = dataFrame.select("name LIKE 'AAAAAAAA%'");
+        Assert.assertEquals(0,filtered.size());
+    }
+
     @Test
     public void numberTest(){
         DataFrame dataFrame = new DefaultDataFrame();

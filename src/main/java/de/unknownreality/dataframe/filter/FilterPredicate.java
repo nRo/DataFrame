@@ -567,7 +567,28 @@ public abstract class FilterPredicate {
     public static FilterPredicate btwn(final String name, Object low, Object high) {
         return FilterPredicate.and(FilterPredicate.gt(name, low), FilterPredicate.lt(name, high));
     }
-
+    /**
+     * Returns a {@link LikePredicate} that checks whether the row column value matches a specified LIKE query.
+     * <p><code>pattern.matches(row.get(name))</code></p>
+     *
+     * @param name    row column name
+     * @param query LIKE query
+     * @return <tt>'LIKE'</tt> predicate.
+     */
+    public static FilterPredicate like(final String name, Object query) {
+        return new LikePredicate(name, query != null ? query.toString() : null);
+    }
+    /**
+     * Returns a {@link LikePredicate} that checks whether the row column value matches a specified LIKE query.
+     * <p><code>pattern.matches(row.get(name))</code></p>
+     *
+     * @param name    row column name
+     * @param query LIKE query
+     * @return <tt>'LIKE'</tt> predicate.
+     */
+    public static FilterPredicate like(final String name, String query) {
+        return new LikePredicate(name, query);
+    }
     /**
      * Returns a {@link MatchPredicate} that checks whether the row column value matches a specified {@link Pattern}.
      * <p><code>pattern.matches(row.get(name))</code></p>

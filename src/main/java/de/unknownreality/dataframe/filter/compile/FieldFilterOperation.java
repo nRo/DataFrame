@@ -37,7 +37,8 @@ public enum FieldFilterOperation {
     LE("LE","le","<="),
     LT("LT","lt","<"),
     GE("GE","ge",">="),
-    GT("GT","Gt",">");
+    GT("GT","Gt",">"),
+    LIKE("LIKE");
     private String[] aliases;
 
     FieldFilterOperation(String... aliases){

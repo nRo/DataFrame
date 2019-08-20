@@ -83,7 +83,7 @@ public class FieldFilterVisitor extends PredicateBaseVisitor<FilterPredicate> {
             case LT: return FilterPredicate.lt(colName,value);
             case GE: return FilterPredicate.ge(colName,value);
             case GT: return FilterPredicate.gt(colName,value);
-
+            case LIKE: return FilterPredicate.like(colName,value);
             default: throw new PredicateCompilerException(String.format("unsupported filter operation '%s'",operation));
 
         }
