@@ -48,7 +48,7 @@ public class TreeIndex implements Index {
      * @param unique    defines whether this index only allows unique values
      * @param columns   index columns
      */
-    protected TreeIndex(String indexName, boolean unique, DataFrameColumn... columns) {
+    public TreeIndex(String indexName, boolean unique, DataFrameColumn... columns) {
         int i = 0;
         for (DataFrameColumn column : columns) {
             columnIndexMap.put(column, i++);
@@ -57,7 +57,7 @@ public class TreeIndex implements Index {
         this.unique = unique;
     }
 
-    protected TreeIndex(String indexName, DataFrameColumn... columns) {
+    public TreeIndex(String indexName, DataFrameColumn... columns) {
         this(indexName, false, columns);
     }
 

@@ -42,6 +42,8 @@ public class JoinInfo {
     private final Map<String, String> dataFrameAHeaderMap = new HashMap<>();
     private final Map<String, String> dataFrameBHeaderMap = new HashMap<>();
 
+
+
     /**
      * Creates a join information using both data frames and the joined data frame header.<br>
      * The data frames are saved as {@link WeakReference}.
@@ -54,6 +56,11 @@ public class JoinInfo {
         this.header = header;
         this.dataFrameA = new WeakReference<>(dataFrameA);
         this.dataFrameB = new WeakReference<>(dataFrameB);
+    }
+
+
+    public DataFrameHeader getHeader() {
+        return header;
     }
 
     /**

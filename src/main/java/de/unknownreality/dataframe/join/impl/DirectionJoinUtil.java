@@ -25,56 +25,49 @@
 package de.unknownreality.dataframe.join.impl;
 
 import de.unknownreality.dataframe.DataFrame;
-import de.unknownreality.dataframe.DataFrameHeader;
 import de.unknownreality.dataframe.DataRow;
-import de.unknownreality.dataframe.group.DataGrouping;
-import de.unknownreality.dataframe.group.GroupRow;
 import de.unknownreality.dataframe.join.JoinColumn;
 import de.unknownreality.dataframe.join.JoinInfo;
 import de.unknownreality.dataframe.join.JoinedDataFrame;
 
+import static de.unknownreality.dataframe.join.impl.JoinOperationUtil.*;
+
 /**
  * Created by Alex on 10.07.2016.
  */
-public abstract class DirectionJoin extends AbstractJoinOperation {
+public class DirectionJoinUtil{
     /**
      * Creates a direction (left or right) join
      *
      * @param dfA         first data frame
      * @param dfB         second data frame
-     * @param joinHeader  joined data frame header
      * @param joinInfo    info about the columns in the joined data frame
      * @param joinColumns columns used for the join
      * @return joined data frame
      */
-    public JoinedDataFrame createDirectionJoin(DataFrame dfA, DataFrame dfB,
-                                               DataFrameHeader joinHeader, JoinInfo joinInfo, JoinColumn[] joinColumns) {
-        String[] groupColumns = new String[joinColumns.length];
-        for (int i = 0; i < joinColumns.length; i++) {
-            groupColumns[i] = joinColumns[i].getColumnB();
-        }
-        Comparable[] groupValues = new Comparable[joinColumns.length];
-        DataGrouping joinedGroups = dfB.groupBy(groupColumns);
+    public static JoinedDataFrame createDirectionJoin(DataFrame dfA, DataFrame dfB,
+                                               JoinInfo joinInfo, JoinColumn[] joinColumns) {
+
+        int[] joinIndicesA = JoinOperationUtil.getJoinIndices(dfA,joinInfo);
+        int[] joinIndicesB = JoinOperationUtil.getJoinIndices(dfB,joinInfo);
+        int joinSize = joinInfo.getHeader().size();
         JoinedDataFrame joinedDataFrame = new JoinedDataFrame(joinInfo);
-        joinedDataFrame.set(joinHeader);
-        for (DataRow row : dfA) {
-            if (joinInfo.isA(dfA)) {
-                setGroupValuesA(groupValues, row, joinColumns);
-            } else {
-                setGroupValuesB(groupValues, row, joinColumns);
-            }
-            GroupRow groupRow = joinedGroups.findByGroupValues((Comparable[]) groupValues);
-            if (groupRow == null) {
-                Comparable[] joinedRowValues = new Comparable[joinHeader.size()];
-                fillValues(dfA, row, joinInfo, joinedRowValues);
-                fillNA(joinedRowValues);
-                joinedDataFrame.append(joinedRowValues);
-            } else {
-                appendGroupJoinedRows(groupRow.getGroup(), dfA, dfB, row, joinInfo, joinHeader, joinedDataFrame);
+        joinedDataFrame.set(joinInfo.getHeader());
+        JoinTree joinTree = new JoinTree(JoinTree.SafeLeafMode.FirstOnly,dfA,dfB, joinColumns);
+        for(JoinTree.JoinNode node : joinTree.getSavedLeafs()){
+            for(Integer rowA : node.getIndicesA()){
+                DataRow dataRowA = dfA.getRow(rowA);
+                if(node.getIndicesB() == null){
+                    Comparable<?>[] joinedRowValues = new Comparable[joinSize];
+                    fillValues(joinIndicesA, dataRowA, joinedRowValues);
+                    fillNA(joinedRowValues);
+                    joinedDataFrame.append(joinedRowValues);
+                    continue;
+                }
+                appendGroupJoinedRows(node.getIndicesB(),dfB,dataRowA,joinIndicesA,joinIndicesB,joinSize,joinedDataFrame);
+
             }
         }
         return joinedDataFrame;
     }
-
-
 }

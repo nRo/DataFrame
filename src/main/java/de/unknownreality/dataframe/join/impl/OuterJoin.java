@@ -31,15 +31,14 @@ import de.unknownreality.dataframe.join.JoinInfo;
 import de.unknownreality.dataframe.join.JoinOperation;
 import de.unknownreality.dataframe.join.JoinedDataFrame;
 
-import static de.unknownreality.dataframe.join.impl.JoinOperationUtil.appendGroupJoinedRows;
-
+import static de.unknownreality.dataframe.join.impl.JoinOperationUtil.*;
 
 /**
  * Created by Alex on 10.07.2016.
  */
-public class InnerJoin implements JoinOperation {
-    public InnerJoin() {
-
+public class OuterJoin implements JoinOperation {
+    public OuterJoin() {
+        
     }
 
 
@@ -55,21 +54,34 @@ public class InnerJoin implements JoinOperation {
      */
     @Override
     public JoinedDataFrame join(DataFrame dfA, DataFrame dfB, String joinSuffixA, String joinSuffixB, JoinColumn... joinColumns) {
-        JoinInfo joinInfo = JoinOperationUtil.createJoinInfo( dfA, dfB, joinColumns, joinSuffixA, joinSuffixB);
-        int[] joinIndicesA = JoinOperationUtil.getJoinIndices(dfA, joinInfo);
-        int[] joinIndicesB = JoinOperationUtil.getJoinIndices(dfB, joinInfo);
+        JoinInfo joinInfo = createJoinInfo( dfA, dfB, joinColumns, joinSuffixA, joinSuffixB);
+        int[] joinIndicesA = JoinOperationUtil.getJoinIndices(dfA,joinInfo);
+        int[] joinIndicesB = JoinOperationUtil.getJoinIndices(dfB,joinInfo);
         int joinSize = joinInfo.getHeader().size();
         JoinedDataFrame joinedDataFrame = new JoinedDataFrame(joinInfo);
         joinedDataFrame.set(joinInfo.getHeader());
-        JoinTree joinTree = new JoinTree(JoinTree.SafeLeafMode.All,dfA, dfB, joinColumns);
-        for (JoinTree.JoinNode node : joinTree.getSavedLeafs()) {
-            if (node.getIndicesA() == null) {
-                continue;
+        JoinTree joinTree = new JoinTree(JoinTree.SafeLeafMode.All,dfA,dfB,joinColumns);
+        for(JoinTree.JoinNode node : joinTree.getSavedLeafs()){
+            if(node.getIndicesB() == null || node.getIndicesB().isEmpty()){
+                for(Integer rowA : node.getIndicesA()){
+                    Comparable<?>[] joinedRowValues = new Comparable[joinSize];
+                    fillValues(joinIndicesA, dfA.getRow(rowA), joinedRowValues);
+                    fillNA(joinedRowValues);
+                    joinedDataFrame.append(joinedRowValues);
+                }
             }
-            for (Integer rowA : node.getIndicesA()) {
-                DataRow dataRowA = dfA.getRow(rowA);
-                if (node.getIndicesB() != null && !node.getIndicesB().isEmpty()) {
-                    appendGroupJoinedRows(node.getIndicesB(), dfB, dataRowA, joinIndicesA, joinIndicesB, joinSize, joinedDataFrame);
+            else if(node.getIndicesA() == null || node.getIndicesA().isEmpty()){
+                for(Integer rowB : node.getIndicesB()){
+                    Comparable<?>[] joinedRowValues = new Comparable[joinSize];
+                    fillValues(joinIndicesB, dfB.getRow(rowB), joinedRowValues);
+                    fillNA(joinedRowValues);
+                    joinedDataFrame.append(joinedRowValues);
+                }
+            }
+            else{
+                for(Integer rowA : node.getIndicesA()){
+                    DataRow dataRowA = dfA.getRow(rowA);
+                    appendGroupJoinedRows(node.getIndicesB(),dfB,dataRowA,joinIndicesA,joinIndicesB,joinSize,joinedDataFrame);
                 }
             }
         }

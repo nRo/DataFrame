@@ -34,6 +34,9 @@ public interface JoinUtil {
     JoinedDataFrame innerJoin(DataFrame dfA, DataFrame  dfB, JoinColumn... joinColumns);
     JoinedDataFrame innerJoin(DataFrame  dfA, DataFrame  dfB, String joinSuffixA, String joinSuffixB, JoinColumn... joinColumns);
 
+    JoinedDataFrame outerJoin(DataFrame dfA, DataFrame  dfB, JoinColumn... joinColumns);
+    JoinedDataFrame outerJoin(DataFrame  dfA, DataFrame  dfB, String joinSuffixA, String joinSuffixB, JoinColumn... joinColumns);
+
     JoinedDataFrame rightJoin(DataFrame dfA, DataFrame  dfB, JoinColumn... joinColumns);
     JoinedDataFrame rightJoin(DataFrame  dfA, DataFrame  dfB, String joinSuffixA, String joinSuffixB, JoinColumn... joinColumns);
 

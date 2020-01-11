@@ -893,6 +893,39 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     JoinedDataFrame joinInner(DataFrame dataFrame, String suffixA, String suffixB, JoinColumn... joinColumns);
 
     /**
+     * Joins this data frame with another data frame using the <tt>OUTER JOIN</tt> method.
+     *
+     * @param dataFrame   other data frame
+     * @param joinColumns join columns
+     * @return joined data frame
+     * @see JoinUtil#innerJoin(DataFrame, DataFrame, JoinColumn...)
+     */
+    JoinedDataFrame joinOuter(DataFrame dataFrame, String... joinColumns);
+
+    /**
+     * Joins this data frame with another data frame using the <tt>OUTER JOIN</tt> method.
+     *
+     * @param dataFrame   other data frame
+     * @param joinColumns join columns
+     * @return joined data frame
+     * @see JoinUtil#innerJoin(DataFrame, DataFrame, JoinColumn...)
+     */
+    JoinedDataFrame joinOuter(DataFrame dataFrame, JoinColumn... joinColumns);
+
+    /**
+     * Joins this data frame with another data frame using the <tt>OUTER JOIN</tt> method.
+     * Column names are altered using the provided suffixes.
+     *
+     * @param dataFrame   other data frame
+     * @param suffixA     suffixes for columns from this data frame
+     * @param suffixB     suffixes for columns from the other data frame
+     * @param joinColumns join columns
+     * @return joined data frame
+     * @see JoinUtil#innerJoin(DataFrame, DataFrame, String, String, JoinColumn...)
+     */
+    JoinedDataFrame joinOuter(DataFrame dataFrame, String suffixA, String suffixB, JoinColumn... joinColumns);
+
+    /**
      * Returns a copy of this data frame.
      * Header, columns, rows and indices are copied.
      *
@@ -930,6 +963,8 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      */
     DataRows selectRowsByIndex(String name, Comparable... values);
 
+
+    DataRows selectRows(Collection<Integer> rowIndices);
 
     /**
      * Finds the first data row matching an index and the corresponding index values

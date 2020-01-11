@@ -25,16 +25,19 @@
 package de.unknownreality.dataframe.join.impl;
 
 import de.unknownreality.dataframe.DataFrame;
-import de.unknownreality.dataframe.DataFrameHeader;
 import de.unknownreality.dataframe.join.JoinColumn;
 import de.unknownreality.dataframe.join.JoinInfo;
+import de.unknownreality.dataframe.join.JoinOperation;
 import de.unknownreality.dataframe.join.JoinedDataFrame;
+
+import static de.unknownreality.dataframe.join.impl.DirectionJoinUtil.createDirectionJoin;
+import static de.unknownreality.dataframe.join.impl.JoinOperationUtil.createJoinInfo;
 
 /**
  * Created by Alex on 10.07.2016.
  */
-public class LeftJoin extends DirectionJoin {
-    protected LeftJoin() {
+public class LeftJoin implements JoinOperation {
+    public LeftJoin() {
     }
 
     /**
@@ -49,8 +52,7 @@ public class LeftJoin extends DirectionJoin {
      */
     @Override
     public JoinedDataFrame join(DataFrame dfA, DataFrame dfB, String joinSuffixA, String joinSuffixB, JoinColumn... joinColumns) {
-        DataFrameHeader joinHeader = new DataFrameHeader();
-        JoinInfo joinInfo = fillJoinHeader(joinHeader, dfA, dfB, joinColumns, joinSuffixA, joinSuffixB);
-        return createDirectionJoin(dfA, dfB, joinHeader, joinInfo, joinColumns);
+        JoinInfo joinInfo = createJoinInfo(dfA, dfB, joinColumns, joinSuffixA, joinSuffixB);
+        return createDirectionJoin(dfA, dfB, joinInfo, joinColumns);
     }
 }
