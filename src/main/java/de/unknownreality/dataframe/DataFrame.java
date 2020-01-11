@@ -1,3 +1,27 @@
+/*
+ *
+ *  * Copyright (c) 2019 Alexander Grün
+ *  *
+ *  * Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  * of this software and associated documentation files (the "Software"), to deal
+ *  * in the Software without restriction, including without limitation the rights
+ *  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  * copies of the Software, and to permit persons to whom the Software is
+ *  * furnished to do so, subject to the following conditions:
+ *  *
+ *  * The above copyright notice and this permission notice shall be included in all
+ *  * copies or substantial portions of the Software.
+ *  *
+ *  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  * SOFTWARE.
+ *
+ */
+
 package de.unknownreality.dataframe;
 
 import de.unknownreality.dataframe.column.*;
@@ -869,6 +893,39 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     JoinedDataFrame joinInner(DataFrame dataFrame, String suffixA, String suffixB, JoinColumn... joinColumns);
 
     /**
+     * Joins this data frame with another data frame using the <tt>OUTER JOIN</tt> method.
+     *
+     * @param dataFrame   other data frame
+     * @param joinColumns join columns
+     * @return joined data frame
+     * @see JoinUtil#innerJoin(DataFrame, DataFrame, JoinColumn...)
+     */
+    JoinedDataFrame joinOuter(DataFrame dataFrame, String... joinColumns);
+
+    /**
+     * Joins this data frame with another data frame using the <tt>OUTER JOIN</tt> method.
+     *
+     * @param dataFrame   other data frame
+     * @param joinColumns join columns
+     * @return joined data frame
+     * @see JoinUtil#innerJoin(DataFrame, DataFrame, JoinColumn...)
+     */
+    JoinedDataFrame joinOuter(DataFrame dataFrame, JoinColumn... joinColumns);
+
+    /**
+     * Joins this data frame with another data frame using the <tt>OUTER JOIN</tt> method.
+     * Column names are altered using the provided suffixes.
+     *
+     * @param dataFrame   other data frame
+     * @param suffixA     suffixes for columns from this data frame
+     * @param suffixB     suffixes for columns from the other data frame
+     * @param joinColumns join columns
+     * @return joined data frame
+     * @see JoinUtil#innerJoin(DataFrame, DataFrame, String, String, JoinColumn...)
+     */
+    JoinedDataFrame joinOuter(DataFrame dataFrame, String suffixA, String suffixB, JoinColumn... joinColumns);
+
+    /**
      * Returns a copy of this data frame.
      * Header, columns, rows and indices are copied.
      *
@@ -906,6 +963,8 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      */
     DataRows selectRowsByIndex(String name, Comparable... values);
 
+
+    DataRows selectRows(Collection<Integer> rowIndices);
 
     /**
      * Finds the first data row matching an index and the corresponding index values

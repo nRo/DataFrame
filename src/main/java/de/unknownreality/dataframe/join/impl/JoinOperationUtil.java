@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2017 Alexander Grün
+ *  * Copyright (c) 2019 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -28,38 +28,40 @@ import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.DataFrameHeader;
 import de.unknownreality.dataframe.DataRow;
 import de.unknownreality.dataframe.Values;
-import de.unknownreality.dataframe.common.Row;
-import de.unknownreality.dataframe.group.DataGroup;
 import de.unknownreality.dataframe.join.JoinColumn;
 import de.unknownreality.dataframe.join.JoinInfo;
-import de.unknownreality.dataframe.join.JoinedDataFrame;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by Alex on 10.07.2016.
  */
-public abstract class AbstractJoinOperation {
-
-    public abstract JoinedDataFrame join(DataFrame dfA, DataFrame dfB, String joinSuffixA, String joinSuffixB, JoinColumn... joinColumns);
+public class JoinOperationUtil {
 
 
     /**
      * Fills the values of a row into the corresponding values in a joined row value
      *
-     * @param dataFrame       parent data frame of row
+     * @param joinIndices     indices of column from original dataframe in joined dataframe
      * @param row             row containing the values
-     * @param joinInfo        info about the joined data frame
      * @param joinedRowValues array that is filled with the row values
      */
-    public void fillValues(DataFrame dataFrame, DataRow row, JoinInfo joinInfo, Comparable[] joinedRowValues) {
+
+    public static void fillValues(int[] joinIndices, DataRow row, Comparable<?>[] joinedRowValues) {
+        for (int i = 0; i < joinIndices.length; i++) {
+            joinedRowValues[joinIndices[i]] = row.get(i);
+
+        }
+    }
+
+    public static int[] getJoinIndices(DataFrame dataFrame, JoinInfo joinInfo) {
+        int[] joindIndices = new int[dataFrame.getHeader().size()];
+        int i = 0;
         for (String headerName : dataFrame.getHeader()) {
             int joinedIndex = joinInfo.getJoinedIndex(headerName, dataFrame);
-            joinedRowValues[joinedIndex] = row.get(headerName);
+            joindIndices[i++] = joinedIndex;
         }
+        return joindIndices;
     }
 
     /**
@@ -67,7 +69,7 @@ public abstract class AbstractJoinOperation {
      *
      * @param joinedRowValues array with <tt>NA</tt> values
      */
-    public void fillNA(Comparable[] joinedRowValues) {
+    public static void fillNA(Comparable<?>[] joinedRowValues) {
         for (int i = 0; i < joinedRowValues.length; i++) {
             if (joinedRowValues[i] == null) {
                 joinedRowValues[i] = Values.NA;
@@ -81,7 +83,6 @@ public abstract class AbstractJoinOperation {
      * Headers with the same name in both data frames get a suffix.<br>
      * The information about the join is returned after the header is filled.
      *
-     * @param joinHeader  join header to fill
      * @param dfA         first data frame
      * @param dfB         second data frame
      * @param joinColumns columns used for the join
@@ -89,8 +90,9 @@ public abstract class AbstractJoinOperation {
      * @param suffixB     suffix used for headers from the second data frame
      * @return information about the join
      */
-    public JoinInfo fillJoinHeader(DataFrameHeader joinHeader, DataFrame dfA, DataFrame dfB,
-                                   JoinColumn[] joinColumns, String suffixA, String suffixB) {
+    public static JoinInfo createJoinInfo(DataFrame dfA, DataFrame dfB,
+                                          JoinColumn[] joinColumns, String suffixA, String suffixB) {
+        DataFrameHeader joinHeader = new DataFrameHeader();
         Set<String> joinColumnSetA = new HashSet<>();
         Set<String> joinColumnSetB = new HashSet<>();
         Map<String, String> joinedBToAMap = new HashMap<>();
@@ -130,51 +132,24 @@ public abstract class AbstractJoinOperation {
         return info;
     }
 
-
-    /**
-     * Fills the join values of the first data frame into an values array
-     *
-     * @param groupValues values array to be filled
-     * @param row         row containing the values
-     * @param joinColumns columns used for the join
-     */
-    public void setGroupValuesA(Comparable[] groupValues, Row<Comparable,String> row, JoinColumn[] joinColumns) {
-        for (int i = 0; i < joinColumns.length; i++) {
-            String headerName = joinColumns[i].getColumnA();
-            groupValues[i] = row.get(headerName);
-        }
-    }
-
-    /**
-     * Fills the join values of the second data frame into an values array
-     *
-     * @param groupValues values array to be filled
-     * @param row         row containing the values
-     * @param joinColumns columns used for the join
-     */
-    public void setGroupValuesB(Comparable[] groupValues, Row<Comparable,String> row, JoinColumn[] joinColumns) {
-        for (int i = 0; i < joinColumns.length; i++) {
-            String headerName = joinColumns[i].getColumnB();
-            groupValues[i] = row.get(headerName);
-        }
-    }
-
     /**
      * Appends the joined rows resulting from a row from one data frame and a data group from the other data frame
      *
-     * @param group      data group a data frame
-     * @param dfA        first data frame
-     * @param dfB        second data frame
-     * @param rowA       row from the other data frame  (not the same as the data group)
-     * @param joinInfo   info about the join
-     * @param joinHeader resulting data frame header
+     * @param rowIndices      row indices
+     * @param dfB             second data frame
+     * @param rowA            row from the other data frame  (not the same as the data group)
+     * @param joinIndicesA    indices of column from first dataframe in joined dataframe
+     * @param joinIndicesB    indices of column from second dataframe in joined dataframe
+     * @param joinedSize      size of joined rows
      * @param joinedDataFrame resulting joined data frame
      */
-    public void appendGroupJoinedRows(DataGroup group, DataFrame dfA, DataFrame dfB, DataRow rowA, JoinInfo joinInfo, DataFrameHeader joinHeader, DataFrame joinedDataFrame) {
-        for (DataRow rowB : group) {
-            Comparable[] joinedRowValues = new Comparable[joinHeader.size()];
-            fillValues(dfA, rowA, joinInfo, joinedRowValues);
-            fillValues(dfB, rowB, joinInfo, joinedRowValues);
+
+    public static void appendGroupJoinedRows(Collection<Integer> rowIndices, DataFrame dfB,
+                                             DataRow rowA, int[] joinIndicesA, int[] joinIndicesB, int joinedSize, DataFrame joinedDataFrame) {
+        for (Integer rowB : rowIndices) {
+            Comparable<?>[] joinedRowValues = new Comparable<?>[joinedSize];
+            fillValues(joinIndicesA, rowA, joinedRowValues);
+            fillValues(joinIndicesB, dfB.getRow(rowB), joinedRowValues);
             fillNA(joinedRowValues);
             joinedDataFrame.append(joinedRowValues);
         }

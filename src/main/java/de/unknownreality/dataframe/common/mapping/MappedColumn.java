@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2017 Alexander Grün
+ *  * Copyright (c) 2019 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -26,10 +26,6 @@ package de.unknownreality.dataframe.common.mapping;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-
-/**
- * Created by Alex on 08.03.2016.
- */
 
 /**
  * Annotation that defines a mapped column.

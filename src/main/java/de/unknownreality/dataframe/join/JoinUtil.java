@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2017 Alexander Grün
+ *  * Copyright (c) 2019 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -33,6 +33,9 @@ public interface JoinUtil {
 
     JoinedDataFrame innerJoin(DataFrame dfA, DataFrame  dfB, JoinColumn... joinColumns);
     JoinedDataFrame innerJoin(DataFrame  dfA, DataFrame  dfB, String joinSuffixA, String joinSuffixB, JoinColumn... joinColumns);
+
+    JoinedDataFrame outerJoin(DataFrame dfA, DataFrame  dfB, JoinColumn... joinColumns);
+    JoinedDataFrame outerJoin(DataFrame  dfA, DataFrame  dfB, String joinSuffixA, String joinSuffixB, JoinColumn... joinColumns);
 
     JoinedDataFrame rightJoin(DataFrame dfA, DataFrame  dfB, JoinColumn... joinColumns);
     JoinedDataFrame rightJoin(DataFrame  dfA, DataFrame  dfB, String joinSuffixA, String joinSuffixB, JoinColumn... joinColumns);

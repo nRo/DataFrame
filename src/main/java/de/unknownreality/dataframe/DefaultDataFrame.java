@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2017 Alexander Grün
+ *  * Copyright (c) 2019 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -1003,7 +1003,26 @@ public class DefaultDataFrame implements DataFrame {
         return joinUtil.innerJoin(this, dataFrame, suffixA, suffixB, joinColumns);
     }
 
+    @Override
+    public JoinedDataFrame joinOuter(DataFrame dataFrame, String... joinColumns) {
+        JoinColumn[] joinColumnsArray = new JoinColumn[joinColumns.length];
+        for (int i = 0; i < joinColumns.length; i++) {
+            joinColumnsArray[i] = new JoinColumn(joinColumns[i]);
+        }
+        return joinOuter(dataFrame, joinColumnsArray);
+    }
 
+
+    @Override
+    public JoinedDataFrame joinOuter(DataFrame dataFrame, JoinColumn... joinColumns) {
+        return joinUtil.outerJoin(this, dataFrame, joinColumns);
+    }
+
+
+    @Override
+    public JoinedDataFrame joinOuter(DataFrame dataFrame, String suffixA, String suffixB, JoinColumn... joinColumns) {
+        return joinUtil.outerJoin(this, dataFrame, suffixA, suffixB, joinColumns);
+    }
     @Override
     public DefaultDataFrame copy() {
         DataRows rows = getRows(0, size);
@@ -1047,6 +1066,10 @@ public class DefaultDataFrame implements DataFrame {
     @Override
     public DataRows selectRowsByIndex(String name, Comparable... values) {
         Collection<Integer> rowIndices = indices.find(name, values);
+        return selectRows(rowIndices);
+    }
+    @Override
+    public DataRows selectRows(Collection<Integer> rowIndices) {
         if (!rowIndices.isEmpty()) {
             List<DataRow> rows = new ArrayList<>();
             for (Integer i : rowIndices) {
@@ -1056,7 +1079,6 @@ public class DefaultDataFrame implements DataFrame {
         }
         return new DataRows(this, new ArrayList<>(0));
     }
-
     @Override
     public DataRow selectFirstRowByIndex(String name, Comparable... values) {
         Integer idx = indices.findFirst(name, values);

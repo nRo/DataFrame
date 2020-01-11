@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2017 Alexander Grün
+ *  * Copyright (c) 2019 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -51,6 +51,10 @@ public class DefaultJoinUtil implements JoinUtil {
      */
     public static final InnerJoin INNER = new InnerJoin();
 
+    /**
+     * INNER JOIN
+     */
+    public static final OuterJoin OUTER = new OuterJoin();
 
     /**
      * Joins two data frames using the <tt>LEFT JOIN</tt> method and the default header name suffixes
@@ -111,6 +115,7 @@ public class DefaultJoinUtil implements JoinUtil {
     }
 
 
+
     /**
      * Joins two data frames using the <tt>INNER JOIN</tt> method and the default header name suffixes
      *
@@ -139,5 +144,32 @@ public class DefaultJoinUtil implements JoinUtil {
         return INNER.join(dfA, dfB, joinSuffixA, joinSuffixB, joinColumns);
     }
 
+    /**
+     * Joins two data frames using the <tt>OUTER JOIN</tt> method and the default header name suffixes
+     *
+     * @param dfA         first data frame
+     * @param dfB         second data frame
+     * @param joinColumns columns used for the join
+     * @return joined data frame
+     * @see InnerJoin#join(DataFrame , DataFrame , String, String, JoinColumn...)
+     */
+    public JoinedDataFrame outerJoin(DataFrame  dfA, DataFrame  dfB, JoinColumn... joinColumns) {
+        return outerJoin(dfA, dfB, JOIN_SUFFIX_A, JOIN_SUFFIX_B, joinColumns);
+    }
+
+    /**
+     * Joins two data frames using the <tt>OUTER JOIN</tt> method and specified suffixes for the column header names
+     *
+     * @param dfA         first data frame
+     * @param dfB         second data frame
+     * @param joinSuffixA suffix used for columns in the first data frame
+     * @param joinSuffixB suffix used for columns in the second data frame
+     * @param joinColumns columns used for the join
+     * @return joined data frame
+     * @see InnerJoin#join(DataFrame , DataFrame, String, String, JoinColumn...)
+     */
+    public JoinedDataFrame outerJoin(DataFrame  dfA, DataFrame  dfB, String joinSuffixA, String joinSuffixB, JoinColumn... joinColumns) {
+        return OUTER.join(dfA, dfB, joinSuffixA, joinSuffixB, joinColumns);
+    }
 
 }
