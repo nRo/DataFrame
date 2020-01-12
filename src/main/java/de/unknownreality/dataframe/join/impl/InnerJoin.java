@@ -61,7 +61,7 @@ public class InnerJoin implements JoinOperation {
         int joinSize = joinInfo.getHeader().size();
         JoinedDataFrame joinedDataFrame = new JoinedDataFrame(joinInfo);
         joinedDataFrame.set(joinInfo.getHeader());
-        JoinTree joinTree = new JoinTree(JoinTree.SafeLeafMode.All,dfA, dfB, joinColumns);
+        JoinTree joinTree = new JoinTree(JoinTree.LeafMode.All,dfA, dfB, joinColumns);
         for (JoinTree.JoinNode node : joinTree.getSavedLeafs()) {
             if (node.getIndicesA() == null) {
                 continue;

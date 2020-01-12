@@ -7,7 +7,7 @@ import de.unknownreality.dataframe.join.JoinColumn;
 import java.util.*;
 
 public class JoinTree {
-    public enum SafeLeafMode{
+    public enum LeafMode {
         All,
         FirstOnly
     }
@@ -19,7 +19,7 @@ public class JoinTree {
     private int[] colIndicesA;
     private int[] colIndicesB;
 
-    public JoinTree(SafeLeafMode mode,DataFrame dfA, DataFrame dfB, JoinColumn... columns) {
+    public JoinTree(LeafMode mode, DataFrame dfA, DataFrame dfB, JoinColumn... columns) {
         int i = 0;
         colIndicesA = new int[columns.length];
         colIndicesB = new int[columns.length];
@@ -29,7 +29,7 @@ public class JoinTree {
             colIndicesB[idx] = dfB.getHeader().getIndex(column.getColumnB());
         }
         this.saveLeafsA = true;
-        this.saveLeafsB = mode == SafeLeafMode.All;
+        this.saveLeafsB = mode == LeafMode.All;
         setA(dfA);
         setB(dfB);
     }
