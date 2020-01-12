@@ -53,7 +53,7 @@ public class DirectionJoinUtil{
         int joinSize = joinInfo.getHeader().size();
         JoinedDataFrame joinedDataFrame = new JoinedDataFrame(joinInfo);
         joinedDataFrame.set(joinInfo.getHeader());
-        JoinTree joinTree = new JoinTree(JoinTree.SafeLeafMode.FirstOnly,dfA,dfB, joinColumns);
+        JoinTree joinTree = new JoinTree(JoinTree.LeafMode.FirstOnly,dfA,dfB, joinColumns);
         for(JoinTree.JoinNode node : joinTree.getSavedLeafs()){
             for(Integer rowA : node.getIndicesA()){
                 DataRow dataRowA = dfA.getRow(rowA);
