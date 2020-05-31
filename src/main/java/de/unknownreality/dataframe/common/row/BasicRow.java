@@ -24,16 +24,16 @@
 
 package de.unknownreality.dataframe.common.row;
 
-import de.unknownreality.dataframe.common.Header;
+import de.unknownreality.dataframe.common.header.TypeHeader;
 
 /**
  * Created by Alex on 19.05.2017.
  */
-public class BasicRow<T,H extends Header<T>,V> extends AbstractHeaderRow<T, H, V> {
+public class BasicRow<T, H extends TypeHeader<T>, V> extends AbstractHeaderRow<T, H, V> {
     private final V[] values;
 
     public BasicRow(H header, V[] values, int index) {
-        super(header,index);
+        super(header, index);
         this.values = values;
     }
 

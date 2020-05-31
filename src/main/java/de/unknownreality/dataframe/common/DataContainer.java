@@ -24,6 +24,7 @@
 
 package de.unknownreality.dataframe.common;
 
+import de.unknownreality.dataframe.common.header.Header;
 import de.unknownreality.dataframe.common.mapping.DataMapper;
 
 import java.util.List;

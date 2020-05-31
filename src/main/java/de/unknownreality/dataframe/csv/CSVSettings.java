@@ -27,9 +27,7 @@ package de.unknownreality.dataframe.csv;
 import de.unknownreality.dataframe.io.FormatSettings;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by Alex on 17.06.2017.

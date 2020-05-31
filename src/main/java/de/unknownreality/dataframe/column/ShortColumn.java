@@ -25,22 +25,21 @@
 package de.unknownreality.dataframe.column;
 
 import de.unknownreality.dataframe.common.Row;
-import de.unknownreality.dataframe.common.parser.Parser;
-import de.unknownreality.dataframe.common.parser.ParserUtil;
+import de.unknownreality.dataframe.type.impl.ShortType;
 
 /**
  * Created by Alex on 09.03.2016.
  */
 public class ShortColumn extends NumberColumn<Short, ShortColumn> {
 
-    private final Parser<Short> parser = ParserUtil.findParserOrNull(Short.class);
+    private final ShortType valueType = new ShortType();
 
     public ShortColumn() {
-        super();
+        super(Short.class);
     }
 
     public ShortColumn(String name) {
-        super(name);
+        super(name, Short.class);
     }
 
     public ShortColumn(String name, Short[] values) {
@@ -52,16 +51,9 @@ public class ShortColumn extends NumberColumn<Short, ShortColumn> {
     }
 
 
-
     @Override
-    public Class<Short> getType() {
-        return Short.class;
-    }
-
-
-    @Override
-    public Parser<Short> getParser() {
-        return parser;
+    public ShortType getValueType() {
+        return valueType;
     }
 
     @Override

@@ -126,6 +126,7 @@ public class ComparePredicate extends FilterPredicate {
         return compare(kv.get(headerName),value);
     }
 
+    //TODO value type
     protected boolean compare(Object valueA, Object valueB){
         if (operation == Operation.EQ && valueA.equals(valueB)) {
             return true;
@@ -134,8 +135,7 @@ public class ComparePredicate extends FilterPredicate {
             Number n ;
             if((n = NumberUtil.parseNumberOrNull(valueA.toString())) != null){
                 valueA = n;
-            }
-            else{
+            } else{
                 valueB = NumberUtil.toString((Number)valueB);
             }
         }

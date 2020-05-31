@@ -25,8 +25,8 @@
 package de.unknownreality.dataframe.common.mapping;
 
 import de.unknownreality.dataframe.common.DataContainer;
-import de.unknownreality.dataframe.common.Header;
 import de.unknownreality.dataframe.common.Row;
+import de.unknownreality.dataframe.common.header.Header;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

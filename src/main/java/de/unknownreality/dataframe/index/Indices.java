@@ -140,7 +140,7 @@ public class Indices {
      * @param values row values
      * @return row numbers matching the row values
      */
-    public Collection<Integer> find(String name, Comparable... values) {
+    public Collection<Integer> find(String name, Object... values) {
         if (!indexMap.containsKey(name)) {
             throw new DataFrameRuntimeException(String.format("index not found'%s'", name));
         }
@@ -155,8 +155,8 @@ public class Indices {
      * @param values row values
      * @return row number matching the row values or null
      */
-    public Integer findFirst(String name, Comparable... values){
-        Collection<Integer> rows = find(name,values);
+    public Integer findFirst(String name, Object... values) {
+        Collection<Integer> rows = find(name, values);
         return rows.isEmpty() ? null : rows.iterator().next();
     }
 
@@ -166,13 +166,13 @@ public class Indices {
      * @param values primary key values
      * @return row number matching the row values
      */
-    public Integer findByPrimaryKey(Comparable... values) {
+    public Integer findByPrimaryKey(Object... values) {
         Index primaryKey = indexMap.get(PRIMARY_KEY_NAME);
         if (primaryKey == null) {
             throw new DataFrameRuntimeException("no primaryKey found");
         }
         Collection<Integer> indices = primaryKey.find(values);
-        if(indices.isEmpty()){
+        if (indices.isEmpty()) {
             return null;
         }
         return indices.iterator().next();

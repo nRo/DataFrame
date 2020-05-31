@@ -25,6 +25,7 @@
 package de.unknownreality.dataframe.sort;
 
 import de.unknownreality.dataframe.DataRow;
+import de.unknownreality.dataframe.type.ValueType;
 
 import java.util.Comparator;
 
@@ -56,6 +57,7 @@ public class RowColumnComparator implements Comparator<DataRow> {
     public int compare(DataRow r1, DataRow r2) {
         int c = 0;
         for (int i = 0; i <sortColumns.length;i++) {
+            ValueType<?> type = r1.getType(i);
             SortColumn sortColumn = sortColumns[i];
             String name = sortColumn.getName();
             if (r1.isNA(name) && r2.isNA(name)) {
@@ -68,9 +70,11 @@ public class RowColumnComparator implements Comparator<DataRow> {
             if (r2.isNA(name)) {
                 return -1;
             }
-            Comparable a = r1.get(sortColumn.getName());
-            Comparable b = r2.get(sortColumn.getName());
-            c = a.compareTo(b);
+            //TODO value type
+            Comparator typeComp = type.getComparator();
+            Object a = r1.get(sortColumn.getName());
+            Object b = r2.get(sortColumn.getName());
+            c = typeComp.compare(a, b);
             c = sortColumn.getDirection() == SortColumn.Direction.Ascending ? c : -c;
             if (c != 0) {
                 return c;

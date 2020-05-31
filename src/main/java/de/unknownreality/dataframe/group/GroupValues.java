@@ -26,17 +26,28 @@ package de.unknownreality.dataframe.group;
 
 import de.unknownreality.dataframe.DataFrameRuntimeException;
 import de.unknownreality.dataframe.common.Row;
+import de.unknownreality.dataframe.type.ValueType;
 
 /**
  * Created by Alex on 15.03.2016.
  */
-public class GroupValues implements Row<Comparable,String> {
-    private final Comparable[] values;
+public class GroupValues implements Row<Object, String> {
+    private final Object[] values;
     private final GroupHeader groupHeader;
 
-    public GroupValues(Comparable[] groupValues, GroupHeader header) {
+    public GroupValues(Object[] groupValues, GroupHeader header) {
         this.values = groupValues;
         this.groupHeader = header;
+    }
+
+    @Override
+    public ValueType getType(int index) {
+        return groupHeader.getValueType(index);
+    }
+
+    @Override
+    public ValueType getType(String headerName) {
+        return groupHeader.getValueType(headerName);
     }
 
     /**
@@ -44,12 +55,12 @@ public class GroupValues implements Row<Comparable,String> {
      *
      * @return values array
      */
-    public Comparable[] getValues() {
+    public Object[] getValues() {
         return values;
     }
 
     @Override
-    public Comparable get(String headerName) {
+    public Object get(String headerName) {
         int index = groupHeader.getIndex(headerName);
         if (index == -1) {
             throw new DataFrameRuntimeException(String.format("group header name not found '%s'", headerName));
@@ -58,7 +69,7 @@ public class GroupValues implements Row<Comparable,String> {
     }
 
     @Override
-    public Comparable get(int index) {
+    public Object get(int index) {
         return this.values[index];
     }
 
@@ -150,6 +161,7 @@ public class GroupValues implements Row<Comparable,String> {
             throw new DataFrameRuntimeException("no float value in col " + headerName + " (" + value + ")");
         }
     }
+
 
     @Override
     public <T> T get(String headerName, Class<T> cl) {

@@ -25,9 +25,9 @@
 package de.unknownreality.dataframe;
 
 import de.unknownreality.dataframe.common.Row;
-import de.unknownreality.dataframe.common.parser.Parser;
 import de.unknownreality.dataframe.transform.ColumnDataFrameTransform;
 import de.unknownreality.dataframe.transform.ColumnTransform;
+import de.unknownreality.dataframe.type.ValueType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +38,7 @@ import java.util.List;
 /**
  * Created by Alex on 11.03.2016.
  */
-public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFrameColumn<T, C>> implements Iterable<T> {
+public abstract class DataFrameColumn<T, C extends DataFrameColumn<T, C>> implements Iterable<T> {
     private static final Logger log = LoggerFactory.getLogger(DataFrameColumn.class);
     public static final String ERROR_APPENDING = "error appending value to column";
     private String name;
@@ -56,18 +56,23 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
     /**
      * Sets the capacity of this column.
      * Can be used during dataframe creation if the size is known.
+     *
      * @param capacity capacity
      * @return <tt>self</tt> for method chaining
      */
     public abstract C setCapacity(int capacity);
 
+
+    public abstract ValueType<T> getValueType();
+
     /**
      * Used to apply transformations on a column
+     *
      * @param transformer column transformer
-     * @param <R> type of resulting column
+     * @param <R>         type of resulting column
      * @return resulting column
      */
-    public <R extends DataFrameColumn<?,R>> R transform(ColumnTransform<C,R> transformer){
+    public <R extends DataFrameColumn<?, R>> R transform(ColumnTransform<C, R> transformer) {
         return transformer.transform(getThis());
     }
 
@@ -127,8 +132,8 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
      * @param index index of value
      * @return double value
      */
-    public Double toDouble(int index){
-        Comparable v = get(index);
+    public Double toDouble(int index) {
+        T v = get(index);
         try{
             return Number.class.cast(v).doubleValue();
         }
@@ -161,12 +166,6 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
         this.name = name;
     }
 
-    /**
-     * Returns a {@link Parser} for the type of the values in this column.
-     *
-     * @return parser for the value type in this column
-     */
-    public abstract Parser<T> getParser();
 
     /**
      * Returns the type of the values in this column.
@@ -174,15 +173,17 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
      *
      * @return type of the values in this column
      */
-    public abstract Class<T> getType();
+    public Class<T> getType() {
+        return getValueType().getType();
+    }
 
 
     /**
-     * Used by {@link #set(int, Comparable)} to set a value at a specified index
+     * Used by {@link #set(int, T)} to set a value at a specified index
      *
      * @param index index of the new value
      * @param value value to be doSet
-     * @see #set(int, Comparable)
+     * @see #set(int, T)
      */
     protected abstract void doSet(int index, T value);
 
@@ -281,11 +282,11 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
     public abstract T[] toArray(T[] a);
 
     /**
-     * Returns an {@link Comparable} array that contains all values of this column.
+     * Returns an {@link T} array that contains all values of this column.
      *
      * @return Object array with all column values
      */
-    public abstract Comparable[] toArray();
+    public abstract T[] toArray();
 
 
     /**
@@ -319,7 +320,7 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
     public abstract boolean contains(T o);
 
     /**
-     * Used by {@link #append(Comparable)} to append a value to this column.
+     * Used by {@link #append(T)} to append a value to this column.
      *
      * @param value value to be appended
      * @return <tt>true</tt> if the value is successfully appended
@@ -328,17 +329,18 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
 
     /**
      * returns true if the input value is compatible with this column
+     *
      * @param value tested value
      * @return true if value is compatible
      */
-    public abstract boolean isValueValid(Comparable value);
+    public abstract boolean isValueValid(Object value);
 
     public abstract<H> T getValueFromRow(Row<?,H> row,H headerName);
 
     public abstract T getValueFromRow(Row<?,?> row, int headerIndex);
 
     /**
-     * A new value is appended at the end of this column using {@link #doAppend(Comparable)}.
+     * A new value is appended at the end of this column using {@link #doAppend(T)}.
      * <p>Calls{@link #validateAppend()} to ensure data frame index consistency</p>
      *
      * @param value value to be appended
@@ -356,7 +358,7 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
     }
 
     /**
-     * A new value is appended at the end of this column using {@link #doAppend(Comparable)}.
+     * A new value is appended at the end of this column using {@link #doAppend(T)}.
      * <p>Calls{@link #validateAppend()} to ensure data frame index consistency</p>
      * @param <H> header value type
      * @param row row containing the value
@@ -371,11 +373,11 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
             log.warn(ERROR_APPENDING, e);
             return false;
         }
-        return doAppend(getValueFromRow(row,headerName));
+        return doAppend(getValueFromRow(row, headerName));
     }
 
     /**
-     * A new value is appended at the end of this column using {@link #doAppend(Comparable)}.
+     * A new value is appended at the end of this column using {@link #doAppend(T)}.
      * <p>Calls{@link #validateAppend()} to ensure data frame index consistency</p>
      *
      * @param row row containing the value
@@ -390,34 +392,16 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
             log.warn(ERROR_APPENDING, e);
             return false;
         }
-        return doAppend(getValueFromRow(row,index));
+        return doAppend(getValueFromRow(row, index));
     }
 
-    /**
-     * Append a value at the end of this column.
-     * Value is first casted to the correct type.
-     * This method throws a {@link RuntimeException} if anything goes wrong.
-     *
-     * @param value value to be appended
-     * @return <tt>true</tt> if the value is successfully appended
-     * @see #append(Comparable)
-     */
-    @SuppressWarnings("unchecked")
-    protected final boolean append(Object value) {
-        try {
-            return append((T) value);
-        } catch (Exception e) {
-            log.warn(ERROR_APPENDING, e);
-            throw new DataFrameRuntimeException(ERROR_APPENDING, e);
-        }
-    }
 
     /**
      * Used by {@link #appendAll(Collection)}} to append a collection of values.
      *
      * @param c collection containing values to be added to this column
      * @return <tt>true</tt> if the value is successfully appended
-     * @see #append(Comparable)
+     * @see #append(T)
      */
     protected abstract boolean doAppendAll(Collection<? extends T> c);
 
@@ -427,7 +411,7 @@ public abstract class DataFrameColumn<T extends Comparable<T>, C extends DataFra
      *
      * @param c collection containing values to be added to this column
      * @return <tt>true</tt> if all values are appended successfully
-     * @see #append(Comparable)
+     * @see #append(T)
      */
     public final boolean appendAll(Collection<? extends T> c) {
         try {

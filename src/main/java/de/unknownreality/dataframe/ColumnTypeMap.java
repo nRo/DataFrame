@@ -51,21 +51,24 @@ public class ColumnTypeMap {
 
     private final Map<Class<?>, Class<? extends DataFrameColumn>> columnTypesMap = new HashMap<>();
 
-    public static synchronized<T extends Comparable<T>> void registerType(Class<T> cl,
-                                                                          Class<? extends DataFrameColumn<T,?>> colType){
-        ADDITIONAL_COLUMN_TYPES.put(cl,colType);
+    public static synchronized <T> void registerType(Class<T> cl,
+                                                     Class<? extends DataFrameColumn<T, ?>> colType) {
+        ADDITIONAL_COLUMN_TYPES.put(cl, colType);
     }
 
 
-    public static <T extends Comparable<T>, C extends DataFrameColumn<T, ?>> Class<C> get(Class<T> type){
-        return  defaultInstance.getColumnType(type);
+    public static <T, C extends DataFrameColumn<T, ?>> Class<C> get(Class<T> type) {
+        return defaultInstance.getColumnType(type);
     }
 
 
-    public static <T extends Comparable<T>, C extends DataFrameColumn<T, ?>> DataFrameColumn createColumn(Class<T> type){
-        return  defaultInstance.getColumn(type);
+    public static <T, C extends DataFrameColumn<T, ?>> DataFrameColumn createColumn(Class<T> type) {
+        return defaultInstance.getColumn(type);
     }
-    /** Do not instantiate ColumnConverter. */
+
+    /**
+     * Do not instantiate ColumnConverter.
+     */
     private ColumnTypeMap() {
         this.columnTypesMap.putAll(ColumnTypeMap.DEFAULT_COLUMN_TYPES);
         this.columnTypesMap.putAll(ColumnTypeMap.ADDITIONAL_COLUMN_TYPES);
@@ -80,15 +83,13 @@ public class ColumnTypeMap {
      * @return column matching the value type
      */
     @SuppressWarnings("unchecked")
-    public <T extends Comparable<T>, C extends DataFrameColumn<T, ?>> Class<C> getColumnType(Class<T> type) {
+    public <T, C extends DataFrameColumn<T, ?>> Class<C> getColumnType(Class<T> type) {
         Class<? extends DataFrameColumn> columnType = columnTypesMap.get(type);
         if (columnType == null) {
             throw new DataFrameRuntimeException(String.format("no column type found for value type '%s'", type.getCanonicalName()));
         }
         return (Class<C>) columnType;
     }
-
-
 
 
     /**
@@ -100,7 +101,7 @@ public class ColumnTypeMap {
      * @param <C>        column type
      * @return <tt>self</tt> for method chaining
      */
-    public <T extends Comparable<T>, C extends DataFrameColumn<T, C>> ColumnTypeMap addType(Class<T> type, Class<C> columnType) {
+    public <T, C extends DataFrameColumn<T, C>> ColumnTypeMap addType(Class<T> type, Class<C> columnType) {
         columnTypesMap.put(type, columnType);
         return this;
     }
@@ -114,7 +115,7 @@ public class ColumnTypeMap {
      * @return column matching the value type
      */
     @SuppressWarnings("unchecked")
-    public <T extends Comparable<T>, C extends DataFrameColumn<T, ?>> C getColumn(Class<T> type) {
+    public <T, C extends DataFrameColumn<T, ?>> C getColumn(Class<T> type) {
         Class<? extends DataFrameColumn> columnType = getColumnType(type);
         DataFrameColumn newColumn = null;
         try {
@@ -122,7 +123,7 @@ public class ColumnTypeMap {
         } catch (InstantiationException | IllegalAccessException e) {
             throw new DataFrameRuntimeException(String.format("error creating column instance (%s)", columnType.getCanonicalName()));
         }
-        return (C)newColumn;
+        return (C) newColumn;
     }
 
 

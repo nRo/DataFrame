@@ -31,7 +31,6 @@ import de.unknownreality.dataframe.column.BooleanColumn;
 import de.unknownreality.dataframe.column.DoubleColumn;
 import de.unknownreality.dataframe.column.IntegerColumn;
 import de.unknownreality.dataframe.column.StringColumn;
-import de.unknownreality.dataframe.filter.FilterPredicate;
 import de.unknownreality.dataframe.filter.compile.PredicateCompiler;
 import de.unknownreality.dataframe.filter.compile.PredicateCompilerException;
 import org.junit.Assert;
@@ -42,7 +41,7 @@ import org.junit.rules.ExpectedException;
 /**
  * Created by Alex on 12.03.2016.
  */
-public class PredicateParserTest {
+public class PredicateValueReaderTest {
     @Rule
     public final ExpectedException exception = ExpectedException.none();
 

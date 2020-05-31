@@ -29,32 +29,33 @@ import de.unknownreality.dataframe.common.row.UpdatableRow;
 /**
  * Created by Alex on 12.06.2017.
  */
-public class DataRow extends UpdatableRow<String,DataFrameHeader,Comparable> {
+public class DataRow extends UpdatableRow<String, DataFrameHeader, Object> {
     private DataFrame dataFrame;
     private int size;
     private int rowVersion;
+
     public DataRow(DataFrame dataFrame, int index) {
-        super(dataFrame.getHeader(),index);
+        super(dataFrame.getHeader(), index);
         this.rowVersion = dataFrame.getVersion();
         this.size = getHeader().size();
         this.dataFrame = dataFrame;
     }
 
-    public boolean isVersionValid(){
+    public boolean isVersionValid() {
         return rowVersion == dataFrame.getVersion();
     }
 
-    private void checkValidity(){
-        if(!isVersionValid()){
+    private void checkValidity() {
+        if (!isVersionValid()) {
             throw new DataFrameRuntimeException("row is no longer valid, the dataframe changed since the row object was created");
         }
     }
 
     @Override
-    public Comparable get(int index) {
+    public Object get(int index) {
         checkValidity();
-        Comparable val = dataFrame.getValue(index,getIndex());
-        if(val == null){
+        Object val = dataFrame.getValue(index, getIndex());
+        if (val == null) {
             return Values.NA;
         }
         return val;
@@ -72,17 +73,18 @@ public class DataRow extends UpdatableRow<String,DataFrameHeader,Comparable> {
     /**
      * Checks whether a certain value is compatible for a column.
      * Compatible means that the value has a type suited for the respective class
-     * @param value checked value
+     *
+     * @param value      checked value
      * @param headerName header name
      * @return true if value is compatible
      */
     @Override
-    public boolean isCompatible(Comparable value, String headerName) {
-        if(value == null || value instanceof Values.NA){
+    public boolean isCompatible(Object value, String headerName) {
+        if (value == null || value instanceof Values.NA) {
             return true;
         }
-        Class<? extends Comparable> type = getHeader().getType(headerName);
-        if(Number.class.isAssignableFrom(type)){
+        Class<?> type = getHeader().getValueType(headerName).getType();
+        if (Number.class.isAssignableFrom(type)) {
             return Number.class.isAssignableFrom(value.getClass());
         }
         return type.isAssignableFrom(value.getClass());
@@ -91,20 +93,21 @@ public class DataRow extends UpdatableRow<String,DataFrameHeader,Comparable> {
     /**
      * Checks whether a certain value is compatible for a column.
      * Compatible means that the value has a type suited for the respective class
-     * @param value checked value
+     *
+     * @param value       checked value
      * @param headerIndex header index
      * @return true if value is compatible
      */
     @Override
-    public boolean isCompatible(Comparable value, int headerIndex) {
-        Class<? extends Comparable> type = getHeader().getType(headerIndex);
+    public boolean isCompatible(Object value, int headerIndex) {
+        Class<?> type = getHeader().getValueType(headerIndex).getType();
         return type.isAssignableFrom(value.getClass());
     }
 
     @Override
-    protected void setValue(int index, Comparable value) {
+    protected void setValue(int index, Object value) {
         checkValidity();
-        dataFrame.setValue(index,getIndex(),value);
+        dataFrame.setValue(index, getIndex(), value);
     }
 
 
@@ -114,14 +117,14 @@ public class DataRow extends UpdatableRow<String,DataFrameHeader,Comparable> {
      * @param i index of data row
      * @return values in data row
      */
-    public Comparable[] getRowValues(int i) {
+    public Object[] getRowValues(int i) {
         checkValidity();
         if (i >= dataFrame.size()) {
             throw new DataFrameRuntimeException("index out of bounds");
         }
-        Comparable[] values = new Comparable[dataFrame.getHeader().size()];
+        Object[] values = new Comparable[dataFrame.getHeader().size()];
         for (int j = 0; j < dataFrame.getHeader().size(); j++) {
-            Comparable value = dataFrame.getValue(j,i);
+            Object value = dataFrame.getValue(j, i);
             if (Values.NA.isNA(value)) {
                 values[j] = Values.NA;
             } else {

@@ -25,22 +25,21 @@
 package de.unknownreality.dataframe.column;
 
 import de.unknownreality.dataframe.common.Row;
-import de.unknownreality.dataframe.common.parser.Parser;
-import de.unknownreality.dataframe.common.parser.ParserUtil;
+import de.unknownreality.dataframe.type.impl.LongType;
 
 /**
  * Created by Alex on 09.03.2016.
  */
 public class LongColumn extends NumberColumn<Long, LongColumn> {
 
-    private final Parser<Long> parser = ParserUtil.findParserOrNull(Long.class);
+    private final LongType valueType = new LongType();
 
     public LongColumn() {
-        super();
+        super(Long.class);
     }
 
     public LongColumn(String name) {
-        super(name);
+        super(name, Long.class);
     }
 
     public LongColumn(String name, Long[] values) {
@@ -58,16 +57,9 @@ public class LongColumn extends NumberColumn<Long, LongColumn> {
     }
 
     @Override
-    public Class<Long> getType() {
-        return Long.class;
+    public LongType getValueType() {
+        return valueType;
     }
-
-
-    @Override
-    public Parser<Long> getParser() {
-        return parser;
-    }
-
 
     @Override
     public LongColumn copy() {
@@ -75,6 +67,7 @@ public class LongColumn extends NumberColumn<Long, LongColumn> {
         toArray(copyValues);
         return new LongColumn(getName(), copyValues, size());
     }
+
     @Override
     public <H> Long getValueFromRow(Row<?, H> row, H headerName) {
         return row.getLong(headerName);

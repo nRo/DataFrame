@@ -62,7 +62,7 @@ public class MatchPredicate extends FilterPredicate {
      * @param kv tested row
      * @return <tt>true</tt> of row column value matches pattern
      */
-    @Override
+    @Override //TODO value type
     public boolean valid(KeyValueGetter<String, ?> kv) {
         Object v = kv.get(headerName);
         return pattern.matcher(v.toString()).matches();

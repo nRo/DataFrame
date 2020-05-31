@@ -57,26 +57,26 @@ public class DataGrouping extends DefaultDataFrame {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends Comparable<T>> DataGrouping aggregate(String columnName, AggregateFunction<T> fun) {
-        return agg(columnName,fun);
+    public <T> DataGrouping aggregate(String columnName, AggregateFunction<T> fun) {
+        return agg(columnName, fun);
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends Comparable<T>> DataGrouping agg(String columnName, AggregateFunction<T> fun) {
+    public <T> DataGrouping agg(String columnName, AggregateFunction<T> fun) {
         List<T> values = new ArrayList<>();
-        for(int i = 0; i < size(); i++){
+        for (int i = 0; i < size(); i++) {
             T v = fun.aggregate(getRow(i).getGroup());
             values.add(v);
         }
-        Class<? extends Comparable> vType = null;
-        for(T v : values){
-            if(v != null){
+        Class<?> vType = null;
+        for (T v : values) {
+            if (v != null) {
                 vType = v.getClass();
                 break;
             }
         }
         vType = vType == null ? String.class : vType;
-        Class colType = ColumnTypeMap.get(vType);
+        Class<?> colType = ColumnTypeMap.get(vType);
         if(colType == null){
             throw new DataFrameRuntimeException(String.format("no column type found for value type '%s'", vType.getCanonicalName()));
         }
@@ -113,7 +113,7 @@ public class DataGrouping extends DefaultDataFrame {
      * @param values input group values
      * @return found data group. or <tt>null</tt> if no group was found
      */
-    public GroupRow findByGroupValues(Comparable... values) {
+    public GroupRow findByGroupValues(Object... values) {
         return (GroupRow) selectFirstRowByIndex(GROUP_INDEX, values);
     }
 

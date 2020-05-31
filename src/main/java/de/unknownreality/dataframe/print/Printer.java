@@ -24,12 +24,14 @@
 
 package de.unknownreality.dataframe.print;
 
-import de.unknownreality.dataframe.*;
+import de.unknownreality.dataframe.DataFrame;
+import de.unknownreality.dataframe.DataFrameColumn;
+import de.unknownreality.dataframe.DataFrameRuntimeException;
+import de.unknownreality.dataframe.Values;
 import de.unknownreality.dataframe.common.DataContainer;
-import de.unknownreality.dataframe.common.Header;
 import de.unknownreality.dataframe.common.Row;
-import de.unknownreality.dataframe.common.header.BasicTypeHeader;
-import de.unknownreality.dataframe.io.DataIterator;
+import de.unknownreality.dataframe.common.header.Header;
+import de.unknownreality.dataframe.common.header.TypeHeader;
 import de.unknownreality.dataframe.io.DataWriter;
 import de.unknownreality.dataframe.io.ReadFormat;
 
@@ -296,9 +298,9 @@ public class Printer extends DataWriter {
 
     private ValueFormatter getDefaultValueFormatter(DataContainer<?, ?> dataContainer, int colIdx) {
         Header<?> header = dataContainer.getHeader();
-        if (header instanceof BasicTypeHeader<?>) {
-            BasicTypeHeader<?> typeHeader = (BasicTypeHeader<?>) header;
-            Class<?> type = typeHeader.getType(colIdx);
+        if (header instanceof TypeHeader<?>) {
+            TypeHeader<?> typeHeader = (TypeHeader<?>) header;
+            Class<?> type = typeHeader.getValueType(colIdx).getType();
             return getDefaultValueFormatter(type);
         }
         return null;

@@ -55,18 +55,17 @@ public class ParserTest {
         }
 
         try {
-            ParserUtil.parse(Double.class,"x");
+            ParserUtil.parse(Double.class, "x");
             fail("Expected a ParseException to be thrown");
         } catch (ParseException parseException) {
         }
 
-        Assert.assertEquals(null,ParserUtil.parseOrNull(Double.class,"x"));
-        Assert.assertEquals(null,ParserUtil.parseOrNull(ParserTest.class,"x"));
+        Assert.assertNull(ParserUtil.parseOrNull(Double.class, "x"));
+        Assert.assertNull(ParserUtil.parseOrNull(ParserTest.class, "x"));
 
 
-
-        Assert.assertEquals(true, ParserUtil.hasParser(Double.class));
-        Assert.assertEquals(false, ParserUtil.hasParser(ParserTest.class));
+        Assert.assertTrue(ParserUtil.hasParser(Double.class));
+        Assert.assertFalse(ParserUtil.hasParser(ParserTest.class));
 
         try {
             ParserUtil.getParser(ParserTest.class);

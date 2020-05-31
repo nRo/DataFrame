@@ -25,6 +25,7 @@
 package de.unknownreality.dataframe.group;
 
 import de.unknownreality.dataframe.DefaultDataFrame;
+import de.unknownreality.dataframe.type.ValueType;
 
 /**
  * Created by Alex on 10.03.2016.
@@ -38,13 +39,14 @@ public class DataGroup extends DefaultDataFrame {
      *
      * @param columns group columns
      * @param values  group column values
+     * @param types   group column value types
      */
-    public DataGroup(String[] columns, Comparable[] values) {
+    public DataGroup(String[] columns, Object[] values, ValueType<?>[] types) {
         if (columns.length != values.length) {
             throw new IllegalArgumentException("column and values must have same length");
         }
-        groupHeader = new GroupHeader(columns);
-        Comparable[] groupValueArray = new Comparable[values.length];
+        groupHeader = new GroupHeader(columns, types);
+        Object[] groupValueArray = new Object[values.length];
         System.arraycopy(values, 0, groupValueArray, 0, values.length);
         this.groupValues = new GroupValues(groupValueArray, groupHeader);
     }

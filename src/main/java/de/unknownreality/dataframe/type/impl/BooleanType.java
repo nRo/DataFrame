@@ -1,0 +1,62 @@
+package de.unknownreality.dataframe.type.impl;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.Writer;
+import java.nio.ByteBuffer;
+import java.text.ParseException;
+
+public class BooleanType extends ComparableType<Boolean> {
+    @Override
+    public Class<Boolean> getType() {
+        return Boolean.class;
+    }
+
+    @Override
+    public Boolean read(DataInputStream dis) throws IOException {
+        return dis.readBoolean();
+    }
+
+    @Override
+    public Boolean read(ByteBuffer buf) {
+        return buf.get() == 1;
+    }
+
+    @Override
+    public Boolean parse(String s) throws ParseException {
+        if (s == null || !(
+                "false".equals((s = s.toLowerCase()))
+                        || "true".equals(s)
+                        || "f".equals(s)
+                        || "t".equals(s)
+        )) {
+            throw new ParseException(String.format("illegal boolean value: %s", s), 0);
+        }
+        if (s.equals("f")) {
+            return false;
+        }
+        if ("t".equals(s)) {
+            return true;
+        }
+        return Boolean.parseBoolean(s);
+    }
+
+    @Override
+    public void write(Writer writer, Boolean value) throws IOException {
+        writer.write(toString(value));
+    }
+
+    @Override
+    public String toString(Boolean value) {
+        return Boolean.toString(value);
+    }
+
+    @Override
+    public int write(DataOutputStream dos, Boolean value) throws IOException {
+        dos.writeBoolean(value);
+        return 1;
+    }
+
+
+}

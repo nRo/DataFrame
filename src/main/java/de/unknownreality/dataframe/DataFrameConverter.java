@@ -36,7 +36,6 @@ import de.unknownreality.dataframe.io.DataIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -57,7 +56,7 @@ public class DataFrameConverter {
                     Long.class,
                     Double.class
             };
-    private static Parser<?>[] TYPE_PARSER = new Parser[]
+    private static Parser<?>[] typeValueReader = new Parser[]
             {
                     ParserUtil.findParserOrNull(Boolean.class),
                     ParserUtil.findParserOrNull(Integer.class),
@@ -156,10 +155,10 @@ public class DataFrameConverter {
         }
         int r = 0;
         for (R row : dataIterator) {
-            Comparable[] rowValues = new Comparable[columnCount];
+            Object[] rowValues = new Comparable[columnCount];
             for (int i = 0; i < columnCount; i++) {
                 ColumnInformation columnInformation = columnsInformation.get(i);
-                Comparable val = null;
+                Object val = null;
                 if (Values.NA.isNA(row.get(columnInformation.getIndex()))) {
                     rowValues[i] = Values.NA;
                     continue;
@@ -177,7 +176,7 @@ public class DataFrameConverter {
                 if (autodetect[i] && (!SAMPLE_ROW_DETECTION || doSample(r))) {
                     for (int j = 0; j < TYPES.length; j++) {
                         types[i][j] = types[i][j]
-                                && (TYPE_PARSER[j].parseOrNull(val.toString()) != null);
+                                && (typeValueReader[j].parseOrNull(val.toString()) != null);
                     }
                 }
                 rowValues[i] = val;
@@ -256,7 +255,7 @@ public class DataFrameConverter {
                     continue;
                 }
                 currentVal = row.getString(j);
-                currentParsedVal = newColumns[j].getParser().parseOrNull(currentVal);
+                currentParsedVal = newColumns[j].getValueType().parseOrNull(currentVal);
 
                 //Error parsing value, stop auto conversion for column j
                 if (currentParsedVal == null) {

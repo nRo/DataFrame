@@ -25,22 +25,27 @@
 package de.unknownreality.dataframe.column;
 
 import de.unknownreality.dataframe.common.Row;
-import de.unknownreality.dataframe.common.parser.Parser;
-import de.unknownreality.dataframe.common.parser.ParserUtil;
+import de.unknownreality.dataframe.type.ValueType;
+import de.unknownreality.dataframe.type.impl.ByteType;
 
 /**
  * Created by Alex on 09.03.2016.
  */
 public class ByteColumn extends NumberColumn<Byte, ByteColumn> {
 
-    private final Parser<Byte> parser = ParserUtil.findParserOrNull(Byte.class);
+    private static final ByteType valueType = new ByteType();
+
+    @Override
+    public ValueType<Byte> getValueType() {
+        return valueType;
+    }
 
     public ByteColumn() {
-        super();
+        super(Byte.class);
     }
 
     public ByteColumn(String name) {
-        super(name);
+        super(name, Byte.class);
     }
 
     public ByteColumn(String name, Byte[] values) {
@@ -52,20 +57,10 @@ public class ByteColumn extends NumberColumn<Byte, ByteColumn> {
     }
 
     @Override
-    public Class<Byte> getType() {
-        return Byte.class;
-    }
-
-
-    @Override
-    public Parser<Byte> getParser() {
-        return parser;
-    }
-
-    @Override
     protected ByteColumn getThis() {
         return this;
     }
+
 
     @Override
     public ByteColumn copy() {

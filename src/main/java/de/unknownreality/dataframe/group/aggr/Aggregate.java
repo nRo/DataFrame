@@ -24,13 +24,14 @@
 
 package de.unknownreality.dataframe.group.aggr;
 
+import de.unknownreality.dataframe.DefaultDataFrame;
 import de.unknownreality.dataframe.filter.FilterPredicate;
 
 /**
  * Created by Alex on 13.06.2017.
  */
 public class Aggregate {
-    public static final AggregateFunction<Integer> count = (group -> group.size());
+    public static final AggregateFunction<Integer> count = (DefaultDataFrame::size);
 
     public static AggregateFunction<Integer> count() {
         return count;
@@ -40,16 +41,16 @@ public class Aggregate {
         return group -> group.getNumberColumn(colName).mean();
     }
 
-    public static AggregateFunction<Comparable> median(final String colName) {
+    public static AggregateFunction<Number> median(final String colName) {
         return group -> group.getNumberColumn(colName).median();
     }
 
-    public static AggregateFunction<Comparable> min(final String colName) {
+    public static AggregateFunction<Number> min(final String colName) {
         return group -> group.getNumberColumn(colName).min();
     }
 
 
-    public static AggregateFunction<Comparable> max(final String colName) {
+    public static AggregateFunction<Number> max(final String colName) {
         return group -> group.getNumberColumn(colName).max();
     }
 
@@ -61,16 +62,16 @@ public class Aggregate {
         return group -> group.selectRows(predicateString).size();
     }
 
-    public static AggregateFunction<Comparable> first(final String colName) {
+    public static AggregateFunction<Object> first(final String colName) {
         return group -> group.getRow(0).get(colName);
     }
 
-    public static AggregateFunction<Comparable> last(final String colName) {
+    public static AggregateFunction<Object> last(final String colName) {
         return group -> group.getRow(group.size() - 1).get(colName);
     }
 
 
-    public static AggregateFunction<Comparable> quantile(final String colName, double quantile) {
+    public static AggregateFunction<Number> quantile(final String colName, double quantile) {
         return group -> group.getNumberColumn(colName).getQuantile(quantile);
     }
 

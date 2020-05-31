@@ -79,15 +79,15 @@ public class IntervalIndex implements Index {
     }
 
     @Override
-    public Collection<Integer> find(Comparable... values) {
-        if(values.length == 1){
-            if(!(values[0] instanceof Number)){
+    public Collection<Integer> find(Object... values) {
+        if (values.length == 1) {
+            if (!(values[0] instanceof Number)) {
                 throw new DataFrameRuntimeException("stab value must be a number for interval search");
             }
-            return intervalSearchTree.stab((Number)values[0]);
+            return intervalSearchTree.stab((Number) values[0]);
 
         }
-        if(values.length != 2){
+        if (values.length != 2) {
             throw new DataFrameRuntimeException("start and end values are required for interval search");
         }
         if(!(values[0] instanceof Number) || !(values[1] instanceof Number)){

@@ -189,7 +189,7 @@ public class DefaultDataFrame implements DataFrame {
         } catch (DataFrameException e) {
             throw new DataFrameRuntimeException("error adding column", e);
         }
-        header.add(column.getName(), column.getClass(), column.getType());
+        header.add(column.getName(), column.getClass(), column.getValueType());
         columnsMap.put(column.getName(), column);
         return this;
     }
@@ -253,22 +253,22 @@ public class DefaultDataFrame implements DataFrame {
 
 
     @Override
-    public <T extends Comparable<T>> DataFrame addColumn(Class<T> type, String name) {
+    public <T> DataFrame addColumn(Class<T> type, String name) {
         return addColumn(type, name, ColumnTypeMap.create());
     }
 
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends Comparable<T>> DataFrame addColumn(Class<T> type, String name, ColumnTypeMap columnTypeMap) {
+    public <T> DataFrame addColumn(Class<T> type, String name, ColumnTypeMap columnTypeMap) {
         return addColumn(type, name, columnTypeMap, null);
     }
 
 
     @Override
-    public <T extends Comparable<T>, C extends DataFrameColumn<T, C>> DataFrame addColumn(Class<T> type, String name,
-                                                                                          ColumnTypeMap columnTypeMap,
-                                                                                          ColumnAppender<T> appender) {
+    public <T, C extends DataFrameColumn<T, C>> DataFrame addColumn(Class<T> type, String name,
+                                                                    ColumnTypeMap columnTypeMap,
+                                                                    ColumnAppender<T> appender) {
         Class<C> columnType = columnTypeMap.getColumnType(type);
         if (columnType == null) {
             throw new DataFrameRuntimeException(String.format("no  column type found for %s", type.getName()));
@@ -283,8 +283,8 @@ public class DefaultDataFrame implements DataFrame {
      * If the column can not be created or added a {@link DataFrameRuntimeException} is thrown.
      */
     @Override
-    public <T extends Comparable<T>, C extends DataFrameColumn<T, C>> DataFrame addColumn(Class<C> type, String name,
-                                                                                          ColumnAppender<T> appender) {
+    public <T, C extends DataFrameColumn<T, C>> DataFrame addColumn(Class<C> type, String name,
+                                                                    ColumnAppender<T> appender) {
         try {
             C col = type.newInstance();
             col.setName(name);
@@ -344,7 +344,7 @@ public class DefaultDataFrame implements DataFrame {
             throw new DataFrameRuntimeException("value for each column required");
         }
         DataFrameColumn column;
-        Comparable value;
+        Object value;
         for (int i = 0; i < columns.length; i++) {
             column = columns[i];
             column.startDataFrameAppend();
@@ -365,7 +365,7 @@ public class DefaultDataFrame implements DataFrame {
      * {@inheritDoc} If the wrong number of values or a wrong type is found a {@link DataFrameRuntimeException} is thrown.
      */
     @Override
-    public DefaultDataFrame append(Comparable... values) {
+    public DefaultDataFrame append(Object... values) {
         if (columns == null) {
             throw new DataFrameRuntimeException("dataframe contains no columns");
         }
@@ -373,8 +373,8 @@ public class DefaultDataFrame implements DataFrame {
             throw new DataFrameRuntimeException("value for each column required");
         }
         DataFrameColumn column;
-        Comparable value;
-        for (int i = 0; i< columns.length; i++) {
+        Object value;
+        for (int i = 0; i < columns.length; i++) {
             column = columns[i];
             value = values[i];
             if (!column.isValueValid(value)) {
@@ -408,7 +408,7 @@ public class DefaultDataFrame implements DataFrame {
     @Override
     @SuppressWarnings("unchecked")
     public DefaultDataFrame append(DataRow row) {
-        Comparable value;
+        Object value;
         for (String h : header) {
             DataFrameColumn column = columnsMap.get(h);
             column.startDataFrameAppend();
@@ -429,7 +429,7 @@ public class DefaultDataFrame implements DataFrame {
     @Override
     @SuppressWarnings("unchecked")
     public DefaultDataFrame appendMatchingRow(DataRow row) {
-        Comparable value;
+        Object value;
         for (int i  = 0; i < row.size(); i++) {
             DataFrameColumn column = columns[i];
             column.startDataFrameAppend();
@@ -450,7 +450,7 @@ public class DefaultDataFrame implements DataFrame {
     public DefaultDataFrame update(DataRow dataRow) {
         for (String h : header) {
             DataFrameColumn column = getColumn(h);
-            Comparable newValue = dataRow.get(h);
+            Object newValue = dataRow.get(h);
             if (newValue == null) {
                 continue;
             }
@@ -621,13 +621,13 @@ public class DefaultDataFrame implements DataFrame {
 
 
     @Override
-    public DefaultDataFrame select(String colName, Comparable value) {
+    public DefaultDataFrame select(String colName, Object value) {
         return select(FilterPredicate.eq(colName, value));
     }
 
 
     @Override
-    public DataRow selectFirst(String colName, Comparable value) {
+    public DataRow selectFirst(String colName, Object value) {
         return selectFirst(FilterPredicate.eq(colName, value));
     }
 
@@ -684,7 +684,7 @@ public class DefaultDataFrame implements DataFrame {
 
 
     @Override
-    public DataRows selectRows(String colName, Comparable value) {
+    public DataRows selectRows(String colName, Object value) {
         return selectRows(FilterPredicate.eq(colName, value));
     }
 
@@ -712,7 +712,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     @Override
-    public DataRow selectByPrimaryKey(Comparable... keyValues) {
+    public DataRow selectByPrimaryKey(Object... keyValues) {
         Integer index = this.indices.findByPrimaryKey(keyValues);
         if (index == null || index < 0) {
             return null;
@@ -859,7 +859,7 @@ public class DefaultDataFrame implements DataFrame {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends Comparable<T>, C extends DataFrameColumn<T, C>> DataFrameColumn<T, C> getColumn(String name) {
+    public <T, C extends DataFrameColumn<T, C>> DataFrameColumn<T, C> getColumn(String name) {
         return columnsMap.get(name);
     }
 
@@ -879,7 +879,7 @@ public class DefaultDataFrame implements DataFrame {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends Number & Comparable<T>, C extends NumberColumn<T, C>> NumberColumn<T, C> getNumberColumn(String name) {
+    public <T extends Number, C extends NumberColumn<T, C>> NumberColumn<T, C> getNumberColumn(String name) {
         return getColumn(name, NumberColumn.class);
     }
 
@@ -1043,7 +1043,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
 
-    protected void notifyColumnValueChanged(DataFrameColumn column, int index, Comparable value) {
+    protected void notifyColumnValueChanged(DataFrameColumn column, int index, Object value) {
         if (indices.isIndexColumn(column)) {
             indices.updateValue(column, getRow(index));
         }
@@ -1064,10 +1064,11 @@ public class DefaultDataFrame implements DataFrame {
 
 
     @Override
-    public DataRows selectRowsByIndex(String name, Comparable... values) {
+    public DataRows selectRowsByIndex(String name, Object... values) {
         Collection<Integer> rowIndices = indices.find(name, values);
         return selectRows(rowIndices);
     }
+
     @Override
     public DataRows selectRows(Collection<Integer> rowIndices) {
         if (!rowIndices.isEmpty()) {
@@ -1079,14 +1080,15 @@ public class DefaultDataFrame implements DataFrame {
         }
         return new DataRows(this, new ArrayList<>(0));
     }
+
     @Override
-    public DataRow selectFirstRowByIndex(String name, Comparable... values) {
+    public DataRow selectFirstRowByIndex(String name, Object... values) {
         Integer idx = indices.findFirst(name, values);
         return idx == null ? null : getRow(idx);
     }
 
     @Override
-    public DataFrame selectByIndex(String name, Comparable... values) {
+    public DataFrame selectByIndex(String name, Object... values) {
         DataRows rows = selectRowsByIndex(name, values);
         DefaultDataFrame df = new DefaultDataFrame();
         df.set(rows, indices);
@@ -1157,7 +1159,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     @Override
-    public Comparable getValue(int col, int row) {
+    public Object getValue(int col, int row) {
         if (columns == null) {
             throw new DataFrameRuntimeException("dataframe contains no columns");
         }
@@ -1168,7 +1170,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     @Override
-    public void setValue(int col, int row, Comparable newValue) {
+    public void setValue(int col, int row, Object newValue) {
         if (columns == null) {
             throw new DataFrameRuntimeException("dataframe contains no columns");
         }
@@ -1225,7 +1227,7 @@ public class DefaultDataFrame implements DataFrame {
     }
     @Override
     public boolean equals(Object o) {
-        if (o == null || !(o instanceof DefaultDataFrame)) {
+        if (!(o instanceof DefaultDataFrame)) {
             return false;
         }
         if (o == this) {

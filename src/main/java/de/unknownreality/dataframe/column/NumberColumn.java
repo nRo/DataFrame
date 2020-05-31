@@ -30,20 +30,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
-import java.util.Comparator;
 
 /**
  * Created by Alex on 11.03.2016.
  */
-public abstract class NumberColumn<T extends Number & Comparable<T>, C extends NumberColumn<T, C>> extends BasicColumn<T, C> {
+public abstract class NumberColumn<T extends Number, C extends NumberColumn<T, C>> extends BasicColumn<T, C> {
     private static final Logger log = LoggerFactory.getLogger(NumberColumn.class);
 
-    public NumberColumn(String name) {
-        super(name);
+    public NumberColumn(String name, Class<T> cl) {
+        super(name, cl);
     }
 
-    public NumberColumn() {
-        super(null);
+    public NumberColumn(Class<T> cl) {
+        super(null, cl);
     }
 
     public NumberColumn(String name, T[] values) {
@@ -219,21 +218,7 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
 
     protected T[] getSortedValues() {
         T[] sortedValues = (T[]) toArray();
-        Arrays.sort(sortedValues, new Comparator<T>() {
-            @Override
-            public int compare(T o1, T o2) {
-                if (o1 == null && o2 == null) {
-                    return 0;
-                }
-                if (o1 == null) {
-                    return -1;
-                }
-                if (o2 == null) {
-                    return 1;
-                }
-                return o1.compareTo(o2);
-            }
-        });
+        Arrays.sort(sortedValues, getValueType().getComparator());
         return sortedValues;
     }
 
@@ -434,7 +419,7 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
     }
 
     @Override
-    public boolean isValueValid(Comparable value) {
+    public boolean isValueValid(Object value) {
         return super.isValueValid(value) || (value != null && Number.class.isAssignableFrom(value.getClass()));
     }
 

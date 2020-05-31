@@ -26,26 +26,46 @@ package de.unknownreality.dataframe.column;
 
 
 import de.unknownreality.dataframe.common.Row;
-import de.unknownreality.dataframe.common.parser.Parser;
-import de.unknownreality.dataframe.common.parser.ParserUtil;
+import de.unknownreality.dataframe.type.impl.BooleanType;
 
 /**
  * Created by Alex on 09.03.2016.
  */
 public class BooleanColumn extends BasicColumn<Boolean, BooleanColumn> {
 
-    private final Parser<Boolean> parser = ParserUtil.findParserOrNull(Boolean.class);
+    private final BooleanType valueType = new BooleanType();
 
+    public BooleanColumn() {
+        super(Boolean.class);
+    }
+
+    public BooleanColumn(String name) {
+        super(name, Boolean.class);
+    }
+
+    public BooleanColumn(String name, Boolean[] values) {
+        super(name, values);
+    }
+
+    public BooleanColumn(String name, Boolean[] values, int size) {
+        super(name, values, size);
+    }
+
+
+    @Override
+    public BooleanType getValueType() {
+        return valueType;
+    }
 
     public BooleanColumn and(BooleanColumn other) {
-        for(int i  = 0; i < Math.min(size(),other.size());i++){
+        for (int i = 0; i < Math.min(size(), other.size()); i++) {
             values[i] = values[i] && other.values[i];
         }
         return this;
     }
 
     public BooleanColumn andNot(BooleanColumn other) {
-        for(int i  = 0; i < Math.min(size(),other.size());i++){
+        for (int i = 0; i < Math.min(size(), other.size()); i++) {
             values[i] = values[i] && !other.values[i];
         }
         return this;
@@ -72,37 +92,12 @@ public class BooleanColumn extends BasicColumn<Boolean, BooleanColumn> {
         return this;
     }
 
-    public BooleanColumn() {
-        super();
-    }
-
-    public BooleanColumn(String name) {
-        super(name);
-    }
-
-    public BooleanColumn(String name, Boolean[] values) {
-        super(name, values);
-    }
-
-    public BooleanColumn(String name, Boolean[] values, int size) {
-        super(name, values, size);
-    }
 
     @Override
     protected BooleanColumn getThis() {
         return null;
     }
 
-    @Override
-    public Class<Boolean> getType() {
-        return Boolean.class;
-    }
-
-
-    @Override
-    public Parser<Boolean> getParser() {
-        return parser;
-    }
 
     @Override
     public BooleanColumn copy() {

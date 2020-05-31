@@ -25,22 +25,27 @@
 package de.unknownreality.dataframe.column;
 
 import de.unknownreality.dataframe.common.Row;
-import de.unknownreality.dataframe.common.parser.Parser;
-import de.unknownreality.dataframe.common.parser.ParserUtil;
+import de.unknownreality.dataframe.type.impl.DoubleType;
 
 /**
  * Created by Alex on 09.03.2016.
  */
 public class DoubleColumn extends NumberColumn<Double, DoubleColumn> {
 
-    private final Parser<Double> parser = ParserUtil.findParserOrNull(Double.class);
+    private final DoubleType valueType = new DoubleType();
+
+
+    @Override
+    public DoubleType getValueType() {
+        return valueType;
+    }
 
     public DoubleColumn() {
-        super();
+        super(Double.class);
     }
 
     public DoubleColumn(String name) {
-        super(name);
+        super(name, Double.class);
     }
 
     public DoubleColumn(String name, Double[] values) {
@@ -56,11 +61,6 @@ public class DoubleColumn extends NumberColumn<Double, DoubleColumn> {
         return Double.class;
     }
 
-
-    @Override
-    public Parser<Double> getParser() {
-        return parser;
-    }
 
     @Override
     protected DoubleColumn getThis() {

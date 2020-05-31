@@ -24,9 +24,6 @@
 
 package de.unknownreality.dataframe;
 
-import de.unknownreality.dataframe.DataFrame;
-import de.unknownreality.dataframe.DataRow;
-import de.unknownreality.dataframe.Values;
 import de.unknownreality.dataframe.column.*;
 import org.junit.Assert;
 import org.junit.Test;
@@ -200,19 +197,19 @@ public class ColumnTest {
 
         try {
             Assert.assertEquals(
-                    (Boolean) true, column.getParser().parse("true")
+                    (Boolean) true, column.getValueType().parse("true")
             );
             Assert.assertEquals(
-                    (Boolean) false, column.getParser().parse("false")
+                    (Boolean) false, column.getValueType().parse("false")
             );
             Assert.assertEquals(
-                    (Boolean) true, column.getParser().parse("TRUE")
+                    (Boolean) true, column.getValueType().parse("TRUE")
             );
             Assert.assertEquals(
-                    (Boolean) false, column.getParser().parse("FALSE")
+                    (Boolean) false, column.getValueType().parse("FALSE")
             );
             Assert.assertEquals(
-                    null, column.getParser().parseOrNull("false1")
+                    null, column.getValueType().parseOrNull("false1")
             );
         } catch (ParseException e) {
             e.printStackTrace();
@@ -248,16 +245,16 @@ public class ColumnTest {
 
         try {
             Assert.assertEquals(
-                    new Byte((byte) 1), column.getParser().parse("1")
+                    new Byte((byte) 1), column.getValueType().parse("1")
             );
             Assert.assertEquals(
-                    new Byte((byte) 2), column.getParser().parse("2")
+                    new Byte((byte) 2), column.getValueType().parse("2")
             );
             Assert.assertEquals(
-                    null, column.getParser().parseOrNull("x")
+                    null, column.getValueType().parseOrNull("x")
             );
             Assert.assertEquals(
-                    null, column.getParser().parseOrNull("10000000")
+                    null, column.getValueType().parseOrNull("10000000")
             );
         } catch (ParseException e) {
             e.printStackTrace();
@@ -290,22 +287,18 @@ public class ColumnTest {
         Assert.assertEquals(column.get(0), copyColumn.get(0));
 
 
-        try {
-            Assert.assertEquals(
-                    (Double) 1d, column.getParser().parse("1")
-            );
-            Assert.assertEquals(
-                    (Double) 1.5d, column.getParser().parse("1.5")
-            );
-            Assert.assertEquals(
-                    (Double) (-1.5d), column.getParser().parse("-1.5")
-            );
-            Assert.assertEquals(
-                    null, column.getParser().parseOrNull("abc")
-            );
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        Assert.assertEquals(
+                (Double) 1d, column.getValueType().parse("1")
+        );
+        Assert.assertEquals(
+                (Double) 1.5d, column.getValueType().parse("1.5")
+        );
+        Assert.assertEquals(
+                (Double) (-1.5d), column.getValueType().parse("-1.5")
+        );
+        Assert.assertEquals(
+                null, column.getValueType().parseOrNull("abc")
+        );
     }
 
     @Test
@@ -334,22 +327,18 @@ public class ColumnTest {
         Assert.assertEquals(column.get(0), copyColumn.get(0));
 
 
-        try {
-            Assert.assertEquals(
-                    (Float) 1f, column.getParser().parse("1")
-            );
-            Assert.assertEquals(
-                    (Float) 1.5f, column.getParser().parse("1.5")
-            );
-            Assert.assertEquals(
-                    (Float) (-1.5f), column.getParser().parse("-1.5")
-            );
-            Assert.assertEquals(
-                    null, column.getParser().parseOrNull("abc")
-            );
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        Assert.assertEquals(
+                (Float) 1f, column.getValueType().parse("1")
+        );
+        Assert.assertEquals(
+                (Float) 1.5f, column.getValueType().parse("1.5")
+        );
+        Assert.assertEquals(
+                (Float) (-1.5f), column.getValueType().parse("-1.5")
+        );
+        Assert.assertEquals(
+                null, column.getValueType().parseOrNull("abc")
+        );
     }
 
     @Test
@@ -378,22 +367,18 @@ public class ColumnTest {
         Assert.assertEquals(column.get(0), copyColumn.get(0));
 
 
-        try {
-            Assert.assertEquals(
-                    (Integer) 1, column.getParser().parse("1")
-            );
-            Assert.assertEquals(
-                    (Integer) (-1), column.getParser().parse("-1")
-            );
-            Assert.assertEquals(
-                    null, column.getParser().parseOrNull("1.5")
-            );
-            Assert.assertEquals(
-                    null, column.getParser().parseOrNull("abc")
-            );
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        Assert.assertEquals(
+                (Integer) 1, column.getValueType().parse("1")
+        );
+        Assert.assertEquals(
+                (Integer) (-1), column.getValueType().parse("-1")
+        );
+        Assert.assertEquals(
+                null, column.getValueType().parseOrNull("1.5")
+        );
+        Assert.assertEquals(
+                null, column.getValueType().parseOrNull("abc")
+        );
     }
 
     @Test
@@ -422,22 +407,18 @@ public class ColumnTest {
         Assert.assertEquals(column.get(0), copyColumn.get(0));
 
 
-        try {
-            Assert.assertEquals(
-                    (Long) 1L, column.getParser().parse("1")
-            );
-            Assert.assertEquals(
-                    (Long) (-1L), column.getParser().parse("-1")
-            );
-            Assert.assertEquals(
-                    null, column.getParser().parseOrNull("1.5")
-            );
-            Assert.assertEquals(
-                    null, column.getParser().parseOrNull("abc")
-            );
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        Assert.assertEquals(
+                (Long) 1L, column.getValueType().parse("1")
+        );
+        Assert.assertEquals(
+                (Long) (-1L), column.getValueType().parse("-1")
+        );
+        Assert.assertEquals(
+                null, column.getValueType().parseOrNull("1.5")
+        );
+        Assert.assertEquals(
+                null, column.getValueType().parseOrNull("abc")
+        );
     }
 
     @Test
@@ -466,22 +447,18 @@ public class ColumnTest {
         Assert.assertEquals(column.get(0), copyColumn.get(0));
 
 
-        try {
-            Assert.assertEquals(
-                    (Short) (short) 1, column.getParser().parse("1")
-            );
-            Assert.assertEquals(
-                    (Short) (short) (-1), column.getParser().parse("-1")
-            );
-            Assert.assertEquals(
-                    null, column.getParser().parseOrNull("1.5")
-            );
-            Assert.assertEquals(
-                    null, column.getParser().parseOrNull("abc")
-            );
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        Assert.assertEquals(
+                (Short) (short) 1, column.getValueType().parse("1")
+        );
+        Assert.assertEquals(
+                (Short) (short) (-1), column.getValueType().parse("-1")
+        );
+        Assert.assertEquals(
+                null, column.getValueType().parseOrNull("1.5")
+        );
+        Assert.assertEquals(
+                null, column.getValueType().parseOrNull("abc")
+        );
     }
 
     @Test
@@ -510,13 +487,9 @@ public class ColumnTest {
         Assert.assertEquals(column.get(0), copyColumn.get(0));
 
 
-        try {
-            Assert.assertEquals(
-                    "1", column.getParser().parse("1")
-            );
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        Assert.assertEquals(
+                "1", column.getValueType().parse("1")
+        );
     }
 
     @Test

@@ -26,17 +26,29 @@ package de.unknownreality.dataframe.common.row;
 
 import de.unknownreality.dataframe.DataFrameRuntimeException;
 import de.unknownreality.dataframe.Values;
-import de.unknownreality.dataframe.common.Header;
 import de.unknownreality.dataframe.common.Row;
+import de.unknownreality.dataframe.common.header.TypeHeader;
+import de.unknownreality.dataframe.type.ValueType;
 
-public abstract class AbstractHeaderRow<T, H extends Header<T>, V> implements Row<V,T> {
+public abstract class AbstractHeaderRow<T, H extends TypeHeader<T>, V> implements Row<V, T> {
     private final int index;
     private final H header;
 
-    public AbstractHeaderRow(H header, int index){
+    public AbstractHeaderRow(H header, int index) {
         this.index = index;
         this.header = header;
     }
+
+    @Override
+    public ValueType getType(int index) {
+        return header.getValueType(index);
+    }
+
+    @Override
+    public ValueType getType(T headerName) {
+        return header.getValueType(headerName);
+    }
+
     /**
      * Get index of data row
      *

@@ -141,7 +141,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param <T>  type of column values
      * @return <tt>self</tt> for method chaining
      */
-    <T extends Comparable<T>> DataFrame addColumn(Class<T> type, String name);
+    <T> DataFrame addColumn(Class<T> type, String name);
 
     /**
      * Creates a column for a specified column value type using the provided {@link ColumnTypeMap}.
@@ -154,7 +154,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @see #addColumn(Class, String, ColumnAppender)
      */
     @SuppressWarnings("unchecked")
-    <T extends Comparable<T>> DataFrame addColumn(Class<T> type, String name, ColumnTypeMap columnTypeMap);
+    <T> DataFrame addColumn(Class<T> type, String name, ColumnTypeMap columnTypeMap);
 
 
     /**
@@ -169,7 +169,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @return <tt>self</tt> for method chaining
      * @see #addColumn(Class, String, ColumnAppender)
      */
-    <T extends Comparable<T>, C extends DataFrameColumn<T, C>> DataFrame addColumn(Class<T> type, String name, ColumnTypeMap columnTypeMap, ColumnAppender<T> appender);
+    <T, C extends DataFrameColumn<T, C>> DataFrame addColumn(Class<T> type, String name, ColumnTypeMap columnTypeMap, ColumnAppender<T> appender);
 
     /**
      * Creates and adds a column to this data frame based on a provided column class.
@@ -183,7 +183,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @return <tt>self</tt> for method chaining
      * @see #addColumn(DataFrameColumn)
      */
-    <T extends Comparable<T>, C extends DataFrameColumn<T, C>> DataFrame addColumn(Class<C> type, String name, ColumnAppender<T> appender);
+    <T, C extends DataFrameColumn<T, C>> DataFrame addColumn(Class<C> type, String name, ColumnAppender<T> appender);
 
 
     /**
@@ -272,11 +272,10 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
 
 
     /**
-     * Appends a new row based on {@link Comparable} values from another dataframe.
+     * Appends a new row based on {@link Object} values from another dataframe.
      * <p>There must be <b>exactly one value for each column</b>.</p>
      * <p><b>The object types have to match the column types</b>.</p>
      * If the wrong number of values or a wrong type is found a {@link DataFrameRuntimeException} is thrown.
-     *
      *
      * @param dataFrame other dataframe
      * @param rowIndex  row in other dataframe
@@ -285,7 +284,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     DataFrame append(DataFrame dataFrame, int rowIndex);
 
     /**
-     * Appends a new row based on {@link Comparable} values.
+     * Appends a new row based on {@link Object} values.
      * <p>There must be <b>exactly one value for each column</b>.</p>
      * <p><b>The object types have to match the column types</b>.</p>
      * If the wrong number of values or a wrong type is found a {@link DataFrameRuntimeException} is thrown.
@@ -299,7 +298,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param values values for the appended row
      * @return <tt>self</tt> for method chaining
      */
-    DataFrame append(Comparable... values);
+    DataFrame append(Object... values);
 
     /**
      * Appends a new data row. Only row values matching a dataframe column are appended
@@ -406,7 +405,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param value   input value
      * @return new data frame including the found rows
      */
-    DataFrame select(String colName, Comparable value);
+    DataFrame select(String colName, Object value);
 
     /**
      * Returns the first found data row from this data frame where a specified column value equals
@@ -416,7 +415,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param value   input value
      * @return first found data row
      */
-    DataRow selectFirst(String colName, Comparable value);
+    DataRow selectFirst(String colName, Object value);
 
     /**
      * Returns the first found data row from this data frame matching an input predicate.
@@ -491,7 +490,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param value   input value
      * @return list of found data rows
      */
-    DataRows selectRows(String colName, Comparable value);
+    DataRows selectRows(String colName, Object value);
 
     /**
      * Finds data rows using a {@link FilterPredicate}.
@@ -524,7 +523,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param keyValues input key values
      * @return found data row
      */
-    DataRow selectByPrimaryKey(Comparable... keyValues);
+    DataRow selectByPrimaryKey(Object... keyValues);
 
     /**
      * Reverses all columns
@@ -688,7 +687,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param name column name
      * @return column
      */
-    <T extends Comparable<T>, C extends DataFrameColumn<T, C>> DataFrameColumn<T, C> getColumn(String name);
+    <T, C extends DataFrameColumn<T, C>> DataFrameColumn<T, C> getColumn(String name);
 
     /**
      * Returns a column as a specified column type.
@@ -710,7 +709,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param name column name
      * @return found column
      */
-    <T extends Number & Comparable<T>, C extends NumberColumn<T, C>> NumberColumn<T, C> getNumberColumn(String name);
+    <T extends Number, C extends NumberColumn<T, C>> NumberColumn<T, C> getNumberColumn(String name);
 
     /**
      * Returns a {@link StringColumn}
@@ -961,7 +960,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param values index values
      * @return rows found
      */
-    DataRows selectRowsByIndex(String name, Comparable... values);
+    DataRows selectRowsByIndex(String name, Object... values);
 
 
     DataRows selectRows(Collection<Integer> rowIndices);
@@ -973,7 +972,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param values index values
      * @return rows found
      */
-    DataRow selectFirstRowByIndex(String name, Comparable... values);
+    DataRow selectFirstRowByIndex(String name, Object... values);
 
     /**
      * Returns a new dataframe containing data rows found using an index and the corresponding index values
@@ -982,7 +981,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param values index values
      * @return dataframe containing found rows
      */
-    DataFrame selectByIndex(String name, Comparable... values);
+    DataFrame selectByIndex(String name, Object... values);
 
     /**
      * Returns a collection of all columns in this data frame
@@ -1751,12 +1750,12 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     }
 
     /**
-     * Returns a value as {@link Comparable} from the specified column and row
+     * Returns a value as {@link Object} from the specified column and row
      * @param col column
      * @param row row
      * @return value
      */
-    Comparable getValue(int col, int row);
+    Object getValue(int col, int row);
 
     /**
      * Sets the value in the specified column and row
@@ -1764,7 +1763,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param row row
      * @param newValue new value
      */
-    void setValue(int col, int row, Comparable newValue);
+    void setValue(int col, int row, Object newValue);
 
     /**
      * Returns true if the value in the specified column and row is NA

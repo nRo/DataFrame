@@ -55,7 +55,7 @@ public interface Index {
      * @param values indexed row values
      * @return index of row with the input value
      */
-    Collection<Integer> find(Comparable... values);
+    Collection<Integer> find(Object... values);
 
     /**
      * Returns the name if this index

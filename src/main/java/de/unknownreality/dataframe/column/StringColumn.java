@@ -26,23 +26,21 @@ package de.unknownreality.dataframe.column;
 
 
 import de.unknownreality.dataframe.common.Row;
-import de.unknownreality.dataframe.common.parser.Parser;
-import de.unknownreality.dataframe.common.parser.ParserUtil;
+import de.unknownreality.dataframe.type.impl.StringType;
 
 /**
  * Created by Alex on 09.03.2016.
  */
 public class StringColumn extends BasicColumn<String, StringColumn> {
 
-    private final Parser<String> parser = ParserUtil.findParserOrNull(String.class);
-
+    private final static StringType valueType = new StringType();
 
     public StringColumn() {
-        super();
+        super(String.class);
     }
 
     public StringColumn(String name) {
-        super(name);
+        super(name, String.class);
     }
 
     public StringColumn(String name, String[] values) {
@@ -55,8 +53,8 @@ public class StringColumn extends BasicColumn<String, StringColumn> {
 
 
     @Override
-    public Parser<String> getParser() {
-        return parser;
+    public StringType getValueType() {
+        return valueType;
     }
 
     @Override
@@ -64,10 +62,6 @@ public class StringColumn extends BasicColumn<String, StringColumn> {
         return this;
     }
 
-    @Override
-    public Class<String> getType() {
-        return String.class;
-    }
 
     @Override
     public StringColumn copy() {
@@ -78,7 +72,6 @@ public class StringColumn extends BasicColumn<String, StringColumn> {
 
     @Override
     public <H> String getValueFromRow(Row<?, H> row, H headerName) {
-
         return row.getString(headerName);
     }
 

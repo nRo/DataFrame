@@ -27,9 +27,9 @@ package de.unknownreality.dataframe.csv;
 import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.DataFrameColumn;
 import de.unknownreality.dataframe.common.DataContainer;
-import de.unknownreality.dataframe.common.Header;
 import de.unknownreality.dataframe.common.Row;
 import de.unknownreality.dataframe.common.StringUtil;
+import de.unknownreality.dataframe.common.header.Header;
 import de.unknownreality.dataframe.io.DataWriter;
 import de.unknownreality.dataframe.io.FileFormat;
 import de.unknownreality.dataframe.io.ReadFormat;
@@ -93,26 +93,24 @@ public class CSVWriter extends DataWriter {
         bufferedWriter.flush();
     }
 
-    public void writeRow(BufferedWriter bufferedWriter, Row row) throws Exception {
+    public void writeRow(BufferedWriter bufferedWriter, Row<?, ?> row) throws Exception {
         char separator = settings.getSeparator();
         for (int i = 0; i < row.size(); i++) {
-            Object v = row.get(i);
-            String s = v.toString();
+            String s = row.toString(i);
             boolean putInQuotes = false;
             boolean escapeQuotes = false;
-            if (v instanceof String) {
-                char[] chars = s.toCharArray();
-                for (int j = 0; j < chars.length; j++) {
-                    char c = chars[j];
-                    if (c == separator || c == '\'') {
-                        putInQuotes = true;
-                    } else if (c == '\"') {
-                        putInQuotes = true;
-                        escapeQuotes = true;
-                    }
+            char[] chars = s.toCharArray();
+            for (int j = 0; j < chars.length; j++) {
+                char c = chars[j];
+                if (c == separator || c == '\'') {
+                    putInQuotes = true;
+                } else if (c == '\"') {
+                    putInQuotes = true;
+                    escapeQuotes = true;
                 }
             }
-            putInQuotes = putInQuotes || (settings.isQuoteStrings() && v instanceof String);
+            putInQuotes = putInQuotes
+                    || (settings.isQuoteStrings() && row.getType(i).getType() == String.class);
             if (putInQuotes) {
                 if (escapeQuotes) {
                     s = StringUtil.putInQuotes(s, '\"');

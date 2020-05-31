@@ -25,22 +25,40 @@
 package de.unknownreality.dataframe.group;
 
 import de.unknownreality.dataframe.DataFrameRuntimeException;
-import de.unknownreality.dataframe.common.Header;
+import de.unknownreality.dataframe.common.header.TypeHeader;
+import de.unknownreality.dataframe.type.ValueType;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Created by Alex on 11.03.2016.
  */
-public class GroupHeader implements Header<String> {
+public class GroupHeader implements TypeHeader<String> {
     private final Map<String, Integer> headerMap = new HashMap<>();
-    private final List<String> headers = new ArrayList<>();
+    private final String[] headers;
+    private final ValueType<?>[] types;
 
-    public GroupHeader(String... columns) {
+    public GroupHeader(String[] columns, ValueType<?>[] valueTypes) {
+        headers = new String[columns.length];
+        types = new ValueType[columns.length];
         for (int i = 0; i < columns.length; i++) {
-            headers.add(columns[i]);
-            headerMap.put(columns[i], i);
+            String column = columns[i];
+            headers[i] = column;
+            types[i] = valueTypes[i];
+            headerMap.put(column, i);
         }
+    }
+
+    @Override
+    public ValueType<?> getValueType(int index) {
+        return types[index];
+    }
+
+    @Override
+    public ValueType<?> getValueType(String name) {
+        return getValueType(headerMap.get(name));
     }
 
     /**
@@ -50,7 +68,7 @@ public class GroupHeader implements Header<String> {
      */
     @Override
     public int size() {
-        return headers.size();
+        return headers.length;
     }
 
     /**
@@ -62,10 +80,11 @@ public class GroupHeader implements Header<String> {
      */
     @Override
     public String get(int index) {
-        if (index >= headers.size()) {
-            throw new DataFrameRuntimeException(String.format("header index out of bounds %d > %d", index, (headers.size() - 1)));
+        if (index >= headers.length) {
+            throw new DataFrameRuntimeException(
+                    String.format("header index out of bounds %d > %d", index, (headers.length - 1)));
         }
-        return headers.get(index);
+        return headers[index];
     }
 
     /**
@@ -105,11 +124,11 @@ public class GroupHeader implements Header<String> {
     @Override
     public Iterator<String> iterator() {
         return new Iterator<String>() {
-            final Iterator<String> it = headers.iterator();
+            int c = 0;
 
             @Override
             public boolean hasNext() {
-                return it.hasNext();
+                return c < headers.length - 2;
             }
 
             @Override
@@ -119,8 +138,10 @@ public class GroupHeader implements Header<String> {
 
             @Override
             public String next() {
-                return it.next();
+                return headers[c++];
             }
         };
     }
+
+
 }
