@@ -25,8 +25,8 @@
 package de.unknownreality.dataframe.filter;
 
 import de.unknownreality.dataframe.DataFrameRuntimeException;
-import de.unknownreality.dataframe.common.KeyValueGetter;
 import de.unknownreality.dataframe.common.NumberUtil;
+import de.unknownreality.dataframe.common.Row;
 
 /**
  * Created by Alex on 09.03.2016.
@@ -117,26 +117,26 @@ public class ComparePredicate extends FilterPredicate {
     /**
      * Returns <tt>true</tt> if the row is valid for this predicate
      *
-     * @param kv tested row
+     * @param row tested row
      * @return <tt>true</tt> if the row is valid
      */
     @SuppressWarnings("unchecked")
     @Override
-    public boolean valid(KeyValueGetter<String, ?> kv) {
-        return compare(kv.get(headerName),value);
+    public boolean valid(Row<?, String> row) {
+        return compare(row.get(headerName), value);
     }
 
     //TODO value type
-    protected boolean compare(Object valueA, Object valueB){
+    protected boolean compare(Object valueA, Object valueB) {
         if (operation == Operation.EQ && valueA.equals(valueB)) {
             return true;
         }
-        if(valueA instanceof String && valueB instanceof Number){
-            Number n ;
-            if((n = NumberUtil.parseNumberOrNull(valueA.toString())) != null){
+        if (valueA instanceof String && valueB instanceof Number) {
+            Number n;
+            if ((n = NumberUtil.parseNumberOrNull(valueA.toString())) != null) {
                 valueA = n;
-            } else{
-                valueB = NumberUtil.toString((Number)valueB);
+            } else {
+                valueB = NumberUtil.toString((Number) valueB);
             }
         }
 
@@ -150,11 +150,11 @@ public class ComparePredicate extends FilterPredicate {
         } else if (valueA instanceof Comparable && valueB instanceof Comparable) {
             c = ((Comparable) valueA).compareTo(valueB);
         }
-        return isValid(operation,c);
+        return isValid(operation, c);
     }
 
 
-    protected boolean isValid (Operation operation,int c){
+    protected boolean isValid(Operation operation, int c) {
         switch (operation) {
             case GT:
                 return c > 0;
@@ -169,7 +169,7 @@ public class ComparePredicate extends FilterPredicate {
             case NE:
                 return c != 0;
             default:
-                throw new DataFrameRuntimeException(String.format("unknown operation: %s",operation.str));
+                throw new DataFrameRuntimeException(String.format("unknown operation: %s", operation.str));
         }
     }
 

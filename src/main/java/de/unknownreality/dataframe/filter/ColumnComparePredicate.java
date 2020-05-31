@@ -24,7 +24,7 @@
 
 package de.unknownreality.dataframe.filter;
 
-import de.unknownreality.dataframe.common.KeyValueGetter;
+import de.unknownreality.dataframe.common.Row;
 
 /**
  * Created by Alex on 07.06.2017.
@@ -48,12 +48,12 @@ public class ColumnComparePredicate extends ComparePredicate {
     /**
      * Returns <tt>true</tt> if the row is valid for this predicate
      *
-     * @param kv tested row
+     * @param row tested row
      * @return <tt>true</tt> if the row is valid
      */
     @Override
-    public boolean valid(KeyValueGetter<String, ?> kv) {
-        return super.compare(kv.get(getHeaderName()), kv.get(headerB));
+    public boolean valid(Row<?, String> row) {
+        return super.compare(row.get(getHeaderName()), row.get(headerB));
     }
 
     @Override
