@@ -207,7 +207,7 @@ public class LikePredicate extends FilterPredicate {
         if (Values.NA.isNA(v)) {
             return false;
         }
-        String value = v.toString();
+        String value = row.getType(headerName).toStringRaw(v);
 
         value = value.toLowerCase();
 

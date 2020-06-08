@@ -27,11 +27,52 @@ public abstract class ValueType<T> {
         }
     }
 
+    public void writeRaw(Writer writer, Object value) throws IOException {
+        write(writer, convertRaw(value));
+    }
+
     public abstract void write(Writer writer, T value) throws IOException;
+
+    public String toStringRaw(Object value) {
+        return toString(convertRaw(value));
+    }
 
     public abstract String toString(T value);
 
+
+    public void writeRaw(DataOutputStream dos, Object value) throws IOException {
+        write(dos, convertRaw(value));
+    }
+
     public abstract int write(DataOutputStream dos, T value) throws IOException;
+
+    public int compareRaw(Object a, Object b) {
+        return compare(convertRaw(a), convertRaw(b));
+    }
+
+    public boolean equalsRaw(Object a, Object b) {
+        return equals(convertRaw(a), convertRaw(b));
+    }
+
+    protected T convertRaw(Object o) {
+        if (o == null) {
+            return null;
+        }
+        if (getType().isInstance(o)) {
+            return getType().cast(o);
+        }
+        throw new ValueTypeRuntimeException(
+                String.format("error casting raw value of type %s to %s",
+                        o.getClass(), getType()));
+    }
+
+    public int compare(T a, T b) {
+        return getComparator().compare(a, b);
+    }
+
+    public boolean equals(T a, T b) {
+        return a.equals(b);
+    }
 
 
     @Override

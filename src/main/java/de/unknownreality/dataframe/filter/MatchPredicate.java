@@ -59,13 +59,12 @@ public class MatchPredicate extends FilterPredicate {
     /**
      * Returns <tt>true</tt> if the row column value matches the pattern
      *
-     * @param kv tested row
+     * @param row tested row
      * @return <tt>true</tt> of row column value matches pattern
      */
-    @Override //TODO value type
+    @Override
     public boolean valid(Row<?, String> row) {
-        Object v = row.get(headerName);
-        return pattern.matcher(v.toString()).matches();
+        return pattern.matcher(row.toString(headerName)).matches();
     }
 
     @Override

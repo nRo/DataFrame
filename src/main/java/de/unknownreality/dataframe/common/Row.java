@@ -36,34 +36,34 @@ import java.io.Writer;
 public interface Row<V, H> extends KeyValueGetter<H, V> {
 
     default void write(Writer writer, int index) throws IOException {
-        getType(index).write(writer, get(index));
+        getType(index).writeRaw(writer, get(index));
     }
 
     default String toString(int index) {
-        return getType(index).toString(get(index));
+        return getType(index).toStringRaw(get(index));
     }
 
     default void write(DataOutputStream dos, int index) throws IOException {
-        getType(index).write(dos, get(index));
+        getType(index).writeRaw(dos, get(index));
     }
 
     default void write(Writer writer, H headerName) throws IOException {
-        getType(headerName).write(writer, get(headerName));
+        getType(headerName).writeRaw(writer, get(headerName));
     }
 
     default String toString(H headerName) {
-        return getType(headerName).toString(get(headerName));
+        return getType(headerName).toStringRaw(get(headerName));
     }
 
     default void write(DataOutputStream dos, H headerName) throws IOException {
-        getType(headerName).write(dos, get(headerName));
+        getType(headerName).writeRaw(dos, get(headerName));
     }
 
 
-    ValueType getType(int index);
+    ValueType<?> getType(int index);
 
 
-    ValueType getType(H headerName);
+    ValueType<?> getType(H headerName);
 
 
     /**
