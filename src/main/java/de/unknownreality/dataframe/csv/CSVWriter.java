@@ -68,7 +68,7 @@ public class CSVWriter extends DataWriter {
     public void write(BufferedWriter bufferedWriter, DataContainer<?, ?> dataContainer) {
         try {
             writeHeader(bufferedWriter, dataContainer.getHeader());
-            for (Row row : dataContainer) {
+            for (Row<?, ?> row : dataContainer) {
                 writeRow(bufferedWriter, row);
             }
         } catch (Exception e) {
