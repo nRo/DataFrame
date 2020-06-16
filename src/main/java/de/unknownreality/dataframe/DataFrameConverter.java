@@ -27,12 +27,12 @@ package de.unknownreality.dataframe;
 import de.unknownreality.dataframe.column.BasicColumn;
 import de.unknownreality.dataframe.column.StringColumn;
 import de.unknownreality.dataframe.common.Row;
-import de.unknownreality.dataframe.common.parser.Parser;
-import de.unknownreality.dataframe.common.parser.ParserUtil;
 import de.unknownreality.dataframe.common.row.BasicRow;
 import de.unknownreality.dataframe.filter.FilterPredicate;
 import de.unknownreality.dataframe.io.ColumnInformation;
 import de.unknownreality.dataframe.io.DataIterator;
+import de.unknownreality.dataframe.type.TypeUtil;
+import de.unknownreality.dataframe.type.ValueType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,12 +56,12 @@ public class DataFrameConverter {
                     Long.class,
                     Double.class
             };
-    private static Parser<?>[] typeValueReader = new Parser[]
+    private static ValueType<?>[] VALUE_TYPES = new ValueType[]
             {
-                    ParserUtil.findParserOrNull(Boolean.class),
-                    ParserUtil.findParserOrNull(Integer.class),
-                    ParserUtil.findParserOrNull(Long.class),
-                    ParserUtil.findParserOrNull(Double.class),
+                    TypeUtil.findTypeOrNull(Boolean.class),
+                    TypeUtil.findTypeOrNull(Integer.class),
+                    TypeUtil.findTypeOrNull(Long.class),
+                    TypeUtil.findTypeOrNull(Double.class),
 
             };
 
@@ -176,7 +176,7 @@ public class DataFrameConverter {
                 if (autodetect[i] && (!SAMPLE_ROW_DETECTION || doSample(r))) {
                     for (int j = 0; j < TYPES.length; j++) {
                         types[i][j] = types[i][j]
-                                && (typeValueReader[j].parseOrNull(val.toString()) != null);
+                                && (VALUE_TYPES[j].parseOrNull(val.toString()) != null);
                     }
                 }
                 rowValues[i] = val;

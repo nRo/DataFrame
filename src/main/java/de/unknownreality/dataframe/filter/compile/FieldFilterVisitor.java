@@ -25,10 +25,10 @@
 package de.unknownreality.dataframe.filter.compile;
 
 import de.unknownreality.dataframe.Values;
-import de.unknownreality.dataframe.common.parser.ParserUtil;
 import de.unknownreality.dataframe.filter.FilterPredicate;
 import de.unknownreality.dataframe.generated.PredicateBaseVisitor;
 import de.unknownreality.dataframe.generated.PredicateParser;
+import de.unknownreality.dataframe.type.TypeUtil;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -115,9 +115,9 @@ public class FieldFilterVisitor extends PredicateBaseVisitor<FilterPredicate> {
             String n = ctx.value().NUMBER().getText();
             try {
                 if (n.contains(".")) {
-                    return ParserUtil.parse(Double.class, n);
+                    return TypeUtil.parse(Double.class, n);
                 } else {
-                    return ParserUtil.parse(Long.class, n);
+                    return TypeUtil.parse(Long.class, n);
                 }
             }
             catch (Exception e){
@@ -126,7 +126,7 @@ public class FieldFilterVisitor extends PredicateBaseVisitor<FilterPredicate> {
         }
         if(ctx.value().BOOLEAN_VALUE() != null){
             try{
-                return ParserUtil.parse(Boolean.class,ctx.value().BOOLEAN_VALUE().getText());
+                return TypeUtil.parse(Boolean.class, ctx.value().BOOLEAN_VALUE().getText());
             }
             catch (Exception e){
                 throw new PredicateCompilerException(String.format("error parsing value '%s'",ctx.value().BOOLEAN_VALUE().getText()));

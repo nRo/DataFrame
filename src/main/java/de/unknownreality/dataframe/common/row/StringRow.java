@@ -27,10 +27,9 @@ package de.unknownreality.dataframe.common.row;
 import de.unknownreality.dataframe.DataFrameRuntimeException;
 import de.unknownreality.dataframe.common.Row;
 import de.unknownreality.dataframe.common.header.Header;
-import de.unknownreality.dataframe.common.parser.Parser;
-import de.unknownreality.dataframe.common.parser.ParserNotFoundException;
-import de.unknownreality.dataframe.common.parser.ParserUtil;
+import de.unknownreality.dataframe.type.TypeUtil;
 import de.unknownreality.dataframe.type.ValueType;
+import de.unknownreality.dataframe.type.ValueTypeNotFoundException;
 import de.unknownreality.dataframe.type.impl.StringType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,13 +46,13 @@ public class StringRow<T, H extends Header<T>> implements Row<String, T>, Iterab
 
     private final static StringType STRING_VALUE_TYPE = new StringType();
 
-    private static final Parser<Boolean> BOOLEAN_VALUE_READER = ParserUtil.findParserOrNull(Boolean.class);
-    private static final Parser<Double> DOUBLE_VALUE_READER = ParserUtil.findParserOrNull(Double.class);
-    private static final Parser<Float> FLOAT_VALUE_READER = ParserUtil.findParserOrNull(Float.class);
-    private static final Parser<Long> LONG_VALUE_READER = ParserUtil.findParserOrNull(Long.class);
-    private static final Parser<Integer> INTEGER_VALUE_READER = ParserUtil.findParserOrNull(Integer.class);
-    private static final Parser<Short> SHORT_VALUE_READER = ParserUtil.findParserOrNull(Short.class);
-    private static final Parser<Byte> BYTE_VALUE_READER = ParserUtil.findParserOrNull(Byte.class);
+    private static final ValueType<Boolean> BOOLEAN_VALUE_READER = TypeUtil.findTypeOrThrow(Boolean.class);
+    private static final ValueType<Double> DOUBLE_VALUE_READER = TypeUtil.findTypeOrThrow(Double.class);
+    private static final ValueType<Float> FLOAT_VALUE_READER = TypeUtil.findTypeOrThrow(Float.class);
+    private static final ValueType<Long> LONG_VALUE_READER = TypeUtil.findTypeOrThrow(Long.class);
+    private static final ValueType<Integer> INTEGER_VALUE_READER = TypeUtil.findTypeOrThrow(Integer.class);
+    private static final ValueType<Short> SHORT_VALUE_READER = TypeUtil.findTypeOrThrow(Short.class);
+    private static final ValueType<Byte> BYTE_VALUE_READER = TypeUtil.findTypeOrThrow(Byte.class);
 
 
     private final String[] values;
@@ -194,7 +193,7 @@ public class StringRow<T, H extends Header<T>> implements Row<String, T>, Iterab
      * @param <C>         type of resulting entity
      * @return parsed entity
      */
-    protected <C> C parse(T name, Class<C> cl, Parser<C> valueReader) {
+    protected <C> C parse(T name, Class<C> cl, ValueType<C> valueReader) {
         String val = get(name);
         try {
             return valueReader.parse(val);
@@ -214,7 +213,7 @@ public class StringRow<T, H extends Header<T>> implements Row<String, T>, Iterab
      * @param <C>         type of resulting entity
      * @return parsed entity
      */
-    protected <C> C parse(int index, Class<C> cl, Parser<C> valueReader) {
+    protected <C> C parse(int index, Class<C> cl, ValueType<C> valueReader) {
         String val = get(index);
         try {
             return valueReader.parse(val);
@@ -265,8 +264,8 @@ public class StringRow<T, H extends Header<T>> implements Row<String, T>, Iterab
      */
     protected  <C> C getValueAs(String value, Class<C> cl) {
         try {
-            return ParserUtil.parse(cl, value);
-        } catch (ParseException | ParserNotFoundException e) {
+            return TypeUtil.parse(cl, value);
+        } catch (ParseException | ValueTypeNotFoundException e) {
             log.error("error parsing value {} to {}", value, cl, e);
             throw new DataFrameRuntimeException(String.format("error parsing value %s to %s", value, cl), e);
 
@@ -284,8 +283,8 @@ public class StringRow<T, H extends Header<T>> implements Row<String, T>, Iterab
      */
     protected <C> C getValueAsOrNull(String value, Class<C> cl) {
         try {
-            return ParserUtil.parse(cl, value);
-        } catch (ParseException | ParserNotFoundException e) {
+            return TypeUtil.parse(cl, value);
+        } catch (ParseException | ValueTypeNotFoundException e) {
             log.warn("error parsing value {} to {}", value, cl, e);
 
         }

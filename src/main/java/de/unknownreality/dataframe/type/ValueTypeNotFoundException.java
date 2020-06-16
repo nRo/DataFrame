@@ -22,15 +22,15 @@
  *
  */
 
-package de.unknownreality.dataframe.common.parser;
+package de.unknownreality.dataframe.type;
 
 import de.unknownreality.dataframe.DataFrameException;
 
 /**
  * Created by Alex on 04.06.2015.
  */
-public class ParserNotFoundException extends DataFrameException {
-    public ParserNotFoundException(Class<?> c) {
-        super("no parser found for " + c.getName());
+public class ValueTypeNotFoundException extends DataFrameException {
+    public ValueTypeNotFoundException(Class<?> c) {
+        super("no type found for " + c.getName());
     }
 }
