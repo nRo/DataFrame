@@ -33,6 +33,11 @@ public class StringType extends ComparableType<String> {
     }
 
     @Override
+    protected String convertRaw(Object o) {
+        return super.convertRaw(o == null ? null : String.valueOf(o));
+    }
+
+    @Override
     public String parse(String s) {
         return s;
     }

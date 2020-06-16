@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.nio.ByteBuffer;
 
-public class ShortType extends ComparableType<Short> {
+public class ShortType extends NumberType<Short> {
     @Override
     public Class<Short> getType() {
         return Short.class;

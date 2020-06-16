@@ -46,8 +46,8 @@ public class PrintTest {
         int width = 10;
         int cwidth = 8;
         Printer printer = PrinterBuilder.create()
-                .withColumnHeaderFormatter("name", (h, m) -> "||" + h.toString())
-                .withColumnValueFormatter("name", (v, m) -> v.toString().toUpperCase())
+                .withColumnHeaderFormatter("name", (t, h, m) -> "||" + h.toString())
+                .withColumnValueFormatter("name", (t, v, m) -> v.toString().toUpperCase())
                 .withHorizontalLine(hline)
                 .withVerticalLine(vline)
                 .withJoint(joint)
@@ -55,8 +55,8 @@ public class PrintTest {
                 .withDefaultColumnWidth(width)
                 .withDefaultMaxContentWidth(cwidth)
                 .build();
-        df.getRow(2).set(0,"ParkerParker");
-        df.getRow(3).set(2,"GermanyGermany");
+        df.getRow(2).set(0, "ParkerParker");
+        df.getRow(3).set(2, "GermanyGermany");
         StringWriter sw = new StringWriter();
         df.write(sw, printer);
         String[] lines = sw.toString().split("\\r?\\n");
@@ -67,7 +67,7 @@ public class PrintTest {
 
         //cols * width + inner lines + outer lines
         int cols = df.getRow(0).size();
-        int expectedRow = cols*width + cols-1 + 2;
+        int expectedRow = cols * width + cols - 1 + 2;
         Iterator<DataRow> dfIt = df.iterator();
         for (int i = 0; i < lines.length; i++) {
             Assert.assertEquals(expectedRow, lines[i].length());
@@ -75,12 +75,11 @@ public class PrintTest {
             if (i == 0 || i == lines.length - 1) {
                 Assert.assertEquals(corner, String.valueOf(lines[i].charAt(0)));
                 Assert.assertEquals(corner, String.valueOf(lines[i].charAt(lines[i].length() - 1)));
-                for(int j = 1; j < expectedRow  -1; j++){
-                    if(j % (width + 1) == 0){
-                        Assert.assertEquals(joint,String.valueOf(lines[i].charAt(j)));
-                    }
-                    else{
-                        Assert.assertEquals(hline,String.valueOf(lines[i].charAt(j)));
+                for (int j = 1; j < expectedRow - 1; j++) {
+                    if (j % (width + 1) == 0) {
+                        Assert.assertEquals(joint, String.valueOf(lines[i].charAt(j)));
+                    } else {
+                        Assert.assertEquals(hline, String.valueOf(lines[i].charAt(j)));
                     }
                 }
                 continue;
@@ -91,70 +90,67 @@ public class PrintTest {
             if (i % 2 == 0) {
                 Assert.assertEquals(joint, String.valueOf(lines[i].charAt(0)));
                 Assert.assertEquals(joint, String.valueOf(lines[i].charAt(lines[i].length() - 1)));
-                for(int j = 1; j < expectedRow  -1; j++){
-                    if(j % (width + 1) == 0){
-                        Assert.assertEquals(joint,String.valueOf(lines[i].charAt(j)));
-                    }
-                    else{
-                        Assert.assertEquals(hline,String.valueOf(lines[i].charAt(j)));
+                for (int j = 1; j < expectedRow - 1; j++) {
+                    if (j % (width + 1) == 0) {
+                        Assert.assertEquals(joint, String.valueOf(lines[i].charAt(j)));
+                    } else {
+                        Assert.assertEquals(hline, String.valueOf(lines[i].charAt(j)));
                     }
                 }
                 continue;
             }
             Assert.assertEquals(vline, String.valueOf(lines[i].charAt(0)));
             Assert.assertEquals(vline, String.valueOf(lines[i].charAt(lines[i].length() - 1)));
-            for(int j = 1; j < expectedRow  -1; j++){
-                if(j % (width + 1) == 0){
-                    Assert.assertEquals(vline,String.valueOf(lines[i].charAt(j)));
+            for (int j = 1; j < expectedRow - 1; j++) {
+                if (j % (width + 1) == 0) {
+                    Assert.assertEquals(vline, String.valueOf(lines[i].charAt(j)));
                 }
             }
             //header
-            if(i == 1){
-                assertContent("||name",lines[i],width,0);
-                assertContent("#age",lines[i],width,1);
-                assertContent("#country",lines[i],width,2);
+            if (i == 1) {
+                assertContent("||name", lines[i], width, 0);
+                assertContent("#age", lines[i], width, 1);
+                assertContent("#country", lines[i], width, 2);
                 continue;
             }
             DataRow row = dfIt.next();
-            for(int j = 0; j < row.size(); j++){
+            for (int j = 0; j < row.size(); j++) {
                 String c;
-                if(row.get(j) instanceof Number){
-                    c = printer.getDefaultNumberFormatter().format(row.get(j),cwidth);
-                }
-                else{
+                if (row.get(j) instanceof Number) {
+                    c = printer.getDefaultNumberFormatter().format(row.getType(j), row.get(j), cwidth);
+                } else {
                     c = row.getString(j);
                 }
-                if(j == 0){
+                if (j == 0) {
                     c = c.toUpperCase();
                 }
-                if(j ==  0 && "PARKERPARKER".equals(c)){
+                if (j == 0 && "PARKERPARKER".equals(c)) {
                     c = "PARKERPA";
-                }
-                else if(j == 2 && "GermanyGermany".equals(c)){
+                } else if (j == 2 && "GermanyGermany".equals(c)) {
                     c = "Germa...";
                 }
-                assertContent(c,lines[i],width,j);
+                assertContent(c, lines[i], width, j);
             }
         }
     }
 
     @Test
-    public void testAutoWidth(){
+    public void testAutoWidth() {
         Printer printer = PrinterBuilder.create()
                 .build();
 
         DataFrame df = DataFrame.create()
                 .addStringColumn("testA")
                 .addDoubleColumn("testB");
-        df.append("abc",1.5d);
-        df.append("abcdefgh",1.5d);
-        df.append("abcdef",1.5d);
-        df.append("abcdefghijklmnopqrstuvwxyz",1.5d);
-        df.append("ab",1.5d);
+        df.append("abc", 1.5d);
+        df.append("abcdefgh", 1.5d);
+        df.append("abcdef", 1.5d);
+        df.append("abcdefghijklmnopqrstuvwxyz", 1.5d);
+        df.append("ab", 1.5d);
         StringWriter sw = new StringWriter();
         df.write(sw, printer);
         String[] lines = sw.toString().split("\\r?\\n");
-        Assert.assertEquals("│abcdefg...  │1.50000000  │",lines[9]);
+        Assert.assertEquals("│abcdefg...  │1.50000000  │", lines[9]);
 
         printer = PrinterBuilder.create()
                 .withAutoWidth("testA")
@@ -162,11 +158,12 @@ public class PrintTest {
         sw = new StringWriter();
         df.write(sw, printer);
         lines = sw.toString().split("\\r?\\n");
-        Assert.assertEquals("│abcdefghijklmnopqrstuvwxyz │1.50000000  │",lines[9]);
+        Assert.assertEquals("│abcdefghijklmnopqrstuvwxyz │1.50000000  │", lines[9]);
     }
-    private void assertContent(String expected,  String line, int width, int col){
 
-        String content = line.substring(1+col+ col*width,1+col+ (col+1)*width).trim();
-        Assert.assertEquals(expected,content);
+    private void assertContent(String expected, String line, int width, int col) {
+
+        String content = line.substring(1 + col + col * width, 1 + col + (col + 1) * width).trim();
+        Assert.assertEquals(expected, content);
     }
 }

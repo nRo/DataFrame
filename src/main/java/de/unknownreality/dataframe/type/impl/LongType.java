@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.nio.ByteBuffer;
 
-public class LongType extends ComparableType<Long> {
+public class LongType extends NumberType<Long> {
     @Override
     public Class<Long> getType() {
         return Long.class;

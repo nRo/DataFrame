@@ -45,7 +45,7 @@ import java.util.zip.GZIPOutputStream;
  * Created by Alex on 17.06.2017.
  */
 public class CSVWriter extends DataWriter {
-    private CSVSettings settings;
+    private final CSVSettings settings;
 
     protected CSVWriter(CSVSettings settings) {
         this.settings = settings;
@@ -53,7 +53,7 @@ public class CSVWriter extends DataWriter {
 
 
     @Override
-    public void write(OutputStream os, DataContainer<?, ?> dataContainer) {
+    public void write(OutputStream os, DataContainer<? extends Header<?>, ? extends Row<?, ?>> dataContainer) {
         if (settings.isGzip()) {
             try {
                 os = new GZIPOutputStream(os);
@@ -65,7 +65,7 @@ public class CSVWriter extends DataWriter {
     }
 
     @Override
-    public void write(BufferedWriter bufferedWriter, DataContainer<?, ?> dataContainer) {
+    public void write(BufferedWriter bufferedWriter, DataContainer<? extends Header<?>, ? extends Row<?, ?>> dataContainer) {
         try {
             writeHeader(bufferedWriter, dataContainer.getHeader());
             for (Row<?, ?> row : dataContainer) {
@@ -128,7 +128,7 @@ public class CSVWriter extends DataWriter {
     }
 
     @Override
-    public void write(File file, DataContainer<?, ?> dataContainer) {
+    public void write(File file, DataContainer<? extends Header<?>, ? extends Row<?, ?>> dataContainer) {
         if (settings.isGzip()) {
             try (OutputStream outputStream = new GZIPOutputStream(new FileOutputStream(file))) {
                 write(new BufferedWriter(new OutputStreamWriter(outputStream)), dataContainer);

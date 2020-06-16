@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.nio.ByteBuffer;
 
-public class IntegerType extends ComparableType<Integer> {
+public class IntegerType extends NumberType<Integer> {
     @Override
     public Class<Integer> getType() {
         return Integer.class;

@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.nio.ByteBuffer;
 
-public class DoubleType extends ComparableType<Double> {
+public class DoubleType extends NumberType<Double> {
     @Override
     public Class<Double> getType() {
         return Double.class;

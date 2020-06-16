@@ -48,7 +48,7 @@ public final class PrinterBuilder implements WriterBuilder<Printer> {
     private int defaultColumnWidth = 12;
     private int defaultMaxContentWidth = 10;
     private ValueFormatter defaultValueFormatter = new DefaultValueFormatter();
-    private ValueFormatter defaultHeaderFormatter = (v, m) -> "#" + v.toString();
+    private ValueFormatter defaultHeaderFormatter = (t, v, m) -> "#" + v.toString();
     private ValueFormatter defaultNumberFormatter
             = new DefaultNumberFormatter();
     private Map<Object, ColumnPrintSettings> columnSettings = new HashMap<>();

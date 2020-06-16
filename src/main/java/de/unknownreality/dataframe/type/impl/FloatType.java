@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.nio.ByteBuffer;
 
-public class FloatType extends ComparableType<Float> {
+public class FloatType extends NumberType<Float> {
     @Override
     public Class<Float> getType() {
         return Float.class;

@@ -25,18 +25,19 @@
 package de.unknownreality.dataframe.print;
 
 
+import de.unknownreality.dataframe.type.ValueType;
 
 public class DefaultValueFormatter implements ValueFormatter {
     @Override
-    public String format(Object value, int maxWidth) {
-        if((value instanceof String)){
+    public String format(ValueType<?> valueType, Object value, int maxWidth) {
+        if ((value instanceof String)) {
             String strVal = (String) value;
-            if(strVal.length() > maxWidth){
-                value = strVal.substring(0,maxWidth - 3);
+            if (strVal.length() > maxWidth) {
+                value = strVal.substring(0, maxWidth - 3);
                 value += "...";
             }
         }
-        return String.format("%."+maxWidth+"s", value);
+        return String.format("%." + maxWidth + "s", value);
 
     }
 
