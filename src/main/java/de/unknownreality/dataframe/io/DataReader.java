@@ -34,7 +34,7 @@ import java.util.zip.GZIPInputStream;
 /**
  * Created by Alex on 17.06.2017.
  */
-public abstract class DataReader<R extends Row, C extends DataIterator<R>> {
+public abstract class DataReader<R extends Row<?, ?>, C extends DataIterator<R>> {
 
 
     public C load(File file) {

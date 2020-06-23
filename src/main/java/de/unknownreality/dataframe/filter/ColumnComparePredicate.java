@@ -35,7 +35,7 @@ import java.text.ParseException;
  */
 public class ColumnComparePredicate extends ComparePredicate {
 
-    private String headerB;
+    private final String headerB;
 
     /**
      * Creates a compare predicate for two given row column names and operation

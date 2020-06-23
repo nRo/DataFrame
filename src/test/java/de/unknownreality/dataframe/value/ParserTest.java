@@ -22,7 +22,7 @@
  *
  */
 
-package de.unknownreality.dataframe.common;
+package de.unknownreality.dataframe.value;
 
 import de.unknownreality.dataframe.type.TypeUtil;
 import de.unknownreality.dataframe.type.ValueTypeNotFoundException;

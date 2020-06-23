@@ -33,8 +33,8 @@ import java.io.Reader;
  * Created by Alex on 17.06.2017.
  */
 public class CSVReader extends DataReader<CSVRow, CSVIterator> {
-    private CSVSettings settings = new CSVSettings();
-    private ColumnSettings columnSettings;
+    private CSVSettings settings;
+    private final ColumnSettings columnSettings;
 
     protected CSVReader(CSVSettings settings, ColumnSettings columnSettings) {
         this.settings = settings;
@@ -42,7 +42,7 @@ public class CSVReader extends DataReader<CSVRow, CSVIterator> {
     }
 
     @Override
-    public CSVIterator load(Reader reader){
+    public CSVIterator load(Reader reader) {
         return new CSVIterator(new BufferedReader(reader), settings, columnSettings);
     }
 }

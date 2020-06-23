@@ -29,7 +29,7 @@ import java.util.List;
 
 public class DataRows extends ArrayList<DataRow>{
 
-    private DataFrame dataFrame;
+    private final DataFrame dataFrame;
 
     public DataRows(DataFrame dataFrame, List<DataRow> rows){
         this.dataFrame = dataFrame;

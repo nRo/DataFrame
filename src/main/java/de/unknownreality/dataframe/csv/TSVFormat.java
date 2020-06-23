@@ -24,14 +24,16 @@
 
 package de.unknownreality.dataframe.csv;
 
-import de.unknownreality.dataframe.io.*;
+import de.unknownreality.dataframe.io.FileFormat;
+import de.unknownreality.dataframe.io.ReadFormat;
+import de.unknownreality.dataframe.io.WriteFormat;
 
 /**
  * Created by Alex on 17.06.2017.
  */
-public class TSVFormat implements FileFormat, ReadFormat, WriteFormat {
+public class TSVFormat implements FileFormat, ReadFormat<CSVRow, CSVReaderBuilder>, WriteFormat {
     @Override
-    public ReaderBuilder getReaderBuilder() {
+    public CSVReaderBuilder getReaderBuilder() {
         return new CSVReaderBuilder().withSeparator('\t');
     }
 
@@ -40,7 +42,7 @@ public class TSVFormat implements FileFormat, ReadFormat, WriteFormat {
     }
 
     @Override
-    public WriterBuilder getWriterBuilder() {
+    public CSVWriterBuilder getWriterBuilder() {
         return CSVWriterBuilder.create().withSeparator('\t');
     }
 

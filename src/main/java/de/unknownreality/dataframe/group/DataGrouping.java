@@ -35,7 +35,7 @@ import java.util.List;
  */
 public class DataGrouping extends DefaultDataFrame {
     public final static String GROUP_INDEX = "%group_index%";
-    private DataGroup[] groups;
+    private final DataGroup[] groups;
 
     /**
      * Creates a data grouping based on a collections of {@link DataGroup data groups} and the corresponding group columns
@@ -43,11 +43,11 @@ public class DataGrouping extends DefaultDataFrame {
      * @param groups       data groups
      * @param groupColumns group columns
      */
-    public DataGrouping(List<DataGroup> groups, DataFrameColumn... groupColumns) {
+    public DataGrouping(List<DataGroup> groups, DataFrameColumn<?, ?>... groupColumns) {
         this.addIndex(GROUP_INDEX, groupColumns);
         this.groups = new DataGroup[groups.size()];
         groups.toArray(this.groups);
-        for (DataFrameColumn col : groupColumns) {
+        for (DataFrameColumn<?, ?> col : groupColumns) {
             addColumn(col);
         }
         for (int i = 0; i < groups.size(); i++) {
@@ -56,7 +56,6 @@ public class DataGrouping extends DefaultDataFrame {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public <T> DataGrouping aggregate(String columnName, AggregateFunction<T> fun) {
         return agg(columnName, fun);
     }

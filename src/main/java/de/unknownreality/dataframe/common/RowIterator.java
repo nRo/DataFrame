@@ -29,5 +29,5 @@ import java.util.Iterator;
 /**
  * Created by Alex on 17.06.2017.
  */
-public interface RowIterator<R extends Row> extends Iterator<R> {
+public interface RowIterator<R extends Row<?, ?>> extends Iterator<R> {
 }

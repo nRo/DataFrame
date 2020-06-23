@@ -69,7 +69,7 @@ public class FieldColumn {
      * @param row    row that contains the inserted value
      * @param object object that gets the value inserted
      */
-    public void set(Row row,
+    public void set(Row<?, String> row,
                     Object object) {
         set(row.get(headerName), object);
     }

@@ -58,7 +58,7 @@ public class FloatColumn extends NumberColumn<Float, FloatColumn> {
 
     @Override
     protected FloatColumn getThis() {
-        return null;
+        return this;
     }
 
 

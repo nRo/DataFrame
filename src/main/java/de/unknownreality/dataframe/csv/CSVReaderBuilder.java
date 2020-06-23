@@ -43,12 +43,12 @@ public class CSVReaderBuilder implements ReaderBuilder<CSVRow, CSVReader> {
     private boolean containsHeader = true;
     private boolean quoteDetection = true;
     private boolean singleQuoteDetection = true;
-    private List<String> ignoreColumns = new ArrayList();
-    private List<String> selectColumns = new ArrayList<>();
-    private List<String> skipPrefixes = new ArrayList<>();
-    private Map<String, Class<? extends Comparable>> columnTypeMap = new HashMap<>();
+    private final List<String> ignoreColumns = new ArrayList<>();
+    private final List<String> selectColumns = new ArrayList<>();
+    private final List<String> skipPrefixes = new ArrayList<>();
+    private final Map<String, Class<?>> columnTypeMap = new HashMap<>();
 
-    public static CSVReaderBuilder create(){
+    public static CSVReaderBuilder create() {
         return new CSVReaderBuilder();
     }
 
@@ -112,7 +112,7 @@ public class CSVReaderBuilder implements ReaderBuilder<CSVRow, CSVReader> {
         return this;
     }
 
-    public <T extends Comparable<T>> CSVReaderBuilder setColumnType(String col, Class<T> type) {
+    public CSVReaderBuilder setColumnType(String col, Class<?> type) {
         columnTypeMap.put(col, type);
         return this;
     }

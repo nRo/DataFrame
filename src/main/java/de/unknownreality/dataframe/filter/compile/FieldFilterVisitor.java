@@ -37,12 +37,12 @@ import java.util.regex.Pattern;
  * Created by Alex on 21.05.2017.
  */
 public class FieldFilterVisitor extends PredicateBaseVisitor<FilterPredicate> {
-    private static Pattern NUMBER_PATTERN = Pattern.compile("[0-9]+([\\.,][0-9]+)?");
+    private static final Pattern NUMBER_PATTERN = Pattern.compile("[0-9]+([.,][0-9]+)?");
     private static final Object NULL_RETURN_TYPE = Values.NA;
 
     @Override
     public FilterPredicate visitField_filter(PredicateParser.Field_filterContext ctx) {
-        FilterPredicate result = null;
+        FilterPredicate result;
         if(ctx.regex_filter() != null){
             RegexFilterVisitor regexFilterVisitor = new RegexFilterVisitor();
             result = regexFilterVisitor.visitRegex_filter(ctx.regex_filter());

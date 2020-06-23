@@ -32,8 +32,8 @@ import de.unknownreality.dataframe.print.PrintFormat;
  * Created by Alex on 17.06.2017.
  */
 public interface FileFormat {
-    public static CSVFormat CSV = new CSVFormat();
-    public static TSVFormat TSV = new TSVFormat();
-    public static PrintFormat Print = new PrintFormat();
+    CSVFormat CSV = new CSVFormat();
+    TSVFormat TSV = new TSVFormat();
+    PrintFormat Print = new PrintFormat();
 
 }

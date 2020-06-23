@@ -26,7 +26,7 @@ package de.unknownreality.dataframe.index.interval;
 
 
 public class IntervalNode<T> {
-    private Interval interval;
+    private final Interval interval;
     private T value;
     private IntervalNode<T> left;
     private IntervalNode<T> right;

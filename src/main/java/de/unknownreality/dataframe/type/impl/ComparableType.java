@@ -5,7 +5,7 @@ import de.unknownreality.dataframe.type.ValueType;
 import java.util.Comparator;
 
 public abstract class ComparableType<T extends Comparable<T>> extends ValueType<T> {
-    private Comparator<T> comparator = (o1, o2) -> {
+    private final Comparator<T> defaultComparator = (o1, o2) -> {
         if (o1 == null && o2 == null) {
             return 0;
         }
@@ -20,6 +20,6 @@ public abstract class ComparableType<T extends Comparable<T>> extends ValueType<
 
     @Override
     public Comparator<T> getComparator() {
-        return comparator;
+        return defaultComparator;
     }
 }

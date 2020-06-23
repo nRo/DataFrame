@@ -63,17 +63,17 @@ public class Printer extends DataWriter {
     private String innerCrossConnection = "┼";
     private int defaultColumnWidth = 12;
     private int defaultMaxContentWidth = 10;
-    private int maxAutoWidth = 500;
-    private Map<Object, ColumnPrintSettings> columnSettings = new HashMap<>();
+    private final int maxAutoWidth = 500;
+    private final Map<Object, ColumnPrintSettings> columnSettings = new HashMap<>();
     private ValueFormatter defaultValueFormatter = new DefaultValueFormatter();
     private ValueFormatter defaultHeaderFormatter = (t, v, m) -> "#" + v.toString();
-    private StringType headerType = new StringType();
+    private final StringType headerType = new StringType();
     private ValueFormatter defaultNumberFormatter
             = new DefaultNumberFormatter();
 
 
     @Override
-    public void write(BufferedWriter writer, DataContainer<? extends Header<?>, ? extends Row<?, ?>> dataContainer) {
+    public void write(BufferedWriter writer, DataContainer<?, ?> dataContainer) {
         try {
             ColumnPrintSettings[] settings = createPrintSettings(dataContainer);
             ColumnWidth[] columnWidths = createColumnWidth(dataContainer, settings);
@@ -495,16 +495,16 @@ public class Printer extends DataWriter {
     }
 
     @Override
-    public List<DataFrameColumn> getMetaColumns(DataFrame dataFrame) {
+    public List<DataFrameColumn<?, ?>> getMetaColumns(DataFrame dataFrame) {
         return null;
     }
 
     @Override
-    public ReadFormat getReadFormat() {
+    public ReadFormat<?, ?> getReadFormat() {
         return null;
     }
 
-    private class ColumnWidth {
+    private static class ColumnWidth {
         public int contentWidth;
         public int width;
     }

@@ -52,7 +52,7 @@ public class TreeGroupUtil implements GroupUtil {
         List<DataGroup> groupList = new ArrayList<>();
         DataFrameHeader header = df.getHeader().copy();
         GroupNode root = new GroupNode(null);
-        DataFrameColumn[] dfColumns = new DataFrameColumn[df.getHeader().size()];
+        DataFrameColumn<?, ?>[] dfColumns = new DataFrameColumn[df.getHeader().size()];
         df.getColumns().toArray(dfColumns);
         int[] groupColumnIndices = new int[columns.length];
         ValueType<?>[] groupColumnTypes = new ValueType[columns.length];
@@ -101,18 +101,18 @@ public class TreeGroupUtil implements GroupUtil {
                 groupColumnIndices, groupValues, header, df, rowIndex);
     }
 
-    private static DataFrameColumn[] createGroupColumns(DataFrame df, String... columns) {
-        DataFrameColumn[] groupColumns = new DataFrameColumn[columns.length];
+    private static DataFrameColumn<?, ?>[] createGroupColumns(DataFrame df, String... columns) {
+        DataFrameColumn<?, ?>[] groupColumns = new DataFrameColumn[columns.length];
         for (int i = 0; i < columns.length; i++) {
-            DataFrameColumn orgCol = df.getColumn(columns[i]);
+            DataFrameColumn<?, ?> orgCol = df.getColumn(columns[i]);
             groupColumns[i] = orgCol.copyEmpty();
         }
         return groupColumns;
     }
 
 
-    private class GroupNode {
-        private Object value;
+    private static class GroupNode {
+        private final Object value;
         private HashMap<Object, GroupNode> children;
         private DataGroup dataGroup;
 

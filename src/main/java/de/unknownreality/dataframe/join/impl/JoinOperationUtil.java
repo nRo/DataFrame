@@ -147,7 +147,7 @@ public class JoinOperationUtil {
     public static void appendGroupJoinedRows(Collection<Integer> rowIndices, DataFrame dfB,
                                              DataRow rowA, int[] joinIndicesA, int[] joinIndicesB, int joinedSize, DataFrame joinedDataFrame) {
         for (Integer rowB : rowIndices) {
-            Comparable<?>[] joinedRowValues = new Comparable<?>[joinedSize];
+            Object[] joinedRowValues = new Object[joinedSize];
             fillValues(joinIndicesA, rowA, joinedRowValues);
             fillValues(joinIndicesB, dfB.getRow(rowB), joinedRowValues);
             fillNA(joinedRowValues);

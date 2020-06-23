@@ -43,18 +43,19 @@ public class CSVIterator extends BufferedStreamIterator<CSVRow> implements DataI
     private static final Logger log = LoggerFactory.getLogger(CSVIterator.class);
 
     private int lineNumber = 0;
-    private CSVSettings csvSettings;
-    private ColumnSettings columnSettings;
-    private CSVHeader header = new CSVHeader();
+    private final CSVSettings csvSettings;
+    private final ColumnSettings columnSettings;
+    private final CSVHeader header = new CSVHeader();
     private int cols = -1;
-    private Set<String> ignoredColumns;
-    private Set<String> includedColumns;
-    Map<String, Class<? extends Comparable>> colTypes;
-    Map<String, Integer> selectedColumnsIndex = new HashMap<>();
-    private List<ColumnInformation> columnInformations = new ArrayList<>();
+    private final Set<String> ignoredColumns;
+    private final Set<String> includedColumns;
+    private final Map<String, Class<?>> colTypes;
+    private final Map<String, Integer> selectedColumnsIndex = new HashMap<>();
+    private final List<ColumnInformation> columnInformations = new ArrayList<>();
     private CSVRow bufferedRow = null;
     private boolean[] skipIndices;
-    private StringSplitter stringSplitter = new StringSplitter();
+    private final StringSplitter stringSplitter = new StringSplitter();
+
     public CSVIterator(BufferedReader reader, CSVSettings csvSettings, ColumnSettings columnSettings) {
         super(reader);
         this.csvSettings = csvSettings;
@@ -130,7 +131,7 @@ public class CSVIterator extends BufferedStreamIterator<CSVRow> implements DataI
             for (int i = 0; i < header.size(); i++) {
                 ColumnInformation columnInformation;
                 String name = header.get(i);
-                Class<? extends Comparable> type;
+                Class<?> type;
                 if ((type = colTypes.get(name)) != null) {
                     columnInformation = new ColumnInformation(i, name, type);
                 } else {

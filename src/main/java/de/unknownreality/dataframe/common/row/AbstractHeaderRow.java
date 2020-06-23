@@ -40,12 +40,12 @@ public abstract class AbstractHeaderRow<T, H extends TypeHeader<T>, V> implement
     }
 
     @Override
-    public ValueType getType(int index) {
+    public ValueType<?> getType(int index) {
         return header.getValueType(index);
     }
 
     @Override
-    public ValueType getType(T headerName) {
+    public ValueType<?> getType(T headerName) {
         return header.getValueType(headerName);
     }
 
@@ -74,7 +74,7 @@ public abstract class AbstractHeaderRow<T, H extends TypeHeader<T>, V> implement
     public Double getDouble(int index) {
         Object value = get(index);
         try {
-            return Number.class.cast(get(index)).doubleValue();
+            return ((Number) get(index)).doubleValue();
         } catch (Exception e) {
             throw new DataFrameRuntimeException("no double value in col " + index + " (" + value + ")");
         }
@@ -104,7 +104,7 @@ public abstract class AbstractHeaderRow<T, H extends TypeHeader<T>, V> implement
     public Double getDouble(T name) {
         Object value = get(name);
         try {
-            return Number.class.cast(get(name)).doubleValue();
+            return ((Number) get(name)).doubleValue();
         } catch (Exception e) {
             throw new DataFrameRuntimeException("no double value in col " + name + " (" + value + ")");
         }
@@ -157,7 +157,7 @@ public abstract class AbstractHeaderRow<T, H extends TypeHeader<T>, V> implement
     public Double toDouble(int index){
         V v = get(index);
         try{
-            return Number.class.cast(v).doubleValue();
+            return ((Number) v).doubleValue();
         }
         catch (Exception e){
             // try parsing now
@@ -184,7 +184,7 @@ public abstract class AbstractHeaderRow<T, H extends TypeHeader<T>, V> implement
     public Integer getInteger(int index) {
         Object value = get(index);
         try {
-            return Number.class.cast(get(index)).intValue();
+            return ((Number) get(index)).intValue();
         } catch (Exception e) {
             throw new DataFrameRuntimeException("no int value in col " + index + " (" + value + ")");
         }
@@ -194,7 +194,7 @@ public abstract class AbstractHeaderRow<T, H extends TypeHeader<T>, V> implement
     public Integer getInteger(T headerName) {
         Object value = get(headerName);
         try {
-            return Number.class.cast(value).intValue();
+            return ((Number) value).intValue();
         } catch (Exception e) {
             throw new DataFrameRuntimeException("no int value in col " + headerName + " (" + value + ")");
         }
@@ -204,7 +204,7 @@ public abstract class AbstractHeaderRow<T, H extends TypeHeader<T>, V> implement
     public Float getFloat(int index) {
         Object value = get(index);
         try {
-            return Number.class.cast(value).floatValue();
+            return ((Number) value).floatValue();
         } catch (Exception e) {
             throw new DataFrameRuntimeException("no float value in col " + index + " (" + value + ")");
         }
@@ -214,7 +214,7 @@ public abstract class AbstractHeaderRow<T, H extends TypeHeader<T>, V> implement
     public Float getFloat(T headerName) {
         Object value = get(headerName);
         try {
-            return Number.class.cast(value).floatValue();
+            return ((Number) value).floatValue();
         } catch (Exception e) {
             throw new DataFrameRuntimeException("no float value in col " + headerName + " (" + value + ")");
         }
@@ -224,7 +224,7 @@ public abstract class AbstractHeaderRow<T, H extends TypeHeader<T>, V> implement
     public Long getLong(int index) {
         Object value = get(index);
         try {
-            return Number.class.cast(value).longValue();
+            return ((Number) value).longValue();
         } catch (Exception e) {
             throw new DataFrameRuntimeException("no long value in col " + index + " (" + value + ")");
         }
@@ -234,7 +234,7 @@ public abstract class AbstractHeaderRow<T, H extends TypeHeader<T>, V> implement
     public Long getLong(T headerName) {
         Object value = get(headerName);
         try {
-            return Number.class.cast(value).longValue();
+            return ((Number) value).longValue();
         } catch (Exception e) {
             throw new DataFrameRuntimeException("no long value in col " + headerName + " (" + value + ")");
         }
@@ -244,7 +244,7 @@ public abstract class AbstractHeaderRow<T, H extends TypeHeader<T>, V> implement
     public Short getShort(int index) {
         Object value = get(index);
         try {
-            return Number.class.cast(value).shortValue();
+            return ((Number) value).shortValue();
         } catch (Exception e) {
             throw new DataFrameRuntimeException("no short value in col " + index + " (" + value + ")");
         }
@@ -254,7 +254,7 @@ public abstract class AbstractHeaderRow<T, H extends TypeHeader<T>, V> implement
     public Short getShort(T headerName) {
         Object value = get(headerName);
         try {
-            return Number.class.cast(value).shortValue();
+            return ((Number) value).shortValue();
         } catch (Exception e) {
             throw new DataFrameRuntimeException("no short value in col " + index + " (" + value + ")");
         }
@@ -264,7 +264,7 @@ public abstract class AbstractHeaderRow<T, H extends TypeHeader<T>, V> implement
     public Byte getByte(int index) {
         Object value = get(index);
         try {
-            return Number.class.cast(value).byteValue();
+            return ((Number) value).byteValue();
         } catch (Exception e) {
             throw new DataFrameRuntimeException("no byte value in col " + index + " (" + value + ")");
         }
@@ -274,7 +274,7 @@ public abstract class AbstractHeaderRow<T, H extends TypeHeader<T>, V> implement
     public Byte getByte(T headerName) {
         Object value = get(headerName);
         try {
-            return Number.class.cast(value).byteValue();
+            return ((Number) value).byteValue();
         } catch (Exception e) {
             throw new DataFrameRuntimeException("no byte value in col " + index + " (" + value + ")");
         }

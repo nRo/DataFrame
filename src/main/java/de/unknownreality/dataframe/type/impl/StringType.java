@@ -9,7 +9,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 public class StringType extends ComparableType<String> {
-    private Charset charSet = StandardCharsets.UTF_8;
+    private final Charset charSet = StandardCharsets.UTF_8;
 
     @Override
     public Class<String> getType() {
@@ -33,7 +33,7 @@ public class StringType extends ComparableType<String> {
     }
 
     @Override
-    protected String convertRaw(Object o) {
+    public String convertRaw(Object o) {
         return super.convertRaw(o == null ? null : String.valueOf(o));
     }
 

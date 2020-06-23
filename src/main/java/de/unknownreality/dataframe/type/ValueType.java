@@ -54,7 +54,7 @@ public abstract class ValueType<T> {
         return equals(convertRaw(a), convertRaw(b));
     }
 
-    protected T convertRaw(Object o) {
+    public T convertRaw(Object o) {
         if (o == null) {
             return null;
         }

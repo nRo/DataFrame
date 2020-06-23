@@ -39,7 +39,7 @@ public enum FieldFilterOperation {
     GE("GE","ge",">="),
     GT("GT","Gt",">"),
     LIKE("LIKE");
-    private String[] aliases;
+    private final String[] aliases;
 
     FieldFilterOperation(String... aliases){
         this.aliases = aliases;

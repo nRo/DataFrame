@@ -41,11 +41,11 @@ import java.util.NoSuchElementException;
  */
 public class DataMapper<T> implements Iterable<T> {
     private static final Logger log = LoggerFactory.getLogger(DataMapper.class);
-    private final DataContainer<? extends Header, ? extends Row> reader;
+    private final DataContainer<? extends Header<String>, ? extends Row<?, String>> reader;
     private FieldColumn[] columns;
     private final Class<T> cl;
 
-    private DataMapper(DataContainer<? extends Header, ? extends Row> reader, Class<T> cl) {
+    private DataMapper(DataContainer<? extends Header<String>, ? extends Row<?, String>> reader, Class<T> cl) {
         this.reader = reader;
         this.cl = cl;
         initFields(reader.getHeader());
@@ -60,7 +60,7 @@ public class DataMapper<T> implements Iterable<T> {
      * @param <T>    type if mapped entities
      * @return List of mapped entities
      */
-    public static <T> List<T> map(DataContainer<? extends Header, ? extends Row> reader, Class<T> cl) {
+    public static <T> List<T> map(DataContainer<? extends Header<String>, ? extends Row<?, String>> reader, Class<T> cl) {
         DataMapper<T> mapper = new DataMapper<>(reader, cl);
 
         return mapper.map();
@@ -75,9 +75,8 @@ public class DataMapper<T> implements Iterable<T> {
      * @param <T>    type if mapped entities
      * @return iterable over mapped entities
      */
-    public static <T> Iterable<T> mapEach(DataContainer<? extends Header, ? extends Row> reader, Class<T> cl) {
-        DataMapper<T> mapper = new DataMapper<>(reader, cl);
-        return mapper;
+    public static <T> Iterable<T> mapEach(DataContainer<? extends Header<String>, ? extends Row<?, String>> reader, Class<T> cl) {
+        return new DataMapper<>(reader, cl);
     }
 
 
@@ -89,8 +88,8 @@ public class DataMapper<T> implements Iterable<T> {
     public List<T> map() {
         List<T> result = new ArrayList<>();
         initFields(reader.getHeader());
-        for (Row row : reader) {
-            result.add((T)processRow(row));
+        for (Row<?, String> row : reader) {
+            result.add(processRow(row));
         }
         return result;
     }
@@ -101,7 +100,7 @@ public class DataMapper<T> implements Iterable<T> {
      *
      * @param header header of the data container
      */
-    private void initFields(Header header) {
+    private void initFields(Header<String> header) {
 
         List<FieldColumn> fieldColumnList = new ArrayList<>();
         for (Field field : cl.getDeclaredFields()) {
@@ -114,7 +113,7 @@ public class DataMapper<T> implements Iterable<T> {
             if (!isValid(headerName, header)
                     && annotation.index() != -1
                     && annotation.index() < header.size()) {
-                headerName = header.get(annotation.index()).toString();
+                headerName = header.get(annotation.index());
 
             }
             if (!isValid(headerName, header)) {
@@ -139,8 +138,7 @@ public class DataMapper<T> implements Iterable<T> {
      * @param header     header object
      * @return <tt>true</tt> header contains name
      */
-    @SuppressWarnings("unchecked")
-    private boolean isValid(Object headerName, Header header) {
+    private <T> boolean isValid(T headerName, Header<T> header) {
         return !"".equals(headerName) && header.contains(headerName);
     }
 
@@ -151,7 +149,7 @@ public class DataMapper<T> implements Iterable<T> {
      * @param row row from the data container
      * @return mapped entity
      */
-    private <R extends Row> T processRow(R row) {
+    private <R extends Row<?, String>> T processRow(R row) {
         T obj = null;
         try {
             obj = cl.newInstance();
@@ -172,7 +170,7 @@ public class DataMapper<T> implements Iterable<T> {
     @Override
     public Iterator<T> iterator() {
         return new Iterator<T>() {
-            final Iterator<? extends Row> rowIterator = reader.iterator();
+            final Iterator<? extends Row<?, String>> rowIterator = reader.iterator();
 
             @Override
             public boolean hasNext() {

@@ -58,7 +58,7 @@ public class DirectionJoinUtil{
             for(Integer rowA : node.getIndicesA()){
                 DataRow dataRowA = dfA.getRow(rowA);
                 if(node.getIndicesB() == null){
-                    Comparable<?>[] joinedRowValues = new Comparable[joinSize];
+                    Object[] joinedRowValues = new Object[joinSize];
                     fillValues(joinIndicesA, dataRowA, joinedRowValues);
                     fillNA(joinedRowValues);
                     joinedDataFrame.append(joinedRowValues);

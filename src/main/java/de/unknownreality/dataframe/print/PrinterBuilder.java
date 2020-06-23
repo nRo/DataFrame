@@ -51,7 +51,7 @@ public final class PrinterBuilder implements WriterBuilder<Printer> {
     private ValueFormatter defaultHeaderFormatter = (t, v, m) -> "#" + v.toString();
     private ValueFormatter defaultNumberFormatter
             = new DefaultNumberFormatter();
-    private Map<Object, ColumnPrintSettings> columnSettings = new HashMap<>();
+    private final Map<Object, ColumnPrintSettings> columnSettings = new HashMap<>();
 
     private PrinterBuilder() {
     }

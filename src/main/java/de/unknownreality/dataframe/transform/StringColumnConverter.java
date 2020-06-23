@@ -44,9 +44,9 @@ public class StringColumnConverter {
      *
      * @throws DataFrameException thrown if conversion not possible
      */
-    public static <V extends Comparable<V>, C extends DataFrameColumn<V, C>> C convert(StringColumn column, Class<C> colType) throws DataFrameException {
+    public static <V, C extends DataFrameColumn<V, C>> C convert(StringColumn column, Class<C> colType) throws DataFrameException {
         if (colType == StringColumn.class) {
-            return (C) column.copy();
+            return colType.cast(column.copy());
         }
         C newColumn;
         try {
@@ -66,7 +66,10 @@ public class StringColumnConverter {
             }
             V value = newColumn.getValueType().parseOrNull(column.get(i));
             if (value == null) {
-                throw new DataFrameException(String.format("error parsing value '%s' -> ", column.get(i), newColumn.getType()));
+                throw new DataFrameException(
+                        String.format("error parsing value '%s' -> %s",
+                                column.get(i),
+                                newColumn.getValueType().getType()));
             } else {
                 newColumn.append(value);
             }

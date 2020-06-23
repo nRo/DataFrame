@@ -11,13 +11,14 @@ public class JoinTree {
         All,
         FirstOnly
     }
-    Set<JoinNode> savedLeafs = new LinkedHashSet<>();
 
-    private JoinNode root = new JoinNode(null);
-    private boolean saveLeafsA;
-    private boolean saveLeafsB;
-    private int[] colIndicesA;
-    private int[] colIndicesB;
+    final Set<JoinNode> savedLeafs = new LinkedHashSet<>();
+
+    private final JoinNode root = new JoinNode(null);
+    private final boolean saveLeafsA;
+    private final boolean saveLeafsB;
+    private final int[] colIndicesA;
+    private final int[] colIndicesB;
 
     public JoinTree(LeafMode mode, DataFrame dfA, DataFrame dfB, JoinColumn... columns) {
         int i = 0;
@@ -84,8 +85,8 @@ public class JoinTree {
         return savedLeafs;
     }
 
-    public class JoinNode {
-        private Object value;
+    public static class JoinNode {
+        private final Object value;
         private HashMap<Object, JoinNode> children;
         private List<Integer> indicesA;
         private List<Integer> indicesB;

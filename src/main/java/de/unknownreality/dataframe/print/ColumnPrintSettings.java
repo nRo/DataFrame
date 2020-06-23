@@ -40,10 +40,12 @@ public class ColumnPrintSettings {
         this.autoWidth = autoWidth;
     }
 
-    public ColumnPrintSettings(Object columnHeader){
+    public ColumnPrintSettings(Object columnHeader) {
         this.columnHeader = columnHeader;
     }
-    public ColumnPrintSettings(){};
+
+    public ColumnPrintSettings() {
+    }
 
     public Integer getMaxContentWidth() {
         return maxContentWidth;

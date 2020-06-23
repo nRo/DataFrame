@@ -24,7 +24,6 @@
 
 package de.unknownreality.dataframe;
 
-import de.unknownreality.dataframe.*;
 import de.unknownreality.dataframe.column.BooleanColumn;
 import de.unknownreality.dataframe.column.DoubleColumn;
 import de.unknownreality.dataframe.column.IntegerColumn;
@@ -368,9 +367,6 @@ public class DataFrameTest {
         Assert.assertEquals(true, Values.NA.isNA(null));
         Assert.assertEquals(false, Values.NA.isNA(1));
         Assert.assertEquals(false, Values.NA.isNA("na"));
-        Assert.assertEquals(0, Values.NA.compareTo(Values.NA));
-        Assert.assertEquals(-1, Values.NA.compareTo(1));
-        Assert.assertEquals(-1, Values.NA.compareTo(-1));
 
 
         String[] header = new String[]{"A", "B", "C", "D"};

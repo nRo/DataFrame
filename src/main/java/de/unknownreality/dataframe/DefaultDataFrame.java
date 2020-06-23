@@ -54,13 +54,13 @@ public class DefaultDataFrame implements DataFrame {
     public final static int DEFAULT_HEAD_SIZE = 20;
     public final static int DEFAULT_TAIL_SIZE = 20;
     private int size;
-    private final Map<String, DataFrameColumn> columnsMap = new LinkedHashMap<>();
-    private DataFrameColumn[] columns = null;
+    private final Map<String, DataFrameColumn<?, ?>> columnsMap = new LinkedHashMap<>();
+    private DataFrameColumn<?, ?>[] columns = null;
     private DataFrameHeader header = new DataFrameHeader();
     private final Indices indices = new Indices(this);
     private JoinUtil joinUtil = new DefaultJoinUtil();
     private GroupUtil groupUtil = new TreeGroupUtil();
-    private AtomicInteger version = new AtomicInteger(0);
+    private final AtomicInteger version = new AtomicInteger(0);
     private String name;
 
     public DefaultDataFrame() {
@@ -88,7 +88,7 @@ public class DefaultDataFrame implements DataFrame {
 
     @Override
     public DefaultDataFrame setPrimaryKey(String... colNames) {
-        DataFrameColumn[] columns = new DataFrameColumn[colNames.length];
+        DataFrameColumn<?, ?>[] columns = new DataFrameColumn[colNames.length];
         for (int i = 0; i < columns.length; i++) {
             columns[i] = getColumn(colNames[i]);
         }
@@ -97,7 +97,7 @@ public class DefaultDataFrame implements DataFrame {
 
 
     @Override
-    public DefaultDataFrame setPrimaryKey(DataFrameColumn... cols) {
+    public DefaultDataFrame setPrimaryKey(DataFrameColumn<?, ?>... cols) {
         this.indices.setPrimaryKey(cols);
         return this;
     }
@@ -119,7 +119,7 @@ public class DefaultDataFrame implements DataFrame {
 
     @Override
     public DefaultDataFrame renameColumn(String name, String newName) {
-        DataFrameColumn column = columnsMap.get(name);
+        DataFrameColumn<?, ?> column = columnsMap.get(name);
         if (column == null) {
             return this;
         }
@@ -131,13 +131,13 @@ public class DefaultDataFrame implements DataFrame {
     }
 
 
-    public DefaultDataFrame replaceColumn(String existing, DataFrameColumn replacement) {
-        DataFrameColumn existingColumn = getColumn(existing);
+    public DefaultDataFrame replaceColumn(String existing, DataFrameColumn<?, ?> replacement) {
+        DataFrameColumn<?, ?> existingColumn = getColumn(existing);
         return replaceColumn(existingColumn, replacement);
     }
 
 
-    public DefaultDataFrame replaceColumn(DataFrameColumn existing, DataFrameColumn replacement) {
+    public DefaultDataFrame replaceColumn(DataFrameColumn<?, ?> existing, DataFrameColumn<?, ?> replacement) {
         int existingIndex = header.getIndex(existing.getName());
         columns[existingIndex] = replacement;
         header.replace(existing, replacement);
@@ -149,9 +149,8 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public ColumnSelection selectColumns(String... columnNames) {
-        DataFrameColumn[] columns = new DataFrameColumn[columnNames.length];
+        DataFrameColumn<?, ?>[] columns = new DataFrameColumn[columnNames.length];
         for (int i = 0; i < columnNames.length; i++) {
             columns[i] = getColumn(columnNames[i]);
         }
@@ -159,19 +158,17 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public ColumnSelection selectColumns(DataFrameColumn... columns) {
+    public ColumnSelection selectColumns(DataFrameColumn<?, ?>... columns) {
         return new ColumnSelection(this, columns);
     }
 
 
     @Override
-    @SuppressWarnings("unchecked")
-    public DefaultDataFrame addColumn(DataFrameColumn column) {
-        if(column.size() == 0 && size != 0){
-            column.appendAll(
-                    Arrays.asList(new Values.NA[size])
-            );
+    public DefaultDataFrame addColumn(DataFrameColumn<?, ?> column) {
+        if (column.size() == 0 && size != 0) {
+            for (int i = 0; i < size; i++) {
+                column.appendNA();
+            }
         }
         if (columns != null && column.size() != size) {
             throw new DataFrameRuntimeException("column lengths must be equal");
@@ -194,8 +191,8 @@ public class DefaultDataFrame implements DataFrame {
         return this;
     }
 
-    private void addToColumns(DataFrameColumn column) {
-        DataFrameColumn[] newColumns = new DataFrameColumn[columns == null ? 1 : columns.length + 1];
+    private void addToColumns(DataFrameColumn<?, ?> column) {
+        DataFrameColumn<?, ?>[] newColumns = new DataFrameColumn[columns == null ? 1 : columns.length + 1];
         if (columns != null) {
             System.arraycopy(columns, 0, newColumns, 0, columns.length);
         }
@@ -259,7 +256,6 @@ public class DefaultDataFrame implements DataFrame {
 
 
     @Override
-    @SuppressWarnings("unchecked")
     public <T> DataFrame addColumn(Class<T> type, String name, ColumnTypeMap columnTypeMap) {
         return addColumn(type, name, columnTypeMap, null);
     }
@@ -319,8 +315,8 @@ public class DefaultDataFrame implements DataFrame {
 
 
     @Override
-    public DefaultDataFrame addColumns(Collection<DataFrameColumn> columns) {
-        for (DataFrameColumn column : columns) {
+    public DefaultDataFrame addColumns(Collection<DataFrameColumn<?, ?>> columns) {
+        for (DataFrameColumn<?, ?> column : columns) {
             addColumn(column);
         }
         return this;
@@ -328,8 +324,8 @@ public class DefaultDataFrame implements DataFrame {
 
 
     @Override
-    public DefaultDataFrame addColumns(DataFrameColumn... columns) {
-        for (DataFrameColumn column : columns) {
+    public DefaultDataFrame addColumns(DataFrameColumn<?, ?>... columns) {
+        for (DataFrameColumn<?, ?> column : columns) {
             addColumn(column);
         }
         return this;
@@ -343,7 +339,7 @@ public class DefaultDataFrame implements DataFrame {
         if (dataFrame.getHeader().size() != columns.length) {
             throw new DataFrameRuntimeException("value for each column required");
         }
-        DataFrameColumn column;
+        DataFrameColumn<?, ?> column;
         Object value;
         for (int i = 0; i < columns.length; i++) {
             column = columns[i];
@@ -352,7 +348,7 @@ public class DefaultDataFrame implements DataFrame {
             if (value == null || Values.NA.equals(value)) {
                 column.appendNA();
             } else {
-                column.append(value);
+                column.appendRaw(value);
             }
             column.endDataFrameAppend();
         }
@@ -372,7 +368,7 @@ public class DefaultDataFrame implements DataFrame {
         if (values.length != columns.length) {
             throw new DataFrameRuntimeException("value for each column required");
         }
-        DataFrameColumn column;
+        DataFrameColumn<?, ?> column;
         Object value;
         for (int i = 0; i < columns.length; i++) {
             column = columns[i];
@@ -381,7 +377,7 @@ public class DefaultDataFrame implements DataFrame {
                 throw new DataFrameRuntimeException(
                         String.format("value %d has wrong type (%s != %s)", i,
                                 value == null ? "null" : value.getClass().getName(),
-                                column.getType().getName()));
+                                column.getValueType().getType().getName()));
             }
         }
         for (int i = 0; i< columns.length; i++) {
@@ -391,7 +387,7 @@ public class DefaultDataFrame implements DataFrame {
             if (value == null || value == Values.NA) {
                 column.appendNA();
             } else {
-                column.append(value);
+                column.appendRaw(value);
             }
             column.endDataFrameAppend();
         }
@@ -406,17 +402,16 @@ public class DefaultDataFrame implements DataFrame {
      * {@inheritDoc} {@link Values#NA NA} is added for all columns with no value in the provided row.
      */
     @Override
-    @SuppressWarnings("unchecked")
     public DefaultDataFrame append(DataRow row) {
         Object value;
         for (String h : header) {
-            DataFrameColumn column = columnsMap.get(h);
+            DataFrameColumn<?, ?> column = columnsMap.get(h);
             column.startDataFrameAppend();
             value = row.get(h);
             if (value == null || value == Values.NA) {
                 column.appendNA();
             } else {
-                column.append(value);
+                column.appendRaw(value);
             }
             column.endDataFrameAppend();
 
@@ -427,17 +422,16 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public DefaultDataFrame appendMatchingRow(DataRow row) {
         Object value;
         for (int i  = 0; i < row.size(); i++) {
-            DataFrameColumn column = columns[i];
+            DataFrameColumn<?, ?> column = columns[i];
             column.startDataFrameAppend();
             value = row.get(i);
             if (value == null || value == Values.NA) {
                 column.appendNA();
             } else {
-                column.append(value);
+                column.appendRaw(value);
             }
             column.endDataFrameAppend();
         }
@@ -449,7 +443,7 @@ public class DefaultDataFrame implements DataFrame {
     @Override
     public DefaultDataFrame update(DataRow dataRow) {
         for (String h : header) {
-            DataFrameColumn column = getColumn(h);
+            DataFrameColumn<?, ?> column = getColumn(h);
             Object newValue = dataRow.get(h);
             if (newValue == null) {
                 continue;
@@ -457,7 +451,7 @@ public class DefaultDataFrame implements DataFrame {
             if (newValue == Values.NA) {
                 column.setNA(dataRow.getIndex());
             } else {
-                column.set(dataRow.getIndex(), newValue);
+                column.setRaw(dataRow.getIndex(), newValue);
             }
         }
         return this;
@@ -475,7 +469,7 @@ public class DefaultDataFrame implements DataFrame {
         for (String columnName : header) {
             Class<? extends DataFrameColumn> cl = header.getColumnType(columnName);
             try {
-                DataFrameColumn column = cl.newInstance();
+                DataFrameColumn<?, ?> column = cl.newInstance();
                 column.setName(columnName);
                 addColumn(column);
             } catch (Exception e) {
@@ -504,7 +498,7 @@ public class DefaultDataFrame implements DataFrame {
 
         this.size = 0;
         this.header = new DataFrameHeader();
-        for (DataFrameColumn column : dataFrame.getColumns()) {
+        for (DataFrameColumn<?, ?> column : dataFrame.getColumns()) {
             try {
                 column.setDataFrame(null);
                 addColumn(column);
@@ -527,7 +521,7 @@ public class DefaultDataFrame implements DataFrame {
 
     @Override
     public DefaultDataFrame removeColumn(String header) {
-        DataFrameColumn column = getColumn(header);
+        DataFrameColumn<?, ?> column = getColumn(header);
         if (column == null) {
             log.error("error column not found {}", header);
             return this;
@@ -537,7 +531,7 @@ public class DefaultDataFrame implements DataFrame {
 
 
     @Override
-    public DefaultDataFrame removeColumn(DataFrameColumn column) {
+    public DefaultDataFrame removeColumn(DataFrameColumn<?, ?> column) {
         try {
             column.setDataFrame(null);
         } catch (DataFrameException e) {
@@ -552,7 +546,7 @@ public class DefaultDataFrame implements DataFrame {
         return this;
     }
 
-    private void removeFromColumns(DataFrameColumn column) {
+    private void removeFromColumns(DataFrameColumn<?, ?> column) {
         if (columns == null) {
             throw new DataFrameRuntimeException("error removing column: dataframe contains no column");
         }
@@ -560,7 +554,7 @@ public class DefaultDataFrame implements DataFrame {
             columns = null;
             return;
         }
-        DataFrameColumn[] newColumns = new DataFrameColumn[columns.length - 1];
+        DataFrameColumn<?, ?>[] newColumns = new DataFrameColumn[columns.length - 1];
         int newIndex = 0;
         boolean columnFound = false;
         for (int i = 0; i < columns.length; i++) {
@@ -581,8 +575,8 @@ public class DefaultDataFrame implements DataFrame {
     @Override
     public DefaultDataFrame sort(SortColumn... columns) {
         DataRows rows = getRows(0, size);
-        Collections.sort(rows, new RowColumnComparator(columns));
-        set(rows,indices);
+        rows.sort(new RowColumnComparator(columns));
+        set(rows, indices);
         return this;
     }
 
@@ -590,8 +584,8 @@ public class DefaultDataFrame implements DataFrame {
     @Override
     public DefaultDataFrame sort(Comparator<DataRow> comp) {
         DataRows rows = getRows(0, size);
-        Collections.sort(rows, comp);
-        set(rows,indices);
+        rows.sort(comp);
+        set(rows, indices);
         return this;
     }
 
@@ -605,8 +599,8 @@ public class DefaultDataFrame implements DataFrame {
     @Override
     public DefaultDataFrame sort(String name, SortColumn.Direction dir) {
         DataRows rows = getRows(0, size);
-        Collections.sort(rows, new RowColumnComparator(new SortColumn[]{new SortColumn(name, dir)}));
-        set(rows,indices);
+        rows.sort(new RowColumnComparator(new SortColumn[]{new SortColumn(name, dir)}));
+        set(rows, indices);
         return this;
     }
 
@@ -724,7 +718,7 @@ public class DefaultDataFrame implements DataFrame {
     @Override
     public DefaultDataFrame reverse() {
         this.version.incrementAndGet();
-        for (DataFrameColumn col : columns) {
+        for (DataFrameColumn<?, ?> col : columns) {
             col.doReverse();
         }
         this.indices.updateAllRows();
@@ -734,7 +728,7 @@ public class DefaultDataFrame implements DataFrame {
 
     @Override
     public DefaultDataFrame addIndex(String indexName, String... columnNames) {
-        DataFrameColumn[] columns = new DataFrameColumn[columnNames.length];
+        DataFrameColumn<?, ?>[] columns = new DataFrameColumn[columnNames.length];
         for (int i = 0; i < columns.length; i++) {
             columns[i] = getColumn(columnNames[i]);
         }
@@ -744,7 +738,7 @@ public class DefaultDataFrame implements DataFrame {
 
 
     @Override
-    public DefaultDataFrame addIndex(String indexName, DataFrameColumn... columns) {
+    public DefaultDataFrame addIndex(String indexName, DataFrameColumn<?, ?>... columns) {
         indices.addIndex(indexName, columns);
         return this;
     }
@@ -857,16 +851,15 @@ public class DefaultDataFrame implements DataFrame {
     }
 
 
-    @SuppressWarnings("unchecked")
     @Override
-    public <T, C extends DataFrameColumn<T, C>> DataFrameColumn<T, C> getColumn(String name) {
+    public DataFrameColumn<?, ?> getColumn(String name) {
         return columnsMap.get(name);
     }
 
 
     @Override
-    public <T extends DataFrameColumn> T getColumn(String name, Class<T> cl) {
-        DataFrameColumn column = columnsMap.get(name);
+    public <T extends DataFrameColumn<?, T>> T getColumn(String name, Class<T> cl) {
+        DataFrameColumn<?, ?> column = columnsMap.get(name);
         if (column == null) {
             throw new DataFrameRuntimeException(String.format("column '%s' not found", name));
         }
@@ -1033,7 +1026,7 @@ public class DefaultDataFrame implements DataFrame {
 
 
     @Override
-    public boolean containsColumn(DataFrameColumn column) {
+    public boolean containsColumn(DataFrameColumn<?, ?> column) {
         for (int i = 0; i < columns.length; i++) {
             if (columns[i] == column) {
                 return true;
@@ -1043,14 +1036,14 @@ public class DefaultDataFrame implements DataFrame {
     }
 
 
-    protected void notifyColumnValueChanged(DataFrameColumn column, int index, Object value) {
+    protected void notifyColumnValueChanged(DataFrameColumn<?, ?> column, int index, Object value) {
         if (indices.isIndexColumn(column)) {
             indices.updateValue(column, getRow(index));
         }
     }
 
 
-    protected void notifyColumnChanged(DataFrameColumn column) {
+    protected void notifyColumnChanged(DataFrameColumn<?, ?> column) {
         if (indices.isIndexColumn(column)) {
             indices.updateColumn(column);
         }
@@ -1058,7 +1051,7 @@ public class DefaultDataFrame implements DataFrame {
 
 
     @Override
-    public boolean isIndexColumn(DataFrameColumn column) {
+    public boolean isIndexColumn(DataFrameColumn<?, ?> column) {
         return indices.isIndexColumn(column);
     }
 
@@ -1097,7 +1090,7 @@ public class DefaultDataFrame implements DataFrame {
 
 
     @Override
-    public Collection<DataFrameColumn> getColumns() {
+    public Collection<DataFrameColumn<?, ?>> getColumns() {
         return Arrays.asList(columns);
     }
 
@@ -1180,7 +1173,7 @@ public class DefaultDataFrame implements DataFrame {
         if (newValue == null || newValue == Values.NA) {
             columns[col].setNA(row);
         } else {
-            columns[col].set(row, newValue);
+            columns[col].setRaw(row, newValue);
         }
         indices.update(getRow(row));
     }

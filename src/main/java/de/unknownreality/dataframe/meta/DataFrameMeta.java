@@ -59,34 +59,34 @@ public class DataFrameMeta {
     /**
      * Creates data frame meta information
      *
-     * @param readFormatClass class of used read format
-     * @param columns columns contained in meta file
-     * @param writerAttributes   attributes of the used data writer
+     * @param readFormatClass  class of used read format
+     * @param columns          columns contained in meta file
+     * @param writerAttributes attributes of the used data writer
      * @return data frame meta information
      */
-    public static DataFrameMeta create(Class<? extends ReadFormat> readFormatClass,List<DataFrameColumn> columns, Map<String, String> writerAttributes) {
+    public static DataFrameMeta create(Class<? extends ReadFormat> readFormatClass, List<DataFrameColumn<?, ?>> columns, Map<String, String> writerAttributes) {
         int size = 0;
-        if(!columns.isEmpty()){
+        if (!columns.isEmpty()) {
             size = columns.get(0).size();
         }
-        return create(size,readFormatClass,columns,writerAttributes);
+        return create(size, readFormatClass, columns, writerAttributes);
     }
 
     /**
      * Creates data frame meta information
      *
-     * @param size size of the data frame
-     * @param readFormatClass class of used read format
-     * @param columns columns contained in meta file
-     * @param writerAttributes   attributes of the used data writer
+     * @param size             size of the data frame
+     * @param readFormatClass  class of used read format
+     * @param columns          columns contained in meta file
+     * @param writerAttributes attributes of the used data writer
      * @return data frame meta information
      */
-    public static DataFrameMeta create(int size, Class<? extends ReadFormat> readFormatClass,List<DataFrameColumn> columns, Map<String, String> writerAttributes) {
+    public static DataFrameMeta create(int size, Class<? extends ReadFormat> readFormatClass, List<DataFrameColumn<?, ?>> columns, Map<String, String> writerAttributes) {
         DataFrameMeta dataFrameMetaFile = new DataFrameMeta();
         dataFrameMetaFile.readFormatClass = readFormatClass;
         dataFrameMetaFile.attributes = writerAttributes;
         dataFrameMetaFile.size = size;
-        for(DataFrameColumn column : columns){
+        for (DataFrameColumn<?, ?> column : columns) {
             dataFrameMetaFile.columns.put(column.getName(), column.getClass());
         }
         return dataFrameMetaFile;

@@ -30,7 +30,7 @@ import de.unknownreality.dataframe.DataRow;
  * Created by algru on 11.06.2017.
  */
 public class GroupRow extends DataRow {
-    private DataGroup group;
+    private final DataGroup group;
     public GroupRow(DataGroup group, DataGrouping grouping,int index) {
         super(grouping, index);
         this.group = group;

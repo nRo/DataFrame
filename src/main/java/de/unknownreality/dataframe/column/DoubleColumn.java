@@ -55,13 +55,6 @@ public class DoubleColumn extends NumberColumn<Double, DoubleColumn> {
         super(name, values, size);
     }
 
-
-    @Override
-    public Class<Double> getType() {
-        return Double.class;
-    }
-
-
     @Override
     protected DoubleColumn getThis() {
         return this;

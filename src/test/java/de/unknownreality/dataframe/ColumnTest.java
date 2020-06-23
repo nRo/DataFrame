@@ -41,7 +41,7 @@ public class ColumnTest {
     public void testBasicColumn() {
         IntegerColumn basicColumn = new IntegerColumn("test");
 
-        Assert.assertEquals(true, basicColumn.isEmpty());
+        Assert.assertTrue(basicColumn.isEmpty());
 
         basicColumn.append(3);
         basicColumn.append(2);
@@ -52,21 +52,17 @@ public class ColumnTest {
         basicColumn.toArray(a);
         for (int i = 0; i < a.length; i++) {
             if (i >= 4) {
-                Assert.assertEquals(null, a[i]);
+                Assert.assertNull(a[i]);
             }
         }
 
 
-        Assert.assertEquals(false, basicColumn.isEmpty());
+        Assert.assertFalse(basicColumn.isEmpty());
 
-        Assert.assertEquals(true, basicColumn.contains(1));
-        Assert.assertEquals(false, basicColumn.contains(5));
-        Assert.assertEquals(true,
-                basicColumn.containsAll(Arrays.asList(1, 2))
-        );
-        Assert.assertEquals(false,
-                basicColumn.containsAll(Arrays.asList(1, 2, 5))
-        );
+        Assert.assertTrue(basicColumn.contains(1));
+        Assert.assertFalse(basicColumn.contains(5));
+        Assert.assertTrue(basicColumn.containsAll(Arrays.asList(1, 2)));
+        Assert.assertFalse(basicColumn.containsAll(Arrays.asList(1, 2, 5)));
 
         basicColumn.sort(Comparator.comparingDouble(o -> o));
 
@@ -504,7 +500,7 @@ public class ColumnTest {
         dataFrame.addShortColumn("short");
         dataFrame.addStringColumn("string");
 
-        Comparable[] values = new Comparable[]{true, (byte) 1, 2.5d, 3.5f, 4, 5L, (short) 6, "7"};
+        Object[] values = new Object[]{true, (byte) 1, 2.5d, 3.5f, 4, 5L, (short) 6, "7"};
 
         dataFrame.append(values);
         DataRow row = dataFrame.getRow(0);

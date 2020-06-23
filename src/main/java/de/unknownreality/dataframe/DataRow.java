@@ -30,9 +30,9 @@ import de.unknownreality.dataframe.common.row.UpdatableRow;
  * Created by Alex on 12.06.2017.
  */
 public class DataRow extends UpdatableRow<String, DataFrameHeader, Object> {
-    private DataFrame dataFrame;
-    private int size;
-    private int rowVersion;
+    private final DataFrame dataFrame;
+    private final int size;
+    private final int rowVersion;
 
     public DataRow(DataFrame dataFrame, int index) {
         super(dataFrame.getHeader(), index);
@@ -122,7 +122,7 @@ public class DataRow extends UpdatableRow<String, DataFrameHeader, Object> {
         if (i >= dataFrame.size()) {
             throw new DataFrameRuntimeException("index out of bounds");
         }
-        Object[] values = new Comparable[dataFrame.getHeader().size()];
+        Object[] values = new Object[dataFrame.getHeader().size()];
         for (int j = 0; j < dataFrame.getHeader().size(); j++) {
             Object value = dataFrame.getValue(j, i);
             if (Values.NA.isNA(value)) {

@@ -31,8 +31,8 @@ import de.unknownreality.dataframe.type.ValueType;
  * Created by Alex on 10.03.2016.
  */
 public class DataGroup extends DefaultDataFrame {
-    private GroupHeader groupHeader;
-    private GroupValues groupValues;
+    private final GroupHeader groupHeader;
+    private final GroupValues groupValues;
 
     /**
      * Creates a data grouping using group columns and the respective values

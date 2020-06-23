@@ -129,7 +129,8 @@ public abstract class BasicColumn<T, C extends BasicColumn<T, C>> extends DataFr
 
     @Override
     public boolean isValueValid(Object value) {
-        return Values.NA.isNA(value) || getType().isAssignableFrom(value.getClass());
+        return Values.NA.isNA(value) ||
+                getValueType().getType().isAssignableFrom(value.getClass());
     }
 
     @Override
@@ -221,7 +222,6 @@ public abstract class BasicColumn<T, C extends BasicColumn<T, C>> extends DataFr
     @Override
     protected boolean doAppendNA() {
         return doAppend(null);
-
     }
 
     @Override
@@ -265,16 +265,15 @@ public abstract class BasicColumn<T, C extends BasicColumn<T, C>> extends DataFr
     @SuppressWarnings("unchecked")
     @Override
     public void clear() {
-        values = (T[]) Array.newInstance(getType(), INIT_SIZE);
+        values = (T[]) Array.newInstance(getValueType().getType(), INIT_SIZE);
         size = 0;
     }
 
-
-    class BasicValueList<E> extends AbstractList<E>
+    static class BasicValueList<E> extends AbstractList<E>
             implements RandomAccess, java.io.Serializable {
         private static final long serialVersionUID = -2764017481108945198L;
         private final E[] a;
-        private int size;
+        private final int size;
 
         BasicValueList(E[] array, int size) {
             a = Objects.requireNonNull(array);

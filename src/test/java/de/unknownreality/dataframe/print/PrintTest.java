@@ -22,10 +22,12 @@
  *
  */
 
-package de.unknownreality.dataframe;
+package de.unknownreality.dataframe.print;
 
-import de.unknownreality.dataframe.print.Printer;
-import de.unknownreality.dataframe.print.PrinterBuilder;
+import de.unknownreality.dataframe.ColumnTypeMap;
+import de.unknownreality.dataframe.DataFrame;
+import de.unknownreality.dataframe.DataFrameLoaderTest;
+import de.unknownreality.dataframe.DataRow;
 import org.junit.Assert;
 import org.junit.Test;
 

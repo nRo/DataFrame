@@ -107,14 +107,14 @@ public abstract class DataFrameColumn<T, C extends DataFrameColumn<T, C>> implem
     }
 
     /**
-     * Used by {@link #sort()} to sort the column values by their {@linkplain Comparable natural ordering}
+     * Used by {@link #sort()} to sort the column values by their natural ordering
      *
      * @see #sort()
      */
     protected abstract void doSort();
 
     /**
-     * Sorts the column values by their {@linkplain Comparable natural ordering}
+     * Sorts the column values by their natural ordering
      * <p>Calls {@link #notifyDataFrameValueChanged(int)} to ensure data frame index consistency</p>
      *
      * @return <tt>self</tt> for method chaining
@@ -135,7 +135,7 @@ public abstract class DataFrameColumn<T, C extends DataFrameColumn<T, C>> implem
     public Double toDouble(int index) {
         T v = get(index);
         try{
-            return Number.class.cast(v).doubleValue();
+            return ((Number) v).doubleValue();
         }
         catch (Exception e){
             // try parsing now
@@ -168,17 +168,6 @@ public abstract class DataFrameColumn<T, C extends DataFrameColumn<T, C>> implem
 
 
     /**
-     * Returns the type of the values in this column.
-     * The type needs to extend {@link Comparable}
-     *
-     * @return type of the values in this column
-     */
-    public Class<T> getType() {
-        return getValueType().getType();
-    }
-
-
-    /**
      * Used by {@link #set(int, T)} to set a value at a specified index
      *
      * @param index index of the new value
@@ -199,6 +188,20 @@ public abstract class DataFrameColumn<T, C extends DataFrameColumn<T, C>> implem
         doSet(index, value);
         notifyDataFrameValueChanged(index);
         return getThis();
+    }
+
+    /**
+     * Sets a raw value at a specified index.
+     * The raw value is converted first using {@link ValueType#convertRaw(Object)}.
+     * A runtime exception is thrown if the value type is invalid
+     * <p>Calls {@link #notifyDataFrameValueChanged(int)} to ensure data frame index consistency</p>
+     *
+     * @param index index of the new value
+     * @param value value to be doSet
+     * @return <tt>self</tt> for method chaining
+     */
+    public final C setRaw(int index, Object value) {
+        return set(index, getValueType().convertRaw(value));
     }
 
 
@@ -335,9 +338,13 @@ public abstract class DataFrameColumn<T, C extends DataFrameColumn<T, C>> implem
      */
     public abstract boolean isValueValid(Object value);
 
-    public abstract<H> T getValueFromRow(Row<?,H> row,H headerName);
+    public <H> T getValueFromRow(Row<?, H> row, H headerName) {
+        return row.get(headerName, getValueType().getType());
+    }
 
-    public abstract T getValueFromRow(Row<?,?> row, int headerIndex);
+    public T getValueFromRow(Row<?, ?> row, int headerIndex) {
+        return row.get(headerIndex, getValueType().getType());
+    }
 
     /**
      * A new value is appended at the end of this column using {@link #doAppend(T)}.
@@ -358,10 +365,25 @@ public abstract class DataFrameColumn<T, C extends DataFrameColumn<T, C>> implem
     }
 
     /**
+     * A new raw value is appended at the end of this column using {@link #doAppend(T)}.
+     * The raw value is converted first using {@link ValueType#convertRaw(Object)}.
+     * A runtime exception is thrown if the value type is invalid
+     * <p>Calls{@link #validateAppend()} to ensure data frame index consistency</p>
+     *
+     * @param value value to be appended
+     * @return <tt>true</tt> if the value is successfully appended
+     * @see #validateAppend()
+     */
+    public final boolean appendRaw(Object value) {
+        return doAppend(getValueType().convertRaw(value));
+    }
+
+    /**
      * A new value is appended at the end of this column using {@link #doAppend(T)}.
      * <p>Calls{@link #validateAppend()} to ensure data frame index consistency</p>
-     * @param <H> header value type
-     * @param row row containing the value
+     *
+     * @param <H>        header value type
+     * @param row        row containing the value
      * @param headerName headerName of the value within the row
      * @return <tt>true</tt> if the value is successfully appended
      * @see #validateAppend()

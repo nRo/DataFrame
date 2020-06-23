@@ -95,7 +95,7 @@ public class BooleanColumn extends BasicColumn<Boolean, BooleanColumn> {
 
     @Override
     protected BooleanColumn getThis() {
-        return null;
+        return this;
     }
 
 

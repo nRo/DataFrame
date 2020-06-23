@@ -51,7 +51,7 @@ public class DataFrameHeader implements TypeHeader<String> {
      * @param column     new data frame column
      * @return <tt>self</tt> for method chaining
      */
-    public DataFrameHeader add(String headerName, DataFrameColumn<?, ?> column) {
+    public <V> DataFrameHeader add(String headerName, DataFrameColumn<?, ?> column) {
         return add(headerName, column.getClass(), column.getValueType());
     }
 
@@ -100,7 +100,7 @@ public class DataFrameHeader implements TypeHeader<String> {
      * @param type        replacement column value type
      * @return <tt>self</tt> for method chaining
      */
-    public DataFrameHeader replace(String existing, String replacement, Class<? extends DataFrameColumn> colClass, ValueType<?> type) {
+    public <V> DataFrameHeader replace(String existing, String replacement, Class<? extends DataFrameColumn> colClass, ValueType<?> type) {
         Integer index = headerMap.get(existing);
         if (index == null) {
             throw new DataFrameRuntimeException(String.format("header not found: %s", existing));
@@ -343,7 +343,7 @@ public class DataFrameHeader implements TypeHeader<String> {
         return add(column.getName(), column.getClass(), column.getValueType());
     }
 
-    public DataFrameHeader replace(DataFrameColumn<?, ?> existing, DataFrameColumn<?, ?> replacement) {
+    public <C> DataFrameHeader replace(DataFrameColumn<?, ?> existing, DataFrameColumn<?, ?> replacement) {
         return replace(existing.getName(), replacement.getName(), replacement.getClass(), replacement.getValueType());
     }
 

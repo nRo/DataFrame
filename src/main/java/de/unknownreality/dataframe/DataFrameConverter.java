@@ -46,17 +46,17 @@ import java.util.List;
 public class DataFrameConverter {
     private static final Logger log = LoggerFactory.getLogger(DataFrameConverter.class);
 
-    public static boolean SAMPLE_ROW_DETECTION = true;
+    public static final boolean SAMPLE_ROW_DETECTION = true;
 
     @SuppressWarnings("unchecked")
-    private static Class<? extends Comparable<?>>[] TYPES = new Class[]
+    private final static Class<?>[] TYPES = new Class[]
             {
                     Boolean.class,
                     Integer.class,
                     Long.class,
                     Double.class
             };
-    private static ValueType<?>[] VALUE_TYPES = new ValueType[]
+    private final static ValueType<?>[] VALUE_TYPES = new ValueType[]
             {
                     TypeUtil.findTypeOrNull(Boolean.class),
                     TypeUtil.findTypeOrNull(Integer.class),
@@ -79,7 +79,7 @@ public class DataFrameConverter {
      * @param filterPredicate row filter
      * @return created data frame
      */
-    public static <R extends Row> DataFrame fromDataIterator(DataIterator<R> dataIterator, FilterPredicate filterPredicate) {
+    public static <R extends Row<?, ?>> DataFrame fromDataIterator(DataIterator<R> dataIterator, FilterPredicate filterPredicate) {
         return fromDataIterator(dataIterator, null, filterPredicate);
     }
 
@@ -95,8 +95,7 @@ public class DataFrameConverter {
      * @param filterPredicate    row filter
      * @return created data frame
      */
-    @SuppressWarnings("unchecked")
-    public static <R extends Row> DataFrame fromDataIterator(DataIterator<R> dataIterator, List<ColumnInformation> columnsInformation, FilterPredicate filterPredicate) {
+    public static <R extends Row<?, ?>> DataFrame fromDataIterator(DataIterator<R> dataIterator, List<ColumnInformation> columnsInformation, FilterPredicate filterPredicate) {
         return fromDataIterator(dataIterator, -1, columnsInformation, filterPredicate);
     }
 
@@ -114,7 +113,7 @@ public class DataFrameConverter {
      * @return created data frame
      */
     @SuppressWarnings("unchecked")
-    public static <R extends Row> DataFrame fromDataIterator(DataIterator<R> dataIterator, int expectedSize, List<ColumnInformation> columnsInformation, FilterPredicate filterPredicate) {
+    public static <R extends Row<?, ?>> DataFrame fromDataIterator(DataIterator<R> dataIterator, int expectedSize, List<ColumnInformation> columnsInformation, FilterPredicate filterPredicate) {
 
         if (columnsInformation == null) {
             columnsInformation = new ArrayList<>(dataIterator.getColumnsInformation());
@@ -124,13 +123,13 @@ public class DataFrameConverter {
 
         int columnCount = dataIterator.getColumnsInformation().size();
         DataFrame dataFrame = new DefaultDataFrame();
-        DataFrameColumn[] columns = new DataFrameColumn[columnCount];
+        DataFrameColumn<?, ?>[] columns = new DataFrameColumn[columnCount];
         boolean[] autodetect = new boolean[columns.length];
         boolean[][] types = new boolean[columns.length][TYPES.length];
         boolean hasAutodetect = false;
         for (int i = 0; i < columnCount; i++) {
             ColumnInformation columnInformation = columnsInformation.get(i);
-            Class colType = columnInformation.getColumnType();
+            Class<?> colType = columnInformation.getColumnType();
 
             DataFrameColumn<?, ?> col;
             try {
@@ -155,7 +154,7 @@ public class DataFrameConverter {
         }
         int r = 0;
         for (R row : dataIterator) {
-            Object[] rowValues = new Comparable[columnCount];
+            Object[] rowValues = new Object[columnCount];
             for (int i = 0; i < columnCount; i++) {
                 ColumnInformation columnInformation = columnsInformation.get(i);
                 Object val = null;
@@ -181,7 +180,7 @@ public class DataFrameConverter {
                 }
                 rowValues[i] = val;
             }
-            if (hasAutodetect || filterPredicate.valid(new BasicRow(dataFrame.getHeader(), rowValues, dataFrame.size() - 1))) {
+            if (hasAutodetect || filterPredicate.valid(new BasicRow<>(dataFrame.getHeader(), rowValues, dataFrame.size() - 1))) {
                 dataFrame.append(rowValues);
             }
             r++;
@@ -221,13 +220,12 @@ public class DataFrameConverter {
         return row % 10000000 == 0;
     }
 
-    @SuppressWarnings("unchecked")
     private static void replaceAutodetectColumns(DataFrame dataFrame, boolean[] autodetect, boolean[][] types) {
-        DataFrameColumn[] newColumns = new DataFrameColumn[autodetect.length];
+        DataFrameColumn<?, ?>[] newColumns = new DataFrameColumn[autodetect.length];
         List<String> columnNames = new ArrayList<>(dataFrame.getColumnNames());
         for (int i = 0; i < autodetect.length; i++) {
             if (autodetect[i]) {
-                Class<? extends Comparable> colType = null;
+                Class<?> colType = null;
                 for (int j = 0; j < TYPES.length; j++) {
                     if (types[i][j]) {
                         colType = TYPES[j];
@@ -237,7 +235,7 @@ public class DataFrameConverter {
                 if (colType == null) {
                     continue;
                 }
-                DataFrameColumn newColumn = ColumnTypeMap.createColumn(colType);
+                DataFrameColumn<?, ?> newColumn = ColumnTypeMap.createColumn(colType);
                 newColumn.setName(columnNames.get(i));
                 newColumn.setCapacity(dataFrame.size());
                 newColumns[i] = newColumn;
@@ -262,15 +260,13 @@ public class DataFrameConverter {
                     newColumns[j] = null;
                     continue;
                 }
-                newColumns[j].append(
-                        currentParsedVal
-                );
+                newColumns[j].appendRaw(currentParsedVal);
             }
         }
 
         int i = 0;
-        List<DataFrameColumn> columns = new ArrayList<>(dataFrame.getColumns());
-        for (DataFrameColumn column : columns) {
+        List<DataFrameColumn<?, ?>> columns = new ArrayList<>(dataFrame.getColumns());
+        for (DataFrameColumn<?, ?> column : columns) {
             if (newColumns[i] != null) {
                 dataFrame.replaceColumn(column, newColumns[i]);
             }
@@ -289,8 +285,7 @@ public class DataFrameConverter {
      * @param dataIterator parent data container
      * @return created data frame
      */
-    @SuppressWarnings("unchecked")
-    public static <R extends Row> DataFrame fromDataIterator(DataIterator<R> dataIterator) {
+    public static <R extends Row<?, ?>> DataFrame fromDataIterator(DataIterator<R> dataIterator) {
         return fromDataIterator(dataIterator, FilterPredicate.EMPTY_FILTER);
     }
 }

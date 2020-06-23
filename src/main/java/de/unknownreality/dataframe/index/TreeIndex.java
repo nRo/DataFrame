@@ -35,11 +35,11 @@ import java.util.*;
  */
 public class TreeIndex implements Index {
     private final Map<Integer, TreeNode> indexNodeMap = new HashMap<>();
-    private TreeNode root = new TreeNode(null, null);
+    private final TreeNode root = new TreeNode(null, null);
 
-    private final Map<DataFrameColumn, Integer> columnIndexMap = new LinkedHashMap<>();
+    private final Map<DataFrameColumn<?, ?>, Integer> columnIndexMap = new LinkedHashMap<>();
     private final String name;
-    private boolean unique = false;
+    private boolean unique;
 
     /**
      * Creates a multi index using more that one column
@@ -48,16 +48,16 @@ public class TreeIndex implements Index {
      * @param unique    defines whether this index only allows unique values
      * @param columns   index columns
      */
-    public TreeIndex(String indexName, boolean unique, DataFrameColumn... columns) {
+    public TreeIndex(String indexName, boolean unique, DataFrameColumn<?, ?>... columns) {
         int i = 0;
-        for (DataFrameColumn column : columns) {
+        for (DataFrameColumn<?, ?> column : columns) {
             columnIndexMap.put(column, i++);
         }
         this.name = indexName;
         this.unique = unique;
     }
 
-    public TreeIndex(String indexName, DataFrameColumn... columns) {
+    public TreeIndex(String indexName, DataFrameColumn<?, ?>... columns) {
         this(indexName, false, columns);
     }
 
@@ -78,7 +78,7 @@ public class TreeIndex implements Index {
     }
 
     @Override
-    public boolean containsColumn(DataFrameColumn column) {
+    public boolean containsColumn(DataFrameColumn<?, ?> column) {
         return columnIndexMap.containsKey(column);
     }
 
@@ -88,7 +88,7 @@ public class TreeIndex implements Index {
     }
 
     @Override
-    public void replaceColumn(DataFrameColumn existing, DataFrameColumn replacement) {
+    public void replaceColumn(DataFrameColumn<?, ?> existing, DataFrameColumn<?, ?> replacement) {
         Integer index = columnIndexMap.get(existing);
         if (index == null) {
             throw new DataFrameRuntimeException(String.format("column not found: %s", existing.getName()));
@@ -98,7 +98,7 @@ public class TreeIndex implements Index {
     }
 
     @Override
-    public List<DataFrameColumn> getColumns() {
+    public List<DataFrameColumn<?, ?>> getColumns() {
         return new ArrayList<>(columnIndexMap.keySet());
     }
 
@@ -150,9 +150,9 @@ public class TreeIndex implements Index {
     }
 
     private Object[] createValues(DataRow dataRow) {
-        Object[] values = new Comparable[columnIndexMap.size()];
+        Object[] values = new Object[columnIndexMap.size()];
         int i = 0;
-        for (DataFrameColumn column : columnIndexMap.keySet()) {
+        for (DataFrameColumn<?, ?> column : columnIndexMap.keySet()) {
             values[i++] = dataRow.get(column.getName());
         }
         return values;
@@ -184,11 +184,11 @@ public class TreeIndex implements Index {
 
     }
 
-    private class TreeNode {
-        private Object value;
+    private static class TreeNode {
+        private final Object value;
         private HashMap<Object, TreeNode> children;
         private List<Integer> indices;
-        private TreeNode parent;
+        private final TreeNode parent;
 
         public TreeNode(TreeNode parent, Object value) {
             this.value = value;

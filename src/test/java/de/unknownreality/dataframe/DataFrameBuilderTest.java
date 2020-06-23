@@ -24,9 +24,6 @@
 
 package de.unknownreality.dataframe;
 
-import de.unknownreality.dataframe.DataFrame;
-import de.unknownreality.dataframe.DataFrameBuilder;
-import de.unknownreality.dataframe.DataFrameColumn;
 import de.unknownreality.dataframe.group.DataGrouping;
 import de.unknownreality.dataframe.group.GroupUtil;
 import de.unknownreality.dataframe.group.impl.TreeGroupUtil;
@@ -62,7 +59,7 @@ public class DataFrameBuilderTest {
             }
         };
         DataFrame dataFrame = DataFrameBuilder.create()
-            .addBooleanColumn("boolean")
+                .addBooleanColumn("boolean")
                 .addByteColumn("byte")
                 .addFloatColumn("float")
                 .addIntegerColumn("integer")
@@ -72,23 +69,23 @@ public class DataFrameBuilderTest {
                 .setGroupUtil(groupUtil)
                 .setJoinUtil(joinUtil).build();
 
-        dataFrame.append(true,(byte)0,1f,1,1l,(short)1,"A");
-        dataFrame.append(false,(byte)1,2f,2,2l,(short)2,"B");
+        dataFrame.append(true, (byte) 0, 1f, 1, 1L, (short) 1, "A");
+        dataFrame.append(false, (byte) 1, 2f, 2, 2L, (short) 2, "B");
 
-        Assert.assertEquals(7,dataFrame.getColumns().size());
-        Iterator<DataFrameColumn> columnIterator = dataFrame.getColumns().iterator();
-        Assert.assertEquals(true,columnIterator.next().get(0));
-        Assert.assertEquals((byte)0,columnIterator.next().get(0));
-        Assert.assertEquals(1f,columnIterator.next().get(0));
-        Assert.assertEquals(1,columnIterator.next().get(0));
-        Assert.assertEquals(1l,columnIterator.next().get(0));
-        Assert.assertEquals((short)1,columnIterator.next().get(0));
-        Assert.assertEquals("A",columnIterator.next().get(0));
+        Assert.assertEquals(7, dataFrame.getColumns().size());
+        Iterator<DataFrameColumn<?, ?>> columnIterator = dataFrame.getColumns().iterator();
+        Assert.assertEquals(true, columnIterator.next().get(0));
+        Assert.assertEquals((byte) 0, columnIterator.next().get(0));
+        Assert.assertEquals(1f, columnIterator.next().get(0));
+        Assert.assertEquals(1, columnIterator.next().get(0));
+        Assert.assertEquals(1L, columnIterator.next().get(0));
+        Assert.assertEquals((short) 1, columnIterator.next().get(0));
+        Assert.assertEquals("A", columnIterator.next().get(0));
         dataFrame.groupBy("boolean");
-        Assert.assertEquals(1,groupCount.get());
+        Assert.assertEquals(1, groupCount.get());
 
         DataFrame copy = dataFrame.copy();
-        dataFrame.joinInner(copy,"byte");
-        Assert.assertEquals(1,joinCount.get());
+        dataFrame.joinInner(copy, "byte");
+        Assert.assertEquals(1, joinCount.get());
     }
 }

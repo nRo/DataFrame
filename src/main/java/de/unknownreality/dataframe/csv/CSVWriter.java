@@ -65,7 +65,7 @@ public class CSVWriter extends DataWriter {
     }
 
     @Override
-    public void write(BufferedWriter bufferedWriter, DataContainer<? extends Header<?>, ? extends Row<?, ?>> dataContainer) {
+    public void write(BufferedWriter bufferedWriter, DataContainer<?, ?> dataContainer) {
         try {
             writeHeader(bufferedWriter, dataContainer.getHeader());
             for (Row<?, ?> row : dataContainer) {
@@ -152,13 +152,13 @@ public class CSVWriter extends DataWriter {
     }
 
     @Override
-    public List<DataFrameColumn> getMetaColumns(DataFrame dataFrame) {
+    public List<DataFrameColumn<?, ?>> getMetaColumns(DataFrame dataFrame) {
         return new ArrayList<>(dataFrame.getColumns());
     }
 
 
     @Override
-    public ReadFormat getReadFormat() {
+    public ReadFormat<CSVRow, CSVReaderBuilder> getReadFormat() {
         return FileFormat.CSV;
     }
 }

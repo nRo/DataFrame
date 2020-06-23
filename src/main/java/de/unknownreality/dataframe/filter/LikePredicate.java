@@ -54,7 +54,7 @@ public class LikePredicate extends FilterPredicate {
 
     private final String query;
     private final String headerName;
-    private Type type;
+    private final Type type;
     private BiFunction<String, String, Boolean> compareFunction;
     private String format;
     private Pattern containsPattern;

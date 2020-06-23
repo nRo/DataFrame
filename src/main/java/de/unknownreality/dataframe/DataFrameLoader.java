@@ -39,7 +39,7 @@ import java.net.URL;
  * Created by Alex on 08.06.2016.
  */
 public class DataFrameLoader {
-    private final static ReadFormat DEFAULT_READ_FORMAT = FileFormat.TSV;
+    private final static ReadFormat<?, ?> DEFAULT_READ_FORMAT = FileFormat.TSV;
 
 
     private DataFrameLoader() {
@@ -354,7 +354,7 @@ public class DataFrameLoader {
      * @param readFormat read format
      * @return resulting dataframe
      */
-    public static DataFrame load(File file, ReadFormat readFormat) {
+    public static DataFrame load(File file, ReadFormat<?, ?> readFormat) {
         return load(file, readFormat.getReaderBuilder().build());
 
     }
@@ -366,7 +366,7 @@ public class DataFrameLoader {
      * @param readFormat read format
      * @return resulting dataframe
      */
-    public static DataFrame load(String content, ReadFormat readFormat) {
+    public static DataFrame load(String content, ReadFormat<?, ?> readFormat) {
         return load(content, readFormat.getReaderBuilder().build());
     }
 
@@ -379,7 +379,7 @@ public class DataFrameLoader {
      * @param readFormat  read format
      * @return resulting dataframe
      */
-    public static DataFrame load(String resource, ClassLoader classLoader, ReadFormat readFormat) {
+    public static DataFrame load(String resource, ClassLoader classLoader, ReadFormat<?, ?> readFormat) {
         return load(resource, classLoader, readFormat.getReaderBuilder().build());
 
     }
@@ -391,7 +391,7 @@ public class DataFrameLoader {
      * @param readFormat read format
      * @return resulting dataframe
      */
-    public static DataFrame load(URL url, ReadFormat readFormat) {
+    public static DataFrame load(URL url, ReadFormat<?, ?> readFormat) {
         return load(url, readFormat.getReaderBuilder().build());
 
     }
@@ -403,7 +403,7 @@ public class DataFrameLoader {
      * @param readFormat read format
      * @return resulting dataframe
      */
-    public static DataFrame load(byte[] bytes, ReadFormat readFormat) {
+    public static DataFrame load(byte[] bytes, ReadFormat<?, ?> readFormat) {
         return load(bytes, readFormat.getReaderBuilder().build());
 
     }
@@ -416,7 +416,7 @@ public class DataFrameLoader {
      * @param readFormat read format
      * @return resulting dataframe
      */
-    public static DataFrame load(InputStream is, ReadFormat readFormat) {
+    public static DataFrame load(InputStream is, ReadFormat<?, ?> readFormat) {
         return load(is, readFormat.getReaderBuilder().build());
     }
 
@@ -424,11 +424,11 @@ public class DataFrameLoader {
     /**
      * Loads a data frame from a {@link Reader} using a specified {@link ReadFormat}.
      *
-     * @param r         input reader
+     * @param r          input reader
      * @param readFormat read format
      * @return resulting dataframe
      */
-    public static DataFrame load(Reader r, ReadFormat readFormat) {
+    public static DataFrame load(Reader r, ReadFormat<?, ?> readFormat) {
         return load(r, readFormat.getReaderBuilder().build());
     }
 
@@ -440,7 +440,7 @@ public class DataFrameLoader {
      * @param reader data reader
      * @return resulting dataframe
      */
-    public static DataFrame load(File file, DataReader reader) {
+    public static DataFrame load(File file, DataReader<?, ?> reader) {
 
         return load(reader.load(file));
 
@@ -453,7 +453,7 @@ public class DataFrameLoader {
      * @param reader  data reader
      * @return resulting dataframe
      */
-    public static DataFrame load(String content, DataReader reader) {
+    public static DataFrame load(String content, DataReader<?, ?> reader) {
         return load(reader.load(content));
     }
 
@@ -465,7 +465,7 @@ public class DataFrameLoader {
      * @param reader      data reader
      * @return resulting dataframe
      */
-    public static DataFrame load(String resource, ClassLoader classLoader, DataReader reader) {
+    public static DataFrame load(String resource, ClassLoader classLoader, DataReader<?, ?> reader) {
         return load(reader.load(resource, classLoader));
 
     }
@@ -477,7 +477,7 @@ public class DataFrameLoader {
      * @param reader data reader
      * @return resulting dataframe
      */
-    public static DataFrame load(URL url, DataReader reader) {
+    public static DataFrame load(URL url, DataReader<?, ?> reader) {
         return load(reader.load(url));
 
     }
@@ -489,7 +489,7 @@ public class DataFrameLoader {
      * @param reader data reader
      * @return resulting dataframe
      */
-    public static DataFrame load(byte[] bytes, DataReader reader) {
+    public static DataFrame load(byte[] bytes, DataReader<?, ?> reader) {
         return load(reader.load(bytes));
 
     }
@@ -501,18 +501,18 @@ public class DataFrameLoader {
      * @param reader data reader
      * @return resulting dataframe
      */
-    public static DataFrame load(InputStream is, DataReader reader) {
+    public static DataFrame load(InputStream is, DataReader<?, ?> reader) {
         return load(reader.load(is));
     }
 
     /**
      * Loads a data frame from a {@link Reader} using a specified {@link DataReader}
      *
-     * @param r     input reader
+     * @param r      input reader
      * @param reader data reader
      * @return resulting dataframe
      */
-    public static DataFrame load(Reader r, DataReader reader) {
+    public static DataFrame load(Reader r, DataReader<?, ?> reader) {
         return load(reader.load(r));
     }
 
@@ -644,13 +644,13 @@ public class DataFrameLoader {
     }
 
     private static DataReader<?, ?> getDataReader(DataFrameMeta meta) {
-        ReadFormat readFormat;
+        ReadFormat<?, ?> readFormat;
         try {
             readFormat = meta.getReadFormatClass().newInstance();
         } catch (Exception e) {
             throw new DataFrameRuntimeException("error creating readformat instance", e);
         }
-        ReaderBuilder readerBuilder;
+        ReaderBuilder<?, ?> readerBuilder;
         try {
             readerBuilder = readFormat.getReaderBuilder();
         } catch (Exception e) {

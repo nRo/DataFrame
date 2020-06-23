@@ -24,23 +24,25 @@
 
 package de.unknownreality.dataframe.csv;
 
-import de.unknownreality.dataframe.io.*;
+import de.unknownreality.dataframe.io.FileFormat;
+import de.unknownreality.dataframe.io.ReadFormat;
+import de.unknownreality.dataframe.io.WriteFormat;
 
 /**
  * Created by Alex on 17.06.2017.
  */
-public class CSVFormat implements FileFormat, ReadFormat, WriteFormat {
+public class CSVFormat implements FileFormat, ReadFormat<CSVRow, CSVReaderBuilder>, WriteFormat {
     @Override
-    public ReaderBuilder getReaderBuilder() {
+    public CSVReaderBuilder getReaderBuilder() {
         return new CSVReaderBuilder().withSeparator(';');
     }
 
-    public static CSVReaderBuilder createReader(){
+    public static CSVReaderBuilder createReader() {
         return new CSVReaderBuilder().withSeparator(';');
     }
 
     @Override
-    public WriterBuilder getWriterBuilder() {
+    public CSVWriterBuilder getWriterBuilder() {
         return CSVWriterBuilder.create().withSeparator(';');
     }
 

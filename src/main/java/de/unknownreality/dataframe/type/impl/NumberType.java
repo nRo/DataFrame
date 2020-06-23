@@ -4,7 +4,7 @@ import de.unknownreality.dataframe.common.NumberUtil;
 
 public abstract class NumberType<T extends Number & Comparable<T>> extends ComparableType<T> {
     @Override
-    protected T convertRaw(Object o) {
+    public T convertRaw(Object o) {
         if (o instanceof Number) {
             return NumberUtil.convert((Number) o, getType());
         }
