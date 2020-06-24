@@ -25,7 +25,7 @@
 package de.unknownreality.dataframe.common.mapping;
 
 import de.unknownreality.dataframe.common.Row;
-import de.unknownreality.dataframe.type.TypeUtil;
+import de.unknownreality.dataframe.type.DataFrameTypeManager;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -86,7 +86,7 @@ public class FieldColumn {
         if (field.getType().isInstance(value)) {
             convertedVal = value;
         } else {
-            convertedVal = TypeUtil.parseOrNull(field.getType(), value.toString());
+            convertedVal = DataFrameTypeManager.get().parseOrNull(field.getType(), value.toString());
         }
         try {
             if (Modifier.isPublic(field.getModifiers())) {

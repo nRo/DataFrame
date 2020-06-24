@@ -24,10 +24,10 @@
 
 package de.unknownreality.dataframe.print;
 
-import de.unknownreality.dataframe.ColumnTypeMap;
 import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.DataFrameLoaderTest;
 import de.unknownreality.dataframe.DataRow;
+import de.unknownreality.dataframe.type.DataFrameTypeManager;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -40,7 +40,7 @@ public class PrintTest {
 
         DataFrame df = DataFrame.fromCSV("users.csv",
                 DataFrameLoaderTest.class.getClassLoader(), ';', true);
-        df.addColumn(Double.class, "value", ColumnTypeMap.create(), row -> Math.random());
+        df.addColumn(Double.class, "value", DataFrameTypeManager.createNew(), row -> Math.random());
         String corner = "o";
         String vline = "|";
         String hline = "-";

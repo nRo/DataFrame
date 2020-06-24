@@ -26,7 +26,7 @@ package de.unknownreality.dataframe.csv;
 
 import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.io.ReaderBuilder;
-import de.unknownreality.dataframe.type.TypeUtil;
+import de.unknownreality.dataframe.type.DataFrameTypeManager;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -200,9 +200,9 @@ public class CSVReaderBuilder implements ReaderBuilder<CSVRow, CSVReader> {
 
     @Override
     public ReaderBuilder<CSVRow, CSVReader> loadSettings(Map<String, String> attributes) throws Exception {
-        this.separator = TypeUtil.parse(Character.class, attributes.get("separator"));
+        this.separator = DataFrameTypeManager.get().parse(Character.class, attributes.get("separator"));
         this.headerPrefix = attributes.get("headerPrefix");
-        this.containsHeader = TypeUtil.parse(Boolean.class, attributes.get("containsHeader"));
+        this.containsHeader = DataFrameTypeManager.get().parse(Boolean.class, attributes.get("containsHeader"));
         return this;
     }
 

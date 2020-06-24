@@ -27,6 +27,7 @@ package de.unknownreality.dataframe.transform;
 import de.unknownreality.dataframe.DataFrameColumn;
 import de.unknownreality.dataframe.DataFrameException;
 import de.unknownreality.dataframe.column.StringColumn;
+import de.unknownreality.dataframe.type.DataFrameTypeManager;
 import de.unknownreality.dataframe.type.ValueType;
 
 /**
@@ -48,12 +49,7 @@ public class StringColumnConverter {
         if (colType == StringColumn.class) {
             return colType.cast(column.copy());
         }
-        C newColumn;
-        try {
-            newColumn = colType.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new DataFrameException("error creating column instance", e);
-        }
+        C newColumn = colType.cast(DataFrameTypeManager.get().createColumn(colType));
         newColumn.setName(column.getName());
         ValueType<V> valueType = newColumn.getValueType();
         if (valueType == null) {

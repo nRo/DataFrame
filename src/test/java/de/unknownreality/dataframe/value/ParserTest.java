@@ -24,7 +24,7 @@
 
 package de.unknownreality.dataframe.value;
 
-import de.unknownreality.dataframe.type.TypeUtil;
+import de.unknownreality.dataframe.type.DataFrameTypeManager;
 import de.unknownreality.dataframe.type.ValueTypeNotFoundException;
 import org.junit.Assert;
 import org.junit.Test;
@@ -36,63 +36,63 @@ import static org.junit.Assert.fail;
 public class ParserTest {
     @Test
     public void testParserUtil() throws ParseException, ValueTypeNotFoundException {
-        Assert.assertEquals((Integer) 1, TypeUtil.parse(Integer.class, "1"));
+        Assert.assertEquals((Integer) 1, DataFrameTypeManager.get().parse(Integer.class, "1"));
 
-        Assert.assertEquals((Double) 1.5, TypeUtil.parse(Double.class, "1.5"));
+        Assert.assertEquals((Double) 1.5, DataFrameTypeManager.get().parse(Double.class, "1.5"));
 
 
-        Assert.assertEquals(true, TypeUtil.parse(Boolean.class, "t"));
-        Assert.assertEquals(false, TypeUtil.parse(Boolean.class, "f"));
-        Assert.assertEquals(true, TypeUtil.parse(Boolean.class, "T"));
-        Assert.assertEquals(false, TypeUtil.parse(Boolean.class, "F"));
+        Assert.assertEquals(true, DataFrameTypeManager.get().parse(Boolean.class, "t"));
+        Assert.assertEquals(false, DataFrameTypeManager.get().parse(Boolean.class, "f"));
+        Assert.assertEquals(true, DataFrameTypeManager.get().parse(Boolean.class, "T"));
+        Assert.assertEquals(false, DataFrameTypeManager.get().parse(Boolean.class, "F"));
 
 
         try {
-            TypeUtil.parse(Boolean.class, "x");
+            DataFrameTypeManager.get().parse(Boolean.class, "x");
             fail("Expected a ParseException to be thrown");
         } catch (ParseException parseException) {
         }
 
         try {
-            TypeUtil.parse(Double.class, "x");
+            DataFrameTypeManager.get().parse(Double.class, "x");
             fail("Expected a ParseException to be thrown");
         } catch (ParseException parseException) {
         }
 
-        Assert.assertNull(TypeUtil.parseOrNull(Double.class, "x"));
-        Assert.assertNull(TypeUtil.parseOrNull(ParserTest.class, "x"));
+        Assert.assertNull(DataFrameTypeManager.get().parseOrNull(Double.class, "x"));
+        Assert.assertNull(DataFrameTypeManager.get().parseOrNull(ParserTest.class, "x"));
 
 
-        Assert.assertTrue(TypeUtil.typeExists(Double.class));
-        Assert.assertFalse(TypeUtil.typeExists(ParserTest.class));
+        Assert.assertTrue(DataFrameTypeManager.get().typeExists(Double.class));
+        Assert.assertFalse(DataFrameTypeManager.get().typeExists(ParserTest.class));
 
         try {
-            TypeUtil.getType(ParserTest.class);
+            DataFrameTypeManager.get().getValueType(ParserTest.class);
             fail("Expected a ParseException to be thrown");
         } catch (ValueTypeNotFoundException parseException) {
         }
 
 
         try {
-            TypeUtil.getType(ParserTest.class);
+            DataFrameTypeManager.get().getValueType(ParserTest.class);
             fail("Expected a ParserNotFoundException to be thrown");
         } catch (ValueTypeNotFoundException parseException) {
         }
 
         try {
-            TypeUtil.parse(ParserTest.class, "x");
+            DataFrameTypeManager.get().parse(ParserTest.class, "x");
             fail("Expected a ParserNotFoundException to be thrown");
         } catch (ParseException parseException) {
         }
 
-        Integer[] integers = TypeUtil.parse(Integer[].class, "1,2,3");
+        Integer[] integers = DataFrameTypeManager.get().parse(Integer[].class, "1,2,3");
         Assert.assertEquals(3,integers.length);
         Assert.assertEquals((Integer)1,integers[0]);
         Assert.assertEquals((Integer)2,integers[1]);
         Assert.assertEquals((Integer)3,integers[2]);
 
         try {
-            TypeUtil.parse(ParserTest[].class, "x");
+            DataFrameTypeManager.get().parse(ParserTest[].class, "x");
             fail("Expected a ValueTypeNotFoundException to be thrown");
         } catch (ValueTypeNotFoundException parseException) {
         }

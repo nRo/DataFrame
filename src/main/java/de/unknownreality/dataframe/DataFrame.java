@@ -36,6 +36,7 @@ import de.unknownreality.dataframe.join.JoinUtil;
 import de.unknownreality.dataframe.join.JoinedDataFrame;
 import de.unknownreality.dataframe.sort.SortColumn;
 import de.unknownreality.dataframe.transform.DataFrameTransform;
+import de.unknownreality.dataframe.type.DataFrameTypeManager;
 
 import java.io.*;
 import java.net.URL;
@@ -147,31 +148,31 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     <T> DataFrame addColumn(Class<T> type, String name);
 
     /**
-     * Creates a column for a specified column value type using the provided {@link ColumnTypeMap}.
+     * Creates a column for a specified column value type using the provided {@link DataFrameTypeManager}.
      *
-     * @param type          class of column values
-     * @param name          column name
-     * @param columnTypeMap provided column type map
-     * @param <T>           type of column values
+     * @param type                 class of column values
+     * @param name                 column name
+     * @param dataFrameTypeManager provided column type map
+     * @param <T>                  type of column values
      * @return <tt>self</tt> for method chaining
      * @see #addColumn(Class, String, ColumnAppender)
      */
-    <T> DataFrame addColumn(Class<T> type, String name, ColumnTypeMap columnTypeMap);
+    <T> DataFrame addColumn(Class<T> type, String name, DataFrameTypeManager dataFrameTypeManager);
 
 
     /**
-     * Creates and adds a new column based on a specified column value type and a {@link ColumnTypeMap}.
+     * Creates and adds a new column based on a specified column value type and a {@link DataFrameTypeManager}.
      *
-     * @param type          column value value type
-     * @param name          name of new column
-     * @param columnTypeMap column type map (value type / column class mapper)
-     * @param appender      column appender (value generator)
-     * @param <T>           type of column values
-     * @param <C>           type of created column
+     * @param type                 column value value type
+     * @param name                 name of new column
+     * @param dataFrameTypeManager column type map (value type / column class mapper)
+     * @param appender             column appender (value generator)
+     * @param <T>                  type of column values
+     * @param <C>                  type of created column
      * @return <tt>self</tt> for method chaining
      * @see #addColumn(Class, String, ColumnAppender)
      */
-    <T, C extends DataFrameColumn<T, C>> DataFrame addColumn(Class<T> type, String name, ColumnTypeMap columnTypeMap, ColumnAppender<T> appender);
+    <T, C extends DataFrameColumn<T, C>> DataFrame addColumn(Class<T> type, String name, DataFrameTypeManager dataFrameTypeManager, ColumnAppender<T> appender);
 
     /**
      * Creates and adds a column to this data frame based on a provided column class.

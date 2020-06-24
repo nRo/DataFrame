@@ -27,7 +27,7 @@ package de.unknownreality.dataframe.common.row;
 import de.unknownreality.dataframe.DataFrameRuntimeException;
 import de.unknownreality.dataframe.common.Row;
 import de.unknownreality.dataframe.common.header.Header;
-import de.unknownreality.dataframe.type.TypeUtil;
+import de.unknownreality.dataframe.type.DataFrameTypeManager;
 import de.unknownreality.dataframe.type.ValueType;
 import de.unknownreality.dataframe.type.ValueTypeNotFoundException;
 import de.unknownreality.dataframe.type.impl.StringType;
@@ -46,13 +46,13 @@ public class StringRow<T, H extends Header<T>> implements Row<String, T>, Iterab
 
     private final static StringType STRING_VALUE_TYPE = new StringType();
 
-    private static final ValueType<Boolean> BOOLEAN_VALUE_READER = TypeUtil.findTypeOrThrow(Boolean.class);
-    private static final ValueType<Double> DOUBLE_VALUE_READER = TypeUtil.findTypeOrThrow(Double.class);
-    private static final ValueType<Float> FLOAT_VALUE_READER = TypeUtil.findTypeOrThrow(Float.class);
-    private static final ValueType<Long> LONG_VALUE_READER = TypeUtil.findTypeOrThrow(Long.class);
-    private static final ValueType<Integer> INTEGER_VALUE_READER = TypeUtil.findTypeOrThrow(Integer.class);
-    private static final ValueType<Short> SHORT_VALUE_READER = TypeUtil.findTypeOrThrow(Short.class);
-    private static final ValueType<Byte> BYTE_VALUE_READER = TypeUtil.findTypeOrThrow(Byte.class);
+    private static final ValueType<Boolean> BOOLEAN_VALUE_READER = DataFrameTypeManager.get().findValueTypeOrThrow(Boolean.class);
+    private static final ValueType<Double> DOUBLE_VALUE_READER = DataFrameTypeManager.get().findValueTypeOrThrow(Double.class);
+    private static final ValueType<Float> FLOAT_VALUE_READER = DataFrameTypeManager.get().findValueTypeOrThrow(Float.class);
+    private static final ValueType<Long> LONG_VALUE_READER = DataFrameTypeManager.get().findValueTypeOrThrow(Long.class);
+    private static final ValueType<Integer> INTEGER_VALUE_READER = DataFrameTypeManager.get().findValueTypeOrThrow(Integer.class);
+    private static final ValueType<Short> SHORT_VALUE_READER = DataFrameTypeManager.get().findValueTypeOrThrow(Short.class);
+    private static final ValueType<Byte> BYTE_VALUE_READER = DataFrameTypeManager.get().findValueTypeOrThrow(Byte.class);
 
 
     private final String[] values;
@@ -264,7 +264,7 @@ public class StringRow<T, H extends Header<T>> implements Row<String, T>, Iterab
      */
     protected  <C> C getValueAs(String value, Class<C> cl) {
         try {
-            return TypeUtil.parse(cl, value);
+            return DataFrameTypeManager.get().parse(cl, value);
         } catch (ParseException | ValueTypeNotFoundException e) {
             log.error("error parsing value {} to {}", value, cl, e);
             throw new DataFrameRuntimeException(String.format("error parsing value %s to %s", value, cl), e);
@@ -283,7 +283,7 @@ public class StringRow<T, H extends Header<T>> implements Row<String, T>, Iterab
      */
     protected <C> C getValueAsOrNull(String value, Class<C> cl) {
         try {
-            return TypeUtil.parse(cl, value);
+            return DataFrameTypeManager.get().parse(cl, value);
         } catch (ParseException | ValueTypeNotFoundException e) {
             log.warn("error parsing value {} to {}", value, cl, e);
 

@@ -40,6 +40,8 @@ import de.unknownreality.dataframe.join.impl.DefaultJoinUtil;
 import de.unknownreality.dataframe.sort.RowColumnComparator;
 import de.unknownreality.dataframe.sort.SortColumn;
 import de.unknownreality.dataframe.transform.DataFrameTransform;
+import de.unknownreality.dataframe.type.DataFrameTypeManager;
+import de.unknownreality.dataframe.type.ValueType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -251,21 +253,21 @@ public class DefaultDataFrame implements DataFrame {
 
     @Override
     public <T> DataFrame addColumn(Class<T> type, String name) {
-        return addColumn(type, name, ColumnTypeMap.create());
+        return addColumn(type, name, DataFrameTypeManager.get());
     }
 
 
     @Override
-    public <T> DataFrame addColumn(Class<T> type, String name, ColumnTypeMap columnTypeMap) {
-        return addColumn(type, name, columnTypeMap, null);
+    public <T> DataFrame addColumn(Class<T> type, String name, DataFrameTypeManager dataFrameTypeManager) {
+        return addColumn(type, name, dataFrameTypeManager, null);
     }
 
 
     @Override
     public <T, C extends DataFrameColumn<T, C>> DataFrame addColumn(Class<T> type, String name,
-                                                                    ColumnTypeMap columnTypeMap,
+                                                                    DataFrameTypeManager dataFrameTypeManager,
                                                                     ColumnAppender<T> appender) {
-        Class<C> columnType = columnTypeMap.getColumnType(type);
+        Class<C> columnType = dataFrameTypeManager.getColumnType(type);
         if (columnType == null) {
             throw new DataFrameRuntimeException(String.format("no  column type found for %s", type.getName()));
         }
@@ -281,35 +283,23 @@ public class DefaultDataFrame implements DataFrame {
     @Override
     public <T, C extends DataFrameColumn<T, C>> DataFrame addColumn(Class<C> type, String name,
                                                                     ColumnAppender<T> appender) {
-        try {
-            C col = type.newInstance();
-            col.setName(name);
-            if (appender != null) {
-                for (DataRow row : this) {
-                    T val = appender.createRowValue(row);
-                    if (val == null || val == Values.NA) {
-                        col.doAppendNA();
-                    } else {
-                        col.doAppend(val);
-                    }
-                }
-            } else {
-                for (int i = 0; i < size(); i++) {
+        C col = type.cast(DataFrameTypeManager.get().createColumn(type));
+        col.setName(name);
+        if (appender != null) {
+            for (DataRow row : this) {
+                T val = appender.createRowValue(row);
+                if (val == null || val == Values.NA) {
                     col.doAppendNA();
+                } else {
+                    col.doAppend(val);
                 }
             }
-            addColumn(col);
-        } catch (InstantiationException e) {
-            log.error("error creating instance of column [{}], empty constructor required", type, e);
-            throw new DataFrameRuntimeException(
-                    String.format("error creating instance of column [%s], empty constructor required", type),
-                    e);
-
-        } catch (IllegalAccessException e) {
-            throw new DataFrameRuntimeException(
-                    String.format("error creating instance of column [%s], empty constructor required", type),
-                    e);
+        } else {
+            for (int i = 0; i < size(); i++) {
+                col.doAppendNA();
+            }
         }
+        addColumn(col);
         return this;
     }
 
@@ -467,9 +457,9 @@ public class DefaultDataFrame implements DataFrame {
         this.indices.clearValues();
         this.columnsMap.clear();
         for (String columnName : header) {
-            Class<? extends DataFrameColumn> cl = header.getColumnType(columnName);
+            ValueType<?> type = header.getValueType(columnName);
             try {
-                DataFrameColumn<?, ?> column = cl.newInstance();
+                DataFrameColumn<?, ?> column = DataFrameTypeManager.get().createColumn(type);
                 column.setName(columnName);
                 addColumn(column);
             } catch (Exception e) {

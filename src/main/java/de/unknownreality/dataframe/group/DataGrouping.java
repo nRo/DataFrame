@@ -24,8 +24,12 @@
 
 package de.unknownreality.dataframe.group;
 
-import de.unknownreality.dataframe.*;
+import de.unknownreality.dataframe.DataFrameColumn;
+import de.unknownreality.dataframe.DataRow;
+import de.unknownreality.dataframe.DefaultDataFrame;
+import de.unknownreality.dataframe.Values;
 import de.unknownreality.dataframe.group.aggr.AggregateFunction;
+import de.unknownreality.dataframe.type.DataFrameTypeManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,24 +71,14 @@ public class DataGrouping extends DefaultDataFrame {
             T v = fun.aggregate(getRow(i).getGroup());
             values.add(v);
         }
-        Class<?> vType = null;
+        Class<T> vType = null;
         for (T v : values) {
             if (v != null) {
-                vType = v.getClass();
+                vType = (Class<T>) v.getClass();
                 break;
             }
         }
-        vType = vType == null ? String.class : vType;
-        Class<?> colType = ColumnTypeMap.get(vType);
-        if(colType == null){
-            throw new DataFrameRuntimeException(String.format("no column type found for value type '%s'", vType.getCanonicalName()));
-        }
-        DataFrameColumn<T,?> aggCol;
-        try {
-            aggCol = (DataFrameColumn<T,?>)colType.newInstance();
-        } catch (InstantiationException | IllegalAccessException | ClassCastException e) {
-            throw new DataFrameRuntimeException(String.format("error creating instance of column [%s], empty constructor required", colType.getCanonicalName()), e);
-        }
+        DataFrameColumn<T, ?> aggCol = DataFrameTypeManager.get().createColumnForType(vType);
         aggCol.setName(columnName);
         for(T v : values){
             if(v == null || Values.NA.isNA(v)){
