@@ -101,6 +101,14 @@ public class DataFrameTypeManager {
         return this;
     }
 
+    public boolean isRegistered(DataFrameColumn<?, ?> col) {
+        return isRegistered(col.getClass());
+    }
+
+    public boolean isRegistered(Class<? extends DataFrameColumn> colClass) {
+        return columnTypesMap.containsKey(colClass);
+    }
+
     /**
      * removes a custom column type
      *

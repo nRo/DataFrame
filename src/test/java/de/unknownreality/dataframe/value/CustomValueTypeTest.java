@@ -112,7 +112,6 @@ public class CustomValueTypeTest {
 
     @Test
     public void customValueAutodetect() {
-        DataFrameTypeManager.get().register(new CustomColumn());
 
         String csv =
                 "A;B\n" +
@@ -121,6 +120,13 @@ public class CustomValueTypeTest {
                         "3;[1,3]";
         DataFrame dfA = DataFrame.fromCSV(csv, ';', "");
         Assert.assertEquals(Integer.class, dfA.getColumn("A").getValueType().getType());
+        Assert.assertEquals(String.class, dfA.getColumn("B").getValueType().getType());
+
+        DataFrameTypeManager.get().register(new CustomColumn());
+        dfA = DataFrame.fromCSV(csv, ';', "");
+        Assert.assertEquals(Integer.class, dfA.getColumn("A").getValueType().getType());
         Assert.assertEquals(CustomColumn.Custom.class, dfA.getColumn("B").getValueType().getType());
+        DataFrameTypeManager.get().register(new CustomColumn());
+
     }
 }

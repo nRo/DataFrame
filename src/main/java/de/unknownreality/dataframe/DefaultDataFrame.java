@@ -69,7 +69,7 @@ public class DefaultDataFrame implements DataFrame {
 
     }
 
-    public DefaultDataFrame(String name){
+    public DefaultDataFrame(String name) {
         this.name = name;
     }
 
@@ -167,6 +167,10 @@ public class DefaultDataFrame implements DataFrame {
 
     @Override
     public DefaultDataFrame addColumn(DataFrameColumn<?, ?> column) {
+        if (!DataFrameTypeManager.get().isRegistered(column)) {
+            throw new DataFrameRuntimeException(
+                    String.format("column type '%s' is not registered with DataFrameTypeManager", column.getClass()));
+        }
         if (column.size() == 0 && size != 0) {
             for (int i = 0; i < size; i++) {
                 column.appendNA();
@@ -370,7 +374,7 @@ public class DefaultDataFrame implements DataFrame {
                                 column.getValueType().getType().getName()));
             }
         }
-        for (int i = 0; i< columns.length; i++) {
+        for (int i = 0; i < columns.length; i++) {
             column = columns[i];
             column.startDataFrameAppend();
             value = values[i];
@@ -414,7 +418,7 @@ public class DefaultDataFrame implements DataFrame {
     @Override
     public DefaultDataFrame appendMatchingRow(DataRow row) {
         Object value;
-        for (int i  = 0; i < row.size(); i++) {
+        for (int i = 0; i < row.size(); i++) {
             DataFrameColumn<?, ?> column = columns[i];
             column.startDataFrameAppend();
             value = row.get(i);
@@ -745,7 +749,7 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     @Override
-    public boolean isEmpty(){
+    public boolean isEmpty() {
         return size == 0;
     }
 
@@ -1006,6 +1010,7 @@ public class DefaultDataFrame implements DataFrame {
     public JoinedDataFrame joinOuter(DataFrame dataFrame, String suffixA, String suffixB, JoinColumn... joinColumns) {
         return joinUtil.outerJoin(this, dataFrame, suffixA, suffixB, joinColumns);
     }
+
     @Override
     public DefaultDataFrame copy() {
         DataRows rows = getRows(0, size);
@@ -1180,34 +1185,35 @@ public class DefaultDataFrame implements DataFrame {
     }
 
     @Override
-    public DataFrame head(int size){
-        return selectSubset(0,Math.min(size(),size));
+    public DataFrame head(int size) {
+        return selectSubset(0, Math.min(size(), size));
     }
 
 
     @Override
-    public DataFrame head(){
+    public DataFrame head() {
         return head(DEFAULT_HEAD_SIZE);
     }
 
     @Override
-    public DataFrame tail(int size){
-        return selectSubset(Math.max(0,size() - size),size());
+    public DataFrame tail(int size) {
+        return selectSubset(Math.max(0, size() - size), size());
     }
 
 
     @Override
-    public DataFrame tail(){
+    public DataFrame tail() {
         return tail(DEFAULT_TAIL_SIZE);
     }
 
     @Override
-    public void clear(){
-        for(DataFrameColumn<?,?> col : columns){
+    public void clear() {
+        for (DataFrameColumn<?, ?> col : columns) {
             col.clear();
         }
         size = 0;
     }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof DefaultDataFrame)) {
