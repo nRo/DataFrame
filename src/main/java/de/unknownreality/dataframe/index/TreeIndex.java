@@ -35,11 +35,11 @@ import java.util.*;
  */
 public class TreeIndex implements Index {
     private final Map<Integer, TreeNode> indexNodeMap = new HashMap<>();
-    private TreeNode root = new TreeNode(null, null);
+    private final TreeNode root = new TreeNode(null, null);
 
-    private final Map<DataFrameColumn, Integer> columnIndexMap = new LinkedHashMap<>();
+    private final Map<DataFrameColumn<?, ?>, Integer> columnIndexMap = new LinkedHashMap<>();
     private final String name;
-    private boolean unique = false;
+    private boolean unique;
 
     /**
      * Creates a multi index using more that one column
@@ -48,16 +48,16 @@ public class TreeIndex implements Index {
      * @param unique    defines whether this index only allows unique values
      * @param columns   index columns
      */
-    public TreeIndex(String indexName, boolean unique, DataFrameColumn... columns) {
+    public TreeIndex(String indexName, boolean unique, DataFrameColumn<?, ?>... columns) {
         int i = 0;
-        for (DataFrameColumn column : columns) {
+        for (DataFrameColumn<?, ?> column : columns) {
             columnIndexMap.put(column, i++);
         }
         this.name = indexName;
         this.unique = unique;
     }
 
-    public TreeIndex(String indexName, DataFrameColumn... columns) {
+    public TreeIndex(String indexName, DataFrameColumn<?, ?>... columns) {
         this(indexName, false, columns);
     }
 
@@ -78,7 +78,7 @@ public class TreeIndex implements Index {
     }
 
     @Override
-    public boolean containsColumn(DataFrameColumn column) {
+    public boolean containsColumn(DataFrameColumn<?, ?> column) {
         return columnIndexMap.containsKey(column);
     }
 
@@ -88,7 +88,7 @@ public class TreeIndex implements Index {
     }
 
     @Override
-    public void replaceColumn(DataFrameColumn existing, DataFrameColumn replacement) {
+    public void replaceColumn(DataFrameColumn<?, ?> existing, DataFrameColumn<?, ?> replacement) {
         Integer index = columnIndexMap.get(existing);
         if (index == null) {
             throw new DataFrameRuntimeException(String.format("column not found: %s", existing.getName()));
@@ -98,18 +98,18 @@ public class TreeIndex implements Index {
     }
 
     @Override
-    public List<DataFrameColumn> getColumns() {
+    public List<DataFrameColumn<?, ?>> getColumns() {
         return new ArrayList<>(columnIndexMap.keySet());
     }
 
     @Override
     public void update(DataRow dataRow) {
         remove(dataRow);
-        Comparable[] values = createValues(dataRow);
+        Object[] values = createValues(dataRow);
         addRec(root, 0, values, dataRow.getIndex());
     }
 
-    private void addRec(TreeNode node, int index, Comparable[] values, Integer rowIndex) {
+    private void addRec(TreeNode node, int index, Object[] values, Integer rowIndex) {
         if (index == values.length) {
             if (unique && node.hasIndices()) {
                 throw new DataFrameRuntimeException(String.format("error adding row to index: duplicated values found '%s'", Arrays.toString(values)));
@@ -118,7 +118,7 @@ public class TreeIndex implements Index {
             node.addIndex(rowIndex);
             return;
         }
-        Comparable value = values[index];
+        Object value = values[index];
         TreeNode child;
         if ((child = node.getChild(value)) == null) {
             child = new TreeNode(node, value);
@@ -149,17 +149,17 @@ public class TreeIndex implements Index {
         }
     }
 
-    private Comparable[] createValues(DataRow dataRow) {
-        Comparable[] values = new Comparable[columnIndexMap.size()];
+    private Object[] createValues(DataRow dataRow) {
+        Object[] values = new Object[columnIndexMap.size()];
         int i = 0;
-        for (DataFrameColumn column : columnIndexMap.keySet()) {
+        for (DataFrameColumn<?, ?> column : columnIndexMap.keySet()) {
             values[i++] = dataRow.get(column.getName());
         }
         return values;
     }
 
     @Override
-    public Collection<Integer> find(Comparable... values) {
+    public Collection<Integer> find(Object... values) {
         if (values.length != columnIndexMap.size()) {
             throw new IllegalArgumentException("value for each index column required");
         }
@@ -171,11 +171,11 @@ public class TreeIndex implements Index {
     }
 
 
-    private TreeNode findRec(TreeNode node, int index, Comparable[] values) {
+    private TreeNode findRec(TreeNode node, int index, Object[] values) {
         if (index == values.length) {
             return node;
         }
-        Comparable value = values[index];
+        Object value = values[index];
         TreeNode child;
         if ((child = node.getChild(value)) == null) {
             return null;
@@ -184,13 +184,13 @@ public class TreeIndex implements Index {
 
     }
 
-    private class TreeNode {
-        private Comparable value;
-        private HashMap<Comparable, TreeNode> children;
+    private static class TreeNode {
+        private final Object value;
+        private HashMap<Object, TreeNode> children;
         private List<Integer> indices;
-        private TreeNode parent;
+        private final TreeNode parent;
 
-        public TreeNode(TreeNode parent, Comparable value) {
+        public TreeNode(TreeNode parent, Object value) {
             this.value = value;
             this.parent = parent;
         }
@@ -208,7 +208,7 @@ public class TreeIndex implements Index {
             }
         }
 
-        private HashMap<Comparable, TreeNode> getChildrenMap() {
+        private HashMap<Object, TreeNode> getChildrenMap() {
             if (children == null) {
                 children = new HashMap<>();
             }
@@ -219,7 +219,7 @@ public class TreeIndex implements Index {
             return getChildrenMap().values();
         }
 
-        public Comparable getValue() {
+        public Object getValue() {
             return value;
         }
 
@@ -228,7 +228,7 @@ public class TreeIndex implements Index {
             getChildrenMap().put(child.getValue(), child);
         }
 
-        public TreeNode getChild(Comparable value) {
+        public TreeNode getChild(Object value) {
             return getChildrenMap().get(value);
         }
 
@@ -237,7 +237,7 @@ public class TreeIndex implements Index {
 
         }
 
-        public void removeChild(Comparable value) {
+        public void removeChild(Object value) {
             getChildrenMap().remove(value);
         }
 

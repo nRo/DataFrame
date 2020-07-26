@@ -26,30 +26,41 @@ package de.unknownreality.dataframe.group;
 
 import de.unknownreality.dataframe.DataFrameRuntimeException;
 import de.unknownreality.dataframe.common.Row;
+import de.unknownreality.dataframe.type.ValueType;
 
 /**
  * Created by Alex on 15.03.2016.
  */
-public class GroupValues implements Row<Comparable,String> {
-    private final Comparable[] values;
+public class GroupValues implements Row<Object, String> {
+    private final Object[] values;
     private final GroupHeader groupHeader;
 
-    public GroupValues(Comparable[] groupValues, GroupHeader header) {
+    public GroupValues(Object[] groupValues, GroupHeader header) {
         this.values = groupValues;
         this.groupHeader = header;
     }
 
+    @Override
+    public ValueType<?> getType(int index) {
+        return groupHeader.getValueType(index);
+    }
+
+    @Override
+    public ValueType<?> getType(String headerName) {
+        return groupHeader.getValueType(headerName);
+    }
+
     /**
-     * Returns the group values as {@link Comparable} array
+     * Returns the group values as {@link Object} array
      *
      * @return values array
      */
-    public Comparable[] getValues() {
+    public Object[] getValues() {
         return values;
     }
 
     @Override
-    public Comparable get(String headerName) {
+    public Object get(String headerName) {
         int index = groupHeader.getIndex(headerName);
         if (index == -1) {
             throw new DataFrameRuntimeException(String.format("group header name not found '%s'", headerName));
@@ -58,7 +69,7 @@ public class GroupValues implements Row<Comparable,String> {
     }
 
     @Override
-    public Comparable get(int index) {
+    public Object get(int index) {
         return this.values[index];
     }
 
@@ -66,7 +77,7 @@ public class GroupValues implements Row<Comparable,String> {
     public Double getDouble(int index) {
         Object value = get(index);
         try {
-            return Number.class.cast(get(index)).doubleValue();
+            return ((Number) get(index)).doubleValue();
         } catch (Exception e) {
             throw new DataFrameRuntimeException("no double value in group col " + index + " (" + value + ")");
         }
@@ -94,7 +105,7 @@ public class GroupValues implements Row<Comparable,String> {
     public Double getDouble(String name) {
         Object value = get(name);
         try {
-            return Number.class.cast(get(name)).doubleValue();
+            return ((Number) get(name)).doubleValue();
         } catch (Exception e) {
             throw new DataFrameRuntimeException("no double value in group col " + name + " (" + value + ")");
         }
@@ -115,7 +126,7 @@ public class GroupValues implements Row<Comparable,String> {
     public Integer getInteger(int index) {
         Object value = get(index);
         try {
-            return Number.class.cast(get(index)).intValue();
+            return ((Number) get(index)).intValue();
         } catch (Exception e) {
             throw new DataFrameRuntimeException("no int value in group col " + index + " (" + value + ")");
         }
@@ -125,7 +136,7 @@ public class GroupValues implements Row<Comparable,String> {
     public Integer getInteger(String headerName) {
         Object value = get(headerName);
         try {
-            return Number.class.cast(value).intValue();
+            return ((Number) value).intValue();
         } catch (Exception e) {
             throw new DataFrameRuntimeException("no int value in group col " + headerName + " (" + value + ")");
         }
@@ -135,7 +146,7 @@ public class GroupValues implements Row<Comparable,String> {
     public Float getFloat(int index) {
         Object value = get(index);
         try {
-            return Number.class.cast(value).floatValue();
+            return ((Number) value).floatValue();
         } catch (Exception e) {
             throw new DataFrameRuntimeException("no float value in group col " + index + " (" + value + ")");
         }
@@ -145,11 +156,12 @@ public class GroupValues implements Row<Comparable,String> {
     public Float getFloat(String headerName) {
         Object value = get(headerName);
         try {
-            return Number.class.cast(value).floatValue();
+            return ((Number) value).floatValue();
         } catch (Exception e) {
             throw new DataFrameRuntimeException("no float value in col " + headerName + " (" + value + ")");
         }
     }
+
 
     @Override
     public <T> T get(String headerName, Class<T> cl) {
@@ -195,7 +207,7 @@ public class GroupValues implements Row<Comparable,String> {
     public Long getLong(int index) {
         Object value = get(index);
         try {
-            return Number.class.cast(value).longValue();
+            return ((Number) value).longValue();
         } catch (Exception e) {
             throw new DataFrameRuntimeException("no long value in col " + index + " (" + value + ")");
         }
@@ -205,7 +217,7 @@ public class GroupValues implements Row<Comparable,String> {
     public Long getLong(String headerName) {
         Object value = get(headerName);
         try {
-            return Number.class.cast(value).longValue();
+            return ((Number) value).longValue();
         } catch (Exception e) {
             throw new DataFrameRuntimeException("no long value in col " + headerName + " (" + value + ")");
         }
@@ -215,7 +227,7 @@ public class GroupValues implements Row<Comparable,String> {
     public Short getShort(int index) {
         Object value = get(index);
         try {
-            return Number.class.cast(value).shortValue();
+            return ((Number) value).shortValue();
         } catch (Exception e) {
             throw new DataFrameRuntimeException("no short value in col " + index + " (" + value + ")");
         }
@@ -225,7 +237,7 @@ public class GroupValues implements Row<Comparable,String> {
     public Short getShort(String headerName) {
         Object value = get(headerName);
         try {
-            return Number.class.cast(value).shortValue();
+            return ((Number) value).shortValue();
         } catch (Exception e) {
             throw new DataFrameRuntimeException("no short value in col " + headerName + " (" + value + ")");
         }
@@ -235,7 +247,7 @@ public class GroupValues implements Row<Comparable,String> {
     public Byte getByte(int index) {
         Object value = get(index);
         try {
-            return Number.class.cast(value).byteValue();
+            return ((Number) value).byteValue();
         } catch (Exception e) {
             throw new DataFrameRuntimeException("no byte value in col " + index + " (" + value + ")");
         }
@@ -245,7 +257,7 @@ public class GroupValues implements Row<Comparable,String> {
     public Byte getByte(String headerName) {
         Object value = get(headerName);
         try {
-            return Number.class.cast(value).byteValue();
+            return ((Number) value).byteValue();
         } catch (Exception e) {
             throw new DataFrameRuntimeException("no byte value in col " + headerName + " (" + value + ")");
         }

@@ -33,7 +33,7 @@ import org.antlr.v4.runtime.Recognizer;
  * Created by Alex on 21.05.2017.
  */
 public class PredicateCompileErrorListener extends BaseErrorListener {
-    private String predicateString;
+    private final String predicateString;
 
     public PredicateCompileErrorListener(String predicateString) {
         this.predicateString = predicateString;

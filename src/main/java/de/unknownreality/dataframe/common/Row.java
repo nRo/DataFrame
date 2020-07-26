@@ -24,10 +24,47 @@
 
 package de.unknownreality.dataframe.common;
 
+import de.unknownreality.dataframe.type.ValueType;
+
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.Writer;
+
 /**
  * Created by Alex on 10.03.2016.
  */
-public interface Row<V,H> extends KeyValueGetter<H,V>{
+public interface Row<V, H> extends KeyValueGetter<H, V> {
+
+    default void write(Writer writer, int index) throws IOException {
+        getType(index).writeRaw(writer, get(index));
+    }
+
+    default String toString(int index) {
+        return getType(index).toStringRaw(get(index));
+    }
+
+    default void write(DataOutputStream dos, int index) throws IOException {
+        getType(index).writeRaw(dos, get(index));
+    }
+
+    default void write(Writer writer, H headerName) throws IOException {
+        getType(headerName).writeRaw(writer, get(headerName));
+    }
+
+    default String toString(H headerName) {
+        return getType(headerName).toStringRaw(get(headerName));
+    }
+
+    default void write(DataOutputStream dos, H headerName) throws IOException {
+        getType(headerName).writeRaw(dos, get(headerName));
+    }
+
+
+    ValueType<?> getType(int index);
+
+
+    ValueType<?> getType(H headerName);
+
 
     /**
      * Returns an entity using head name as a specified type.

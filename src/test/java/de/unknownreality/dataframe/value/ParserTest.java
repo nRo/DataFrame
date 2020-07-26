@@ -22,10 +22,10 @@
  *
  */
 
-package de.unknownreality.dataframe.common;
+package de.unknownreality.dataframe.value;
 
-import de.unknownreality.dataframe.common.parser.ParserNotFoundException;
-import de.unknownreality.dataframe.common.parser.ParserUtil;
+import de.unknownreality.dataframe.type.DataFrameTypeManager;
+import de.unknownreality.dataframe.type.ValueTypeNotFoundException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -35,68 +35,66 @@ import static org.junit.Assert.fail;
 
 public class ParserTest {
     @Test
-    public void testParserUtil() throws ParseException, ParserNotFoundException {
-        Assert.assertEquals((Integer)1, ParserUtil.parse(Integer.class,"1"));
+    public void testParserUtil() throws ParseException, ValueTypeNotFoundException {
+        Assert.assertEquals((Integer) 1, DataFrameTypeManager.get().parse(Integer.class, "1"));
 
-        Assert.assertEquals((Double)1.5, ParserUtil.parse(Double.class,"1.5"));
+        Assert.assertEquals((Double) 1.5, DataFrameTypeManager.get().parse(Double.class, "1.5"));
 
 
-
-        Assert.assertEquals(true, ParserUtil.parse(Boolean.class,"t"));
-        Assert.assertEquals(false, ParserUtil.parse(Boolean.class,"f"));
-        Assert.assertEquals(true, ParserUtil.parse(Boolean.class,"T"));
-        Assert.assertEquals(false, ParserUtil.parse(Boolean.class,"F"));
+        Assert.assertEquals(true, DataFrameTypeManager.get().parse(Boolean.class, "t"));
+        Assert.assertEquals(false, DataFrameTypeManager.get().parse(Boolean.class, "f"));
+        Assert.assertEquals(true, DataFrameTypeManager.get().parse(Boolean.class, "T"));
+        Assert.assertEquals(false, DataFrameTypeManager.get().parse(Boolean.class, "F"));
 
 
         try {
-            ParserUtil.parse(Boolean.class,"x");
+            DataFrameTypeManager.get().parse(Boolean.class, "x");
             fail("Expected a ParseException to be thrown");
         } catch (ParseException parseException) {
         }
 
         try {
-            ParserUtil.parse(Double.class,"x");
+            DataFrameTypeManager.get().parse(Double.class, "x");
             fail("Expected a ParseException to be thrown");
         } catch (ParseException parseException) {
         }
 
-        Assert.assertEquals(null,ParserUtil.parseOrNull(Double.class,"x"));
-        Assert.assertEquals(null,ParserUtil.parseOrNull(ParserTest.class,"x"));
+        Assert.assertNull(DataFrameTypeManager.get().parseOrNull(Double.class, "x"));
+        Assert.assertNull(DataFrameTypeManager.get().parseOrNull(ParserTest.class, "x"));
 
 
-
-        Assert.assertEquals(true, ParserUtil.hasParser(Double.class));
-        Assert.assertEquals(false, ParserUtil.hasParser(ParserTest.class));
+        Assert.assertTrue(DataFrameTypeManager.get().typeExists(Double.class));
+        Assert.assertFalse(DataFrameTypeManager.get().typeExists(ParserTest.class));
 
         try {
-            ParserUtil.getParser(ParserTest.class);
+            DataFrameTypeManager.get().getValueType(ParserTest.class);
             fail("Expected a ParseException to be thrown");
-        } catch (ParserNotFoundException parseException) {
+        } catch (ValueTypeNotFoundException parseException) {
         }
 
 
         try {
-            ParserUtil.getParser(ParserTest.class);
+            DataFrameTypeManager.get().getValueType(ParserTest.class);
             fail("Expected a ParserNotFoundException to be thrown");
-        } catch (ParserNotFoundException parseException) {
+        } catch (ValueTypeNotFoundException parseException) {
         }
 
         try {
-            ParserUtil.parse(ParserTest.class,"x");
+            DataFrameTypeManager.get().parse(ParserTest.class, "x");
             fail("Expected a ParserNotFoundException to be thrown");
         } catch (ParseException parseException) {
         }
 
-        Integer[] integers = ParserUtil.parse(Integer[].class,"1,2,3");
+        Integer[] integers = DataFrameTypeManager.get().parse(Integer[].class, "1,2,3");
         Assert.assertEquals(3,integers.length);
         Assert.assertEquals((Integer)1,integers[0]);
         Assert.assertEquals((Integer)2,integers[1]);
         Assert.assertEquals((Integer)3,integers[2]);
 
         try {
-            ParserUtil.parse(ParserTest[].class,"x");
-            fail("Expected a ParserNotFoundException to be thrown");
-        } catch (ParserNotFoundException parseException) {
+            DataFrameTypeManager.get().parse(ParserTest[].class, "x");
+            fail("Expected a ValueTypeNotFoundException to be thrown");
+        } catch (ValueTypeNotFoundException parseException) {
         }
     }
 }

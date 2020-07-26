@@ -47,7 +47,7 @@ public class JoinOperationUtil {
      * @param joinedRowValues array that is filled with the row values
      */
 
-    public static void fillValues(int[] joinIndices, DataRow row, Comparable<?>[] joinedRowValues) {
+    public static void fillValues(int[] joinIndices, DataRow row, Object[] joinedRowValues) {
         for (int i = 0; i < joinIndices.length; i++) {
             joinedRowValues[joinIndices[i]] = row.get(i);
 
@@ -69,7 +69,7 @@ public class JoinOperationUtil {
      *
      * @param joinedRowValues array with <tt>NA</tt> values
      */
-    public static void fillNA(Comparable<?>[] joinedRowValues) {
+    public static void fillNA(Object[] joinedRowValues) {
         for (int i = 0; i < joinedRowValues.length; i++) {
             if (joinedRowValues[i] == null) {
                 joinedRowValues[i] = Values.NA;
@@ -113,7 +113,7 @@ public class JoinOperationUtil {
                 name = s;
             }
             info.addDataFrameAHeader(s, name);
-            joinHeader.add(name, dfA.getHeader().getColumnType(s), dfA.getHeader().getType(s));
+            joinHeader.add(name, dfA.getHeader().getColumnType(s), dfA.getHeader().getValueType(s));
         }
         for (String s : dfB.getHeader()) {
             String name;
@@ -127,7 +127,7 @@ public class JoinOperationUtil {
                 name = s;
             }
             info.addDataFrameBHeader(s, name);
-            joinHeader.add(name, dfB.getHeader().getColumnType(s), dfB.getHeader().getType(s));
+            joinHeader.add(name, dfB.getHeader().getColumnType(s), dfB.getHeader().getValueType(s));
         }
         return info;
     }
@@ -147,7 +147,7 @@ public class JoinOperationUtil {
     public static void appendGroupJoinedRows(Collection<Integer> rowIndices, DataFrame dfB,
                                              DataRow rowA, int[] joinIndicesA, int[] joinIndicesB, int joinedSize, DataFrame joinedDataFrame) {
         for (Integer rowB : rowIndices) {
-            Comparable<?>[] joinedRowValues = new Comparable<?>[joinedSize];
+            Object[] joinedRowValues = new Object[joinedSize];
             fillValues(joinIndicesA, rowA, joinedRowValues);
             fillValues(joinIndicesB, dfB.getRow(rowB), joinedRowValues);
             fillNA(joinedRowValues);

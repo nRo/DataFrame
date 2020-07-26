@@ -24,10 +24,13 @@
 
 package de.unknownreality.dataframe.filter;
 
-import de.unknownreality.dataframe.common.KeyValueGetter;
+import de.unknownreality.dataframe.common.Row;
 import de.unknownreality.dataframe.filter.compile.PredicateCompiler;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -40,10 +43,10 @@ public abstract class FilterPredicate {
     /**
      * Returns <tt>true</tt> if the row is valid for this predicate
      *
-     * @param kv tested row
+     * @param row tested row
      * @return <tt>true</tt> if the row is valid
      */
-    public abstract boolean valid(KeyValueGetter<String, ?> kv);
+    public abstract boolean valid(Row<?, String> row);
 
     /**
      * Returns a string representation for this predicate
@@ -60,7 +63,7 @@ public abstract class FilterPredicate {
     public static FilterPredicate empty(){
         return new FilterPredicate() {
             @Override
-            public boolean valid(KeyValueGetter<String, ?> kv) {
+            public boolean valid(Row<?, String> row) {
                 return true;
             }
 
@@ -137,8 +140,8 @@ public abstract class FilterPredicate {
     public static FilterPredicate not(final FilterPredicate filterPredicate) {
         return new FilterPredicate() {
             @Override
-            public boolean valid(KeyValueGetter<String, ?> kv) {
-                return !filterPredicate.valid(kv);
+            public boolean valid(Row<?, String> row) {
+                return !filterPredicate.valid(row);
             }
 
             @Override
@@ -160,8 +163,8 @@ public abstract class FilterPredicate {
     public static FilterPredicate ne(final FilterPredicate p1, final FilterPredicate p2) {
         return new FilterPredicate() {
             @Override
-            public boolean valid(KeyValueGetter<String, ?> value) {
-                return p1.valid(value) != p2.valid(value);
+            public boolean valid(Row<?, String> row) {
+                return p1.valid(row) != p2.valid(row);
             }
 
             @Override
@@ -182,8 +185,8 @@ public abstract class FilterPredicate {
     public static FilterPredicate eq(final FilterPredicate p1, final FilterPredicate p2) {
         return new FilterPredicate() {
             @Override
-            public boolean valid(KeyValueGetter<String, ?> kv) {
-                return p1.valid(kv) == p2.valid(kv);
+            public boolean valid(Row<?, String> row) {
+                return p1.valid(row) == p2.valid(row);
             }
 
             @Override
@@ -204,9 +207,9 @@ public abstract class FilterPredicate {
     public static FilterPredicate and(final FilterPredicate... predicates) {
         return new FilterPredicate() {
             @Override
-            public boolean valid(KeyValueGetter<String, ?> kv) {
+            public boolean valid(Row<?, String> row) {
                 for (FilterPredicate predicate : predicates) {
-                    if (!predicate.valid(kv)) {
+                    if (!predicate.valid(row)) {
                         return false;
                     }
                 }
@@ -237,9 +240,9 @@ public abstract class FilterPredicate {
     public static FilterPredicate or(final FilterPredicate... predicates) {
         return new FilterPredicate() {
             @Override
-            public boolean valid(KeyValueGetter<String, ?> kv) {
+            public boolean valid(Row<?, String> row) {
                 for (FilterPredicate predicate : predicates) {
-                    if (predicate.valid(kv)) {
+                    if (predicate.valid(row)) {
                         return true;
                     }
                 }
@@ -272,8 +275,8 @@ public abstract class FilterPredicate {
     public static FilterPredicate and(final FilterPredicate p1, final FilterPredicate p2) {
         return new FilterPredicate() {
             @Override
-            public boolean valid(KeyValueGetter<String, ?> kv) {
-                return p1.valid(kv) && p2.valid(kv);
+            public boolean valid(Row<?, String> row) {
+                return p1.valid(row) && p2.valid(row);
             }
 
             @Override
@@ -294,8 +297,8 @@ public abstract class FilterPredicate {
     public static FilterPredicate or(final FilterPredicate p1, final FilterPredicate p2) {
         return new FilterPredicate() {
             @Override
-            public boolean valid(KeyValueGetter<String, ?> kv) {
-                return p1.valid(kv) || p2.valid(kv);
+            public boolean valid(Row<?, String> row) {
+                return p1.valid(row) || p2.valid(row);
             }
 
             @Override
@@ -316,9 +319,9 @@ public abstract class FilterPredicate {
     public static FilterPredicate xor(final FilterPredicate p1, final FilterPredicate p2) {
         return new FilterPredicate() {
             @Override
-            public boolean valid(KeyValueGetter<String, ?> kv) {
-                boolean p1v = p1.valid(kv);
-                boolean p2v = p2.valid(kv);
+            public boolean valid(Row<?, String> row) {
+                boolean p1v = p1.valid(row);
+                boolean p2v = p2.valid(row);
                 return (p1v && !p2v) || (p2v && !p1v);
             }
 
@@ -340,9 +343,9 @@ public abstract class FilterPredicate {
     public static FilterPredicate nor(final FilterPredicate p1, final FilterPredicate p2) {
         return new FilterPredicate() {
             @Override
-            public boolean valid(KeyValueGetter<String, ?> kv) {
-                boolean p1v = p1.valid(kv);
-                boolean p2v = p2.valid(kv);
+            public boolean valid(Row<?, String> row) {
+                boolean p1v = p1.valid(row);
+                boolean p2v = p2.valid(row);
                 return !p1v && !p2v;
             }
 
@@ -511,13 +514,6 @@ public abstract class FilterPredicate {
      * @return <tt>'in'</tt> predicate.
      */
     public static FilterPredicate in(final String name, final Object[] values) {
-        List<String> test = new ArrayList<>();
-        Collections.sort(test, new Comparator<String>() {
-            @Override
-            public int compare(String o1, String o2) {
-                return o1.compareTo(o2);
-            }
-        });
         return in(name, Arrays.asList(values));
     }
 
@@ -544,8 +540,8 @@ public abstract class FilterPredicate {
     public static FilterPredicate in(final String name, final Set<Object> values) {
         return new FilterPredicate() {
             @Override
-            public boolean valid(KeyValueGetter<String, ?> kv) {
-                return values.contains(kv.get(name));
+            public boolean valid(Row<?, String> row) {
+                return values.contains(row.get(name));
             }
 
             @Override

@@ -25,11 +25,12 @@
 package de.unknownreality.dataframe.common.row;
 
 import de.unknownreality.dataframe.DataFrameRuntimeException;
-import de.unknownreality.dataframe.common.Header;
 import de.unknownreality.dataframe.common.Row;
-import de.unknownreality.dataframe.common.parser.Parser;
-import de.unknownreality.dataframe.common.parser.ParserNotFoundException;
-import de.unknownreality.dataframe.common.parser.ParserUtil;
+import de.unknownreality.dataframe.common.header.Header;
+import de.unknownreality.dataframe.type.DataFrameTypeManager;
+import de.unknownreality.dataframe.type.ValueType;
+import de.unknownreality.dataframe.type.ValueTypeNotFoundException;
+import de.unknownreality.dataframe.type.impl.StringType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,16 +41,18 @@ import java.util.NoSuchElementException;
 /**
  * Created by Alex on 19.05.2017.
  */
-public class StringRow<T,H extends Header<T>> implements Row<String,T>, Iterable<String> {
+public class StringRow<T, H extends Header<T>> implements Row<String, T>, Iterable<String> {
     private static final Logger log = LoggerFactory.getLogger(StringRow.class);
 
-    private static final Parser<Boolean> BOOLEAN_PARSER = ParserUtil.findParserOrNull(Boolean.class);
-    private static final Parser<Double> DOUBLE_PARSER = ParserUtil.findParserOrNull(Double.class);
-    private static final Parser<Float> FLOAT_PARSER = ParserUtil.findParserOrNull(Float.class);
-    private static final Parser<Long> LONG_PARSER = ParserUtil.findParserOrNull(Long.class);
-    private static final Parser<Integer> INTEGER_PARSER = ParserUtil.findParserOrNull(Integer.class);
-    private static final Parser<Short> SHORT_PARSER = ParserUtil.findParserOrNull(Short.class);
-    private static final Parser<Byte> BYTE_PARSER = ParserUtil.findParserOrNull(Byte.class);
+    private final static StringType STRING_VALUE_TYPE = new StringType();
+
+    private static final ValueType<Boolean> BOOLEAN_VALUE_READER = DataFrameTypeManager.get().findValueTypeOrThrow(Boolean.class);
+    private static final ValueType<Double> DOUBLE_VALUE_READER = DataFrameTypeManager.get().findValueTypeOrThrow(Double.class);
+    private static final ValueType<Float> FLOAT_VALUE_READER = DataFrameTypeManager.get().findValueTypeOrThrow(Float.class);
+    private static final ValueType<Long> LONG_VALUE_READER = DataFrameTypeManager.get().findValueTypeOrThrow(Long.class);
+    private static final ValueType<Integer> INTEGER_VALUE_READER = DataFrameTypeManager.get().findValueTypeOrThrow(Integer.class);
+    private static final ValueType<Short> SHORT_VALUE_READER = DataFrameTypeManager.get().findValueTypeOrThrow(Short.class);
+    private static final ValueType<Byte> BYTE_VALUE_READER = DataFrameTypeManager.get().findValueTypeOrThrow(Byte.class);
 
 
     private final String[] values;
@@ -107,76 +110,76 @@ public class StringRow<T,H extends Header<T>> implements Row<String,T>, Iterable
 
     @Override
     public Boolean getBoolean(int index) {
-        return parse(index, Boolean.class, BOOLEAN_PARSER);
+        return parse(index, Boolean.class, BOOLEAN_VALUE_READER);
 
     }
 
     @Override
     public Boolean getBoolean(T header) {
-        return parse(header, Boolean.class, BOOLEAN_PARSER);
+        return parse(header, Boolean.class, BOOLEAN_VALUE_READER);
 
     }
 
     @Override
     public Double getDouble(int index) {
-        return parse(index, Double.class, DOUBLE_PARSER);
+        return parse(index, Double.class, DOUBLE_VALUE_READER);
 
     }
 
     @Override
     public Double getDouble(T header) {
-        return parse(header, Double.class, DOUBLE_PARSER);
+        return parse(header, Double.class, DOUBLE_VALUE_READER);
     }
 
 
     @Override
     public Long getLong(int index) {
-        return parse(index, Long.class, LONG_PARSER);
+        return parse(index, Long.class, LONG_VALUE_READER);
     }
 
     @Override
     public Long getLong(T header) {
-        return parse(header, Long.class, LONG_PARSER);
+        return parse(header, Long.class, LONG_VALUE_READER);
     }
 
     @Override
     public Short getShort(int index) {
-        return parse(index, Short.class, SHORT_PARSER);
+        return parse(index, Short.class, SHORT_VALUE_READER);
     }
 
     @Override
     public Short getShort(T headerName) {
-        return parse(headerName, Short.class, SHORT_PARSER);
+        return parse(headerName, Short.class, SHORT_VALUE_READER);
     }
 
     @Override
     public Byte getByte(int index) {
-        return parse(index, Byte.class, BYTE_PARSER);
+        return parse(index, Byte.class, BYTE_VALUE_READER);
     }
 
     @Override
     public Byte getByte(T headerName) {
-        return parse(headerName, Byte.class, BYTE_PARSER);
+        return parse(headerName, Byte.class, BYTE_VALUE_READER);
     }
 
     @Override
     public Integer getInteger(int index) {
-        return parse(index, Integer.class, INTEGER_PARSER);
+        return parse(index, Integer.class, INTEGER_VALUE_READER);
     }
 
     @Override
     public Integer getInteger(T header) {
-        return parse(header, Integer.class, INTEGER_PARSER);
+        return parse(header, Integer.class, INTEGER_VALUE_READER);
     }
 
     @Override
     public Float getFloat(int index) {
-        return parse(index, Float.class, FLOAT_PARSER);
+        return parse(index, Float.class, FLOAT_VALUE_READER);
     }
 
     @Override
     public Float getFloat(T header) {
-        return parse(header, Float.class, FLOAT_PARSER);
+        return parse(header, Float.class, FLOAT_VALUE_READER);
     }
 
 
@@ -184,16 +187,16 @@ public class StringRow<T,H extends Header<T>> implements Row<String,T>, Iterable
      * Gets a value by its column header name and parses it into a specified type
      * This method throws a {@link DataFrameRuntimeException} if anything goes wrong.
      *
-     * @param name   csv column name
-     * @param cl     class of resulting entity
-     * @param parser used parser
-     * @param <C>    type of resulting entity
+     * @param name        csv column name
+     * @param cl          class of resulting entity
+     * @param valueReader used parser
+     * @param <C>         type of resulting entity
      * @return parsed entity
      */
-    protected <C> C parse(T name, Class<C> cl, Parser<C> parser) {
+    protected <C> C parse(T name, Class<C> cl, ValueType<C> valueReader) {
         String val = get(name);
         try {
-            return parser.parse(val);
+            return valueReader.parse(val);
         } catch (ParseException e) {
             log.error("error parsing value {} to {}", val, cl, e);
             throw new DataFrameRuntimeException(String.format("error parsing value %s to %s", val, cl), e);
@@ -204,22 +207,31 @@ public class StringRow<T,H extends Header<T>> implements Row<String,T>, Iterable
      * Gets a value by its index and parses it into a specified type
      * This method throws a {@link DataFrameRuntimeException} if anything goes wrong.
      *
-     * @param index  csv column index
-     * @param cl     class of resulting entity
-     * @param parser used parser
-     * @param <C>    type of resulting entity
+     * @param index       csv column index
+     * @param cl          class of resulting entity
+     * @param valueReader used parser
+     * @param <C>         type of resulting entity
      * @return parsed entity
      */
-    protected <C> C parse(int index, Class<C> cl, Parser<C> parser) {
+    protected <C> C parse(int index, Class<C> cl, ValueType<C> valueReader) {
         String val = get(index);
         try {
-            return parser.parse(val);
+            return valueReader.parse(val);
         } catch (ParseException e) {
             log.error("error parsing value {} to {}", val, cl, e);
             throw new DataFrameRuntimeException(String.format("error parsing value %s to %s", val, cl), e);
         }
     }
 
+    @Override
+    public ValueType<String> getType(int index) {
+        return STRING_VALUE_TYPE;
+    }
+
+    @Override
+    public ValueType<String> getType(T headerName) {
+        return STRING_VALUE_TYPE;
+    }
 
     @Override
     public <C> C get(T headerName, Class<C> cl) {
@@ -252,8 +264,8 @@ public class StringRow<T,H extends Header<T>> implements Row<String,T>, Iterable
      */
     protected  <C> C getValueAs(String value, Class<C> cl) {
         try {
-            return ParserUtil.parse(cl, value);
-        } catch (ParseException | ParserNotFoundException e) {
+            return DataFrameTypeManager.get().parse(cl, value);
+        } catch (ParseException | ValueTypeNotFoundException e) {
             log.error("error parsing value {} to {}", value, cl, e);
             throw new DataFrameRuntimeException(String.format("error parsing value %s to %s", value, cl), e);
 
@@ -271,8 +283,8 @@ public class StringRow<T,H extends Header<T>> implements Row<String,T>, Iterable
      */
     protected <C> C getValueAsOrNull(String value, Class<C> cl) {
         try {
-            return ParserUtil.parse(cl, value);
-        } catch (ParseException | ParserNotFoundException e) {
+            return DataFrameTypeManager.get().parse(cl, value);
+        } catch (ParseException | ValueTypeNotFoundException e) {
             log.warn("error parsing value {} to {}", value, cl, e);
 
         }

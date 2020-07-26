@@ -27,9 +27,9 @@ package de.unknownreality.dataframe.csv;
 import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.DataFrameColumn;
 import de.unknownreality.dataframe.common.DataContainer;
-import de.unknownreality.dataframe.common.Header;
 import de.unknownreality.dataframe.common.Row;
 import de.unknownreality.dataframe.common.StringUtil;
+import de.unknownreality.dataframe.common.header.Header;
 import de.unknownreality.dataframe.io.DataWriter;
 import de.unknownreality.dataframe.io.FileFormat;
 import de.unknownreality.dataframe.io.ReadFormat;
@@ -45,7 +45,7 @@ import java.util.zip.GZIPOutputStream;
  * Created by Alex on 17.06.2017.
  */
 public class CSVWriter extends DataWriter {
-    private CSVSettings settings;
+    private final CSVSettings settings;
 
     protected CSVWriter(CSVSettings settings) {
         this.settings = settings;
@@ -53,7 +53,7 @@ public class CSVWriter extends DataWriter {
 
 
     @Override
-    public void write(OutputStream os, DataContainer<?, ?> dataContainer) {
+    public void write(OutputStream os, DataContainer<? extends Header<?>, ? extends Row<?, ?>> dataContainer) {
         if (settings.isGzip()) {
             try {
                 os = new GZIPOutputStream(os);
@@ -68,7 +68,7 @@ public class CSVWriter extends DataWriter {
     public void write(BufferedWriter bufferedWriter, DataContainer<?, ?> dataContainer) {
         try {
             writeHeader(bufferedWriter, dataContainer.getHeader());
-            for (Row row : dataContainer) {
+            for (Row<?, ?> row : dataContainer) {
                 writeRow(bufferedWriter, row);
             }
         } catch (Exception e) {
@@ -93,26 +93,24 @@ public class CSVWriter extends DataWriter {
         bufferedWriter.flush();
     }
 
-    public void writeRow(BufferedWriter bufferedWriter, Row row) throws Exception {
+    public void writeRow(BufferedWriter bufferedWriter, Row<?, ?> row) throws Exception {
         char separator = settings.getSeparator();
         for (int i = 0; i < row.size(); i++) {
-            Object v = row.get(i);
-            String s = v.toString();
+            String s = row.toString(i);
             boolean putInQuotes = false;
             boolean escapeQuotes = false;
-            if (v instanceof String) {
-                char[] chars = s.toCharArray();
-                for (int j = 0; j < chars.length; j++) {
-                    char c = chars[j];
-                    if (c == separator || c == '\'') {
-                        putInQuotes = true;
-                    } else if (c == '\"') {
-                        putInQuotes = true;
-                        escapeQuotes = true;
-                    }
+            char[] chars = s.toCharArray();
+            for (int j = 0; j < chars.length; j++) {
+                char c = chars[j];
+                if (c == separator || c == '\'') {
+                    putInQuotes = true;
+                } else if (c == '\"') {
+                    putInQuotes = true;
+                    escapeQuotes = true;
                 }
             }
-            putInQuotes = putInQuotes || (settings.isQuoteStrings() && v instanceof String);
+            putInQuotes = putInQuotes
+                    || (settings.isQuoteStrings() && row.getType(i).getType() == String.class);
             if (putInQuotes) {
                 if (escapeQuotes) {
                     s = StringUtil.putInQuotes(s, '\"');
@@ -130,7 +128,7 @@ public class CSVWriter extends DataWriter {
     }
 
     @Override
-    public void write(File file, DataContainer<?, ?> dataContainer) {
+    public void write(File file, DataContainer<? extends Header<?>, ? extends Row<?, ?>> dataContainer) {
         if (settings.isGzip()) {
             try (OutputStream outputStream = new GZIPOutputStream(new FileOutputStream(file))) {
                 write(new BufferedWriter(new OutputStreamWriter(outputStream)), dataContainer);
@@ -154,13 +152,13 @@ public class CSVWriter extends DataWriter {
     }
 
     @Override
-    public List<DataFrameColumn> getMetaColumns(DataFrame dataFrame) {
+    public List<DataFrameColumn<?, ?>> getMetaColumns(DataFrame dataFrame) {
         return new ArrayList<>(dataFrame.getColumns());
     }
 
 
     @Override
-    public ReadFormat getReadFormat() {
+    public ReadFormat<CSVRow, CSVReaderBuilder> getReadFormat() {
         return FileFormat.CSV;
     }
 }

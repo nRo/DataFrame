@@ -49,9 +49,8 @@ public abstract class DataWriter {
      *
      * @param writer target writer
      * @return {@link BufferedWriter}
-     * @throws IOException
      */
-    private BufferedWriter initWriter(Writer writer) throws IOException {
+    private BufferedWriter initWriter(Writer writer) {
 
         if (writer instanceof BufferedWriter) {
             return (BufferedWriter) writer;
@@ -59,16 +58,12 @@ public abstract class DataWriter {
         return new BufferedWriter(writer);
     }
 
-    public void write(Writer writer, DataContainer<?,?> dataContainer){
-        try {
-            write(initWriter(writer),dataContainer);
-        } catch (IOException e) {
-            throw new DataFrameRuntimeException("error creating buffered writer",e);
-        }
+    public void write(Writer writer, DataContainer<?, ?> dataContainer) {
+        write(initWriter(writer), dataContainer);
     }
 
 
-    public abstract void write(BufferedWriter writer, DataContainer<?,?> dataContainer);
+    public abstract void write(BufferedWriter writer, DataContainer<?, ?> dataContainer);
 
     /**
      * Writes a dataframe to a file
@@ -87,17 +82,17 @@ public abstract class DataWriter {
         if (file.getParentFile() != null && !file.getParentFile().isDirectory()) {
             file.getParentFile().mkdirs();
         }
-        try(BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
             write(bufferedWriter, dataContainer);
         } catch (IOException e) {
-            throw new DataFrameRuntimeException(String.format("error writing file '%s'",file.getAbsolutePath()),e);
+            throw new DataFrameRuntimeException(String.format("error writing file '%s'", file.getAbsolutePath()), e);
         }
     }
 
     public abstract Map<String,String> getSettings(DataFrame dataFrame);
 
-    public abstract List<DataFrameColumn> getMetaColumns(DataFrame dataFrame);
+    public abstract List<DataFrameColumn<?, ?>> getMetaColumns(DataFrame dataFrame);
 
-    public abstract ReadFormat getReadFormat();
+    public abstract ReadFormat<?, ?> getReadFormat();
 
 }

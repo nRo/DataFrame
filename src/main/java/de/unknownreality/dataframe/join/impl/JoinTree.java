@@ -11,13 +11,14 @@ public class JoinTree {
         All,
         FirstOnly
     }
-    Set<JoinNode> savedLeafs = new LinkedHashSet<>();
 
-    private JoinNode root = new JoinNode(null);
-    private boolean saveLeafsA;
-    private boolean saveLeafsB;
-    private int[] colIndicesA;
-    private int[] colIndicesB;
+    final Set<JoinNode> savedLeafs = new LinkedHashSet<>();
+
+    private final JoinNode root = new JoinNode(null);
+    private final boolean saveLeafsA;
+    private final boolean saveLeafsB;
+    private final int[] colIndicesA;
+    private final int[] colIndicesB;
 
     public JoinTree(LeafMode mode, DataFrame dfA, DataFrame dfB, JoinColumn... columns) {
         int i = 0;
@@ -44,26 +45,25 @@ public class JoinTree {
 
     private void set(DataFrame df,int[] colIndices, boolean isA, boolean safeLeafs) {
         for (DataRow row : df) {
-            Comparable<?>[] values = createValues(row,colIndices);
+            Object[] values = createValues(row, colIndices);
             addRec(root, 0, values, row.getIndex(),isA,safeLeafs);
         }
     }
 
 
-    private void addRec(JoinNode node, int index, Comparable<?>[] values, Integer rowIndex, boolean isA, boolean saveLeaf) {
+    private void addRec(JoinNode node, int index, Object[] values, Integer rowIndex, boolean isA, boolean saveLeaf) {
         if (index == values.length) {
-            if(saveLeaf) {
+            if (saveLeaf) {
                 savedLeafs.add(node);
             }
-            if(isA) {
+            if (isA) {
                 node.addIndexA(rowIndex);
-            }
-            else{
+            } else {
                 node.addIndexB(rowIndex);
             }
             return;
         }
-        Comparable<?> value = values[index];
+        Object value = values[index];
         JoinNode child;
         if ((child = node.getChild(value)) == null) {
             child = new JoinNode(value);
@@ -72,9 +72,9 @@ public class JoinTree {
         addRec(child, index + 1, values, rowIndex, isA, saveLeaf);
     }
 
-    private Comparable<?> [] createValues(DataRow dataRow, int[] colIndices) {
-        Comparable<?> [] values = new Comparable<?>[colIndices.length];
-        for(int i = 0; i < colIndices.length; i++){
+    private Object[] createValues(DataRow dataRow, int[] colIndices) {
+        Object[] values = new Object[colIndices.length];
+        for (int i = 0; i < colIndices.length; i++) {
             values[i] = dataRow.get(colIndices[i]);
         }
         return values;
@@ -85,13 +85,13 @@ public class JoinTree {
         return savedLeafs;
     }
 
-    public class JoinNode {
-        private Comparable<?>  value;
-        private HashMap<Comparable<?> , JoinNode> children;
+    public static class JoinNode {
+        private final Object value;
+        private HashMap<Object, JoinNode> children;
         private List<Integer> indicesA;
         private List<Integer> indicesB;
 
-        public JoinNode(Comparable<?>  value) {
+        public JoinNode(Object value) {
             this.value = value;
         }
 
@@ -107,14 +107,14 @@ public class JoinTree {
             }
         }
 
-        private HashMap<Comparable<?> , JoinNode> getChildrenMap() {
+        private HashMap<Object, JoinNode> getChildrenMap() {
             if (children == null) {
                 children = new HashMap<>();
             }
             return children;
         }
 
-        public Comparable<?>  getValue() {
+        public Object getValue() {
             return value;
         }
 
@@ -123,7 +123,7 @@ public class JoinTree {
             getChildrenMap().put(child.getValue(), child);
         }
 
-        public JoinNode getChild(Comparable<?>  value) {
+        public JoinNode getChild(Object value) {
             return getChildrenMap().get(value);
         }
 
@@ -131,7 +131,7 @@ public class JoinTree {
             removeChild(child.getValue());
         }
 
-        public void removeChild(Comparable<?>  value) {
+        public void removeChild(Object value) {
             getChildrenMap().remove(value);
         }
 

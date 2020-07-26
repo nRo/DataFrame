@@ -33,6 +33,6 @@ import java.util.List;
 /**
  * Created by Alex on 17.06.2017.
  */
-public interface DataIterator<R extends Row> extends RowIterator<R>, RowIterable<R> {
-    public List<ColumnInformation> getColumnsInformation();
+public interface DataIterator<R extends Row<?, ?>> extends RowIterator<R>, RowIterable<R> {
+    List<ColumnInformation> getColumnsInformation();
 }

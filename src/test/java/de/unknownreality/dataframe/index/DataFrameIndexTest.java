@@ -34,7 +34,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -47,7 +46,7 @@ public class DataFrameIndexTest {
     public final ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void testIndex() throws IOException {
+    public void testIndex() {
         /*
        ID;NAME;UID
         1;A;1
@@ -117,12 +116,7 @@ public class DataFrameIndexTest {
         Assert.assertEquals(5, (int) dataFrame.selectByPrimaryKey(11).getInteger("ID"));
         Assert.assertEquals("A", dataFrame.selectByPrimaryKey(11).getString("NAME"));
 
-        dataFrame.getIntegerColumn("ID").map(new MapFunction<Integer>() {
-            @Override
-            public Integer map(Integer value) {
-                return value + 2;
-            }
-        });
+        dataFrame.getIntegerColumn("ID").map(value -> value + 2);
 
         Assert.assertEquals(3, (int) dataFrame.selectByPrimaryKey(9).getInteger("ID"));
 
@@ -176,45 +170,45 @@ public class DataFrameIndexTest {
     }
 
     @Test
-    public void testIndexExistence(){
+    public void testIndexExistence() {
         DefaultDataFrame dataFrame = new DefaultDataFrame()
                 .addStringColumn("name")
                 .addDoubleColumn("a")
                 .addIntegerColumn("b")
                 .addBooleanColumn("c");
 
-        dataFrame.append("A",1d,5, true);
-        dataFrame.append("B",2d,4, true);
-        dataFrame.append("C",3d,3, false);
-        dataFrame.append("D",4d,2, false);
-        dataFrame.addIndex("idx","name");
-        Assert.assertEquals("A",dataFrame.selectFirstRowByIndex("idx","A").getString("name"));
+        dataFrame.append("A", 1d, 5, true);
+        dataFrame.append("B", 2d, 4, true);
+        dataFrame.append("C", 3d, 3, false);
+        dataFrame.append("D", 4d, 2, false);
+        dataFrame.addIndex("idx", "name");
+        Assert.assertEquals("A", dataFrame.selectFirstRowByIndex("idx", "A").getString("name"));
 
         dataFrame = dataFrame.sort("b");
-        Assert.assertEquals("A",dataFrame.selectFirstRowByIndex("idx","A").getString("name"));
+        Assert.assertEquals("A", dataFrame.selectFirstRowByIndex("idx", "A").getString("name"));
 
-        dataFrame = dataFrame.select("a != 'D'");
-        Assert.assertEquals("A",dataFrame.selectFirstRowByIndex("idx","A").getString("name"));
+        dataFrame = dataFrame.select("name != 'D'");
+        Assert.assertEquals("A", dataFrame.selectFirstRowByIndex("idx", "A").getString("name"));
 
-        dataFrame.filter("a != 'C'");
-        Assert.assertEquals("A",dataFrame.selectFirstRowByIndex("idx","A").getString("name"));
+        dataFrame.filter("name != 'C'");
+        Assert.assertEquals("A", dataFrame.selectFirstRowByIndex("idx", "A").getString("name"));
 
         dataFrame.reverse();
-        Assert.assertEquals("A",dataFrame.selectFirstRowByIndex("idx","A").getString("name"));
+        Assert.assertEquals("A", dataFrame.selectFirstRowByIndex("idx", "A").getString("name"));
 
         dataFrame.shuffle();
-        Assert.assertEquals("A",dataFrame.selectFirstRowByIndex("idx","A").getString("name"));
+        Assert.assertEquals("A", dataFrame.selectFirstRowByIndex("idx", "A").getString("name"));
 
-        dataFrame.append("C",3d,3, false);
-        dataFrame.append("D",4d,2, false);
+        dataFrame.append("C", 3d, 3, false);
+        dataFrame.append("D", 4d, 2, false);
         dataFrame.sort("a");
 
-        dataFrame.filterSubset(0,3);
-        Assert.assertEquals("A",dataFrame.selectFirstRowByIndex("idx","A").getString("name"));
+        dataFrame.filterSubset(0, 3);
+        Assert.assertEquals("A", dataFrame.selectFirstRowByIndex("idx", "A").getString("name"));
 
 
-        dataFrame = dataFrame.selectSubset(0,2);
-        Assert.assertEquals("A",dataFrame.selectFirstRowByIndex("idx","A").getString("name"));
+        dataFrame = dataFrame.selectSubset(0, 2);
+        Assert.assertEquals("A", dataFrame.selectFirstRowByIndex("idx", "A").getString("name"));
 
         dataFrame = dataFrame.copy();
         Assert.assertEquals("A",dataFrame.selectFirstRowByIndex("idx","A").getString("name"));

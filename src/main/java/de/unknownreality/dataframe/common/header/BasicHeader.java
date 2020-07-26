@@ -24,8 +24,6 @@
 
 package de.unknownreality.dataframe.common.header;
 
-import de.unknownreality.dataframe.common.Header;
-
 import java.util.*;
 
 /**

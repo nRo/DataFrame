@@ -31,9 +31,10 @@ import java.util.Map;
 /**
  * Created by Alex on 17.06.2017.
  */
-public interface ReaderBuilder<R extends Row,D extends DataReader<R,? extends DataIterator<R>>> {
+public interface ReaderBuilder<R extends Row<?, ?>, D extends DataReader<R, ? extends DataIterator<R>>> {
     D build();
 
-    public ReaderBuilder<R,D> loadSettings(Map<String,String> map) throws Exception;
-    public ReaderBuilder<R, D> selectColumn(String col);
+    ReaderBuilder<R, D> loadSettings(Map<String, String> map) throws Exception;
+
+    ReaderBuilder<R, D> selectColumn(String col);
 }

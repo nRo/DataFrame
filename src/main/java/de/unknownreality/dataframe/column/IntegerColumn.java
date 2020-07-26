@@ -25,22 +25,21 @@
 package de.unknownreality.dataframe.column;
 
 import de.unknownreality.dataframe.common.Row;
-import de.unknownreality.dataframe.common.parser.Parser;
-import de.unknownreality.dataframe.common.parser.ParserUtil;
+import de.unknownreality.dataframe.type.impl.IntegerType;
 
 /**
  * Created by Alex on 09.03.2016.
  */
 public class IntegerColumn extends NumberColumn<Integer, IntegerColumn> {
 
-    private final Parser<Integer> parser = ParserUtil.findParserOrNull(Integer.class);
+    private final IntegerType valueType = new IntegerType();
 
     public IntegerColumn() {
-        super();
+        super(Integer.class);
     }
 
     public IntegerColumn(String name) {
-        super(name);
+        super(name, Integer.class);
     }
 
     public IntegerColumn(String name, Integer[] values) {
@@ -53,19 +52,13 @@ public class IntegerColumn extends NumberColumn<Integer, IntegerColumn> {
 
 
     @Override
+    public IntegerType getValueType() {
+        return valueType;
+    }
+
+    @Override
     protected IntegerColumn getThis() {
         return this;
-    }
-
-    @Override
-    public Class<Integer> getType() {
-        return Integer.class;
-    }
-
-
-    @Override
-    public Parser<Integer> getParser() {
-        return parser;
     }
 
     @Override
@@ -74,6 +67,7 @@ public class IntegerColumn extends NumberColumn<Integer, IntegerColumn> {
         toArray(copyValues);
         return new IntegerColumn(getName(), copyValues, size());
     }
+
     @Override
     public <H> Integer getValueFromRow(Row<?, H> row, H headerName) {
         return row.getInteger(headerName);

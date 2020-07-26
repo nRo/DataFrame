@@ -29,6 +29,6 @@ import de.unknownreality.dataframe.common.Row;
 /**
  * Created by Alex on 17.06.2017.
  */
-public interface ReadFormat<R extends Row,B extends ReaderBuilder<R,?>> {
+public interface ReadFormat<R extends Row<?, ?>, B extends ReaderBuilder<R, ?>> {
     B getReaderBuilder();
 }

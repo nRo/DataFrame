@@ -24,7 +24,6 @@
 
 package de.unknownreality.dataframe;
 
-import de.unknownreality.dataframe.*;
 import de.unknownreality.dataframe.column.BooleanColumn;
 import de.unknownreality.dataframe.column.DoubleColumn;
 import de.unknownreality.dataframe.column.IntegerColumn;
@@ -33,6 +32,7 @@ import de.unknownreality.dataframe.csv.CSVReader;
 import de.unknownreality.dataframe.csv.CSVReaderBuilder;
 import de.unknownreality.dataframe.filter.FilterPredicate;
 import de.unknownreality.dataframe.sort.SortColumn;
+import de.unknownreality.dataframe.type.DataFrameTypeManager;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -58,14 +58,14 @@ public class DataFrameTest {
         DataFrame dataFrame = DataFrameBuilder.createDefault();
         dataFrame.addColumn(new IntegerColumn("id"));
         dataFrame.addColumns(new StringColumn("first"), new StringColumn("last"));
-        dataFrame.addColumn(Double.class, "value", ColumnTypeMap.create().addType(Double.class, DoubleColumn.class));
+        dataFrame.addColumn(Double.class, "value", DataFrameTypeManager.createNew().register(new DoubleColumn()));
         dataFrame.removeColumn("value");
         dataFrame.addColumn(Double.class, "value");
         dataFrame.append(1, "A", "B", 1d);
         Assert.assertEquals(1, dataFrame.size());
         dataFrame.addColumn(StringColumn.class, "full", row -> row.getString("first") + "-" + row.getString("last"));
         Assert.assertEquals("A-B", dataFrame.getRow(0).getString("full"));
-        dataFrame.addColumn(Integer.class, "int_value", ColumnTypeMap.create(), row -> row.getNumber("value").intValue());
+        dataFrame.addColumn(Integer.class, "int_value", DataFrameTypeManager.createNew(), row -> row.getNumber("value").intValue());
         Assert.assertEquals(1, (int) dataFrame.getRow(0).getInteger("int_value"));
         dataFrame.removeColumn(dataFrame.getIntegerColumn("int_value"));
         dataFrame.addColumn(Integer.class, "int_value");
@@ -368,9 +368,6 @@ public class DataFrameTest {
         Assert.assertEquals(true, Values.NA.isNA(null));
         Assert.assertEquals(false, Values.NA.isNA(1));
         Assert.assertEquals(false, Values.NA.isNA("na"));
-        Assert.assertEquals(0, Values.NA.compareTo(Values.NA));
-        Assert.assertEquals(-1, Values.NA.compareTo(1));
-        Assert.assertEquals(-1, Values.NA.compareTo(-1));
 
 
         String[] header = new String[]{"A", "B", "C", "D"};

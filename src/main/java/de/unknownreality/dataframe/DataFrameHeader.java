@@ -24,27 +24,333 @@
 
 package de.unknownreality.dataframe;
 
-import de.unknownreality.dataframe.common.header.BasicTypeHeader;
+import de.unknownreality.dataframe.common.header.TypeHeader;
+import de.unknownreality.dataframe.type.ValueType;
+
+import java.util.*;
 
 /**
  * Created by algru on 11.06.2017.
  */
-public class DataFrameHeader extends BasicTypeHeader<String> {
+public class DataFrameHeader implements TypeHeader<String> {
+
+    private final Map<String, Integer> headerMap = new HashMap<>();
+    private final List<String> headers = new ArrayList<>();
+    private final Map<String, ValueType<?>> typesMap = new HashMap<>();
+    private final Map<String, Class<? extends DataFrameColumn>> colTypeMap = new HashMap<>();
+
+    @Override
+    public int size() {
+        return headers.size();
+    }
+
+    /**
+     * Adds a new data frame column to this header
+     *
+     * @param headerName name of the added column
+     * @param column     new data frame column
+     * @return <tt>self</tt> for method chaining
+     */
+    public <V> DataFrameHeader add(String headerName, DataFrameColumn<?, ?> column) {
+        return add(headerName, column.getClass(), column.getValueType());
+    }
 
 
+    /**
+     * Adds a new header entry based on column name, column class and column value type.
+     *
+     * @param name     column name
+     * @param colClass column class
+     * @param type     column value type
+     * @return <tt>self</tt> for method chaining
+     */
+    public DataFrameHeader add(String name, Class<? extends DataFrameColumn> colClass, ValueType<?> type) {
+        int index = headers.size();
+        headers.add(name);
+        headerMap.put(name, index);
+        typesMap.put(name, type);
+        colTypeMap.put(name, colClass);
+        return this;
+    }
+
+    /**
+     * Adds a new header entry based on column name, column class and column value type.
+     *
+     * @param name     column name
+     * @param colClass column class
+     * @param type     column value type
+     * @return <tt>self</tt> for method chaining
+     */
+    public DataFrameHeader set(String name, Class<? extends DataFrameColumn> colClass, ValueType<?> type) {
+        Integer index = headerMap.get(name);
+        if (index == null) {
+            add(name, colClass, type);
+        }
+        typesMap.put(name, type);
+        colTypeMap.put(name, colClass);
+        return this;
+    }
+
+    /**
+     * Replaces an existing header with a new one.
+     *
+     * @param existing    existing column name
+     * @param replacement replacement column name
+     * @param colClass    replacement column class
+     * @param type        replacement column value type
+     * @return <tt>self</tt> for method chaining
+     */
+    public <V> DataFrameHeader replace(String existing, String replacement, Class<? extends DataFrameColumn> colClass, ValueType<?> type) {
+        Integer index = headerMap.get(existing);
+        if (index == null) {
+            throw new DataFrameRuntimeException(String.format("header not found: %s", existing));
+        }
+        headers.remove(existing);
+        headers.add(index, replacement);
+        headerMap.put(replacement, index);
+        typesMap.remove(existing);
+        colTypeMap.remove(existing);
+        typesMap.put(replacement, type);
+        colTypeMap.put(replacement, colClass);
+        return this;
+    }
+
+
+    /**
+     * Removes a column from this header
+     *
+     * @param name column name
+     */
+    public void remove(String name) {
+        boolean fix = false;
+        for (String s : headers) {
+            if (!fix && s.equals(name)) {
+                fix = true;
+                continue;
+            }
+            if (fix) {
+                headerMap.put(s, headerMap.get(s) - 1);
+            }
+        }
+        headers.remove(name);
+        headerMap.remove(name);
+        typesMap.remove(name);
+        colTypeMap.remove(name);
+    }
+
+    /**
+     * Renames a column
+     *
+     * @param oldName old name
+     * @param newName new name
+     */
+    public void rename(String oldName, String newName) {
+        for (int i = 0; i < headers.size(); i++) {
+            if (headers.get(i).equals(oldName)) {
+                headers.set(i, newName);
+                ValueType<?> type = typesMap.get(oldName);
+                typesMap.remove(oldName);
+                typesMap.put(newName, type);
+
+                Class<? extends DataFrameColumn> colType = colTypeMap.get(oldName);
+                colTypeMap.remove(oldName);
+                colTypeMap.put(newName, colType);
+
+                Integer index = headerMap.get(oldName);
+                headerMap.remove(oldName);
+                headerMap.put(newName, index);
+                return;
+            }
+        }
+    }
+
+    /**
+     * Returns <tt>true</tt> if the other header is compatible with this header.
+     * Compatible means that both headers contain the same columns with the same column classes.
+     *
+     * @param other object to test for compatibility
+     * @return <tt>true</tt> if the object is equal or compatible with this header
+     */
+    @Override
+    public boolean equals(Object other) {
+        if (other == null) {
+            return false;
+        }
+        if (other == this) {
+            return true;
+        }
+        if (other.getClass() != this.getClass()) {
+            return false;
+        }
+        DataFrameHeader otherHeader = (DataFrameHeader) other;
+        if (size() != otherHeader.size()) {
+            return false;
+        }
+        for (String s : headers) {
+
+            if (!otherHeader.contains(s)) {
+                return false;
+            }
+            if (!getValueType(s).equals(otherHeader.getValueType(s))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Returns the column class for an input column name
+     *
+     * @param name input column name
+     * @return column class
+     */
+    public Class<? extends DataFrameColumn> getColumnType(String name) {
+        return colTypeMap.get(name);
+    }
+
+    /**
+     * Returns the column class for a column index
+     *
+     * @param index column index
+     * @return column class
+     */
+    public Class<? extends DataFrameColumn> getColumnType(int index) {
+        return colTypeMap.get(get(index));
+    }
+
+    /**
+     * Returns the column value type for an input column name
+     *
+     * @param name input column name
+     * @return column value type
+     */
+    public ValueType<?> getValueType(String name) {
+        return typesMap.get(name);
+    }
+
+    /**
+     * Returns the column value type for a column index
+     *
+     * @param index column index
+     * @return column value type
+     */
+    public ValueType<?> getValueType(int index) {
+        return typesMap.get(get(index));
+    }
+
+    /**
+     * Returns the column header name at a specific index.
+     * Throws an {@link DataFrameRuntimeException} if the index is out of bounds.
+     *
+     * @param index index of column
+     * @return column name at index
+     */
+    public String get(int index) {
+        if (index >= headers.size()) {
+            throw new DataFrameRuntimeException(String.format("header index out of bounds %d > %d", index, (headers.size() - 1)));
+        }
+        return headers.get(index);
+    }
+
+    /**
+     * Returns <tt>true</tt> if the header contains a column with the input name
+     *
+     * @param name input name
+     * @return <tt>true</tt> if header contains input name
+     */
+    @Override
+    public boolean contains(String name) {
+        return headerMap.containsKey(name);
+    }
+
+
+    /**
+     * Clears this header
+     */
+    public void clear() {
+        headerMap.clear();
+        headers.clear();
+        typesMap.clear();
+    }
+
+    /**
+     * Returns the column index of a specific column name.
+     * throws an {@link DataFrameRuntimeException} if the column header name is not found
+     *
+     * @param name searched column name
+     * @return column index
+     */
+    public int getIndex(String name) {
+        Integer index;
+        if ((index = headerMap.get(name)) == null) {
+            throw new DataFrameRuntimeException(String.format("column header name not found '%s'", name));
+        }
+        return index;
+    }
+
+
+    /**
+     * Returns a string representation of this header
+     *
+     * @return string representation
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("#");
+        for (int i = 0; i < headers.size(); i++) {
+            sb.append(headers.get(i));
+            if (i < headers.size() - 1) {
+                sb.append("\t");
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Returns an iterator over the column names in this header.
+     * {@link Iterator#remove()} is not supported
+     *
+     * @return column name iterator
+     */
+    @Override
+    public Iterator<String> iterator() {
+        return new Iterator<String>() {
+            int i = 0;
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException("remove is not supported");
+            }
+
+            @Override
+            public boolean hasNext() {
+                return i != headers.size();
+            }
+
+            @Override
+            public String next() {
+                if (i >= headers.size()) {
+                    throw new NoSuchElementException(String.format("element not found: index out of bounds %s >= %s]", i, headers.size()));
+                }
+                return headers.get(i++);
+            }
+        };
+    }
 
 
     public DataFrameHeader add(DataFrameColumn<?, ?> column) {
-        return (DataFrameHeader)add(column.getName(), column.getClass(), column.getType());
+        return add(column.getName(), column.getClass(), column.getValueType());
     }
 
-    public DataFrameHeader replace(DataFrameColumn<?, ?> existing, DataFrameColumn<?, ?> replacement){
-        return (DataFrameHeader) replace(existing.getName(),replacement.getName(),replacement.getClass(), replacement.getType());
+    public <C> DataFrameHeader replace(DataFrameColumn<?, ?> existing, DataFrameColumn<?, ?> replacement) {
+        return replace(existing.getName(), replacement.getName(), replacement.getClass(), replacement.getValueType());
     }
+
     public DataFrameHeader copy() {
         DataFrameHeader copy = new DataFrameHeader();
         for (String h : this) {
-            copy.add(h, getColumnType(h), getType(h));
+            copy.add(h, getColumnType(h), getValueType(h));
         }
         return copy;
     }

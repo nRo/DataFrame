@@ -25,7 +25,7 @@
 package de.unknownreality.dataframe.common.mapping;
 
 import de.unknownreality.dataframe.common.Row;
-import de.unknownreality.dataframe.common.parser.ParserUtil;
+import de.unknownreality.dataframe.type.DataFrameTypeManager;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -69,7 +69,7 @@ public class FieldColumn {
      * @param row    row that contains the inserted value
      * @param object object that gets the value inserted
      */
-    public void set(Row row,
+    public void set(Row<?, String> row,
                     Object object) {
         set(row.get(headerName), object);
     }
@@ -86,7 +86,7 @@ public class FieldColumn {
         if (field.getType().isInstance(value)) {
             convertedVal = value;
         } else {
-            convertedVal = ParserUtil.parseOrNull(field.getType(), value.toString());
+            convertedVal = DataFrameTypeManager.get().parseOrNull(field.getType(), value.toString());
         }
         try {
             if (Modifier.isPublic(field.getModifiers())) {

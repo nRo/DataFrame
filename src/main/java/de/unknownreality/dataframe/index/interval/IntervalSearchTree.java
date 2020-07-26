@@ -35,7 +35,7 @@ public class IntervalSearchTree<T> {
 
     private IntervalNode<T> root;
 
-    private Random random = new Random();
+    private final Random random = new Random();
 
 
     public long getSize() {
@@ -123,7 +123,7 @@ public class IntervalSearchTree<T> {
         return tmp;
     }
 
-    private void updateNode(IntervalNode node) {
+    private void updateNode(IntervalNode<T> node) {
         if (node == null) {
             return;
         }
@@ -131,7 +131,7 @@ public class IntervalSearchTree<T> {
         updateSubtreeSize(node);
     }
 
-    private void updateSubtreeSize(IntervalNode node) {
+    private void updateSubtreeSize(IntervalNode<T> node) {
         long size = 1;
         if (node.getLeft() != null) {
             size += node.getLeft().getSubtreeSize();
@@ -142,7 +142,7 @@ public class IntervalSearchTree<T> {
         node.setSubtreeSize(size);
     }
 
-    private void updateMax(IntervalNode node) {
+    private void updateMax(IntervalNode<T> node) {
         Number max = node.getInterval().high;
         Number maxL = node.getLeft() != null ? node.getLeft().getMax() : Double.NEGATIVE_INFINITY;
         Number maxR = node.getRight() != null ? node.getRight().getMax() : Double.NEGATIVE_INFINITY;

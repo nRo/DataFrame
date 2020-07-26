@@ -24,14 +24,18 @@
 
 package de.unknownreality.dataframe.print;
 
-import de.unknownreality.dataframe.*;
+import de.unknownreality.dataframe.DataFrame;
+import de.unknownreality.dataframe.DataFrameColumn;
+import de.unknownreality.dataframe.DataFrameRuntimeException;
+import de.unknownreality.dataframe.Values;
 import de.unknownreality.dataframe.common.DataContainer;
-import de.unknownreality.dataframe.common.Header;
 import de.unknownreality.dataframe.common.Row;
-import de.unknownreality.dataframe.common.header.BasicTypeHeader;
-import de.unknownreality.dataframe.io.DataIterator;
+import de.unknownreality.dataframe.common.header.Header;
+import de.unknownreality.dataframe.common.header.TypeHeader;
 import de.unknownreality.dataframe.io.DataWriter;
 import de.unknownreality.dataframe.io.ReadFormat;
+import de.unknownreality.dataframe.type.ValueType;
+import de.unknownreality.dataframe.type.impl.StringType;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -40,6 +44,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+//TODO value type
 public class Printer extends DataWriter {
     private String topLeftCorner = "┌";
     private String topRightCorner = "┐";
@@ -58,10 +63,11 @@ public class Printer extends DataWriter {
     private String innerCrossConnection = "┼";
     private int defaultColumnWidth = 12;
     private int defaultMaxContentWidth = 10;
-    private int maxAutoWidth = 500;
-    private Map<Object, ColumnPrintSettings> columnSettings = new HashMap<>();
+    private final int maxAutoWidth = 500;
+    private final Map<Object, ColumnPrintSettings> columnSettings = new HashMap<>();
     private ValueFormatter defaultValueFormatter = new DefaultValueFormatter();
-    private ValueFormatter defaultHeaderFormatter = (v, m) -> "#" + v.toString();
+    private ValueFormatter defaultHeaderFormatter = (t, v, m) -> "#" + v.toString();
+    private final StringType headerType = new StringType();
     private ValueFormatter defaultNumberFormatter
             = new DefaultNumberFormatter();
 
@@ -76,7 +82,7 @@ public class Printer extends DataWriter {
             StringBuilder topLineSb = new StringBuilder();
             StringBuilder lastLineSb = new StringBuilder();
             boolean last;
-            Iterator<? extends Row> it = dataContainer.iterator();
+            Iterator<? extends Row<?, ?>> it = dataContainer.iterator();
             while (it.hasNext()) {
                 Row<?, ?> row = it.next();
                 contentLineSb.setLength(0);
@@ -149,7 +155,7 @@ public class Printer extends DataWriter {
                 columnWidth.width = settings.getWidth();
                 columnWidth.contentWidth = settings.getMaxContentWidth();
             } else {
-                max[i] = getContentLength(dataContainer.getHeader().get(i), settings);
+                max[i] = getContentLength(headerType, dataContainer.getHeader().get(i), settings);
                 autoWidthCols[autoWidthColsCount++] = i;
             }
             widths[i] = columnWidth;
@@ -164,7 +170,7 @@ public class Printer extends DataWriter {
                 ColumnPrintSettings settings = columnPrintSetting[c];
 
                 Object v = row.get(c);
-                int length = getContentLength(v, settings);
+                int length = getContentLength(row.getType(c), v, settings);
                 max[i] = Math.max(max[i], length);
             }
         }
@@ -177,7 +183,7 @@ public class Printer extends DataWriter {
         return widths;
     }
 
-    private int getContentLength(Object v, ColumnPrintSettings printSettings) {
+    private int getContentLength(ValueType<?> type, Object v, ColumnPrintSettings printSettings) {
         int length;
         if (v == null) {
             return 0;
@@ -185,13 +191,14 @@ public class Printer extends DataWriter {
             length = 2;
         } else {
             length = printSettings
-                    .getValueFormatter().format(v, maxAutoWidth).length();
+                    .getValueFormatter().format(type, v, maxAutoWidth).length();
         }
         return length;
     }
 
     private String formatContent(ColumnPrintSettings columnPrintSettings, ColumnWidth columnWidth, Row<?, ?> row, int col) {
         Object v = row.get(col);
+        ValueType<?> type = row.getType(col);
         String valueString;
         if (v == null) {
             valueString = "";
@@ -199,7 +206,7 @@ public class Printer extends DataWriter {
             valueString = "NA";
         } else {
             valueString = columnPrintSettings
-                    .getValueFormatter().format(v,
+                    .getValueFormatter().format(type, v,
                             columnWidth.contentWidth);
         }
         String fmt = "%-" + columnWidth.width + "." + columnWidth.contentWidth + "s";
@@ -208,7 +215,7 @@ public class Printer extends DataWriter {
 
     private String formatHeaderContent(Object header, ColumnPrintSettings columnPrintSettings, ColumnWidth columnWidth) {
         String headerString = columnPrintSettings
-                .getHeaderFormatter().format(header,
+                .getHeaderFormatter().format(headerType, header,
                         columnWidth.contentWidth);
 
         String fmt = "%-" + columnWidth.width + "." + columnWidth.contentWidth + "s";
@@ -296,9 +303,9 @@ public class Printer extends DataWriter {
 
     private ValueFormatter getDefaultValueFormatter(DataContainer<?, ?> dataContainer, int colIdx) {
         Header<?> header = dataContainer.getHeader();
-        if (header instanceof BasicTypeHeader<?>) {
-            BasicTypeHeader<?> typeHeader = (BasicTypeHeader<?>) header;
-            Class<?> type = typeHeader.getType(colIdx);
+        if (header instanceof TypeHeader<?>) {
+            TypeHeader<?> typeHeader = (TypeHeader<?>) header;
+            Class<?> type = typeHeader.getValueType(colIdx).getType();
             return getDefaultValueFormatter(type);
         }
         return null;
@@ -488,16 +495,16 @@ public class Printer extends DataWriter {
     }
 
     @Override
-    public List<DataFrameColumn> getMetaColumns(DataFrame dataFrame) {
+    public List<DataFrameColumn<?, ?>> getMetaColumns(DataFrame dataFrame) {
         return null;
     }
 
     @Override
-    public ReadFormat getReadFormat() {
+    public ReadFormat<?, ?> getReadFormat() {
         return null;
     }
 
-    private class ColumnWidth {
+    private static class ColumnWidth {
         public int contentWidth;
         public int width;
     }

@@ -55,7 +55,7 @@ public interface Index {
      * @param values indexed row values
      * @return index of row with the input value
      */
-    Collection<Integer> find(Comparable... values);
+    Collection<Integer> find(Object... values);
 
     /**
      * Returns the name if this index
@@ -77,25 +77,27 @@ public interface Index {
      * @param column column to tes t
      * @return <tt>true</tt> if column is contained in this index
      */
-    boolean containsColumn(DataFrameColumn column);
+    boolean containsColumn(DataFrameColumn<?, ?> column);
 
     /**
      * Returns <tt>true</tt> if this index is unique
+     *
      * @return <tt>true</tt> if this index is unique
      */
     boolean isUnique();
+
     /**
      * Returns the columns used in this index
      *
      * @return columns in this index
      */
-    List<DataFrameColumn> getColumns();
+    List<DataFrameColumn<?, ?>> getColumns();
 
     /**
      * Clears this index
      */
     void clear();
 
-    void replaceColumn(DataFrameColumn existing, DataFrameColumn replacement);
+    void replaceColumn(DataFrameColumn<?, ?> existing, DataFrameColumn<?, ?> replacement);
 
 }

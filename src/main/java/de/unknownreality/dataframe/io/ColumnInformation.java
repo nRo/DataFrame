@@ -24,25 +24,25 @@
 
 package de.unknownreality.dataframe.io;
 
-import de.unknownreality.dataframe.ColumnTypeMap;
 import de.unknownreality.dataframe.DataFrameColumn;
 import de.unknownreality.dataframe.DataFrameRuntimeException;
 import de.unknownreality.dataframe.column.StringColumn;
+import de.unknownreality.dataframe.type.DataFrameTypeManager;
 
 /**
  * Created by Alex on 17.06.2017.
  */
 public class ColumnInformation {
-    private boolean autodetect;
-    private String name;
-    private int index;
+    private final boolean autodetect;
+    private final String name;
+    private final int index;
     private Class<? extends DataFrameColumn> columnType;
 
 
-    public ColumnInformation(int index, String name, Class<? extends Comparable> type){
+    public ColumnInformation(int index, String name, Class<?> type) {
         this.index = index;
         this.name = name;
-        this.columnType = ColumnTypeMap.get(type);
+        this.columnType = DataFrameTypeManager.get().getColumnType(type);
         if (columnType == null) {
             throw new DataFrameRuntimeException(String.format("no column type found for value type '%s'", type));
         }

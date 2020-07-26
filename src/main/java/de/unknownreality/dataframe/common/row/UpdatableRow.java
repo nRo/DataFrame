@@ -25,15 +25,16 @@
 package de.unknownreality.dataframe.common.row;
 
 import de.unknownreality.dataframe.DataFrameRuntimeException;
-import de.unknownreality.dataframe.common.Header;
+import de.unknownreality.dataframe.common.header.TypeHeader;
 
 /**
  * Created by Alex on 19.05.2017.
  */
-public abstract class UpdatableRow<T,H extends Header<T>,V> extends AbstractHeaderRow<T,H,V> {
+public abstract class UpdatableRow<T, H extends TypeHeader<T>, V> extends AbstractHeaderRow<T, H, V> {
     public UpdatableRow(H header, int index) {
         super(header, index);
     }
+
     /**
      * Sets a new value.
      * Throws a {@link DataFrameRuntimeException} if the provided column is not found

@@ -29,7 +29,6 @@ import de.unknownreality.dataframe.DataFrameColumn;
 import de.unknownreality.dataframe.DataFrameRuntimeException;
 import de.unknownreality.dataframe.MapFunction;
 import de.unknownreality.dataframe.Values;
-import de.unknownreality.dataframe.common.ValueComparator;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -37,7 +36,7 @@ import java.util.*;
 /**
  * Created by Alex on 09.03.2016.
  */
-public abstract class BasicColumn<T extends Comparable<T>, C extends BasicColumn<T, C>> extends DataFrameColumn<T, C> {
+public abstract class BasicColumn<T, C extends BasicColumn<T, C>> extends DataFrameColumn<T, C> {
     public static final double GROW_FACTOR = 1.6d;
     public static final int INIT_SIZE = 128;
 
@@ -46,14 +45,14 @@ public abstract class BasicColumn<T extends Comparable<T>, C extends BasicColumn
     protected T[] values;
 
     @SuppressWarnings("unchecked")
-    public BasicColumn(String name) {
+    public BasicColumn(String name, Class<T> cl) {
         this.size = 0;
         setName(name);
-        values = (T[]) Array.newInstance(getType(), INIT_SIZE);
+        values = (T[]) Array.newInstance(cl, INIT_SIZE);
     }
 
-    public BasicColumn() {
-        this(null);
+    public BasicColumn(Class<T> cl) {
+        this(null, cl);
     }
 
     public BasicColumn(String name, T[] values, int size) {
@@ -83,7 +82,7 @@ public abstract class BasicColumn<T extends Comparable<T>, C extends BasicColumn
 
     @Override
     protected void doSort() {
-        Arrays.sort(values, 0, size(), ValueComparator.COMPARATOR);
+        Arrays.sort(values, 0, size(), getValueType().getComparator());
 
     }
 
@@ -129,8 +128,9 @@ public abstract class BasicColumn<T extends Comparable<T>, C extends BasicColumn
     }
 
     @Override
-    public boolean isValueValid(Comparable value) {
-        return Values.NA.isNA(value) || getType().isAssignableFrom(value.getClass());
+    public boolean isValueValid(Object value) {
+        return Values.NA.isNA(value) ||
+                getValueType().getType().isAssignableFrom(value.getClass());
     }
 
     @Override
@@ -192,7 +192,7 @@ public abstract class BasicColumn<T extends Comparable<T>, C extends BasicColumn
 
 
     @Override
-    public Comparable[] toArray() {
+    public T[] toArray() {
         return Arrays.copyOf(values, size());
     }
 
@@ -222,7 +222,6 @@ public abstract class BasicColumn<T extends Comparable<T>, C extends BasicColumn
     @Override
     protected boolean doAppendNA() {
         return doAppend(null);
-
     }
 
     @Override
@@ -259,23 +258,22 @@ public abstract class BasicColumn<T extends Comparable<T>, C extends BasicColumn
     @Override
     public List<T> asList() {
         return Collections.unmodifiableList(
-                new BasicValueList<>(values,size)
+                new BasicValueList<>(values, size)
         );
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public void clear() {
-        values = (T[]) Array.newInstance(getType(), INIT_SIZE);
+        values = (T[]) Array.newInstance(getValueType().getType(), INIT_SIZE);
         size = 0;
     }
 
-
-    class BasicValueList<E> extends AbstractList<E>
+    static class BasicValueList<E> extends AbstractList<E>
             implements RandomAccess, java.io.Serializable {
         private static final long serialVersionUID = -2764017481108945198L;
         private final E[] a;
-        private int size;
+        private final int size;
 
         BasicValueList(E[] array, int size) {
             a = Objects.requireNonNull(array);

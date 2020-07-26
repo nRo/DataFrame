@@ -38,7 +38,7 @@ public enum PredicateOperation {
 
     private static final Map<String,PredicateOperation> ALIASES_MAP = new HashMap<>();
 
-    private String[] aliases;
+    private final String[] aliases;
 
     PredicateOperation(String... aliases){
         this.aliases = aliases;

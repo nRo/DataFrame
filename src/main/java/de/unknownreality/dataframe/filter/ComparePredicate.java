@@ -25,8 +25,12 @@
 package de.unknownreality.dataframe.filter;
 
 import de.unknownreality.dataframe.DataFrameRuntimeException;
-import de.unknownreality.dataframe.common.KeyValueGetter;
+import de.unknownreality.dataframe.Values;
 import de.unknownreality.dataframe.common.NumberUtil;
+import de.unknownreality.dataframe.common.Row;
+import de.unknownreality.dataframe.type.ValueType;
+
+import java.text.ParseException;
 
 /**
  * Created by Alex on 09.03.2016.
@@ -86,6 +90,7 @@ public class ComparePredicate extends FilterPredicate {
 
     private final String headerName;
     private final Object value;
+    private Object parsedValue;
     private final Operation operation;
 
     /**
@@ -117,44 +122,70 @@ public class ComparePredicate extends FilterPredicate {
     /**
      * Returns <tt>true</tt> if the row is valid for this predicate
      *
-     * @param kv tested row
+     * @param row tested row
      * @return <tt>true</tt> if the row is valid
      */
-    @SuppressWarnings("unchecked")
     @Override
-    public boolean valid(KeyValueGetter<String, ?> kv) {
-        return compare(kv.get(headerName),value);
+    public boolean valid(Row<?, String> row) {
+        ValueType<?> type = row.getType(headerName);
+        Object v;
+        try {
+            v = convertValue(type);
+        } catch (ParseException e) {
+            throw new DataFrameFilterRuntimeException(
+                    String.format("error converting filter value '%s' to '%s' in column '%s'",
+                            value, type.getType().getCanonicalName(), headerName));
+        }
+        return compare(type, row.get(headerName), v);
+
     }
 
-    protected boolean compare(Object valueA, Object valueB){
-        if (operation == Operation.EQ && valueA.equals(valueB)) {
-            return true;
-        }
-        if(valueA instanceof String && valueB instanceof Number){
-            Number n ;
-            if((n = NumberUtil.parseNumberOrNull(valueA.toString())) != null){
-                valueA = n;
-            }
-            else{
-                valueB = NumberUtil.toString((Number)valueB);
-            }
-        }
 
-        boolean numberCompare = (valueA instanceof Number && valueB instanceof Number);
-        if (!valueA.getClass().equals(valueB.getClass()) && !numberCompare) {
+    @SuppressWarnings("unchecked")
+    protected <T> T convertValue(ValueType<T> type) throws ParseException {
+        if (value == null) {
+            return null;
+        }
+        if (type.getType().isAssignableFrom(value.getClass())) {
+            return (T) value;
+        }
+        if (this.parsedValue != null && type.getType().isAssignableFrom(parsedValue.getClass())) {
+            return (T) parsedValue;
+        }
+        if (Number.class.isAssignableFrom(type.getType())) {
+            Class<? extends Number> cl = (Class<? extends Number>) type.getType();
+            if (Number.class.isAssignableFrom(value.getClass())) {
+                parsedValue = NumberUtil.convert((Number) value, cl);
+                return (T) parsedValue;
+            }
+        }
+        if (Values.NA.isNA(value)) {
+            parsedValue = null;
+            return null;
+        }
+        parsedValue = type.parse(String.valueOf(value));
+        return (T) parsedValue;
+    }
+
+    protected <T> boolean compare(ValueType<?> type, Object rowValue, Object predicateValue) {
+
+        boolean isValueRowValueNA = Values.NA.isNA(rowValue);
+        boolean isPredicateNA = Values.NA.isNA(predicateValue);
+        if (isValueRowValueNA && isPredicateNA) {
+            return isValid(operation, 0);
+        }
+        if (isPredicateNA || isValueRowValueNA) {
             return operation == Operation.NE;
         }
-        int c = 0;
-        if (numberCompare) {
-            c = NumberUtil.compare((Number) valueA, (Number) valueB);
-        } else if (valueA instanceof Comparable && valueB instanceof Comparable) {
-            c = ((Comparable) valueA).compareTo(valueB);
+        if (operation == Operation.EQ && rowValue.equals(predicateValue)) {
+            return true;
         }
-        return isValid(operation,c);
+        int c = type.compareRaw(rowValue, predicateValue);
+        return isValid(operation, c);
     }
 
 
-    protected boolean isValid (Operation operation,int c){
+    protected boolean isValid(Operation operation, int c) {
         switch (operation) {
             case GT:
                 return c > 0;
@@ -169,7 +200,7 @@ public class ComparePredicate extends FilterPredicate {
             case NE:
                 return c != 0;
             default:
-                throw new DataFrameRuntimeException(String.format("unknown operation: %s",operation.str));
+                throw new DataFrameRuntimeException(String.format("unknown operation: %s", operation.str));
         }
     }
 

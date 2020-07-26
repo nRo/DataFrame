@@ -30,20 +30,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
-import java.util.Comparator;
 
 /**
  * Created by Alex on 11.03.2016.
  */
-public abstract class NumberColumn<T extends Number & Comparable<T>, C extends NumberColumn<T, C>> extends BasicColumn<T, C> {
+public abstract class NumberColumn<T extends Number, C extends NumberColumn<T, C>> extends BasicColumn<T, C> {
     private static final Logger log = LoggerFactory.getLogger(NumberColumn.class);
 
-    public NumberColumn(String name) {
-        super(name);
+    public NumberColumn(String name, Class<T> cl) {
+        super(name, cl);
     }
 
-    public NumberColumn() {
-        super(null);
+    public NumberColumn(Class<T> cl) {
+        super(null, cl);
     }
 
     public NumberColumn(String name, T[] values) {
@@ -67,9 +66,9 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
      * @return median of all values
      */
     public T median() {
-        return new Quantiles<T>(
+        return new Quantiles<>(
                 getSortedValues(),
-                getType(), true).median();
+                getValueType().getType(), true).median();
     }
 
 
@@ -82,9 +81,9 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
      * @return quantile
      */
     public T getQuantile(double percent) {
-        return new Quantiles<T>(
+        return new Quantiles<>(
                 getSortedValues(),
-                getType(), true)
+                getValueType().getType(), true)
                 .getQuantile(percent);
 
     }
@@ -97,7 +96,7 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
      */
 
     public Quantiles<T> getQuantiles() {
-        return new Quantiles<>(getSortedValues(), getType(), true);
+        return new Quantiles<>(getSortedValues(), getValueType().getType(), true);
     }
 
 
@@ -108,7 +107,7 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
      */
     public Double mean() {
         int naCount = 0;
-        Double sum = 0d;
+        double sum = 0d;
         int count = 0;
         int size = size();
         for (int i = 0; i < size; i++) {
@@ -131,7 +130,7 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
      * @return minimum of all values
      */
     public T min() {
-        Double min = Double.MAX_VALUE;
+        double min = Double.MAX_VALUE;
         int naCount = 0;
         int size = size();
         for (int i = 0; i < size; i++) {
@@ -144,7 +143,7 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
         if (naCount > 0) {
             log.warn("min() ignored {} NA", naCount);
         }
-        return NumberUtil.convert(min, getType());
+        return NumberUtil.convert(min, getValueType().getType());
     }
 
     /**
@@ -166,7 +165,7 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
         if (naCount > 0) {
             log.warn("max() ignored {} NA", naCount);
         }
-        return NumberUtil.convert(max, getType());
+        return NumberUtil.convert(max, getValueType().getType());
     }
 
     /**
@@ -188,7 +187,7 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
         if (naCount > 0) {
             log.warn("sum() ignored {} NA", naCount);
         }
-        return NumberUtil.convert(sum, getType());
+        return NumberUtil.convert(sum, getValueType().getType());
     }
 
 
@@ -200,12 +199,12 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
      * @param column column containing the values that are added
      * @return <tt>self</tt> for method chaining
      */
-    public C add(NumberColumn column) {
+    public C add(NumberColumn<?, ?> column) {
         int naCount = 0;
         int size = size();
         for (int i = 0; i < size; i++) {
             if (!isNA(i) && !column.isNA(i)) {
-                doSet(i, NumberUtil.add(get(i), column.get(i), getType()));
+                doSet(i, NumberUtil.add(get(i), column.get(i), getValueType().getType()));
             } else {
                 naCount++;
             }
@@ -218,22 +217,8 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
     }
 
     protected T[] getSortedValues() {
-        T[] sortedValues = (T[]) toArray();
-        Arrays.sort(sortedValues, new Comparator<T>() {
-            @Override
-            public int compare(T o1, T o2) {
-                if (o1 == null && o2 == null) {
-                    return 0;
-                }
-                if (o1 == null) {
-                    return -1;
-                }
-                if (o2 == null) {
-                    return 1;
-                }
-                return o1.compareTo(o2);
-            }
-        });
+        T[] sortedValues = toArray();
+        Arrays.sort(sortedValues, getValueType().getComparator());
         return sortedValues;
     }
 
@@ -246,7 +231,7 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
      * @param column column containing the values that are subtracted
      * @return <tt>self</tt> for method chaining
      */
-    public C subtract(NumberColumn column) {
+    public C subtract(NumberColumn<?, ?> column) {
         if (column.size() != size()) {
             throw new IllegalArgumentException("'subtract' requires column of same size");
         }
@@ -254,7 +239,7 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
         int size = size();
         for (int i = 0; i < size; i++) {
             if (!isNA(i) && !column.isNA(i)) {
-                doSet(i, NumberUtil.subtract(get(i), column.get(i), getType()));
+                doSet(i, NumberUtil.subtract(get(i), column.get(i), getValueType().getType()));
             } else {
                 naCount++;
             }
@@ -274,7 +259,7 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
      * @param column column containing the values that are multiplied
      * @return <tt>self</tt> for method chaining
      */
-    public C multiply(NumberColumn column) {
+    public C multiply(NumberColumn<?, ?> column) {
         if (column.size() != size()) {
             throw new IllegalArgumentException("'multiply' requires column of same size");
         }
@@ -282,7 +267,7 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
         int size = size();
         for (int i = 0; i < size; i++) {
             if (!isNA(i) && !column.isNA(i)) {
-                doSet(i, NumberUtil.multiply(get(i), column.get(i), getType()));
+                doSet(i, NumberUtil.multiply(get(i), column.get(i), getValueType().getType()));
             } else {
                 naCount++;
             }
@@ -302,7 +287,7 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
      * @param column column containing the values that are divided
      * @return <tt>self</tt> for method chaining
      */
-    public C divide(NumberColumn column) {
+    public C divide(NumberColumn<?, ?> column) {
         if (column.size() != size()) {
             throw new IllegalArgumentException("'divide' requires column of same size");
         }
@@ -310,7 +295,7 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
         int size = size();
         for (int i = 0; i < size; i++) {
             if (!isNA(i) && !column.isNA(i)) {
-                doSet(i, NumberUtil.divide(get(i), column.get(i), getType()));
+                doSet(i, NumberUtil.divide(get(i), column.get(i), getValueType().getType()));
             } else {
                 naCount++;
             }
@@ -336,7 +321,7 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
         int size = size();
         for (int i = 0; i < size; i++) {
             if (!isNA(i) && value != null) {
-                doSet(i, NumberUtil.add(get(i), value, getType()));
+                doSet(i, NumberUtil.add(get(i), value, getValueType().getType()));
             } else {
                 naCount++;
             }
@@ -361,7 +346,7 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
         int size = size();
         for (int i = 0; i < size; i++) {
             if (!isNA(i) && value != null) {
-                doSet(i, NumberUtil.subtract(get(i), value, getType()));
+                doSet(i, NumberUtil.subtract(get(i), value, getValueType().getType()));
             } else {
                 naCount++;
             }
@@ -387,7 +372,7 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
         int size = size();
         for (int i = 0; i < size; i++) {
             if (!isNA(i) && value != null) {
-                doSet(i, NumberUtil.multiply(get(i), value, getType()));
+                doSet(i, NumberUtil.multiply(get(i), value, getValueType().getType()));
             } else {
                 naCount++;
             }
@@ -412,7 +397,7 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
         int size = size();
         for (int i = 0; i < size; i++) {
             if (!isNA(i) && value != null) {
-                doSet(i, NumberUtil.divide(get(i), value, getType()));
+                doSet(i, NumberUtil.divide(get(i), value, getValueType().getType()));
             } else {
                 naCount++;
             }
@@ -427,19 +412,19 @@ public abstract class NumberColumn<T extends Number & Comparable<T>, C extends N
     @Override
     protected boolean doAppend(T t) {
         if (t != null
-                && t.getClass() != getType()) {
-            t = NumberUtil.convert(t, getType());
+                && t.getClass() != getValueType().getType()) {
+            t = NumberUtil.convert(t, getValueType().getType());
         }
         return super.doAppend(t);
     }
 
     @Override
-    public boolean isValueValid(Comparable value) {
+    public boolean isValueValid(Object value) {
         return super.isValueValid(value) || (value != null && Number.class.isAssignableFrom(value.getClass()));
     }
 
     @Override
     protected void setValue(int index, T value) {
-        values[index] = NumberUtil.convert(value, getType());
+        values[index] = NumberUtil.convert(value, getValueType().getType());
     }
 }

@@ -38,7 +38,7 @@ public class Indices {
     public static final String PRIMARY_KEY_NAME = "%primary_key%";
 
     private final Map<String, Index> indexMap = new HashMap<>();
-    private final Map<DataFrameColumn, List<Index>> columnIndexMap = new WeakHashMap<>();
+    private final Map<DataFrameColumn<?, ?>, List<Index>> columnIndexMap = new WeakHashMap<>();
     private final DataFrame dataFrame;
     /**
      * Creates an index for a data frame
@@ -55,29 +55,30 @@ public class Indices {
      * @param column input column
      * @return <tt>true</tt> if column is part of an index
      */
-    public boolean isIndexColumn(DataFrameColumn column) {
+    public boolean isIndexColumn(DataFrameColumn<?, ?> column) {
         return columnIndexMap.containsKey(column);
     }
 
     /**
      * Replaces an existing column with a replacement column
      * All existing indices will be updated
-     * @param existing existing column
+     *
+     * @param existing    existing column
      * @param replacement replacement column
      */
-    public void replace(DataFrameColumn existing, DataFrameColumn replacement){
-        if(!isIndexColumn(existing)){
+    public void replace(DataFrameColumn<?, ?> existing, DataFrameColumn<?, ?> replacement) {
+        if (!isIndexColumn(existing)) {
             return;
         }
         List<Index> existingIndices = columnIndexMap.get(existing);
-        for(Index idx : existingIndices){
-            idx.replaceColumn(existing,replacement);
+        for (Index idx : existingIndices) {
+            idx.replaceColumn(existing, replacement);
             idx.clear();
         }
         columnIndexMap.remove(existing);
-        columnIndexMap.put(replacement,existingIndices);
-        for(DataRow row : dataFrame){
-            for(Index idx : existingIndices){
+        columnIndexMap.put(replacement, existingIndices);
+        for (DataRow row : dataFrame) {
+            for (Index idx : existingIndices) {
                 idx.update(row);
             }
         }
@@ -90,11 +91,11 @@ public class Indices {
      */
     public void copyTo(DataFrame dataFrame) {
         for (Map.Entry<String, Index> entry : indexMap.entrySet()) {
-            List<DataFrameColumn> indexColumns = entry.getValue().getColumns();
-            DataFrameColumn[] dfColumns = new DataFrameColumn[indexColumns.size()];
+            List<DataFrameColumn<?, ?>> indexColumns = entry.getValue().getColumns();
+            DataFrameColumn<?, ?>[] dfColumns = new DataFrameColumn[indexColumns.size()];
             boolean invalid = false;
             for (int i = 0; i < indexColumns.size(); i++) {
-                DataFrameColumn dfCol = dataFrame.getColumn(indexColumns.get(i).getName());
+                DataFrameColumn<?, ?> dfCol = dataFrame.getColumn(indexColumns.get(i).getName());
                 if (dfCol == null) {
                     invalid = true;
                     break;
@@ -140,7 +141,7 @@ public class Indices {
      * @param values row values
      * @return row numbers matching the row values
      */
-    public Collection<Integer> find(String name, Comparable... values) {
+    public Collection<Integer> find(String name, Object... values) {
         if (!indexMap.containsKey(name)) {
             throw new DataFrameRuntimeException(String.format("index not found'%s'", name));
         }
@@ -155,8 +156,8 @@ public class Indices {
      * @param values row values
      * @return row number matching the row values or null
      */
-    public Integer findFirst(String name, Comparable... values){
-        Collection<Integer> rows = find(name,values);
+    public Integer findFirst(String name, Object... values) {
+        Collection<Integer> rows = find(name, values);
         return rows.isEmpty() ? null : rows.iterator().next();
     }
 
@@ -166,13 +167,13 @@ public class Indices {
      * @param values primary key values
      * @return row number matching the row values
      */
-    public Integer findByPrimaryKey(Comparable... values) {
+    public Integer findByPrimaryKey(Object... values) {
         Index primaryKey = indexMap.get(PRIMARY_KEY_NAME);
         if (primaryKey == null) {
             throw new DataFrameRuntimeException("no primaryKey found");
         }
         Collection<Integer> indices = primaryKey.find(values);
-        if(indices.isEmpty()){
+        if (indices.isEmpty()) {
             return null;
         }
         return indices.iterator().next();
@@ -184,38 +185,36 @@ public class Indices {
      * @param name    name of the index
      * @param columns columns the index is based on
      */
-    public void addIndex(String name, DataFrameColumn... columns) {
-        addIndex(name,false,columns);
+    public void addIndex(String name, DataFrameColumn<?, ?>... columns) {
+        addIndex(name, false, columns);
     }
+
     /**
      * Creates and adds a new index using one or more columns
      *
      * @param name    name of the index
-     * @param unique allow only unique values in this index
+     * @param unique  allow only unique values in this index
      * @param columns columns the index is based on
      */
-    public void addIndex(String name, boolean unique,DataFrameColumn... columns) {
+    public void addIndex(String name, boolean unique, DataFrameColumn<?, ?>... columns) {
 
-        Index index = new TreeIndex(name,columns);
+        Index index = new TreeIndex(name, columns);
         index.setUnique(unique);
         addIndex(index);
     }
 
     /**
      * Adds a new index using one or more columns
+     *
      * @param index index to add
      */
-    public void addIndex(Index index){
+    public void addIndex(Index index) {
         if (indexMap.containsKey(index.getName())) {
             throw new DataFrameRuntimeException(String.format("error adding index: index name already exists'%s'", index.getName()));
         }
         indexMap.put(index.getName(), index);
-        for (DataFrameColumn column : index.getColumns()) {
-            List<Index> indexList = columnIndexMap.get(column);
-            if (indexList == null) {
-                indexList = new ArrayList<>();
-                columnIndexMap.put(column, indexList);
-            }
+        for (DataFrameColumn<?, ?> column : index.getColumns()) {
+            List<Index> indexList = columnIndexMap.computeIfAbsent(column, k -> new ArrayList<>());
             indexList.add(index);
         }
         for (DataRow row : dataFrame) {
@@ -236,11 +235,11 @@ public class Indices {
      *
      * @param columns columns the index is based on
      */
-    public void setPrimaryKey(DataFrameColumn... columns) {
-        if(indexMap.containsKey(PRIMARY_KEY_NAME)){
+    public void setPrimaryKey(DataFrameColumn<?, ?>... columns) {
+        if (indexMap.containsKey(PRIMARY_KEY_NAME)) {
             removeIndex(PRIMARY_KEY_NAME);
         }
-        addIndex(PRIMARY_KEY_NAME,true,columns);
+        addIndex(PRIMARY_KEY_NAME, true, columns);
     }
 
 
@@ -270,8 +269,8 @@ public class Indices {
      * @param column  index column
      * @param dataRow row to update
      */
-    public void updateValue(DataFrameColumn column, DataRow dataRow) {
-        if(indicesCount() == 0){
+    public void updateValue(DataFrameColumn<?, ?> column, DataRow dataRow) {
+        if (indicesCount() == 0) {
             return;
         }
         if (!isIndexColumn(column)) {
@@ -288,8 +287,8 @@ public class Indices {
      *
      * @param column update column
      */
-    public void updateColumn(DataFrameColumn column) {
-        if(indicesCount() == 0){
+    public void updateColumn(DataFrameColumn<?, ?> column) {
+        if (indicesCount() == 0) {
             return;
         }
         if (!isIndexColumn(column)) {
@@ -331,7 +330,7 @@ public class Indices {
             return;
         }
         indexMap.remove(name);
-        for (DataFrameColumn column : index.getColumns()) {
+        for (DataFrameColumn<?, ?> column : index.getColumns()) {
             List<Index> colIndices = columnIndexMap.get(column);
             colIndices.remove(index);
             if (colIndices.isEmpty()) {
@@ -345,8 +344,8 @@ public class Indices {
      *
      * @param column column to remove
      */
-    public void removeColumn(DataFrameColumn column) {
-        if(indicesCount() == 0){
+    public void removeColumn(DataFrameColumn<?, ?> column) {
+        if (indicesCount() == 0) {
             return;
         }
 
@@ -354,7 +353,7 @@ public class Indices {
             return;
         }
         List<Index> columnIndices = new ArrayList<>(columnIndexMap.get(column));
-        for(Index index : columnIndices){
+        for (Index index : columnIndices) {
             removeIndex(index.getName());
         }
         columnIndexMap.remove(column);

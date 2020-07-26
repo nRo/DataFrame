@@ -24,14 +24,18 @@
 
 package de.unknownreality.dataframe.filter;
 
-import de.unknownreality.dataframe.common.KeyValueGetter;
+import de.unknownreality.dataframe.common.NumberUtil;
+import de.unknownreality.dataframe.common.Row;
+import de.unknownreality.dataframe.type.ValueType;
+
+import java.text.ParseException;
 
 /**
  * Created by Alex on 07.06.2017.
  */
 public class ColumnComparePredicate extends ComparePredicate {
 
-    private String headerB;
+    private final String headerB;
 
     /**
      * Creates a compare predicate for two given row column names and operation
@@ -48,12 +52,43 @@ public class ColumnComparePredicate extends ComparePredicate {
     /**
      * Returns <tt>true</tt> if the row is valid for this predicate
      *
-     * @param kv tested row
+     * @param row tested row
      * @return <tt>true</tt> if the row is valid
      */
     @Override
-    public boolean valid(KeyValueGetter<String, ?> kv) {
-        return super.compare(kv.get(getHeaderName()), kv.get(headerB));
+    public boolean valid(Row<?, String> row) {
+        ValueType<?> type = row.getType(getHeaderName());
+        ValueType<?> typeB = row.getType(headerB);
+        if (type.getType().isAssignableFrom(typeB.getType())) {
+            return compare(type, row.get(getHeaderName()), row.get(headerB));
+        }
+        Object vB = row.get(headerB);
+        Object convertedB;
+        try {
+            convertedB = convertValue(type, vB);
+        } catch (ParseException e) {
+            throw new DataFrameFilterRuntimeException(
+                    String.format("error converting filter value '%s' to '%s' in column '%s'",
+                            vB, type.getType().getCanonicalName(), headerB));
+        }
+        return super.compare(type, row.get(getHeaderName()), convertedB);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <T> T convertValue(ValueType<T> type, Object value) throws ParseException {
+        if (value == null) {
+            return null;
+        }
+        if (type.getType().isAssignableFrom(value.getClass())) {
+            return (T) value;
+        }
+        if (Number.class.isAssignableFrom(type.getType())) {
+            Class<? extends Number> cl = (Class<? extends Number>) type.getType();
+            if (Number.class.isAssignableFrom(value.getClass())) {
+                return (T) NumberUtil.convert((Number) value, cl);
+            }
+        }
+        return type.parse(String.valueOf(value));
     }
 
     @Override

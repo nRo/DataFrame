@@ -37,7 +37,7 @@ import java.util.Locale;
  */
 public class NumberUtil {
     //default Number format (US locale)
-    private static NumberFormat NUMBER_FORMAT = NumberFormat.getInstance(Locale.US);
+    private static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance(Locale.US);
 
     private NumberUtil(){}
     public static <T extends Number> T add(Number a, Number b, Class<T> cl) {

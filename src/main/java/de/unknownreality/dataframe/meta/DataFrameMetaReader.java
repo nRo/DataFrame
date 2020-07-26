@@ -48,7 +48,7 @@ import java.util.TreeMap;
  * Created by Alex on 07.06.2016.
  */
 public class DataFrameMetaReader {
-    private static Logger logger = LoggerFactory.getLogger(DataFrameMetaReader.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DataFrameMetaReader.class);
 
     /**
      * Map containing legacy package names.
@@ -75,7 +75,7 @@ public class DataFrameMetaReader {
         for(Map.Entry<String,String> e : LEGACY_PACKAGES.entrySet()){
             if (remappedClassname.contains(e.getKey())) {
                 remappedClassname = remappedClassname.replace(e.getKey(), e.getValue());
-                logger.warn("old package name found '{}'", e.getKey());
+                LOG.warn("old package name found '{}'", e.getKey());
             }
         }
         return remappedClassname;

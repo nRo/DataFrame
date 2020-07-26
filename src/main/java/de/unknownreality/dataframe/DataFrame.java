@@ -36,6 +36,7 @@ import de.unknownreality.dataframe.join.JoinUtil;
 import de.unknownreality.dataframe.join.JoinedDataFrame;
 import de.unknownreality.dataframe.sort.SortColumn;
 import de.unknownreality.dataframe.transform.DataFrameTransform;
+import de.unknownreality.dataframe.type.DataFrameTypeManager;
 
 import java.io.*;
 import java.net.URL;
@@ -48,12 +49,14 @@ import java.util.Comparator;
 public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     /**
      * Returns the name of this dataframe
+     *
      * @return name
      */
     String getName();
 
     /**
      * Sets the name of this dataframe
+     *
      * @param name dataframe name
      */
     void setName(String name);
@@ -61,6 +64,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     /**
      * Returns the version of this dataframe.
      * The version is automatically increased on each function that alters the dataframe (sort,...)
+     *
      * @return version
      */
     int getVersion();
@@ -79,7 +83,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param cols primary key columns
      * @return <tt>self</tt> for method chaining
      */
-    DataFrame setPrimaryKey(DataFrameColumn... cols);
+    DataFrame setPrimaryKey(DataFrameColumn<?, ?>... cols);
 
     /**
      * Removes the current primary key
@@ -122,7 +126,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param columns selected columns
      * @return {@link ColumnSelection} for row selection
      */
-    ColumnSelection selectColumns(DataFrameColumn... columns);
+    ColumnSelection selectColumns(DataFrameColumn<?, ?>... columns);
 
     /**
      * Adds a column to the data frame.
@@ -131,7 +135,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param column column to add
      * @return <tt>self</tt> for method chaining
      */
-    DataFrame addColumn(DataFrameColumn column);
+    DataFrame addColumn(DataFrameColumn<?, ?> column);
 
     /**
      * Creates a column for a specified column value type.
@@ -141,35 +145,34 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param <T>  type of column values
      * @return <tt>self</tt> for method chaining
      */
-    <T extends Comparable<T>> DataFrame addColumn(Class<T> type, String name);
+    <T> DataFrame addColumn(Class<T> type, String name);
 
     /**
-     * Creates a column for a specified column value type using the provided {@link ColumnTypeMap}.
+     * Creates a column for a specified column value type using the provided {@link DataFrameTypeManager}.
      *
-     * @param type          class of column values
-     * @param name          column name
-     * @param columnTypeMap provided column type map
-     * @param <T>           type of column values
+     * @param type                 class of column values
+     * @param name                 column name
+     * @param dataFrameTypeManager provided column type map
+     * @param <T>                  type of column values
      * @return <tt>self</tt> for method chaining
      * @see #addColumn(Class, String, ColumnAppender)
      */
-    @SuppressWarnings("unchecked")
-    <T extends Comparable<T>> DataFrame addColumn(Class<T> type, String name, ColumnTypeMap columnTypeMap);
+    <T> DataFrame addColumn(Class<T> type, String name, DataFrameTypeManager dataFrameTypeManager);
 
 
     /**
-     * Creates and adds a new column based on a specified column value type and a {@link ColumnTypeMap}.
+     * Creates and adds a new column based on a specified column value type and a {@link DataFrameTypeManager}.
      *
-     * @param type          column value value type
-     * @param name          name of new column
-     * @param columnTypeMap column type map (value type / column class mapper)
-     * @param appender      column appender (value generator)
-     * @param <T>           type of column values
-     * @param <C>           type of created column
+     * @param type                 column value value type
+     * @param name                 name of new column
+     * @param dataFrameTypeManager column type map (value type / column class mapper)
+     * @param appender             column appender (value generator)
+     * @param <T>                  type of column values
+     * @param <C>                  type of created column
      * @return <tt>self</tt> for method chaining
      * @see #addColumn(Class, String, ColumnAppender)
      */
-    <T extends Comparable<T>, C extends DataFrameColumn<T, C>> DataFrame addColumn(Class<T> type, String name, ColumnTypeMap columnTypeMap, ColumnAppender<T> appender);
+    <T, C extends DataFrameColumn<T, C>> DataFrame addColumn(Class<T> type, String name, DataFrameTypeManager dataFrameTypeManager, ColumnAppender<T> appender);
 
     /**
      * Creates and adds a column to this data frame based on a provided column class.
@@ -183,7 +186,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @return <tt>self</tt> for method chaining
      * @see #addColumn(DataFrameColumn)
      */
-    <T extends Comparable<T>, C extends DataFrameColumn<T, C>> DataFrame addColumn(Class<C> type, String name, ColumnAppender<T> appender);
+    <T, C extends DataFrameColumn<T, C>> DataFrame addColumn(Class<C> type, String name, ColumnAppender<T> appender);
 
 
     /**
@@ -256,7 +259,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param columns columns to add
      * @return <tt>self</tt> for method chaining
      */
-    DataFrame addColumns(Collection<DataFrameColumn> columns);
+    DataFrame addColumns(Collection<DataFrameColumn<?, ?>> columns);
 
     /**
      * Adds an array of columns to this data frame
@@ -264,19 +267,18 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param columns columns to add
      * @return <tt>self</tt> for method chaining
      */
-    DataFrame addColumns(DataFrameColumn... columns);
+    DataFrame addColumns(DataFrameColumn<?, ?>... columns);
 
-    DataFrame replaceColumn(DataFrameColumn existing, DataFrameColumn replacement);
+    DataFrame replaceColumn(DataFrameColumn<?, ?> existing, DataFrameColumn<?, ?> replacement);
 
-    DataFrame replaceColumn(String existing, DataFrameColumn replacement);
+    DataFrame replaceColumn(String existing, DataFrameColumn<?, ?> replacement);
 
 
     /**
-     * Appends a new row based on {@link Comparable} values from another dataframe.
+     * Appends a new row based on {@link Object} values from another dataframe.
      * <p>There must be <b>exactly one value for each column</b>.</p>
      * <p><b>The object types have to match the column types</b>.</p>
      * If the wrong number of values or a wrong type is found a {@link DataFrameRuntimeException} is thrown.
-     *
      *
      * @param dataFrame other dataframe
      * @param rowIndex  row in other dataframe
@@ -285,7 +287,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     DataFrame append(DataFrame dataFrame, int rowIndex);
 
     /**
-     * Appends a new row based on {@link Comparable} values.
+     * Appends a new row based on {@link Object} values.
      * <p>There must be <b>exactly one value for each column</b>.</p>
      * <p><b>The object types have to match the column types</b>.</p>
      * If the wrong number of values or a wrong type is found a {@link DataFrameRuntimeException} is thrown.
@@ -299,7 +301,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param values values for the appended row
      * @return <tt>self</tt> for method chaining
      */
-    DataFrame append(Comparable... values);
+    DataFrame append(Object... values);
 
     /**
      * Appends a new data row. Only row values matching a dataframe column are appended
@@ -307,7 +309,6 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param row row containing the new values
      * @return <tt>self</tt> for method chaining
      */
-    @SuppressWarnings("unchecked")
     DataFrame append(DataRow row);
 
     /**
@@ -317,7 +318,6 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param row row containing the new values
      * @return <tt>self</tt> for method chaining
      */
-    @SuppressWarnings("unchecked")
     DataFrame appendMatchingRow(DataRow row);
 
     /**
@@ -340,8 +340,6 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     DataFrame set(DataRows rows);
 
 
-
-
     /**
      * Removes a column from this data frame
      *
@@ -356,7 +354,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param column column to remove
      * @return <tt>self</tt> for method chaining
      */
-    DataFrame removeColumn(DataFrameColumn column);
+    DataFrame removeColumn(DataFrameColumn<?, ?> column);
 
     /**
      * Sorts the rows in this data frame by one or more {@link SortColumn}
@@ -406,7 +404,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param value   input value
      * @return new data frame including the found rows
      */
-    DataFrame select(String colName, Comparable value);
+    DataFrame select(String colName, Object value);
 
     /**
      * Returns the first found data row from this data frame where a specified column value equals
@@ -416,7 +414,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param value   input value
      * @return first found data row
      */
-    DataRow selectFirst(String colName, Comparable value);
+    DataRow selectFirst(String colName, Object value);
 
     /**
      * Returns the first found data row from this data frame matching an input predicate.
@@ -491,7 +489,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param value   input value
      * @return list of found data rows
      */
-    DataRows selectRows(String colName, Comparable value);
+    DataRows selectRows(String colName, Object value);
 
     /**
      * Finds data rows using a {@link FilterPredicate}.
@@ -524,7 +522,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param keyValues input key values
      * @return found data row
      */
-    DataRow selectByPrimaryKey(Comparable... keyValues);
+    DataRow selectByPrimaryKey(Object... keyValues);
 
     /**
      * Reverses all columns
@@ -551,7 +549,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param columns   index columns
      * @return <tt>self</tt> for method chaining
      */
-    DataFrame addIndex(String indexName, DataFrameColumn... columns);
+    DataFrame addIndex(String indexName, DataFrameColumn<?, ?>... columns);
 
     /**
      * Adds a new index to the dataframe
@@ -570,6 +568,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
 
     /**
      * Returns true if the dataframe is empty (contains no rows)
+     *
      * @return true if the dataframe is empty
      */
     boolean isEmpty();
@@ -683,12 +682,10 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     /**
      * Returns a column based on its name
      *
-     * @param <T>  value type of the column
-     * @param <C>  column type
      * @param name column name
      * @return column
      */
-    <T extends Comparable<T>, C extends DataFrameColumn<T, C>> DataFrameColumn<T, C> getColumn(String name);
+    DataFrameColumn<?, ?> getColumn(String name);
 
     /**
      * Returns a column as a specified column type.
@@ -699,7 +696,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param <T>  type of column
      * @return found column
      */
-    <T extends DataFrameColumn> T getColumn(String name, Class<T> cl);
+    <T extends DataFrameColumn<?, T>> T getColumn(String name, Class<T> cl);
 
     /**
      * Returns a {@link NumberColumn}
@@ -710,7 +707,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param name column name
      * @return found column
      */
-    <T extends Number & Comparable<T>, C extends NumberColumn<T, C>> NumberColumn<T, C> getNumberColumn(String name);
+    <T extends Number, C extends NumberColumn<T, C>> NumberColumn<T, C> getNumberColumn(String name);
 
     /**
      * Returns a {@link StringColumn}
@@ -939,7 +936,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param column input column
      * @return <tt>true</tt> if this data frame contains the input column
      */
-    boolean containsColumn(DataFrameColumn column);
+    boolean containsColumn(DataFrameColumn<?, ?> column);
 
     /**
      * Returns <tt>true</tt> if the input column is part of at least one index
@@ -947,11 +944,8 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param column input column
      * @return <tt>true</tt> if column is part of index
      */
-    boolean isIndexColumn(DataFrameColumn column);
+    boolean isIndexColumn(DataFrameColumn<?, ?> column);
 
-    /**
-
-     */
 
 
     /**
@@ -961,7 +955,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param values index values
      * @return rows found
      */
-    DataRows selectRowsByIndex(String name, Comparable... values);
+    DataRows selectRowsByIndex(String name, Object... values);
 
 
     DataRows selectRows(Collection<Integer> rowIndices);
@@ -973,7 +967,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param values index values
      * @return rows found
      */
-    DataRow selectFirstRowByIndex(String name, Comparable... values);
+    DataRow selectFirstRowByIndex(String name, Object... values);
 
     /**
      * Returns a new dataframe containing data rows found using an index and the corresponding index values
@@ -982,21 +976,21 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param values index values
      * @return dataframe containing found rows
      */
-    DataFrame selectByIndex(String name, Comparable... values);
+    DataFrame selectByIndex(String name, Object... values);
 
     /**
      * Returns a collection of all columns in this data frame
      *
      * @return collection of columns
      */
-    Collection<DataFrameColumn> getColumns();
+    Collection<DataFrameColumn<?, ?>> getColumns();
 
     /**
      * Returns the indices of this data frame
      *
      * @return data frame indices
      */
-    public Iterable<? extends DataRow> rows();
+    Iterable<? extends DataRow> rows();
 
 
     /**
@@ -1021,9 +1015,10 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
 
     /**
      * Creates a new {@link DataFrameBuilder}
+     *
      * @return dataframe builder
      */
-    static DataFrameBuilder builder(){
+    static DataFrameBuilder builder() {
         return new DataFrameBuilder();
     }
 
@@ -1111,7 +1106,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param readFormat read format
      * @return resulting dataframe
      */
-    static DataFrame load(File file, ReadFormat readFormat) {
+    static DataFrame load(File file, ReadFormat<?, ?> readFormat) {
         return DataFrameLoader.load(file, readFormat);
 
     }
@@ -1124,7 +1119,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param readFormat read format
      * @return resulting dataframe
      */
-    static DataFrame load(String content, ReadFormat readFormat) {
+    static DataFrame load(String content, ReadFormat<?, ?> readFormat) {
         return DataFrameLoader.load(content, readFormat);
     }
 
@@ -1137,7 +1132,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param readFormat  read format
      * @return resulting dataframe
      */
-    static DataFrame load(String resource, ClassLoader classLoader, ReadFormat readFormat) {
+    static DataFrame load(String resource, ClassLoader classLoader, ReadFormat<?, ?> readFormat) {
         return DataFrameLoader.load(resource, classLoader, readFormat);
 
     }
@@ -1149,7 +1144,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param readFormat read format
      * @return resulting dataframe
      */
-    static DataFrame load(URL url, ReadFormat readFormat) {
+    static DataFrame load(URL url, ReadFormat<?, ?> readFormat) {
         return DataFrameLoader.load(url, readFormat);
 
     }
@@ -1161,7 +1156,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param readFormat read format
      * @return resulting dataframe
      */
-    static DataFrame load(byte[] bytes, ReadFormat readFormat) {
+    static DataFrame load(byte[] bytes, ReadFormat<?, ?> readFormat) {
         return DataFrameLoader.load(bytes, readFormat);
 
     }
@@ -1173,7 +1168,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param readFormat read format
      * @return resulting dataframe
      */
-    static DataFrame load(InputStream is, ReadFormat readFormat) {
+    static DataFrame load(InputStream is, ReadFormat<?, ?> readFormat) {
         return DataFrameLoader.load(is, readFormat);
     }
 
@@ -1185,7 +1180,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param readFormat read format
      * @return resulting dataframe
      */
-    static DataFrame load(Reader reader, ReadFormat readFormat) {
+    static DataFrame load(Reader reader, ReadFormat<?, ?> readFormat) {
         return DataFrameLoader.load(reader, readFormat);
     }
 
@@ -1197,7 +1192,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param reader data reader
      * @return resulting dataframe
      */
-    static DataFrame load(File file, DataReader reader) {
+    static DataFrame load(File file, DataReader<?, ?> reader) {
         return DataFrameLoader.load(file, reader);
 
     }
@@ -1209,7 +1204,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param reader  data reader
      * @return resulting dataframe
      */
-    static DataFrame load(String content, DataReader reader) {
+    static DataFrame load(String content, DataReader<?, ?> reader) {
         return DataFrameLoader.load(content, reader);
     }
 
@@ -1222,7 +1217,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param reader      data reader
      * @return resulting dataframe
      */
-    static DataFrame load(String resource, ClassLoader classLoader, DataReader reader) {
+    static DataFrame load(String resource, ClassLoader classLoader, DataReader<?, ?> reader) {
         return DataFrameLoader.load(resource, classLoader, reader);
 
     }
@@ -1235,7 +1230,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param reader data reader
      * @return resulting dataframe
      */
-    static DataFrame load(URL url, DataReader reader) {
+    static DataFrame load(URL url, DataReader<?, ?> reader) {
         return DataFrameLoader.load(url, reader);
 
     }
@@ -1247,7 +1242,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param reader data reader
      * @return resulting dataframe
      */
-    static DataFrame load(byte[] bytes, DataReader reader) {
+    static DataFrame load(byte[] bytes, DataReader<?, ?> reader) {
         return DataFrameLoader.load(bytes, reader);
 
     }
@@ -1259,7 +1254,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param reader data reader
      * @return resulting dataframe
      */
-    static DataFrame load(InputStream is, DataReader reader) {
+    static DataFrame load(InputStream is, DataReader<?, ?> reader) {
         return DataFrameLoader.load(is, reader);
     }
 
@@ -1270,7 +1265,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param reader data reader
      * @return resulting dataframe
      */
-    static DataFrame load(Reader r, DataReader reader) {
+    static DataFrame load(Reader r, DataReader<?, ?> reader) {
         return DataFrameLoader.load(r, reader);
     }
 
@@ -1751,23 +1746,26 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     }
 
     /**
-     * Returns a value as {@link Comparable} from the specified column and row
+     * Returns a value as {@link Object} from the specified column and row
+     *
      * @param col column
      * @param row row
      * @return value
      */
-    Comparable getValue(int col, int row);
+    Object getValue(int col, int row);
 
     /**
      * Sets the value in the specified column and row
-     * @param col column
-     * @param row row
+     *
+     * @param col      column
+     * @param row      row
      * @param newValue new value
      */
-    void setValue(int col, int row, Comparable newValue);
+    void setValue(int col, int row, Object newValue);
 
     /**
      * Returns true if the value in the specified column and row is NA
+     *
      * @param col column
      * @param row row
      * @return true if value is NA
@@ -1776,6 +1774,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
 
     /**
      * Returns the head (top rows) of the dataframe
+     *
      * @param size number of rows
      * @return head dataframe
      */
@@ -1783,12 +1782,14 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
 
     /**
      * Returns the head (top rows) of the dataframe
+     *
      * @return head dataframe
      */
     DataFrame head();
 
     /**
      * Returns the tail (bottom rows) of the dataframe
+     *
      * @param size number of rows
      * @return head dataframe
      */
@@ -1796,6 +1797,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
 
     /**
      * Returns the tail (bottom rows) of the dataframe
+     *
      * @return head dataframe
      */
     DataFrame tail();

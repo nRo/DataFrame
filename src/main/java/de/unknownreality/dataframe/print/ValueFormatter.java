@@ -24,6 +24,8 @@
 
 package de.unknownreality.dataframe.print;
 
+import de.unknownreality.dataframe.type.ValueType;
+
 public interface ValueFormatter {
-    String format(Object value, int maxWidth);
+    String format(ValueType<?> type, Object value, int maxWidth);
 }

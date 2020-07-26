@@ -27,7 +27,8 @@ package de.unknownreality.dataframe.transform;
 import de.unknownreality.dataframe.DataFrameColumn;
 import de.unknownreality.dataframe.DataFrameException;
 import de.unknownreality.dataframe.column.StringColumn;
-import de.unknownreality.dataframe.common.parser.Parser;
+import de.unknownreality.dataframe.type.DataFrameTypeManager;
+import de.unknownreality.dataframe.type.ValueType;
 
 /**
  * Created by Alex on 02.06.2017.
@@ -44,19 +45,14 @@ public class StringColumnConverter {
      *
      * @throws DataFrameException thrown if conversion not possible
      */
-    public static <V extends Comparable<V>, C extends DataFrameColumn<V, C>> C convert(StringColumn column, Class<C> colType) throws DataFrameException {
+    public static <V, C extends DataFrameColumn<V, C>> C convert(StringColumn column, Class<C> colType) throws DataFrameException {
         if (colType == StringColumn.class) {
-            return (C) column.copy();
+            return colType.cast(column.copy());
         }
-        C newColumn;
-        try {
-            newColumn = colType.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new DataFrameException("error creating column instance", e);
-        }
+        C newColumn = colType.cast(DataFrameTypeManager.get().createColumn(colType));
         newColumn.setName(column.getName());
-        Parser<V> parser = newColumn.getParser();
-        if (parser == null) {
+        ValueType<V> valueType = newColumn.getValueType();
+        if (valueType == null) {
             throw new DataFrameException(String.format("no parser defined for column type '%s'", colType.getCanonicalName()));
         }
         for (int i = 0; i < column.size(); i++) {
@@ -64,9 +60,12 @@ public class StringColumnConverter {
                 newColumn.appendNA();
                 continue;
             }
-            V value = newColumn.getParser().parseOrNull(column.get(i));
+            V value = newColumn.getValueType().parseOrNull(column.get(i));
             if (value == null) {
-                throw new DataFrameException(String.format("error parsing value '%s' -> ", column.get(i), newColumn.getType()));
+                throw new DataFrameException(
+                        String.format("error parsing value '%s' -> %s",
+                                column.get(i),
+                                newColumn.getValueType().getType()));
             } else {
                 newColumn.append(value);
             }

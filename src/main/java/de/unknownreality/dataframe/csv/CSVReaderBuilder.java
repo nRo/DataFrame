@@ -25,8 +25,8 @@
 package de.unknownreality.dataframe.csv;
 
 import de.unknownreality.dataframe.DataFrame;
-import de.unknownreality.dataframe.common.parser.ParserUtil;
 import de.unknownreality.dataframe.io.ReaderBuilder;
+import de.unknownreality.dataframe.type.DataFrameTypeManager;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -43,12 +43,12 @@ public class CSVReaderBuilder implements ReaderBuilder<CSVRow, CSVReader> {
     private boolean containsHeader = true;
     private boolean quoteDetection = true;
     private boolean singleQuoteDetection = true;
-    private List<String> ignoreColumns = new ArrayList();
-    private List<String> selectColumns = new ArrayList<>();
-    private List<String> skipPrefixes = new ArrayList<>();
-    private Map<String, Class<? extends Comparable>> columnTypeMap = new HashMap<>();
+    private final List<String> ignoreColumns = new ArrayList<>();
+    private final List<String> selectColumns = new ArrayList<>();
+    private final List<String> skipPrefixes = new ArrayList<>();
+    private final Map<String, Class<?>> columnTypeMap = new HashMap<>();
 
-    public static CSVReaderBuilder create(){
+    public static CSVReaderBuilder create() {
         return new CSVReaderBuilder();
     }
 
@@ -112,7 +112,7 @@ public class CSVReaderBuilder implements ReaderBuilder<CSVRow, CSVReader> {
         return this;
     }
 
-    public <T extends Comparable<T>> CSVReaderBuilder setColumnType(String col, Class<T> type) {
+    public CSVReaderBuilder setColumnType(String col, Class<?> type) {
         columnTypeMap.put(col, type);
         return this;
     }
@@ -200,9 +200,9 @@ public class CSVReaderBuilder implements ReaderBuilder<CSVRow, CSVReader> {
 
     @Override
     public ReaderBuilder<CSVRow, CSVReader> loadSettings(Map<String, String> attributes) throws Exception {
-        this.separator = ParserUtil.parse(Character.class, attributes.get("separator"));
+        this.separator = DataFrameTypeManager.get().parse(Character.class, attributes.get("separator"));
         this.headerPrefix = attributes.get("headerPrefix");
-        this.containsHeader = ParserUtil.parse(Boolean.class, attributes.get("containsHeader"));
+        this.containsHeader = DataFrameTypeManager.get().parse(Boolean.class, attributes.get("containsHeader"));
         return this;
     }
 

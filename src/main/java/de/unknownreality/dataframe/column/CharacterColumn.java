@@ -22,30 +22,55 @@
  *
  */
 
-package de.unknownreality.dataframe.common;
+package de.unknownreality.dataframe.column;
 
-import java.util.Comparator;
 
-public class ValueComparator implements Comparator<Comparable> {
+import de.unknownreality.dataframe.type.impl.CharacterType;
 
-    public final static ValueComparator COMPARATOR = new ValueComparator(1);
-    private int naOrder = 1;
+/**
+ * Created by Alex on 09.03.2016.
+ */
+public class CharacterColumn extends BasicColumn<Character, CharacterColumn> {
 
-    public ValueComparator(int naOrder){
-        this.naOrder = naOrder;
+    private final static CharacterType valueType = new CharacterType();
+
+    public CharacterColumn() {
+        super(Character.class);
+    }
+
+    public CharacterColumn(String name) {
+        super(name, Character.class);
+    }
+
+    public CharacterColumn(String name, Character[] values) {
+        super(name, values);
+    }
+
+    public CharacterColumn(String name, Character[] values, int size) {
+        super(name, values, size);
+    }
+
+
+    @Override
+    public CharacterType getValueType() {
+        return valueType;
     }
 
     @Override
-    public int compare(Comparable o1, Comparable o2) {
-        if(o1 == null && o2 == null){
-            return 0;
-        }
-        if(o1 == null) {
-            return -1*naOrder;
-        }
-        if(o2 == null){
-            return 1*naOrder;
-        }
-        return o1.compareTo(o2);
+    protected CharacterColumn getThis() {
+        return this;
+    }
+
+
+    @Override
+    public CharacterColumn copy() {
+        Character[] copyValues = new Character[values.length];
+        toArray(copyValues);
+        return new CharacterColumn(getName(), copyValues, size());
+    }
+
+    @Override
+    public CharacterColumn copyEmpty() {
+        return new CharacterColumn(getName());
     }
 }

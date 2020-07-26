@@ -22,12 +22,13 @@
  *
  */
 
-package de.unknownreality.dataframe.common;
+package de.unknownreality.dataframe.common.header;
 
 /**
  * Created by Alex on 10.03.2016.
  */
 public interface Header<T> extends Iterable<T> {
+
     /**
      * Returns the number of entries(columns) in this header
      *
@@ -58,4 +59,5 @@ public interface Header<T> extends Iterable<T> {
      * @return index of the entry
      */
     int getIndex(T name);
+
 }

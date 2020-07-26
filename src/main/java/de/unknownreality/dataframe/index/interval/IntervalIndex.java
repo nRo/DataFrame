@@ -34,20 +34,21 @@ import de.unknownreality.dataframe.index.Index;
 import java.util.*;
 
 public class IntervalIndex implements Index {
-    private Map<Integer, Interval> intervalMap = new HashMap<>();
-    private IntervalSearchTree<Integer> intervalSearchTree = new IntervalSearchTree<>();
+    private final Map<Integer, Interval> intervalMap = new HashMap<>();
+    private final IntervalSearchTree<Integer> intervalSearchTree = new IntervalSearchTree<>();
     private NumberColumn<?, ?> startColumn;
     private NumberColumn<?, ?> endColumn;
-    private String name;
+    private final String name;
 
-    public static IntervalIndex create(DataFrame dataFrame, String name, String startColumn, String endColumn){
+    public static IntervalIndex create(DataFrame dataFrame, String name, String startColumn, String endColumn) {
         return new IntervalIndex(name, dataFrame.getNumberColumn(startColumn), dataFrame.getNumberColumn(endColumn));
     }
-    public static IntervalIndex create(String name, NumberColumn<?,?> startColumn, NumberColumn<?,?> endColumn){
+
+    public static IntervalIndex create(String name, NumberColumn<?, ?> startColumn, NumberColumn<?, ?> endColumn) {
         return new IntervalIndex(name, startColumn, endColumn);
     }
 
-    public IntervalIndex(String name, NumberColumn<?,?> startColumn, NumberColumn<?,?> endColumn){
+    public IntervalIndex(String name, NumberColumn<?, ?> startColumn, NumberColumn<?, ?> endColumn) {
         this.name = name;
         this.startColumn = startColumn;
         this.endColumn = endColumn;
@@ -79,15 +80,15 @@ public class IntervalIndex implements Index {
     }
 
     @Override
-    public Collection<Integer> find(Comparable... values) {
-        if(values.length == 1){
-            if(!(values[0] instanceof Number)){
+    public Collection<Integer> find(Object... values) {
+        if (values.length == 1) {
+            if (!(values[0] instanceof Number)) {
                 throw new DataFrameRuntimeException("stab value must be a number for interval search");
             }
-            return intervalSearchTree.stab((Number)values[0]);
+            return intervalSearchTree.stab((Number) values[0]);
 
         }
-        if(values.length != 2){
+        if (values.length != 2) {
             throw new DataFrameRuntimeException("start and end values are required for interval search");
         }
         if(!(values[0] instanceof Number) || !(values[1] instanceof Number)){
@@ -108,7 +109,7 @@ public class IntervalIndex implements Index {
     }
 
     @Override
-    public boolean containsColumn(DataFrameColumn column) {
+    public boolean containsColumn(DataFrameColumn<?, ?> column) {
         return startColumn == column || endColumn == column;
     }
 
@@ -118,8 +119,8 @@ public class IntervalIndex implements Index {
     }
 
     @Override
-    public List<DataFrameColumn> getColumns() {
-        List<DataFrameColumn> columns = new ArrayList<>();
+    public List<DataFrameColumn<?, ?>> getColumns() {
+        List<DataFrameColumn<?, ?>> columns = new ArrayList<>();
         columns.add(startColumn);
         columns.add(endColumn);
         return columns;
@@ -132,18 +133,18 @@ public class IntervalIndex implements Index {
     }
 
     @Override
-    public void replaceColumn(DataFrameColumn existing, DataFrameColumn replacement) {
-        if(!(replacement instanceof NumberColumn<?,?>)){
+    public void replaceColumn(DataFrameColumn<?, ?> existing, DataFrameColumn<?, ?> replacement) {
+        if (!(replacement instanceof NumberColumn<?, ?>)) {
             throw new DataFrameRuntimeException("only number columns are supported by interval indices");
         }
         clear();
-        if(startColumn == existing){
+        if (startColumn == existing) {
             startColumn = (NumberColumn<?, ?>) replacement;
         }
-        if(endColumn == existing){
+        if (endColumn == existing) {
             endColumn = (NumberColumn<?, ?>) replacement;
         }
-        for(int i = 0; i < startColumn.size(); i++){
+        for (int i = 0; i < startColumn.size(); i++) {
             Interval interval = new Interval(startColumn.get(i),endColumn.get(i));
             intervalMap.put(i,interval);
             intervalSearchTree.add(interval,i);

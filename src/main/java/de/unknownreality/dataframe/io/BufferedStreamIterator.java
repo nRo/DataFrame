@@ -39,7 +39,7 @@ import java.util.NoSuchElementException;
 /**
  * Created by Alex on 19.05.2017.
  */
-public abstract class BufferedStreamIterator<R extends Row> implements RowIterator<R> {
+public abstract class BufferedStreamIterator<R extends Row<?, ?>> implements RowIterator<R> {
     private static final Logger log = LoggerFactory.getLogger(BufferedStreamIterator.class);
     private final BufferedReader reader;
     private R next;
@@ -77,7 +77,6 @@ public abstract class BufferedStreamIterator<R extends Row> implements RowIterat
             try {
                 getLine();
             } catch (IOException e) {
-                log.error("error reading file:{}", e);
                 close();
             }
         }

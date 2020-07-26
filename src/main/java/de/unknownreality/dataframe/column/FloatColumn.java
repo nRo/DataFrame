@@ -25,22 +25,26 @@
 package de.unknownreality.dataframe.column;
 
 import de.unknownreality.dataframe.common.Row;
-import de.unknownreality.dataframe.common.parser.Parser;
-import de.unknownreality.dataframe.common.parser.ParserUtil;
+import de.unknownreality.dataframe.type.impl.FloatType;
 
 /**
  * Created by Alex on 09.03.2016.
  */
 public class FloatColumn extends NumberColumn<Float, FloatColumn> {
 
-    private final Parser<Float> parser = ParserUtil.findParserOrNull(Float.class);
+    private final FloatType valueType = new FloatType();
+
+    @Override
+    public FloatType getValueType() {
+        return valueType;
+    }
 
     public FloatColumn() {
-        super();
+        super(Float.class);
     }
 
     public FloatColumn(String name) {
-        super(name);
+        super(name, Float.class);
     }
 
     public FloatColumn(String name, Float[] values) {
@@ -54,20 +58,7 @@ public class FloatColumn extends NumberColumn<Float, FloatColumn> {
 
     @Override
     protected FloatColumn getThis() {
-        return null;
-    }
-
-
-    @Override
-    public Class<Float> getType() {
-        return Float.class;
-    }
-
-
-
-    @Override
-    public Parser<Float> getParser() {
-        return parser;
+        return this;
     }
 
 

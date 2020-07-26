@@ -162,7 +162,7 @@ public class StringSplitter {
     }
 
     private static class ListParts implements Parts {
-        private List<String> list;
+        private final List<String> list;
 
         public ListParts(List<String> list) {
             this.list = list;
@@ -175,7 +175,7 @@ public class StringSplitter {
     }
 
     private static class ArrayParts implements Parts {
-        private String[] array;
+        private final String[] array;
         private int p = 0;
 
         public ArrayParts(String[] array) {

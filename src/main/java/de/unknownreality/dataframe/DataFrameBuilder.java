@@ -39,7 +39,7 @@ import java.util.List;
  * Created by Alex on 09.03.2016.
  */
 public class DataFrameBuilder {
-    private final LinkedHashMap<String, DataFrameColumn> columns = new LinkedHashMap<>();
+    private final LinkedHashMap<String, DataFrameColumn<?, ?>> columns = new LinkedHashMap<>();
 
     private JoinUtil joinUtil = null;
     private GroupUtil groupUtil = null;
@@ -82,17 +82,18 @@ public class DataFrameBuilder {
      * @param name data frame name
      * @return <tt>self</tt> for method chaining
      */
-    public DataFrameBuilder withName(String name){
+    public DataFrameBuilder withName(String name) {
         this.name = name;
         return this;
     }
+
     /**
      * Adds a new column to the builder.
      *
      * @param column data frame column
      * @return <tt>self</tt> for method chaining
      */
-    public DataFrameBuilder addColumn(DataFrameColumn column) {
+    public DataFrameBuilder addColumn(DataFrameColumn<?, ?> column) {
         columns.put(column.getName(), column);
         return this;
     }
@@ -219,12 +220,12 @@ public class DataFrameBuilder {
      * @param column data frame column
      * @return <tt>self</tt> for method chaining
      */
-    public DataFrameBuilder addColumn(String header, DataFrameColumn column) {
+    public DataFrameBuilder addColumn(String header, DataFrameColumn<?, ?> column) {
         columns.put(header, column);
         return this;
     }
 
-    public LinkedHashMap<String, DataFrameColumn> getColumns() {
+    public LinkedHashMap<String, DataFrameColumn<?, ?>> getColumns() {
         return columns;
     }
 
@@ -250,7 +251,7 @@ public class DataFrameBuilder {
         }
         DefaultDataFrame dataFrame = new DefaultDataFrame(name);
         for (String n : columns.keySet()) {
-            DataFrameColumn col = columns.get(n);
+            DataFrameColumn<?, ?> col = columns.get(n);
             col.setName(n);
             dataFrame.addColumn(col);
         }

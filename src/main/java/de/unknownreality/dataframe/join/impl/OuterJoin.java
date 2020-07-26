@@ -64,7 +64,7 @@ public class OuterJoin implements JoinOperation {
         for(JoinTree.JoinNode node : joinTree.getSavedLeafs()){
             if(node.getIndicesB() == null || node.getIndicesB().isEmpty()){
                 for(Integer rowA : node.getIndicesA()){
-                    Comparable<?>[] joinedRowValues = new Comparable[joinSize];
+                    Object[] joinedRowValues = new Object[joinSize];
                     fillValues(joinIndicesA, dfA.getRow(rowA), joinedRowValues);
                     fillNA(joinedRowValues);
                     joinedDataFrame.append(joinedRowValues);
@@ -72,7 +72,7 @@ public class OuterJoin implements JoinOperation {
             }
             else if(node.getIndicesA() == null || node.getIndicesA().isEmpty()){
                 for(Integer rowB : node.getIndicesB()){
-                    Comparable<?>[] joinedRowValues = new Comparable[joinSize];
+                    Object[] joinedRowValues = new Object[joinSize];
                     fillValues(joinIndicesB, dfB.getRow(rowB), joinedRowValues);
                     fillNA(joinedRowValues);
                     joinedDataFrame.append(joinedRowValues);

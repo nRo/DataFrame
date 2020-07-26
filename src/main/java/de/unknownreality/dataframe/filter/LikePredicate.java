@@ -25,10 +25,9 @@
 package de.unknownreality.dataframe.filter;
 
 import de.unknownreality.dataframe.Values;
-import de.unknownreality.dataframe.common.KeyValueGetter;
+import de.unknownreality.dataframe.common.Row;
 
 import java.util.function.BiFunction;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -55,7 +54,7 @@ public class LikePredicate extends FilterPredicate {
 
     private final String query;
     private final String headerName;
-    private Type type;
+    private final Type type;
     private BiFunction<String, String, Boolean> compareFunction;
     private String format;
     private Pattern containsPattern;
@@ -203,13 +202,12 @@ public class LikePredicate extends FilterPredicate {
         }
     }
 
-    @Override
-    public boolean valid(KeyValueGetter<String, ?> kv) {
-        Object v = kv.get(headerName);
+    public boolean valid(Row<?, String> row) {
+        Object v = row.get(headerName);
         if (Values.NA.isNA(v)) {
             return false;
         }
-        String value = v.toString();
+        String value = row.getType(headerName).toStringRaw(v);
 
         value = value.toLowerCase();
 

@@ -31,6 +31,7 @@ import de.unknownreality.dataframe.DefaultDataFrame;
 import de.unknownreality.dataframe.group.DataGroup;
 import de.unknownreality.dataframe.group.DataGrouping;
 import de.unknownreality.dataframe.group.GroupUtil;
+import de.unknownreality.dataframe.type.ValueType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,28 +52,35 @@ public class TreeGroupUtil implements GroupUtil {
         List<DataGroup> groupList = new ArrayList<>();
         DataFrameHeader header = df.getHeader().copy();
         GroupNode root = new GroupNode(null);
-        DataFrameColumn[] dfColumns = new DataFrameColumn[df.getHeader().size()];
+        DataFrameColumn<?, ?>[] dfColumns = new DataFrameColumn[df.getHeader().size()];
         df.getColumns().toArray(dfColumns);
         int[] groupColumnIndices = new int[columns.length];
+        ValueType<?>[] groupColumnTypes = new ValueType[columns.length];
         for (int i = 0; i < columns.length; i++) {
             groupColumnIndices[i] = header.getIndex(columns[i]);
+            groupColumnTypes[i] = header.getValueType(i);
         }
-        Comparable[] groupValues = new Comparable[columns.length];
+        Object[] groupValues = new Object[columns.length];
         for (int i = 0; i < df.size(); i++) {
-            addRec(groupList, root, 0, columns, groupColumnIndices, groupValues, header, df, i);
+            addRec(groupList, root, 0,
+                    columns, groupColumnTypes,
+                    groupColumnIndices, groupValues, header, df, i);
         }
         root.clear();
         return new DataGrouping(groupList, createGroupColumns(df, columns));
     }
 
-    private void addRec(List<DataGroup> groups, GroupNode node, int index, String[] groupColumns, int[] groupColumnIndices,
-                        Comparable[] groupValues, DataFrameHeader header,
+    private void addRec(List<DataGroup> groups, GroupNode node, int index,
+                        String[] groupColumns, ValueType<?>[] valueTypes,
+                        int[] groupColumnIndices,
+                        Object[] groupValues, DataFrameHeader header,
                         DataFrame df, int rowIndex) {
         if (index == groupColumns.length) {
             if (!node.hasGroup()) {
                 DataGroup group = new DataGroup(
                         groupColumns,
-                        groupValues
+                        groupValues,
+                        valueTypes
                 );
                 group.set(header.copy());
                 groups.add(group);
@@ -81,32 +89,34 @@ public class TreeGroupUtil implements GroupUtil {
             node.addRow(df, rowIndex);
             return;
         }
-        Comparable value = df.getValue(groupColumnIndices[index], rowIndex);
+        Object value = df.getValue(groupColumnIndices[index], rowIndex);
         groupValues[index] = value;
         GroupNode child;
         if ((child = node.getChild(value)) == null) {
             child = new GroupNode(value);
             node.addChild(child);
         }
-        addRec(groups, child, index + 1, groupColumns, groupColumnIndices, groupValues, header, df, rowIndex);
+        addRec(groups, child, index + 1,
+                groupColumns, valueTypes,
+                groupColumnIndices, groupValues, header, df, rowIndex);
     }
 
-    private static DataFrameColumn[] createGroupColumns(DataFrame df, String... columns) {
-        DataFrameColumn[] groupColumns = new DataFrameColumn[columns.length];
+    private static DataFrameColumn<?, ?>[] createGroupColumns(DataFrame df, String... columns) {
+        DataFrameColumn<?, ?>[] groupColumns = new DataFrameColumn[columns.length];
         for (int i = 0; i < columns.length; i++) {
-            DataFrameColumn orgCol = df.getColumn(columns[i]);
+            DataFrameColumn<?, ?> orgCol = df.getColumn(columns[i]);
             groupColumns[i] = orgCol.copyEmpty();
         }
         return groupColumns;
     }
 
 
-    private class GroupNode {
-        private Comparable value;
-        private HashMap<Comparable, GroupNode> children;
+    private static class GroupNode {
+        private final Object value;
+        private HashMap<Object, GroupNode> children;
         private DataGroup dataGroup;
 
-        public GroupNode(Comparable value) {
+        public GroupNode(Object value) {
             this.value = value;
         }
 
@@ -119,14 +129,14 @@ public class TreeGroupUtil implements GroupUtil {
             }
         }
 
-        private HashMap<Comparable, GroupNode> getChildrenMap() {
+        private HashMap<Object, GroupNode> getChildrenMap() {
             if (children == null) {
                 children = new HashMap<>();
             }
             return children;
         }
 
-        public Comparable getValue() {
+        public Object getValue() {
             return value;
         }
 
@@ -134,7 +144,7 @@ public class TreeGroupUtil implements GroupUtil {
             getChildrenMap().put(child.getValue(), child);
         }
 
-        public GroupNode getChild(Comparable value) {
+        public GroupNode getChild(Object value) {
             return getChildrenMap().get(value);
         }
 

@@ -26,7 +26,6 @@ package de.unknownreality.dataframe.transform;
 
 import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.DataFrameColumn;
-import de.unknownreality.dataframe.DataFrameRuntimeException;
 import de.unknownreality.dataframe.DefaultDataFrame;
 import de.unknownreality.dataframe.column.IntegerColumn;
 
@@ -36,47 +35,43 @@ import java.util.Map;
 /**
  * Created by algru on 06.09.2016.
  */
-public class CountTransformer<T extends Comparable<T>> implements ColumnDataFrameTransform<DataFrameColumn<T,?>> {
+public class CountTransformer<T> implements ColumnDataFrameTransform<DataFrameColumn<T, ?>> {
     public static final String COUNTS_COLUMN = "counts";
-    private boolean ignoreNA = true;
+    private final boolean ignoreNA;
 
-    public CountTransformer(boolean ignoreNA){
+    public CountTransformer(boolean ignoreNA) {
         this.ignoreNA = ignoreNA;
     }
 
-    public CountTransformer(){
+    public CountTransformer() {
         this(true);
     }
 
     /**
      * Creates a new dataframe containing the values of the input column and a column with the corresponding counts
+     *
      * @param source input column
      * @return count dataframe
      */
     @Override
-    public DataFrame transform(DataFrameColumn<T,?> source) {
+    public DataFrame transform(DataFrameColumn<T, ?> source) {
         DataFrame countDataFrame = new DefaultDataFrame();
-        DataFrameColumn valueColumn;
-        try {
-            valueColumn = source.getClass().newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new DataFrameRuntimeException(String.format("error creating column instance of '%s'",source.getClass()),e);
-        }
+        DataFrameColumn<T, ?> valueColumn = source.copyEmpty();
         valueColumn.setName(source.getName());
         IntegerColumn countColumn = new IntegerColumn(COUNTS_COLUMN);
 
-        Map<Comparable,Integer> counts = new LinkedHashMap<>();
-        for(int i = 0; i < source.size();i++){
-            if(ignoreNA && source.isNA(i)){
+        Map<T, Integer> counts = new LinkedHashMap<>();
+        for (int i = 0; i < source.size(); i++) {
+            if (ignoreNA && source.isNA(i)) {
                 continue;
             }
-            Comparable v = source.get(i);
+            T v = source.get(i);
             Integer count = counts.get(v);
             count = count == null ? 0 : count;
             count++;
-            counts.put(v,count);
+            counts.put(v, count);
         }
-        for(Map.Entry<Comparable,Integer> entry : counts.entrySet()){
+        for (Map.Entry<T, Integer> entry : counts.entrySet()) {
             valueColumn.append(entry.getKey());
             countColumn.append(entry.getValue());
         }

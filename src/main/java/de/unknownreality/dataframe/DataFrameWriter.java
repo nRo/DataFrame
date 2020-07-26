@@ -31,7 +31,6 @@ import de.unknownreality.dataframe.io.FileFormat;
 import de.unknownreality.dataframe.io.WriteFormat;
 import de.unknownreality.dataframe.meta.DataFrameMeta;
 import de.unknownreality.dataframe.meta.DataFrameMetaWriter;
-import de.unknownreality.dataframe.print.PrintFormat;
 
 import java.io.File;
 import java.io.OutputStream;

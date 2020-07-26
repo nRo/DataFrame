@@ -43,42 +43,29 @@ public class Values {
      * Representation for 'not available'.
      * Null values in a row are returned as <tt>NA</tt>
      */
-    public static class NA implements Comparable {
+    public static class NA {
 
 
         /**
          * checks whether the input object is of type NA or null.
+         *
          * @param o input object
          * @return true if the object is of type NA or null
          */
-        public boolean isNA(Object o){
-            if(o == null){
+        public boolean isNA(Object o) {
+            if (o == null) {
                 return true;
             }
-            if(o == this){
+            if (o == this) {
                 return true;
             }
-            if(o instanceof String){
+            if (o instanceof String) {
                 return "NA".equals(o.toString());
             }
             return false;
         }
         private NA() {
 
-        }
-
-        /**
-         * Compares NA to other objects.
-         * Result is always -1 if the other object is not NA
-         * @param o other object
-         * @return 0 or -1  (if the other object is not NA)
-         */
-        @Override
-        public int compareTo(Object o) {
-            if (o == this) {
-                return 0;
-            }
-            return -1;
         }
 
         @Override

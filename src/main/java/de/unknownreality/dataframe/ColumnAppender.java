@@ -28,7 +28,7 @@ package de.unknownreality.dataframe;
  * Created by Alex on 13.03.2016.
  */
 @FunctionalInterface
-public interface ColumnAppender<T extends Comparable<T>> {
+public interface ColumnAppender<T> {
     /**
      * Creates the value for a new column in a row
      *

@@ -32,22 +32,23 @@ import java.util.Arrays;
  * Created by Alex on 17.07.2017.
  */
 public class Quantiles<T extends Number> {
-    private T[] values;
-    private Class<T> cl;
-    public Quantiles(T[] values, Class<T> cl, boolean sorted){
-        if(values == null || values.length == 0){
+    private final T[] values;
+    private final Class<T> cl;
+
+    public Quantiles(T[] values, Class<T> cl, boolean sorted) {
+        if (values == null || values.length == 0) {
             throw new IllegalArgumentException("empty value arrays are not allowed for quantile calculations");
         }
         this.values = values;
         this.cl = cl;
-        if(!sorted){
+        if (!sorted) {
             Arrays.sort(values);
         }
     }
 
     public T getQuantile(double quantile) {
         int index = (int) Math.ceil(quantile * values.length) - 1;
-        index = index < 0 ? 0 : index;
+        index = Math.max(index, 0);
         return values[index];
     }
     public T median() {

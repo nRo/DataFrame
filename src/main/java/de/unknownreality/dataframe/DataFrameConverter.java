@@ -27,16 +27,15 @@ package de.unknownreality.dataframe;
 import de.unknownreality.dataframe.column.BasicColumn;
 import de.unknownreality.dataframe.column.StringColumn;
 import de.unknownreality.dataframe.common.Row;
-import de.unknownreality.dataframe.common.parser.Parser;
-import de.unknownreality.dataframe.common.parser.ParserUtil;
 import de.unknownreality.dataframe.common.row.BasicRow;
 import de.unknownreality.dataframe.filter.FilterPredicate;
 import de.unknownreality.dataframe.io.ColumnInformation;
 import de.unknownreality.dataframe.io.DataIterator;
+import de.unknownreality.dataframe.type.DataFrameTypeManager;
+import de.unknownreality.dataframe.type.ValueType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -47,22 +46,14 @@ import java.util.List;
 public class DataFrameConverter {
     private static final Logger log = LoggerFactory.getLogger(DataFrameConverter.class);
 
-    public static boolean SAMPLE_ROW_DETECTION = true;
+    public static final boolean SAMPLE_ROW_DETECTION = true;
 
-    @SuppressWarnings("unchecked")
-    private static Class<? extends Comparable<?>>[] TYPES = new Class[]
+    private final static ValueType<?>[] DEFAULT_VALUE_TYPES = new ValueType[]
             {
-                    Boolean.class,
-                    Integer.class,
-                    Long.class,
-                    Double.class
-            };
-    private static Parser<?>[] TYPE_PARSER = new Parser[]
-            {
-                    ParserUtil.findParserOrNull(Boolean.class),
-                    ParserUtil.findParserOrNull(Integer.class),
-                    ParserUtil.findParserOrNull(Long.class),
-                    ParserUtil.findParserOrNull(Double.class),
+                    DataFrameTypeManager.get().findValueTypeOrNull(Boolean.class),
+                    DataFrameTypeManager.get().findValueTypeOrNull(Integer.class),
+                    DataFrameTypeManager.get().findValueTypeOrNull(Long.class),
+                    DataFrameTypeManager.get().findValueTypeOrNull(Double.class),
 
             };
 
@@ -80,7 +71,7 @@ public class DataFrameConverter {
      * @param filterPredicate row filter
      * @return created data frame
      */
-    public static <R extends Row> DataFrame fromDataIterator(DataIterator<R> dataIterator, FilterPredicate filterPredicate) {
+    public static <R extends Row<?, ?>> DataFrame fromDataIterator(DataIterator<R> dataIterator, FilterPredicate filterPredicate) {
         return fromDataIterator(dataIterator, null, filterPredicate);
     }
 
@@ -96,8 +87,7 @@ public class DataFrameConverter {
      * @param filterPredicate    row filter
      * @return created data frame
      */
-    @SuppressWarnings("unchecked")
-    public static <R extends Row> DataFrame fromDataIterator(DataIterator<R> dataIterator, List<ColumnInformation> columnsInformation, FilterPredicate filterPredicate) {
+    public static <R extends Row<?, ?>> DataFrame fromDataIterator(DataIterator<R> dataIterator, List<ColumnInformation> columnsInformation, FilterPredicate filterPredicate) {
         return fromDataIterator(dataIterator, -1, columnsInformation, filterPredicate);
     }
 
@@ -115,30 +105,25 @@ public class DataFrameConverter {
      * @return created data frame
      */
     @SuppressWarnings("unchecked")
-    public static <R extends Row> DataFrame fromDataIterator(DataIterator<R> dataIterator, int expectedSize, List<ColumnInformation> columnsInformation, FilterPredicate filterPredicate) {
+    public static <R extends Row<?, ?>> DataFrame fromDataIterator(DataIterator<R> dataIterator, int expectedSize, List<ColumnInformation> columnsInformation, FilterPredicate filterPredicate) {
 
         if (columnsInformation == null) {
             columnsInformation = new ArrayList<>(dataIterator.getColumnsInformation());
         }
         columnsInformation.sort(Comparator.comparingInt(ColumnInformation::getIndex));
 
-
+        ValueType<?>[] valueTypes = getValueTypes();
         int columnCount = dataIterator.getColumnsInformation().size();
         DataFrame dataFrame = new DefaultDataFrame();
-        DataFrameColumn[] columns = new DataFrameColumn[columnCount];
+        DataFrameColumn<?, ?>[] columns = new DataFrameColumn[columnCount];
         boolean[] autodetect = new boolean[columns.length];
-        boolean[][] types = new boolean[columns.length][TYPES.length];
+        boolean[][] types = new boolean[columns.length][valueTypes.length];
         boolean hasAutodetect = false;
         for (int i = 0; i < columnCount; i++) {
             ColumnInformation columnInformation = columnsInformation.get(i);
-            Class colType = columnInformation.getColumnType();
+            Class<? extends DataFrameColumn> colType = columnInformation.getColumnType();
 
-            DataFrameColumn<?, ?> col;
-            try {
-                col = (DataFrameColumn<?, ?>) colType.newInstance();
-            } catch (InstantiationException | IllegalAccessException | ClassCastException e) {
-                throw new DataFrameRuntimeException(String.format("error creating instance of column [%s], empty constructor required", colType.getCanonicalName()), e);
-            }
+            DataFrameColumn<?, ?> col = DataFrameTypeManager.get().createColumn(colType);
             if (expectedSize > BasicColumn.INIT_SIZE) {
                 col.setCapacity(expectedSize);
             }
@@ -149,17 +134,17 @@ public class DataFrameConverter {
                     && columnInformation.getColumnType().equals(StringColumn.class);
             if (autodetect[i]) {
                 hasAutodetect = true;
-                for (int j = 0; j < TYPES.length; j++) {
+                for (int j = 0; j < valueTypes.length; j++) {
                     types[i][j] = true;
                 }
             }
         }
         int r = 0;
         for (R row : dataIterator) {
-            Comparable[] rowValues = new Comparable[columnCount];
+            Object[] rowValues = new Object[columnCount];
             for (int i = 0; i < columnCount; i++) {
                 ColumnInformation columnInformation = columnsInformation.get(i);
-                Comparable val = null;
+                Object val = null;
                 if (Values.NA.isNA(row.get(columnInformation.getIndex()))) {
                     rowValues[i] = Values.NA;
                     continue;
@@ -175,20 +160,20 @@ public class DataFrameConverter {
                     continue;
                 }
                 if (autodetect[i] && (!SAMPLE_ROW_DETECTION || doSample(r))) {
-                    for (int j = 0; j < TYPES.length; j++) {
+                    for (int j = 0; j < valueTypes.length; j++) {
                         types[i][j] = types[i][j]
-                                && (TYPE_PARSER[j].parseOrNull(val.toString()) != null);
+                                && (valueTypes[j].parseOrNull(val.toString()) != null);
                     }
                 }
                 rowValues[i] = val;
             }
-            if (hasAutodetect || filterPredicate.valid(new BasicRow(dataFrame.getHeader(), rowValues, dataFrame.size() - 1))) {
+            if (hasAutodetect || filterPredicate.valid(new BasicRow<>(dataFrame.getHeader(), rowValues, dataFrame.size() - 1))) {
                 dataFrame.append(rowValues);
             }
             r++;
         }
         if (hasAutodetect) {
-            replaceAutodetectColumns(dataFrame, autodetect, types);
+            replaceAutodetectColumns(dataFrame, valueTypes, autodetect, types);
             if (filterPredicate != null && filterPredicate != FilterPredicate.EMPTY_FILTER) {
                 dataFrame.filter(filterPredicate);
             }
@@ -222,23 +207,23 @@ public class DataFrameConverter {
         return row % 10000000 == 0;
     }
 
-    @SuppressWarnings("unchecked")
-    private static void replaceAutodetectColumns(DataFrame dataFrame, boolean[] autodetect, boolean[][] types) {
-        DataFrameColumn[] newColumns = new DataFrameColumn[autodetect.length];
+    private static void replaceAutodetectColumns(DataFrame dataFrame, ValueType<?>[] valueTypes,
+                                                 boolean[] autodetect, boolean[][] types) {
+        DataFrameColumn<?, ?>[] newColumns = new DataFrameColumn[autodetect.length];
         List<String> columnNames = new ArrayList<>(dataFrame.getColumnNames());
         for (int i = 0; i < autodetect.length; i++) {
             if (autodetect[i]) {
-                Class<? extends Comparable> colType = null;
-                for (int j = 0; j < TYPES.length; j++) {
+                Class<?> colType = null;
+                for (int j = 0; j < valueTypes.length; j++) {
                     if (types[i][j]) {
-                        colType = TYPES[j];
+                        colType = valueTypes[j].getType();
                         break;
                     }
                 }
                 if (colType == null) {
                     continue;
                 }
-                DataFrameColumn newColumn = ColumnTypeMap.createColumn(colType);
+                DataFrameColumn<?, ?> newColumn = DataFrameTypeManager.get().createColumnForType(colType);
                 newColumn.setName(columnNames.get(i));
                 newColumn.setCapacity(dataFrame.size());
                 newColumns[i] = newColumn;
@@ -248,7 +233,7 @@ public class DataFrameConverter {
         Object currentParsedVal;
         for (DataRow row : dataFrame) {
             for (int j = 0; j < autodetect.length; j++) {
-                if(newColumns[j] == null){
+                if (newColumns[j] == null) {
                     continue;
                 }
                 if (row.isNA(j)) {
@@ -256,22 +241,20 @@ public class DataFrameConverter {
                     continue;
                 }
                 currentVal = row.getString(j);
-                currentParsedVal = newColumns[j].getParser().parseOrNull(currentVal);
+                currentParsedVal = newColumns[j].getValueType().parseOrNull(currentVal);
 
                 //Error parsing value, stop auto conversion for column j
                 if (currentParsedVal == null) {
                     newColumns[j] = null;
                     continue;
                 }
-                newColumns[j].append(
-                        currentParsedVal
-                );
+                newColumns[j].appendRaw(currentParsedVal);
             }
         }
 
         int i = 0;
-        List<DataFrameColumn> columns = new ArrayList<>(dataFrame.getColumns());
-        for (DataFrameColumn column : columns) {
+        List<DataFrameColumn<?, ?>> columns = new ArrayList<>(dataFrame.getColumns());
+        for (DataFrameColumn<?, ?> column : columns) {
             if (newColumns[i] != null) {
                 dataFrame.replaceColumn(column, newColumns[i]);
             }
@@ -290,8 +273,21 @@ public class DataFrameConverter {
      * @param dataIterator parent data container
      * @return created data frame
      */
-    @SuppressWarnings("unchecked")
-    public static <R extends Row> DataFrame fromDataIterator(DataIterator<R> dataIterator) {
+    public static <R extends Row<?, ?>> DataFrame fromDataIterator(DataIterator<R> dataIterator) {
         return fromDataIterator(dataIterator, FilterPredicate.EMPTY_FILTER);
+    }
+
+    private static ValueType<?>[] getValueTypes() {
+        List<Class<?>> customTypes = DataFrameTypeManager.get().getCustomTypes();
+        if (customTypes.isEmpty()) {
+            return DEFAULT_VALUE_TYPES;
+        }
+        ValueType<?>[] types = new ValueType[customTypes.size() + DEFAULT_VALUE_TYPES.length];
+        System.arraycopy(DEFAULT_VALUE_TYPES, 0, types, 0, DEFAULT_VALUE_TYPES.length);
+        int offSet = DEFAULT_VALUE_TYPES.length;
+        for (int i = 0; i < customTypes.size(); i++) {
+            types[i + offSet] = DataFrameTypeManager.get().findValueTypeOrNull(customTypes.get(i));
+        }
+        return types;
     }
 }

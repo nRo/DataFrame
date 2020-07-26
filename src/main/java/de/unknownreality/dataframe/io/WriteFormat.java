@@ -28,5 +28,5 @@ package de.unknownreality.dataframe.io;
  * Created by Alex on 17.06.2017.
  */
 public interface WriteFormat {
-    WriterBuilder getWriterBuilder();
+    WriterBuilder<?> getWriterBuilder();
 }

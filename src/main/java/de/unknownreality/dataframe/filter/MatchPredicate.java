@@ -24,7 +24,7 @@
 
 package de.unknownreality.dataframe.filter;
 
-import de.unknownreality.dataframe.common.KeyValueGetter;
+import de.unknownreality.dataframe.common.Row;
 
 import java.util.regex.Pattern;
 
@@ -59,13 +59,12 @@ public class MatchPredicate extends FilterPredicate {
     /**
      * Returns <tt>true</tt> if the row column value matches the pattern
      *
-     * @param kv tested row
+     * @param row tested row
      * @return <tt>true</tt> of row column value matches pattern
      */
     @Override
-    public boolean valid(KeyValueGetter<String, ?> kv) {
-        Object v = kv.get(headerName);
-        return pattern.matcher(v.toString()).matches();
+    public boolean valid(Row<?, String> row) {
+        return pattern.matcher(row.toString(headerName)).matches();
     }
 
     @Override
