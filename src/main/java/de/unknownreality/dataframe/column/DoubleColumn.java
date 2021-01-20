@@ -32,8 +32,7 @@ import de.unknownreality.dataframe.type.impl.DoubleType;
  */
 public class DoubleColumn extends NumberColumn<Double, DoubleColumn> {
 
-    private final DoubleType valueType = new DoubleType();
-
+    private final DoubleType valueType = new DoubleType(getSettings());
 
     @Override
     public DoubleType getValueType() {

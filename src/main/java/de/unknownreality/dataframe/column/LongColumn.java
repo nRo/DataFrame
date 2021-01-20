@@ -32,7 +32,7 @@ import de.unknownreality.dataframe.type.impl.LongType;
  */
 public class LongColumn extends NumberColumn<Long, LongColumn> {
 
-    private final LongType valueType = new LongType();
+    private final LongType valueType = new LongType(getSettings());
 
     public LongColumn() {
         super(Long.class);

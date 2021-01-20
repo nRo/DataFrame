@@ -1,6 +1,7 @@
 package de.unknownreality.dataframe.value;
 
 import de.unknownreality.dataframe.column.BasicColumn;
+import de.unknownreality.dataframe.column.settings.ColumnSettings;
 import de.unknownreality.dataframe.type.ValueType;
 
 import java.io.DataInputStream;
@@ -15,7 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CustomColumn extends BasicColumn<CustomColumn.Custom, CustomColumn> {
-    private CustomValueType type = new CustomValueType();
+    private CustomValueType type = new CustomValueType(getSettings());
 
     public CustomColumn() {
         super(Custom.class);
@@ -75,6 +76,10 @@ public class CustomColumn extends BasicColumn<CustomColumn.Custom, CustomColumn>
 
     public static class CustomValueType extends ValueType<Custom> {
         private Pattern PATTERN = Pattern.compile("\\[([0-9+]+),\\s*([0-9+]+)]");
+
+        protected CustomValueType(ColumnSettings columnSettings) {
+            super(columnSettings);
+        }
 
         @Override
         public Class<Custom> getType() {

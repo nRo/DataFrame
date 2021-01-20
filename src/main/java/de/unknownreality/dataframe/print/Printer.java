@@ -28,6 +28,7 @@ import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.DataFrameColumn;
 import de.unknownreality.dataframe.DataFrameRuntimeException;
 import de.unknownreality.dataframe.Values;
+import de.unknownreality.dataframe.column.settings.ColumnSettings;
 import de.unknownreality.dataframe.common.DataContainer;
 import de.unknownreality.dataframe.common.Row;
 import de.unknownreality.dataframe.common.header.Header;
@@ -67,7 +68,7 @@ public class Printer extends DataWriter {
     private final Map<Object, ColumnPrintSettings> columnSettings = new HashMap<>();
     private ValueFormatter defaultValueFormatter = new DefaultValueFormatter();
     private ValueFormatter defaultHeaderFormatter = (t, v, m) -> "#" + v.toString();
-    private final StringType headerType = new StringType();
+    private final StringType headerType = new StringType(new ColumnSettings());
     private ValueFormatter defaultNumberFormatter
             = new DefaultNumberFormatter();
 

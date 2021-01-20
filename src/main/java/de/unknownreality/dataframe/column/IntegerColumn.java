@@ -32,7 +32,7 @@ import de.unknownreality.dataframe.type.impl.IntegerType;
  */
 public class IntegerColumn extends NumberColumn<Integer, IntegerColumn> {
 
-    private final IntegerType valueType = new IntegerType();
+    private final IntegerType valueType = new IntegerType(getSettings());
 
     public IntegerColumn() {
         super(Integer.class);

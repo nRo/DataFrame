@@ -34,15 +34,15 @@ import java.io.Reader;
  */
 public class CSVReader extends DataReader<CSVRow, CSVIterator> {
     private CSVSettings settings;
-    private final ColumnSettings columnSettings;
+    private final CSVColumnSettings csvColumnSettings;
 
-    protected CSVReader(CSVSettings settings, ColumnSettings columnSettings) {
+    protected CSVReader(CSVSettings settings, CSVColumnSettings csvColumnSettings) {
         this.settings = settings;
-        this.columnSettings = columnSettings;
+        this.csvColumnSettings = csvColumnSettings;
     }
 
     @Override
     public CSVIterator load(Reader reader) {
-        return new CSVIterator(new BufferedReader(reader), settings, columnSettings);
+        return new CSVIterator(new BufferedReader(reader), settings, csvColumnSettings);
     }
 }

@@ -1,5 +1,7 @@
 package de.unknownreality.dataframe.type.impl;
 
+import de.unknownreality.dataframe.column.settings.ColumnSettings;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -8,6 +10,10 @@ import java.nio.ByteBuffer;
 import java.text.ParseException;
 
 public class BooleanType extends ComparableType<Boolean> {
+    public BooleanType(ColumnSettings columnSettings) {
+        super(columnSettings);
+    }
+
     @Override
     public Class<Boolean> getType() {
         return Boolean.class;

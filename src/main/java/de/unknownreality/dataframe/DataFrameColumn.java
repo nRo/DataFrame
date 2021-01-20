@@ -24,6 +24,7 @@
 
 package de.unknownreality.dataframe;
 
+import de.unknownreality.dataframe.column.settings.ColumnSettings;
 import de.unknownreality.dataframe.common.Row;
 import de.unknownreality.dataframe.transform.ColumnDataFrameTransform;
 import de.unknownreality.dataframe.transform.ColumnTransform;
@@ -44,7 +45,15 @@ public abstract class DataFrameColumn<T, C extends DataFrameColumn<T, C>> implem
     private String name;
     private DefaultDataFrame dataFrame;
     private boolean dataFrameAppend = false;
+    private ColumnSettings settings = new ColumnSettings();
 
+    protected DataFrameColumn(String name) {
+        this.name = name;
+    }
+
+    public ColumnSettings getSettings() {
+        return settings;
+    }
 
     /**
      * Used to return the right column type for

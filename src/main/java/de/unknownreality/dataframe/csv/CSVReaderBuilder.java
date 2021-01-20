@@ -191,11 +191,11 @@ public class CSVReaderBuilder implements ReaderBuilder<CSVRow, CSVReader> {
         settings.setSkipPrefixes(skipPrefixes);
         settings.setQuoteDetection(quoteDetection);
         settings.setSingleQuoteDetection(singleQuoteDetection);
-        ColumnSettings columnSettings = new ColumnSettings();
-        columnSettings.getColumnTypeMap().putAll(columnTypeMap);
-        columnSettings.getIgnoreColumns().addAll(ignoreColumns);
-        columnSettings.getSelectColumns().addAll(selectColumns);
-        return new CSVReader(settings, columnSettings);
+        CSVColumnSettings csvColumnSettings = new CSVColumnSettings();
+        csvColumnSettings.getColumnTypeMap().putAll(columnTypeMap);
+        csvColumnSettings.getIgnoreColumns().addAll(ignoreColumns);
+        csvColumnSettings.getSelectColumns().addAll(selectColumns);
+        return new CSVReader(settings, csvColumnSettings);
     }
 
     @Override

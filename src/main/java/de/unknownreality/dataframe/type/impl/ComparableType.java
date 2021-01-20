@@ -1,5 +1,6 @@
 package de.unknownreality.dataframe.type.impl;
 
+import de.unknownreality.dataframe.column.settings.ColumnSettings;
 import de.unknownreality.dataframe.type.ValueType;
 
 import java.util.Comparator;
@@ -17,6 +18,10 @@ public abstract class ComparableType<T extends Comparable<T>> extends ValueType<
         }
         return o1.compareTo(o2);
     };
+
+    public ComparableType(ColumnSettings columnSettings) {
+        super(columnSettings);
+    }
 
     @Override
     public Comparator<T> getComparator() {

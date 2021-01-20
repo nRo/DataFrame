@@ -33,7 +33,7 @@ import de.unknownreality.dataframe.type.impl.ByteType;
  */
 public class ByteColumn extends NumberColumn<Byte, ByteColumn> {
 
-    private static final ByteType valueType = new ByteType();
+    private final ByteType valueType = new ByteType(getSettings());
 
     @Override
     public ValueType<Byte> getValueType() {

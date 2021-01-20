@@ -25,6 +25,7 @@
 package de.unknownreality.dataframe.common.row;
 
 import de.unknownreality.dataframe.DataFrameRuntimeException;
+import de.unknownreality.dataframe.column.settings.ColumnSettings;
 import de.unknownreality.dataframe.common.Row;
 import de.unknownreality.dataframe.common.header.Header;
 import de.unknownreality.dataframe.type.DataFrameTypeManager;
@@ -44,7 +45,7 @@ import java.util.NoSuchElementException;
 public class StringRow<T, H extends Header<T>> implements Row<String, T>, Iterable<String> {
     private static final Logger log = LoggerFactory.getLogger(StringRow.class);
 
-    private final static StringType STRING_VALUE_TYPE = new StringType();
+    private final static StringType STRING_VALUE_TYPE = new StringType(new ColumnSettings());
 
     private static final ValueType<Boolean> BOOLEAN_VALUE_READER = DataFrameTypeManager.get().findValueTypeOrThrow(Boolean.class);
     private static final ValueType<Double> DOUBLE_VALUE_READER = DataFrameTypeManager.get().findValueTypeOrThrow(Double.class);
@@ -262,7 +263,7 @@ public class StringRow<T, H extends Header<T>> implements Row<String, T>, Iterab
      * @param <C>   resulting type
      * @return converted value
      */
-    protected  <C> C getValueAs(String value, Class<C> cl) {
+    protected <C> C getValueAs(String value, Class<C> cl) {
         try {
             return DataFrameTypeManager.get().parse(cl, value);
         } catch (ParseException | ValueTypeNotFoundException e) {
@@ -314,8 +315,8 @@ public class StringRow<T, H extends Header<T>> implements Row<String, T>, Iterab
 
             @Override
             public String next() {
-                if(index >= values.length){
-                    throw new NoSuchElementException(String.format("element not found: index out of bounds %s >= %s]",index,values.length));
+                if (index >= values.length) {
+                    throw new NoSuchElementException(String.format("element not found: index out of bounds %s >= %s]", index, values.length));
                 }
                 return values[index++];
             }

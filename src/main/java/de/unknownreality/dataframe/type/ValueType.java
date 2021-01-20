@@ -1,5 +1,7 @@
 package de.unknownreality.dataframe.type;
 
+import de.unknownreality.dataframe.column.settings.ColumnSettings;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -9,6 +11,12 @@ import java.text.ParseException;
 import java.util.Comparator;
 
 public abstract class ValueType<T> {
+    private ColumnSettings columnSettings;
+
+    protected ValueType(ColumnSettings columnSettings) {
+        this.columnSettings = columnSettings;
+    }
+
     public abstract Class<T> getType();
 
     public abstract Comparator<T> getComparator();

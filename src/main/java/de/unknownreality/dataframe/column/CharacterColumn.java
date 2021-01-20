@@ -32,7 +32,7 @@ import de.unknownreality.dataframe.type.impl.CharacterType;
  */
 public class CharacterColumn extends BasicColumn<Character, CharacterColumn> {
 
-    private final static CharacterType valueType = new CharacterType();
+    private final CharacterType valueType = new CharacterType(getSettings());
 
     public CharacterColumn() {
         super(Character.class);
