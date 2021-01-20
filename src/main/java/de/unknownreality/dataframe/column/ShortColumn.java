@@ -32,7 +32,7 @@ import de.unknownreality.dataframe.type.impl.ShortType;
  */
 public class ShortColumn extends NumberColumn<Short, ShortColumn> {
 
-    private final ShortType valueType = new ShortType();
+    private final ShortType valueType = new ShortType(getSettings());
 
     public ShortColumn() {
         super(Short.class);

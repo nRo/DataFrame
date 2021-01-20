@@ -32,7 +32,7 @@ import de.unknownreality.dataframe.type.impl.FloatType;
  */
 public class FloatColumn extends NumberColumn<Float, FloatColumn> {
 
-    private final FloatType valueType = new FloatType();
+    private final FloatType valueType = new FloatType(getSettings());
 
     @Override
     public FloatType getValueType() {

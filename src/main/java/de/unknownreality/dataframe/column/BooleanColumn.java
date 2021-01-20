@@ -33,7 +33,7 @@ import de.unknownreality.dataframe.type.impl.BooleanType;
  */
 public class BooleanColumn extends BasicColumn<Boolean, BooleanColumn> {
 
-    private final BooleanType valueType = new BooleanType();
+    private final BooleanType valueType = new BooleanType(getSettings());
 
     public BooleanColumn() {
         super(Boolean.class);

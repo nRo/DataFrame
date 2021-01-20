@@ -1,5 +1,7 @@
 package de.unknownreality.dataframe.type.impl;
 
+import de.unknownreality.dataframe.column.settings.ColumnSettings;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -7,6 +9,10 @@ import java.io.Writer;
 import java.nio.ByteBuffer;
 
 public class ByteType extends NumberType<Byte> {
+    public ByteType(ColumnSettings columnSettings) {
+        super(columnSettings);
+    }
+
     @Override
     public Class<Byte> getType() {
         return Byte.class;

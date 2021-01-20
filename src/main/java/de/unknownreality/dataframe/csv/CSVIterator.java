@@ -44,7 +44,7 @@ public class CSVIterator extends BufferedStreamIterator<CSVRow> implements DataI
 
     private int lineNumber = 0;
     private final CSVSettings csvSettings;
-    private final ColumnSettings columnSettings;
+    private final CSVColumnSettings csvColumnSettings;
     private final CSVHeader header = new CSVHeader();
     private int cols = -1;
     private final Set<String> ignoredColumns;
@@ -56,17 +56,17 @@ public class CSVIterator extends BufferedStreamIterator<CSVRow> implements DataI
     private boolean[] skipIndices;
     private final StringSplitter stringSplitter = new StringSplitter();
 
-    public CSVIterator(BufferedReader reader, CSVSettings csvSettings, ColumnSettings columnSettings) {
+    public CSVIterator(BufferedReader reader, CSVSettings csvSettings, CSVColumnSettings csvColumnSettings) {
         super(reader);
         this.csvSettings = csvSettings;
-        this.columnSettings = columnSettings;
-        ignoredColumns = new HashSet<>(columnSettings.getIgnoreColumns());
-        includedColumns = new HashSet<>(columnSettings.getSelectColumns());
-        colTypes = new HashMap<>(columnSettings.getColumnTypeMap());
+        this.csvColumnSettings = csvColumnSettings;
+        ignoredColumns = new HashSet<>(csvColumnSettings.getIgnoreColumns());
+        includedColumns = new HashSet<>(csvColumnSettings.getSelectColumns());
+        colTypes = new HashMap<>(csvColumnSettings.getColumnTypeMap());
         this.stringSplitter.setDetectQuotes(csvSettings.isQuoteDetection());
         this.stringSplitter.setDetectSingleQuotes(csvSettings.isSingleQuoteDetection());
         int j = 0;
-        for (String col : columnSettings.getSelectColumns()) {
+        for (String col : csvColumnSettings.getSelectColumns()) {
             selectedColumnsIndex.put(col, j++);
         }
         //loadNext();

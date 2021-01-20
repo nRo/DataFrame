@@ -1,5 +1,7 @@
 package de.unknownreality.dataframe.type.impl;
 
+import de.unknownreality.dataframe.column.settings.ColumnSettings;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -7,6 +9,10 @@ import java.io.Writer;
 import java.nio.ByteBuffer;
 
 public class FloatType extends NumberType<Float> {
+    public FloatType(ColumnSettings columnSettings) {
+        super(columnSettings);
+    }
+
     @Override
     public Class<Float> getType() {
         return Float.class;

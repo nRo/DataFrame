@@ -1,5 +1,7 @@
 package de.unknownreality.dataframe.type.impl;
 
+import de.unknownreality.dataframe.column.settings.ColumnSettings;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -10,6 +12,10 @@ import java.nio.charset.StandardCharsets;
 
 public class StringType extends ComparableType<String> {
     private final Charset charSet = StandardCharsets.UTF_8;
+
+    public StringType(ColumnSettings columnSettings) {
+        super(columnSettings);
+    }
 
     @Override
     public Class<String> getType() {

@@ -46,8 +46,8 @@ public abstract class BasicColumn<T, C extends BasicColumn<T, C>> extends DataFr
 
     @SuppressWarnings("unchecked")
     public BasicColumn(String name, Class<T> cl) {
+        super(name);
         this.size = 0;
-        setName(name);
         values = (T[]) Array.newInstance(cl, INIT_SIZE);
     }
 
@@ -56,8 +56,8 @@ public abstract class BasicColumn<T, C extends BasicColumn<T, C>> extends DataFr
     }
 
     public BasicColumn(String name, T[] values, int size) {
+        super(name);
         this.values = values;
-        setName(name);
         this.size = size;
     }
 

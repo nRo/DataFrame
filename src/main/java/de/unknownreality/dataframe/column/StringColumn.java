@@ -32,8 +32,7 @@ import de.unknownreality.dataframe.type.impl.StringType;
  * Created by Alex on 09.03.2016.
  */
 public class StringColumn extends BasicColumn<String, StringColumn> {
-
-    private final static StringType valueType = new StringType();
+    private final StringType valueType = new StringType(getSettings());
 
     public StringColumn() {
         super(String.class);
@@ -50,7 +49,6 @@ public class StringColumn extends BasicColumn<String, StringColumn> {
     public StringColumn(String name, String[] values, int size) {
         super(name, values, size);
     }
-
 
     @Override
     public StringType getValueType() {
