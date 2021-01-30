@@ -59,6 +59,7 @@ public class CSVReaderBuilder implements ReaderBuilder<CSVRow, CSVReader> {
 
     /**
      * Detect quoted values e.g. val1 "val 2" val3
+     *
      * @param quoteDetection quoteDetection
      * @return self for method chaining
      */
@@ -69,6 +70,7 @@ public class CSVReaderBuilder implements ReaderBuilder<CSVRow, CSVReader> {
 
     /**
      * Detect single quoted values e.g. val1 'val 2' val3
+     *
      * @param singleQuoteDetection singleQuoteDetection
      * @return self for method chaining
      */
@@ -77,7 +79,7 @@ public class CSVReaderBuilder implements ReaderBuilder<CSVRow, CSVReader> {
         return this;
     }
 
-    public CSVReaderBuilder addSkipPrefix(String prefix){
+    public CSVReaderBuilder addSkipPrefix(String prefix) {
         skipPrefixes.add(prefix);
         return this;
     }
@@ -128,8 +130,6 @@ public class CSVReaderBuilder implements ReaderBuilder<CSVRow, CSVReader> {
     }
 
 
-
-
     /**
      * Creates a {@link CSVIterator} for the specified file
      *
@@ -138,7 +138,7 @@ public class CSVReaderBuilder implements ReaderBuilder<CSVRow, CSVReader> {
      * @deprecated use {@link DataFrame#fromCSV} or {@link DataFrame#load} instead.
      */
     @Deprecated
-    public CSVIterator load(File file){
+    public CSVIterator load(File file) {
         return build().load(file);
     }
 
@@ -151,7 +151,7 @@ public class CSVReaderBuilder implements ReaderBuilder<CSVRow, CSVReader> {
      * @deprecated use {@link DataFrame#fromCSV} or {@link DataFrame#load} instead.
      */
     @Deprecated
-    public CSVIterator load(String content){
+    public CSVIterator load(String content) {
         return build().load(content);
     }
 
@@ -166,7 +166,7 @@ public class CSVReaderBuilder implements ReaderBuilder<CSVRow, CSVReader> {
      */
     @Deprecated
     public CSVIterator loadResource(String resourcePath, ClassLoader classLoader) {
-        return build().load(resourcePath,classLoader);
+        return build().load(resourcePath, classLoader);
     }
 
     /**
@@ -179,7 +179,7 @@ public class CSVReaderBuilder implements ReaderBuilder<CSVRow, CSVReader> {
      */
     @Deprecated
     public CSVIterator loadResource(String resourcePath) {
-        return build().load(resourcePath,CSVReaderBuilder.class.getClassLoader());
+        return build().load(resourcePath, CSVReaderBuilder.class.getClassLoader());
     }
 
     @Override
@@ -199,12 +199,10 @@ public class CSVReaderBuilder implements ReaderBuilder<CSVRow, CSVReader> {
     }
 
     @Override
-    public ReaderBuilder<CSVRow, CSVReader> loadSettings(Map<String, String> attributes) throws Exception {
+    public CSVReaderBuilder loadSettings(Map<String, String> attributes) throws Exception {
         this.separator = DataFrameTypeManager.get().parse(Character.class, attributes.get("separator"));
         this.headerPrefix = attributes.get("headerPrefix");
         this.containsHeader = DataFrameTypeManager.get().parse(Boolean.class, attributes.get("containsHeader"));
         return this;
     }
-
-
 }

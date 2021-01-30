@@ -24,8 +24,8 @@
 
 package de.unknownreality.dataframe;
 
-import de.unknownreality.dataframe.column.settings.ColumnSettings;
 import de.unknownreality.dataframe.common.Row;
+import de.unknownreality.dataframe.settings.ColumnSettings;
 import de.unknownreality.dataframe.transform.ColumnDataFrameTransform;
 import de.unknownreality.dataframe.transform.ColumnTransform;
 import de.unknownreality.dataframe.type.ValueType;
@@ -45,7 +45,7 @@ public abstract class DataFrameColumn<T, C extends DataFrameColumn<T, C>> implem
     private String name;
     private DefaultDataFrame dataFrame;
     private boolean dataFrameAppend = false;
-    private ColumnSettings settings = new ColumnSettings();
+    private final ColumnSettings settings = new ColumnSettings();
 
     protected DataFrameColumn(String name) {
         this.name = name;
@@ -61,6 +61,19 @@ public abstract class DataFrameColumn<T, C extends DataFrameColumn<T, C>> implem
      * @return <tt>self</tt>
      */
     protected abstract C getThis();
+
+    /**
+     * Returns the index for this column.
+     * Return null the column is not added to a dataframe
+     *
+     * @return index of column
+     */
+    public Integer getColumnIndex() {
+        if (dataFrame == null) {
+            return null;
+        }
+        return dataFrame.getHeader().getIndex(getName());
+    }
 
     /**
      * Sets the capacity of this column.

@@ -1,6 +1,6 @@
 package de.unknownreality.dataframe.type;
 
-import de.unknownreality.dataframe.column.settings.ColumnSettings;
+import de.unknownreality.dataframe.settings.ColumnSettings;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -15,6 +15,10 @@ public abstract class ValueType<T> {
 
     protected ValueType(ColumnSettings columnSettings) {
         this.columnSettings = columnSettings;
+    }
+
+    public ColumnSettings getColumnSettings() {
+        return columnSettings;
     }
 
     public abstract Class<T> getType();

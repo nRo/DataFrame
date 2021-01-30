@@ -1,6 +1,7 @@
 package de.unknownreality.dataframe.type.impl;
 
-import de.unknownreality.dataframe.column.settings.ColumnSettings;
+import de.unknownreality.dataframe.settings.ColumnSettings;
+import de.unknownreality.dataframe.settings.EncodingSetting;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -8,10 +9,9 @@ import java.io.IOException;
 import java.io.Writer;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 
 public class StringType extends ComparableType<String> {
-    private final Charset charSet = StandardCharsets.UTF_8;
+    private final static EncodingSetting DEFAULT_ENCODING_SETTING = EncodingSetting.UTF8;
 
     public StringType(ColumnSettings columnSettings) {
         super(columnSettings);
@@ -22,20 +22,23 @@ public class StringType extends ComparableType<String> {
         return String.class;
     }
 
+    private Charset getEncoding() {
+        return getColumnSettings().getOrDefault(EncodingSetting.class, DEFAULT_ENCODING_SETTING).getCharset();
+    }
 
     @Override
     public String read(DataInputStream dis) throws IOException {
         int length = dis.readInt();
         byte[] data = new byte[length];
         dis.read(data);
-        return new String(data, charSet);
+        return new String(data, getEncoding());
     }
 
     @Override
     public String read(ByteBuffer buf) {
         int length = buf.getInt();
         byte[] data = new byte[length];
-        return new String(data, charSet);
+        return new String(data, getEncoding());
     }
 
     @Override
@@ -64,7 +67,7 @@ public class StringType extends ComparableType<String> {
     @Override
     public int write(DataOutputStream dos, String value) throws IOException {
         assertNotNull(value);
-        byte[] data = value.getBytes(charSet);
+        byte[] data = value.getBytes(getEncoding());
         dos.writeInt(data.length);
         dos.write(data);
         return Integer.BYTES + data.length;

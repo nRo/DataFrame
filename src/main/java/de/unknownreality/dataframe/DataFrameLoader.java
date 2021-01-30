@@ -523,7 +523,7 @@ public class DataFrameLoader {
      * @return resulting dataframe
      */
     public static DataFrame load(DataIterator<?> dataIterator) {
-        return DataFrameConverter.fromDataIterator(dataIterator, FilterPredicate.EMPTY_FILTER);
+        return load(dataIterator, FilterPredicate.EMPTY_FILTER);
     }
 
     /**
@@ -536,7 +536,6 @@ public class DataFrameLoader {
     public static DataFrame load(DataIterator<?> dataIterator, FilterPredicate predicate) {
         return DataFrameConverter.fromDataIterator(dataIterator, predicate);
     }
-
 
     /**
      * Loads a data frame from a file.
@@ -666,7 +665,6 @@ public class DataFrameLoader {
         return reader;
     }
 
-
     /**
      * Loads a data frame from a resource and the corresponding meta resource.
      *
@@ -678,6 +676,4 @@ public class DataFrameLoader {
     public static DataFrame loadResource(String path, String metaPath, ClassLoader classLoader) {
         return loadResource(path, metaPath, classLoader, FilterPredicate.EMPTY_FILTER);
     }
-
-
 }

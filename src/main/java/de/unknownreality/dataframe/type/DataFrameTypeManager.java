@@ -234,7 +234,7 @@ public class DataFrameTypeManager {
         if (col == null) {
             throw new ValueTypeNotFoundException(cl);
         }
-        return (ValueType<T>) col.getValueType();
+        return (ValueType<T>) col.copyEmpty().getValueType();
     }
 
     /**

@@ -1,7 +1,7 @@
 package de.unknownreality.dataframe.value;
 
 import de.unknownreality.dataframe.column.BasicColumn;
-import de.unknownreality.dataframe.column.settings.ColumnSettings;
+import de.unknownreality.dataframe.settings.ColumnSettings;
 import de.unknownreality.dataframe.type.ValueType;
 
 import java.io.DataInputStream;

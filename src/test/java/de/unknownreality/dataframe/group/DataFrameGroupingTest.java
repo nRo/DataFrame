@@ -68,9 +68,9 @@ public class DataFrameGroupingTest {
                 .withHeader(true)
                 .withHeaderPrefix("")
                 .withSeparator(';')
-                .setColumnType("ID",Integer.class)
-                .setColumnType("NAME",String.class)
-                .setColumnType("VALUE",Integer.class)
+                .setColumnType("ID", Integer.class)
+                .setColumnType("NAME", String.class)
+                .setColumnType("VALUE", Integer.class)
                 .build();
 
         DataFrame dataFrame = DataFrameLoader.load("data_grouping.csv", DataFrameGroupingTest.class.getClassLoader(), csvReader);
@@ -87,7 +87,7 @@ public class DataFrameGroupingTest {
          */
         DataGrouping dataGroups = dataFrame.groupBy("ID", "NAME")
                 .agg("MAX", Aggregate.max("VALUE"))
-                .agg("MIN",Aggregate.max("VALUE"));
+                .agg("MIN", Aggregate.max("VALUE"));
         Assert.assertEquals(6, dataGroups.size());
 
         Assert.assertEquals(IntegerColumn.class, dataGroups.getColumn("MIN").getClass());
@@ -102,13 +102,13 @@ public class DataFrameGroupingTest {
         testGroup(dataGroups.findByGroupValues(4, "B"), 7);
 
 
-        dataGroups.agg("count2",(DataGroup::size));
-        Assert.assertEquals((Integer)2,dataGroups.findByGroupValues(1, "A").getInteger("count2"));
-        Assert.assertEquals((Integer)1,dataGroups.findByGroupValues(1, "B").getInteger("count2"));
-        Assert.assertEquals((Integer)1,dataGroups.findByGroupValues(2, "A").getInteger("count2"));
-        Assert.assertEquals((Integer)2,dataGroups.findByGroupValues(3, "B").getInteger("count2"));
-        Assert.assertEquals((Integer)1,dataGroups.findByGroupValues(2, "C").getInteger("count2"));
-        Assert.assertEquals((Integer)1,dataGroups.findByGroupValues(4, "B").getInteger("count2"));
+        dataGroups.agg("count2", (DataGroup::size));
+        Assert.assertEquals((Integer) 2, dataGroups.findByGroupValues(1, "A").getInteger("count2"));
+        Assert.assertEquals((Integer) 1, dataGroups.findByGroupValues(1, "B").getInteger("count2"));
+        Assert.assertEquals((Integer) 1, dataGroups.findByGroupValues(2, "A").getInteger("count2"));
+        Assert.assertEquals((Integer) 2, dataGroups.findByGroupValues(3, "B").getInteger("count2"));
+        Assert.assertEquals((Integer) 1, dataGroups.findByGroupValues(2, "C").getInteger("count2"));
+        Assert.assertEquals((Integer) 1, dataGroups.findByGroupValues(4, "B").getInteger("count2"));
 
         DataFrame grouping2 = dataGroups.select(FilterPredicate.and(FilterPredicate.lt("ID", 4), FilterPredicate.in("NAME", new String[]{"A", "B"})));
         Assert.assertEquals(4, grouping2.size());
@@ -134,13 +134,13 @@ public class DataFrameGroupingTest {
                 .withHeader(true)
                 .withHeaderPrefix("")
                 .withSeparator(';')
-                .setColumnType("ID",Integer.class)
-                .setColumnType("NAME",String.class)
-                .setColumnType("VALUE",Integer.class)
+                .setColumnType("ID", Integer.class)
+                .setColumnType("NAME", String.class)
+                .setColumnType("VALUE", Integer.class)
                 .build();
 
         DataFrame dataFrame = DataFrameLoader.load("data_grouping.csv", DataFrameGroupingTest.class.getClassLoader(), csvReader);
-        ((DefaultDataFrame)dataFrame).setGroupUtil(new TreeGroupUtil());
+        ((DefaultDataFrame) dataFrame).setGroupUtil(new TreeGroupUtil());
         Assert.assertEquals(8, dataFrame.size());
 
         /*
@@ -154,7 +154,7 @@ public class DataFrameGroupingTest {
          */
         DataGrouping dataGroups = dataFrame.groupBy("ID", "NAME")
                 .agg("MAX", Aggregate.max("VALUE"))
-                .agg("MIN",Aggregate.max("VALUE"));
+                .agg("MIN", Aggregate.max("VALUE"));
         Assert.assertEquals(6, dataGroups.size());
 
         Assert.assertEquals(IntegerColumn.class, dataGroups.getColumn("MIN").getClass());
@@ -169,13 +169,13 @@ public class DataFrameGroupingTest {
         testGroup(dataGroups.findByGroupValues(4, "B"), 7);
 
 
-        dataGroups.agg("count2",(DataGroup::size));
-        Assert.assertEquals((Integer)2,dataGroups.findByGroupValues(1, "A").getInteger("count2"));
-        Assert.assertEquals((Integer)1,dataGroups.findByGroupValues(1, "B").getInteger("count2"));
-        Assert.assertEquals((Integer)1,dataGroups.findByGroupValues(2, "A").getInteger("count2"));
-        Assert.assertEquals((Integer)2,dataGroups.findByGroupValues(3, "B").getInteger("count2"));
-        Assert.assertEquals((Integer)1,dataGroups.findByGroupValues(2, "C").getInteger("count2"));
-        Assert.assertEquals((Integer)1,dataGroups.findByGroupValues(4, "B").getInteger("count2"));
+        dataGroups.agg("count2", (DataGroup::size));
+        Assert.assertEquals((Integer) 2, dataGroups.findByGroupValues(1, "A").getInteger("count2"));
+        Assert.assertEquals((Integer) 1, dataGroups.findByGroupValues(1, "B").getInteger("count2"));
+        Assert.assertEquals((Integer) 1, dataGroups.findByGroupValues(2, "A").getInteger("count2"));
+        Assert.assertEquals((Integer) 2, dataGroups.findByGroupValues(3, "B").getInteger("count2"));
+        Assert.assertEquals((Integer) 1, dataGroups.findByGroupValues(2, "C").getInteger("count2"));
+        Assert.assertEquals((Integer) 1, dataGroups.findByGroupValues(4, "B").getInteger("count2"));
 
         DataFrame grouping2 = dataGroups.select(FilterPredicate.and(FilterPredicate.lt("ID", 4), FilterPredicate.in("NAME", new String[]{"A", "B"})));
         Assert.assertEquals(4, grouping2.size());
@@ -195,32 +195,31 @@ public class DataFrameGroupingTest {
         dataFrame.addColumn(new IntegerColumn("n"));
 
 
-        dataFrame.append("a",1d,5,true,true,"abc123",1);
-        dataFrame.append("b",2d,4,true,false,"abc/123",null);
-        dataFrame.append("c",3d,3,false,true,"abc", Values.NA);
-        dataFrame.append("d",4d,2,false,false,"123",1);
-        dataFrame.append("a",2d,5,true,true,"abc123",1);
-        dataFrame.append("b",2d,4,true,false,"abc/123",null);
-        dataFrame.append("c",3d,3,false,true,"abc", Values.NA);
-        dataFrame.append("d",4d,2,false,false,"a123",1);
-        dataFrame.append("a",3d,5,true,true,"1bc123",1);
-        dataFrame.append("b",2d,4,true,false,"abc/123",null);
-
+        dataFrame.append("a", 1d, 5, true, true, "abc123", 1);
+        dataFrame.append("b", 2d, 4, true, false, "abc/123", null);
+        dataFrame.append("c", 3d, 3, false, true, "abc", Values.NA);
+        dataFrame.append("d", 4d, 2, false, false, "123", 1);
+        dataFrame.append("a", 2d, 5, true, true, "abc123", 1);
+        dataFrame.append("b", 2d, 4, true, false, "abc/123", null);
+        dataFrame.append("c", 3d, 3, false, true, "abc", Values.NA);
+        dataFrame.append("d", 4d, 2, false, false, "a123", 1);
+        dataFrame.append("a", 3d, 5, true, true, "1bc123", 1);
+        dataFrame.append("b", 2d, 4, true, false, "abc/123", null);
 
 
         DataGrouping grouping = dataFrame
                 .groupBy("name")
-                .agg("count",Aggregate.count())
+                .agg("count", Aggregate.count())
                 .agg("mean", Aggregate.mean("x"))
-                .agg("max",Aggregate.max("x"))
+                .agg("max", Aggregate.max("x"))
                 .agg("na_count", Aggregate.naCount("n"))
-                .agg("filter_count",Aggregate.filterCount("r ~= /[a-z].+/"))
+                .agg("filter_count", Aggregate.filterCount("r ~= /[a-z].+/"))
                 .agg("first", Aggregate.first("x"))
                 .agg("nfirst", Aggregate.first("n"))
-                .agg("x_25", Aggregate.quantile("x",0.25))
-                .agg("desc",group -> group.getGroupDescription());
+                .agg("x_25", Aggregate.quantile("x", 0.25))
+                .agg("desc", group -> group.getGroupDescription());
 
-        for(DataRow row : grouping){
+        for (DataRow row : grouping) {
             DataGroup group = grouping.getGroup(row.getIndex());
             System.out.println(group.getGroupDescription());
         }
@@ -234,8 +233,8 @@ public class DataFrameGroupingTest {
         DataFrame df = grouping.select("na_count < 3");
         df.print();
 
-        df.getStringColumn("desc").map(value -> value+"::2");
-        DataFrame joined = grouping.joinInner(df,"name");
+        df.getStringColumn("desc").map(value -> value + "::2");
+        DataFrame joined = grouping.joinInner(df, "name");
         joined.print();
 
     }

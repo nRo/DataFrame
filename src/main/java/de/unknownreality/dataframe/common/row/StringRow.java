@@ -25,9 +25,9 @@
 package de.unknownreality.dataframe.common.row;
 
 import de.unknownreality.dataframe.DataFrameRuntimeException;
-import de.unknownreality.dataframe.column.settings.ColumnSettings;
 import de.unknownreality.dataframe.common.Row;
 import de.unknownreality.dataframe.common.header.Header;
+import de.unknownreality.dataframe.settings.ColumnSettings;
 import de.unknownreality.dataframe.type.DataFrameTypeManager;
 import de.unknownreality.dataframe.type.ValueType;
 import de.unknownreality.dataframe.type.ValueTypeNotFoundException;

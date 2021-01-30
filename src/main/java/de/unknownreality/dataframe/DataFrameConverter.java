@@ -31,6 +31,7 @@ import de.unknownreality.dataframe.common.row.BasicRow;
 import de.unknownreality.dataframe.filter.FilterPredicate;
 import de.unknownreality.dataframe.io.ColumnInformation;
 import de.unknownreality.dataframe.io.DataIterator;
+import de.unknownreality.dataframe.settings.DataFrameSettings;
 import de.unknownreality.dataframe.type.DataFrameTypeManager;
 import de.unknownreality.dataframe.type.ValueType;
 import org.slf4j.Logger;
@@ -71,8 +72,31 @@ public class DataFrameConverter {
      * @param filterPredicate row filter
      * @return created data frame
      */
-    public static <R extends Row<?, ?>> DataFrame fromDataIterator(DataIterator<R> dataIterator, FilterPredicate filterPredicate) {
-        return fromDataIterator(dataIterator, null, filterPredicate);
+    public static <R extends Row<?, ?>> DataFrame fromDataIterator(
+            DataIterator<R> dataIterator,
+            FilterPredicate filterPredicate
+    ) {
+        return fromDataIterator(dataIterator, null, new DataFrameSettings(), filterPredicate);
+    }
+
+    /**
+     * Converts a parent data container to a data frame.
+     * The required column information is provided by a column information object.
+     * Column information specified by the dataIterator is used.
+     * Only rows validated by the filter are appended to the resulting data frame
+     *
+     * @param <R>               row type
+     * @param dataIterator      parent data container
+     * @param dataFrameSettings column settings
+     * @param filterPredicate   row filter
+     * @return created data frame
+     */
+    public static <R extends Row<?, ?>> DataFrame fromDataIterator(
+            DataIterator<R> dataIterator,
+            DataFrameSettings dataFrameSettings,
+            FilterPredicate filterPredicate
+    ) {
+        return fromDataIterator(dataIterator, null, dataFrameSettings, filterPredicate);
     }
 
     /**
@@ -87,8 +111,40 @@ public class DataFrameConverter {
      * @param filterPredicate    row filter
      * @return created data frame
      */
-    public static <R extends Row<?, ?>> DataFrame fromDataIterator(DataIterator<R> dataIterator, List<ColumnInformation> columnsInformation, FilterPredicate filterPredicate) {
-        return fromDataIterator(dataIterator, -1, columnsInformation, filterPredicate);
+    public static <R extends Row<?, ?>> DataFrame fromDataIterator(
+            DataIterator<R> dataIterator,
+            List<ColumnInformation> columnsInformation,
+            FilterPredicate filterPredicate
+    ) {
+        return fromDataIterator(
+                dataIterator,
+                -1,
+                columnsInformation,
+                new DataFrameSettings(),
+                filterPredicate
+        );
+    }
+
+    /**
+     * Converts a parent data container to a data frame.
+     * The required column information is provided by a column information object.
+     * If no column information is defined, the one specified by the dataIterator is used.
+     * Only rows validated by the filter are appended to the resulting data frame
+     *
+     * @param <R>                row type
+     * @param dataIterator       parent data container
+     * @param columnsInformation column information
+     * @param dataFrameSettings  column settings
+     * @param filterPredicate    row filter
+     * @return created data frame
+     */
+    public static <R extends Row<?, ?>> DataFrame fromDataIterator(
+            DataIterator<R> dataIterator,
+            List<ColumnInformation> columnsInformation,
+            DataFrameSettings dataFrameSettings,
+            FilterPredicate filterPredicate
+    ) {
+        return fromDataIterator(dataIterator, -1, columnsInformation, dataFrameSettings, filterPredicate);
     }
 
     /**
@@ -105,7 +161,37 @@ public class DataFrameConverter {
      * @return created data frame
      */
     @SuppressWarnings("unchecked")
-    public static <R extends Row<?, ?>> DataFrame fromDataIterator(DataIterator<R> dataIterator, int expectedSize, List<ColumnInformation> columnsInformation, FilterPredicate filterPredicate) {
+    public static <R extends Row<?, ?>> DataFrame fromDataIterator(
+            DataIterator<R> dataIterator,
+            int expectedSize,
+            List<ColumnInformation> columnsInformation,
+            FilterPredicate filterPredicate
+    ) {
+        return fromDataIterator(dataIterator, expectedSize, columnsInformation, new DataFrameSettings(), filterPredicate);
+    }
+
+    /**
+     * Converts a parent data container to a data frame.
+     * The required column information is provided by a column information object.
+     * If no column information is defined, the one specified by the dataIterator is used.
+     * Only rows validated by the filter are appended to the resulting data frame
+     *
+     * @param <R>                   row type
+     * @param dataIterator          parent data container
+     * @param expectedSize          expected size of the resulting dataframe
+     * @param columnsInformation    column information
+     * @param dataFrameSettings column settings
+     * @param filterPredicate       row filter
+     * @return created data frame
+     */
+    @SuppressWarnings("unchecked")
+    public static <R extends Row<?, ?>> DataFrame fromDataIterator(
+            DataIterator<R> dataIterator,
+            int expectedSize,
+            List<ColumnInformation> columnsInformation,
+            DataFrameSettings dataFrameSettings,
+            FilterPredicate filterPredicate
+    ) {
 
         if (columnsInformation == null) {
             columnsInformation = new ArrayList<>(dataIterator.getColumnsInformation());
@@ -129,6 +215,7 @@ public class DataFrameConverter {
             }
             col.setName(columnInformation.getName());
             dataFrame.addColumn(col);
+            dataFrameSettings.applyToColumn(col);
             columns[i] = col;
             autodetect[i] = columnInformation.isAutodetect()
                     && columnInformation.getColumnType().equals(StringColumn.class);
@@ -173,7 +260,7 @@ public class DataFrameConverter {
             r++;
         }
         if (hasAutodetect) {
-            replaceAutodetectColumns(dataFrame, valueTypes, autodetect, types);
+            replaceAutodetectColumns(dataFrame, valueTypes, autodetect, types, dataFrameSettings);
             if (filterPredicate != null && filterPredicate != FilterPredicate.EMPTY_FILTER) {
                 dataFrame.filter(filterPredicate);
             }
@@ -207,8 +294,13 @@ public class DataFrameConverter {
         return row % 10000000 == 0;
     }
 
-    private static void replaceAutodetectColumns(DataFrame dataFrame, ValueType<?>[] valueTypes,
-                                                 boolean[] autodetect, boolean[][] types) {
+    private static void replaceAutodetectColumns(
+            DataFrame dataFrame,
+            ValueType<?>[] valueTypes,
+            boolean[] autodetect,
+            boolean[][] types,
+            DataFrameSettings dataFrameSettings
+    ) {
         DataFrameColumn<?, ?>[] newColumns = new DataFrameColumn[autodetect.length];
         List<String> columnNames = new ArrayList<>(dataFrame.getColumnNames());
         for (int i = 0; i < autodetect.length; i++) {
@@ -227,6 +319,9 @@ public class DataFrameConverter {
                 newColumn.setName(columnNames.get(i));
                 newColumn.setCapacity(dataFrame.size());
                 newColumns[i] = newColumn;
+                DataFrameColumn<?, ?> oldColumn = dataFrame.getColumn(columnNames.get(i));
+                oldColumn.getSettings().applyTo(newColumn.getSettings());
+                dataFrameSettings.applyToColumn(newColumn);
             }
         }
         String currentVal;
@@ -269,12 +364,16 @@ public class DataFrameConverter {
      * Keys in this map are name of the column in the parent data container.
      * Values are the corresponding data frame columns.
      *
-     * @param <R>          row type
-     * @param dataIterator parent data container
+     * @param <R>                   row type
+     * @param dataIterator          parent data container
+     * @param dataFrameSettings column settings
      * @return created data frame
      */
-    public static <R extends Row<?, ?>> DataFrame fromDataIterator(DataIterator<R> dataIterator) {
-        return fromDataIterator(dataIterator, FilterPredicate.EMPTY_FILTER);
+    public static <R extends Row<?, ?>> DataFrame fromDataIterator(
+            DataIterator<R> dataIterator,
+            DataFrameSettings dataFrameSettings
+    ) {
+        return fromDataIterator(dataIterator, dataFrameSettings, FilterPredicate.EMPTY_FILTER);
     }
 
     private static ValueType<?>[] getValueTypes() {
