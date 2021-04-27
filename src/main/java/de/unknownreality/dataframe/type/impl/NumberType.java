@@ -1,5 +1,6 @@
 package de.unknownreality.dataframe.type.impl;
 
+import de.unknownreality.dataframe.column.settings.ColumnSettings;
 import de.unknownreality.dataframe.common.NumberUtil;
 import de.unknownreality.dataframe.settings.ColumnSettings;
 
