@@ -1,10 +1,11 @@
 package de.unknownreality.dataframe.value.impl;
 
+import de.unknownreality.dataframe.settings.ColumnSettings;
 import de.unknownreality.dataframe.type.impl.IntegerType;
 
 public class IntegerValueTypeTest extends NumberValueTypeTest<Integer, IntegerType> {
     @Override
     public IntegerType getValueType() {
-        return new IntegerType();
+        return new IntegerType(new ColumnSettings());
     }
 }
