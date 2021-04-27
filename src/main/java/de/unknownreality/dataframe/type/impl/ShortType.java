@@ -24,6 +24,7 @@ public class ShortType extends NumberType<Short> {
 
     @Override
     public Short parse(String s) {
+        assertNotNull(s);
         return Short.parseShort(s);
     }
 
@@ -34,12 +35,13 @@ public class ShortType extends NumberType<Short> {
 
     @Override
     public String toString(Short value) {
+        assertNotNull(value);
         return Short.toString(value);
     }
 
-
     @Override
     public int write(DataOutputStream dos, Short value) throws IOException {
+        assertNotNull(value);
         dos.writeShort(value);
         return Short.BYTES;
     }

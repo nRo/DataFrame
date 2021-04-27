@@ -25,6 +25,7 @@ public class IntegerType extends NumberType<Integer> {
 
     @Override
     public Integer parse(String s) {
+        assertNotNull(s);
         return Integer.parseInt(s);
     }
 
@@ -35,12 +36,13 @@ public class IntegerType extends NumberType<Integer> {
 
     @Override
     public String toString(Integer value) {
+        assertNotNull(value);
         return Integer.toString(value);
     }
 
-
     @Override
     public int write(DataOutputStream dos, Integer value) throws IOException {
+        assertNotNull(value);
         dos.writeInt(value);
         return Integer.BYTES;
     }

@@ -29,6 +29,8 @@ import de.unknownreality.dataframe.DataFrameColumn;
 import de.unknownreality.dataframe.DataFrameRuntimeException;
 import de.unknownreality.dataframe.DataFrameWriter;
 import de.unknownreality.dataframe.common.DataContainer;
+import de.unknownreality.dataframe.common.Row;
+import de.unknownreality.dataframe.common.header.Header;
 
 import java.io.*;
 import java.util.List;
@@ -39,7 +41,7 @@ import java.util.Map;
  */
 public abstract class DataWriter {
 
-    public void write(OutputStream os, DataContainer<?, ?> dataContainer) {
+    public void write(OutputStream os, DataContainer<? extends Header<?>, ? extends Row<?, ?>> dataContainer) {
         BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os));
         write(bufferedWriter, dataContainer);
     }
@@ -78,7 +80,7 @@ public abstract class DataWriter {
     }
 
 
-    public void write(File file, DataContainer<?, ?> dataContainer) {
+    public void write(File file, DataContainer<? extends Header<?>, ? extends Row<?, ?>> dataContainer) {
         if (file.getParentFile() != null && !file.getParentFile().isDirectory()) {
             file.getParentFile().mkdirs();
         }

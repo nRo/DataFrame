@@ -25,6 +25,7 @@ public class FloatType extends NumberType<Float> {
 
     @Override
     public Float parse(String s) {
+        assertNotNull(s);
         return Float.parseFloat(s);
     }
 
@@ -35,12 +36,13 @@ public class FloatType extends NumberType<Float> {
 
     @Override
     public String toString(Float value) {
+        assertNotNull(value);
         return Float.toString(value);
     }
 
-
     @Override
     public int write(DataOutputStream dos, Float value) throws IOException {
+        assertNotNull(value);
         dos.writeFloat(value);
         return Float.BYTES;
     }

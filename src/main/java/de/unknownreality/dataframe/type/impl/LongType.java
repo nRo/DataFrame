@@ -25,6 +25,7 @@ public class LongType extends NumberType<Long> {
 
     @Override
     public Long parse(String s) {
+        assertNotNull(s);
         return Long.parseLong(s);
     }
 
@@ -35,12 +36,13 @@ public class LongType extends NumberType<Long> {
 
     @Override
     public String toString(Long value) {
+        assertNotNull(value);
         return Long.toString(value);
     }
 
-
     @Override
     public int write(DataOutputStream dos, Long value) throws IOException {
+        assertNotNull(value);
         dos.writeLong(value);
         return Long.BYTES;
     }

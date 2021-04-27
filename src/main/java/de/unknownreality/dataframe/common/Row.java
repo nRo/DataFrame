@@ -24,6 +24,7 @@
 
 package de.unknownreality.dataframe.common;
 
+import de.unknownreality.dataframe.Values;
 import de.unknownreality.dataframe.type.ValueType;
 
 import java.io.DataOutputStream;
@@ -57,6 +58,26 @@ public interface Row<V, H> extends KeyValueGetter<H, V> {
 
     default void write(DataOutputStream dos, H headerName) throws IOException {
         getType(headerName).writeRaw(dos, get(headerName));
+    }
+
+    /**
+     * Returns <tt>true</tt> if the value at the specified column name is {@link Values#NA NA}.
+     *
+     * @param headerName column name
+     * @return <tt>true</tt> if the value in this column is NA
+     */
+    default boolean isNA(H headerName) {
+        return get(headerName) == Values.NA || get(headerName) == null;
+    }
+
+    /**
+     * Returns <tt>true</tt> if the value at the specified index is {@link Values#NA NA}.
+     *
+     * @param index column index
+     * @return <tt>true</tt> if the value in this column is NA
+     */
+    default boolean isNA(int index) {
+        return get(index) == Values.NA || get(index) == null;
     }
 
 

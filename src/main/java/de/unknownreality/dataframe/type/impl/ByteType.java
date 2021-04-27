@@ -15,6 +15,7 @@ public class ByteType extends NumberType<Byte> {
 
     @Override
     public Byte read(DataInputStream dis) throws IOException {
+        dis.readByte();
         return dis.readByte();
     }
 
@@ -25,6 +26,7 @@ public class ByteType extends NumberType<Byte> {
 
     @Override
     public Byte parse(String s) {
+        assertNotNull(s);
         return Byte.parseByte(s);
     }
 
@@ -35,12 +37,13 @@ public class ByteType extends NumberType<Byte> {
 
     @Override
     public String toString(Byte value) {
+        assertNotNull(value);
         return Byte.toString(value);
     }
 
-
     @Override
     public int write(DataOutputStream dos, Byte value) throws IOException {
+        assertNotNull(value);
         dos.writeByte(value);
         return 1;
     }

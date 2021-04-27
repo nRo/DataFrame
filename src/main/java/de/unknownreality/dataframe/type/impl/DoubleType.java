@@ -25,6 +25,7 @@ public class DoubleType extends NumberType<Double> {
 
     @Override
     public Double parse(String s) {
+        assertNotNull(s);
         return Double.parseDouble(s);
     }
 
@@ -35,12 +36,13 @@ public class DoubleType extends NumberType<Double> {
 
     @Override
     public String toString(Double value) {
+        assertNotNull(value);
         return Double.toString(value);
     }
 
-
     @Override
     public int write(DataOutputStream dos, Double value) throws IOException {
+        assertNotNull(value);
         dos.writeDouble(value);
         return Double.BYTES;
     }

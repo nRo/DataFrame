@@ -39,22 +39,25 @@ public class StringType extends ComparableType<String> {
 
     @Override
     public String parse(String s) {
+        assertNotNull(s);
         return s;
     }
 
     @Override
     public void write(Writer writer, String value) throws IOException {
+        assertNotNull(value);
         writer.write(value);
     }
 
     @Override
     public String toString(String value) {
+        assertNotNull(value);
         return value;
     }
 
-
     @Override
     public int write(DataOutputStream dos, String value) throws IOException {
+        assertNotNull(value);
         byte[] data = value.getBytes(charSet);
         dos.writeInt(data.length);
         dos.write(data);

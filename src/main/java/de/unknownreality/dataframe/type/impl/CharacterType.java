@@ -24,6 +24,7 @@ public class CharacterType extends ComparableType<Character> {
 
     @Override
     public Character parse(String s) {
+        assertNotNull(s);
         return s.charAt(0);
     }
 
@@ -34,12 +35,13 @@ public class CharacterType extends ComparableType<Character> {
 
     @Override
     public String toString(Character value) {
+        assertNotNull(value);
         return Character.toString(value);
     }
 
-
     @Override
     public int write(DataOutputStream dos, Character value) throws IOException {
+        assertNotNull(value);
         dos.writeChar(value);
         return Character.BYTES;
     }

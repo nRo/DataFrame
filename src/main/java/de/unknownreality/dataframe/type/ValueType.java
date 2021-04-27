@@ -55,9 +55,7 @@ public abstract class ValueType<T> {
     }
 
     public T convertRaw(Object o) {
-        if (o == null) {
-            return null;
-        }
+        assertNotNull(o);
         if (getType().isInstance(o)) {
             return getType().cast(o);
         }
@@ -90,5 +88,11 @@ public abstract class ValueType<T> {
     @Override
     public int hashCode() {
         return getType().hashCode();
+    }
+
+    public static void assertNotNull(Object v) {
+        if (v == null) {
+            throw new IllegalArgumentException("null value is not allowed");
+        }
     }
 }

@@ -25,7 +25,6 @@
 package de.unknownreality.dataframe.common.row;
 
 import de.unknownreality.dataframe.DataFrameRuntimeException;
-import de.unknownreality.dataframe.Values;
 import de.unknownreality.dataframe.common.Row;
 import de.unknownreality.dataframe.common.header.TypeHeader;
 import de.unknownreality.dataframe.type.ValueType;
@@ -278,26 +277,6 @@ public abstract class AbstractHeaderRow<T, H extends TypeHeader<T>, V> implement
         } catch (Exception e) {
             throw new DataFrameRuntimeException("no byte value in col " + index + " (" + value + ")");
         }
-    }
-
-    /**
-     * Returns <tt>true</tt> if the value at the specified column name is {@link Values#NA NA}.
-     *
-     * @param headerName column name
-     * @return <tt>true</tt> if the value in this column is NA
-     */
-    public boolean isNA(T headerName) {
-        return get(headerName) == Values.NA || get(headerName) == null;
-    }
-
-    /**
-     * Returns <tt>true</tt> if the value at the specified index is {@link Values#NA NA}.
-     *
-     * @param index column index
-     * @return <tt>true</tt> if the value in this column is NA
-     */
-    public boolean isNA(int index) {
-        return get(index) == Values.NA || get(index) == null;
     }
 
     @Override

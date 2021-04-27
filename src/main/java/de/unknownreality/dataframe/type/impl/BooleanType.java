@@ -25,7 +25,8 @@ public class BooleanType extends ComparableType<Boolean> {
 
     @Override
     public Boolean parse(String s) throws ParseException {
-        if (s == null || !(
+        assertNotNull(s);
+        if (!(
                 "false".equals((s = s.toLowerCase()))
                         || "true".equals(s)
                         || "f".equals(s)
@@ -49,14 +50,14 @@ public class BooleanType extends ComparableType<Boolean> {
 
     @Override
     public String toString(Boolean value) {
+        assertNotNull(value);
         return Boolean.toString(value);
     }
 
     @Override
     public int write(DataOutputStream dos, Boolean value) throws IOException {
+        assertNotNull(value);
         dos.writeBoolean(value);
         return 1;
     }
-
-
 }
