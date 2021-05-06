@@ -31,6 +31,7 @@ import de.unknownreality.dataframe.type.ValueType;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 /**
  * Created by Alex on 11.03.2016.
@@ -124,12 +125,7 @@ public class GroupHeader implements TypeHeader<String> {
     @Override
     public Iterator<String> iterator() {
         return new Iterator<String>() {
-            int c = 0;
-
-            @Override
-            public boolean hasNext() {
-                return c < headers.length - 2;
-            }
+            int i = 0;
 
             @Override
             public void remove() {
@@ -137,8 +133,16 @@ public class GroupHeader implements TypeHeader<String> {
             }
 
             @Override
+            public boolean hasNext() {
+                return i != headers.length;
+            }
+
+            @Override
             public String next() {
-                return headers[c++];
+                if (i >= headers.length) {
+                    throw new NoSuchElementException(String.format("element not found: index out of bounds %s >= %s]", i, headers.length));
+                }
+                return headers[i++];
             }
         };
     }

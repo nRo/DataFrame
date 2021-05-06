@@ -1,0 +1,5 @@
+#name;count;mean;max;na_count;filter_count;first;nfirst;x_25;desc
+a;3;2.0;3.0;0;2;1.0;1;1.0;name=a
+b;3;2.0;2.0;3;3;2.0;NA;2.0;name=b
+c;2;3.0;3.0;2;2;3.0;NA;3.0;name=c
+d;2;4.0;4.0;0;1;4.0;1;4.0;name=d
