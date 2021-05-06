@@ -88,5 +88,19 @@ public class Aggregate {
         };
     }
 
+    public static AggregateFunction<String> join(String delimiter, String column) {
+        return group -> {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < group.size(); i++) {
+                if (i > 0) {
+                    sb.append(delimiter);
+                }
+                if (!group.getRow(i).isNA(column)) {
+                    sb.append(group.getRow(i).toString(column));
+                }
+            }
+            return sb.toString();
+        };
+    }
 
 }

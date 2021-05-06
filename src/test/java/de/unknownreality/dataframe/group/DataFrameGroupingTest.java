@@ -234,12 +234,31 @@ public class DataFrameGroupingTest {
         DataFrame df = grouping.select("na_count < 3");
         df.print();
 
-        df.getStringColumn("desc").map(value -> value+"::2");
-        DataFrame joined = grouping.joinInner(df,"name");
+        df.getStringColumn("desc").map(value -> value + "::2");
+        DataFrame joined = grouping.joinInner(df, "name");
         joined.print();
-
     }
 
+    @Test
+    public void testJoinAgg() {
+        DataFrame dataFrame = new DefaultDataFrame();
+        dataFrame.addColumn(new IntegerColumn("id"));
+        dataFrame.addColumn(new StringColumn("name"));
+
+        dataFrame.append(1, "x");
+        dataFrame.append(1, "y");
+        dataFrame.append(1, "z");
+        dataFrame.append(2, "x");
+        dataFrame.append(2, "y");
+        dataFrame.append(3, "z");
+        dataFrame.append(3, null);
+        DataGrouping grouping = dataFrame.groupBy("id")
+                .agg("names", Aggregate.join(",", "name"));
+        Assert.assertEquals("x,y,z", grouping.getValue(1, 0));
+        Assert.assertEquals("x,y", grouping.getValue(1, 1));
+        Assert.assertEquals("z,", grouping.getValue(1, 2));
+
+    }
 
     public static void testGroup(GroupRow groupRow, int... values) {
         Assert.assertEquals(values.length, groupRow.getGroup().size());
