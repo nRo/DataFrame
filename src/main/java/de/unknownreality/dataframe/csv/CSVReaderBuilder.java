@@ -29,6 +29,7 @@ import de.unknownreality.dataframe.io.ReaderBuilder;
 import de.unknownreality.dataframe.type.DataFrameTypeManager;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +41,7 @@ import java.util.Map;
 public class CSVReaderBuilder implements ReaderBuilder<CSVRow, CSVReader> {
     private char separator = ';';
     private String headerPrefix = "";
+    private Charset charset;
     private boolean containsHeader = true;
     private boolean quoteDetection = true;
     private boolean singleQuoteDetection = true;
@@ -69,6 +71,7 @@ public class CSVReaderBuilder implements ReaderBuilder<CSVRow, CSVReader> {
 
     /**
      * Detect single quoted values e.g. val1 'val 2' val3
+     *
      * @param singleQuoteDetection singleQuoteDetection
      * @return self for method chaining
      */
@@ -77,7 +80,12 @@ public class CSVReaderBuilder implements ReaderBuilder<CSVRow, CSVReader> {
         return this;
     }
 
-    public CSVReaderBuilder addSkipPrefix(String prefix){
+    public CSVReaderBuilder withCharset(Charset charset) {
+        this.charset = charset;
+        return this;
+    }
+
+    public CSVReaderBuilder addSkipPrefix(String prefix) {
         skipPrefixes.add(prefix);
         return this;
     }
@@ -191,6 +199,7 @@ public class CSVReaderBuilder implements ReaderBuilder<CSVRow, CSVReader> {
         settings.setSkipPrefixes(skipPrefixes);
         settings.setQuoteDetection(quoteDetection);
         settings.setSingleQuoteDetection(singleQuoteDetection);
+        settings.setCharset(charset);
         ColumnSettings columnSettings = new ColumnSettings();
         columnSettings.getColumnTypeMap().putAll(columnTypeMap);
         columnSettings.getIgnoreColumns().addAll(ignoreColumns);

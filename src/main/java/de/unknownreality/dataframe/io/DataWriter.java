@@ -33,6 +33,7 @@ import de.unknownreality.dataframe.common.Row;
 import de.unknownreality.dataframe.common.header.Header;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 
@@ -41,8 +42,12 @@ import java.util.Map;
  */
 public abstract class DataWriter {
 
+    public Charset getCharset() {
+        return Charset.defaultCharset();
+    }
+
     public void write(OutputStream os, DataContainer<? extends Header<?>, ? extends Row<?, ?>> dataContainer) {
-        BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os));
+        BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os, getCharset()));
         write(bufferedWriter, dataContainer);
     }
 
@@ -69,29 +74,29 @@ public abstract class DataWriter {
 
     /**
      * Writes a dataframe to a file
-     * @param file target file
+     *
+     * @param file      target file
      * @param dataFrame dataframe to write
      * @param writeMeta write meta file
      * @deprecated use {@link de.unknownreality.dataframe.DataFrame#write} instead
      */
     @Deprecated
-    public  void write(File file, DataFrame dataFrame, boolean writeMeta){
-        DataFrameWriter.write(file,dataFrame,this, writeMeta);
+    public void write(File file, DataFrame dataFrame, boolean writeMeta) {
+        DataFrameWriter.write(file, dataFrame, this, writeMeta);
     }
-
 
     public void write(File file, DataContainer<? extends Header<?>, ? extends Row<?, ?>> dataContainer) {
         if (file.getParentFile() != null && !file.getParentFile().isDirectory()) {
             file.getParentFile().mkdirs();
         }
-        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
-            write(bufferedWriter, dataContainer);
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), getCharset()))) {
+            write(writer, dataContainer);
         } catch (IOException e) {
             throw new DataFrameRuntimeException(String.format("error writing file '%s'", file.getAbsolutePath()), e);
         }
     }
 
-    public abstract Map<String,String> getSettings(DataFrame dataFrame);
+    public abstract Map<String, String> getSettings(DataFrame dataFrame);
 
     public abstract List<DataFrameColumn<?, ?>> getMetaColumns(DataFrame dataFrame);
 

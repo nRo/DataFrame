@@ -29,6 +29,7 @@ import de.unknownreality.dataframe.common.Row;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.zip.GZIPInputStream;
 
 /**
@@ -36,6 +37,9 @@ import java.util.zip.GZIPInputStream;
  */
 public abstract class DataReader<R extends Row<?, ?>, C extends DataIterator<R>> {
 
+    public Charset getCharset() {
+        return Charset.defaultCharset();
+    }
 
     public C load(File file) {
         try {
@@ -43,7 +47,7 @@ public abstract class DataReader<R extends Row<?, ?>, C extends DataIterator<R>>
                 InputStream is = new GZIPInputStream(new FileInputStream(file));
                 return load(is);
             }
-            return load(new FileReader(file));
+            return load(new InputStreamReader(new FileInputStream(file), getCharset()));
         } catch (IOException e) {
             throw new DataFrameRuntimeException(String.format("error loading file '%s'", file.getAbsolutePath()), e);
         }
@@ -60,11 +64,11 @@ public abstract class DataReader<R extends Row<?, ?>, C extends DataIterator<R>>
     }
 
     public C load(URL url) {
-        InputStream is = null;
+        InputStream is;
         try {
             is = url.openStream();
         } catch (IOException e) {
-            throw new DataFrameRuntimeException(String.format("error opening url stream '%s'", url.toString()), e);
+            throw new DataFrameRuntimeException(String.format("error opening url stream '%s'", url), e);
         }
         return load(is);
     }
