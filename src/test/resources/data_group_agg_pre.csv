@@ -1,0 +1,11 @@
+name;x;y;z;v;r;n
+a;1.0;5;true;true;abc123;1
+b;2.0;4;true;false;abc/123;NA
+c;3.0;3;false;true;abc;NA
+d;4.0;2;false;false;123;1
+a;2.0;5;true;true;abc123;1
+b;2.0;4;true;false;abc/123;NA
+c;3.0;3;false;true;abc;NA
+d;4.0;2;false;false;a123;1
+a;3.0;5;true;true;1bc123;1
+b;2.0;4;true;false;abc/123;NA

@@ -26,6 +26,8 @@ package de.unknownreality.dataframe.csv;
 
 import de.unknownreality.dataframe.io.WriterBuilder;
 
+import java.nio.charset.Charset;
+
 /**
  * Created by Alex on 17.06.2017.
  */
@@ -35,14 +37,17 @@ public class CSVWriterBuilder implements WriterBuilder<CSVWriter> {
     private boolean containsHeader = true;
     private boolean gzip = false;
     private boolean quoteStrings = false;
-    private CSVWriterBuilder(){}
+    private Charset charset;
 
-    public static CSVWriterBuilder create(){
+    private CSVWriterBuilder() {
+    }
+
+    public static CSVWriterBuilder create() {
         return new CSVWriterBuilder();
     }
 
 
-    public CSVWriterBuilder withSeparator(char separator){
+    public CSVWriterBuilder withSeparator(char separator) {
         this.separator = separator;
         return this;
     }
@@ -68,11 +73,15 @@ public class CSVWriterBuilder implements WriterBuilder<CSVWriter> {
         return this;
     }
 
-    public CSVWriterBuilder useGzip(boolean gzip){
+    public CSVWriterBuilder useGzip(boolean gzip) {
         this.gzip = gzip;
         return this;
     }
 
+    public CSVWriterBuilder withCharset(Charset charset) {
+        this.charset = charset;
+        return this;
+    }
 
 
     @Override
@@ -82,6 +91,7 @@ public class CSVWriterBuilder implements WriterBuilder<CSVWriter> {
         settings.setHeaderPrefix(headerPrefix);
         settings.setContainsHeader(containsHeader);
         settings.setGzip(gzip);
+        settings.setCharset(charset);
         settings.setQuoteStrings(quoteStrings);
         return new CSVWriter(settings);
     }

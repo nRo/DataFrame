@@ -335,10 +335,10 @@ public abstract class AbstractHeaderRow<T, H extends TypeHeader<T>, V> implement
 
     @Override
     public boolean equals(Object o){
-        if(o == null || !(this.getClass().equals(o.getClass()))){
+        if (!(o instanceof AbstractHeaderRow)) {
             return false;
         }
-        if(o == this){
+        if (o == this) {
             return true;
         }
         AbstractHeaderRow<?,?,?> r = (AbstractHeaderRow<?,?,?>)o;

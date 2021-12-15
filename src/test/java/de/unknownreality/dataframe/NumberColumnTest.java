@@ -108,7 +108,7 @@ public class NumberColumnTest {
     @Test
     public void quantileTest(){
         DoubleColumn dc = new DoubleColumn("A");
-        dc.appendAll(Arrays.asList(new Double[]{3d,2d,5d,1d,4d}));
+        dc.appendAll(Arrays.asList(3d, 2d, 5d, 1d, 4d));
 
         Quantiles<Double> quantiles = dc.getQuantiles();
         Assert.assertEquals((Double)1d,quantiles.min());

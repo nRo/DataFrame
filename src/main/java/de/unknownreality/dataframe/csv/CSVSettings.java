@@ -26,6 +26,7 @@ package de.unknownreality.dataframe.csv;
 
 import de.unknownreality.dataframe.io.FormatSettings;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +41,7 @@ public class CSVSettings implements FormatSettings{
     private boolean gzip = false;
     private boolean quoteStrings = false;
     private boolean quoteDetection;
+    private Charset charset;
     private boolean singleQuoteDetection;
 
     public boolean isQuoteDetection() {
@@ -56,6 +58,14 @@ public class CSVSettings implements FormatSettings{
 
     public void setSingleQuoteDetection(boolean singleQuoteDetection) {
         this.singleQuoteDetection = singleQuoteDetection;
+    }
+
+    public Charset getCharset() {
+        return charset;
+    }
+
+    public void setCharset(Charset charset) {
+        this.charset = charset;
     }
 
     public boolean isGzip() {

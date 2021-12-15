@@ -28,6 +28,7 @@ import de.unknownreality.dataframe.io.DataReader;
 
 import java.io.BufferedReader;
 import java.io.Reader;
+import java.nio.charset.Charset;
 
 /**
  * Created by Alex on 17.06.2017.
@@ -39,6 +40,14 @@ public class CSVReader extends DataReader<CSVRow, CSVIterator> {
     protected CSVReader(CSVSettings settings, ColumnSettings columnSettings) {
         this.settings = settings;
         this.columnSettings = columnSettings;
+    }
+
+    @Override
+    public Charset getCharset() {
+        if (settings.getCharset() != null) {
+            return settings.getCharset();
+        }
+        return super.getCharset();
     }
 
     @Override

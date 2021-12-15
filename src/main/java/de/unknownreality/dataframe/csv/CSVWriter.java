@@ -36,6 +36,7 @@ import de.unknownreality.dataframe.io.FileFormat;
 import de.unknownreality.dataframe.io.ReadFormat;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,6 +53,13 @@ public class CSVWriter extends DataWriter {
         this.settings = settings;
     }
 
+    @Override
+    public Charset getCharset() {
+        if (settings.getCharset() != null) {
+            return settings.getCharset();
+        }
+        return super.getCharset();
+    }
 
     @Override
     public void write(OutputStream os, DataContainer<? extends Header<?>, ? extends Row<?, ?>> dataContainer) {
