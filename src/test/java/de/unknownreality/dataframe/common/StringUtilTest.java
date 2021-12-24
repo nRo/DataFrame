@@ -107,16 +107,24 @@ public class StringUtilTest {
         stringSplitter.setDetectSingleQuotes(false);
         Assert.assertArrayEquals(
                 new String[]{"testA","'testB","testC'","testD"}
-                , stringSplitter.splitQuoted("testA,\'testB,testC\',testD",','));
+                , stringSplitter.splitQuoted("testA,\'testB,testC\',testD", ','));
 
 
         Assert.assertArrayEquals(
-                new String[]{"testA","testB,testC","testD"}
-                , stringSplitter.splitQuoted("testA,\"testB,testC\",testD",','));
+                new String[]{"testA", "testB,testC", "testD"}
+                , stringSplitter.splitQuoted("testA,\"testB,testC\",testD", ','));
         stringSplitter.setDetectQuotes(false);
         Assert.assertArrayEquals(
-                new String[]{"testA","\"testB","testC\"","testD"}
-                , stringSplitter.splitQuoted("testA,\"testB,testC\",testD",','));
+                new String[]{"testA", "\"testB", "testC\"", "testD"}
+                , stringSplitter.splitQuoted("testA,\"testB,testC\",testD", ','));
+
+
+        stringSplitter.setDetectQuotes(true);
+        stringSplitter.setEscapeChar('\"');
+        Assert.assertArrayEquals(
+                new String[]{"testA", "\"testB,testC\"", "testD"}
+                , stringSplitter.splitQuoted("testA,\"\"\"testB,testC\"\"\",testD", ','));
+
     }
 
 

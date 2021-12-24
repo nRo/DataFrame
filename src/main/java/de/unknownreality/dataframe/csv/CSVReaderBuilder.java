@@ -49,6 +49,8 @@ public class CSVReaderBuilder implements ReaderBuilder<CSVRow, CSVReader> {
     private final List<String> selectColumns = new ArrayList<>();
     private final List<String> skipPrefixes = new ArrayList<>();
     private final Map<String, Class<?>> columnTypeMap = new HashMap<>();
+    private char escapeChar = '\\';
+
 
     public static CSVReaderBuilder create() {
         return new CSVReaderBuilder();
@@ -95,6 +97,10 @@ public class CSVReaderBuilder implements ReaderBuilder<CSVRow, CSVReader> {
         return this;
     }
 
+    public CSVReaderBuilder withEscapeChar(char escapeChar) {
+        this.escapeChar = escapeChar;
+        return this;
+    }
 
     public CSVReaderBuilder ignoreColumns(String... cols) {
         for (String col : cols) {
@@ -200,6 +206,7 @@ public class CSVReaderBuilder implements ReaderBuilder<CSVRow, CSVReader> {
         settings.setQuoteDetection(quoteDetection);
         settings.setSingleQuoteDetection(singleQuoteDetection);
         settings.setCharset(charset);
+        settings.setEscapeChar(escapeChar);
         ColumnSettings columnSettings = new ColumnSettings();
         columnSettings.getColumnTypeMap().putAll(columnTypeMap);
         columnSettings.getIgnoreColumns().addAll(ignoreColumns);

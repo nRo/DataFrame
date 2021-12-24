@@ -37,6 +37,7 @@ public class StringSplitter {
     }
     private boolean detectSingleQuotes = true;
     private boolean detectQuotes = true;
+    private char escapeChar = '\\';
     public StringSplitter() {
     }
 
@@ -47,6 +48,11 @@ public class StringSplitter {
 
     public StringSplitter setDetectSingleQuotes(boolean detectSingleQuotes) {
         this.detectSingleQuotes = detectSingleQuotes;
+        return this;
+    }
+
+    public StringSplitter setEscapeChar(char escapeChar) {
+        this.escapeChar = escapeChar;
         return this;
     }
 
@@ -109,6 +115,8 @@ public class StringSplitter {
         boolean inQuotation = false;
         boolean inDoubleQuotation = false;
         boolean escapeNext = false;
+        boolean singleQuoteEscapeChar = escapeChar == '\'';
+        boolean doubleQuoteEscapeChar = escapeChar == '\"';
         char c;
         boolean startOrSplit = true;
         final StringBuilder sb = new StringBuilder(input.length());
@@ -120,10 +128,24 @@ public class StringSplitter {
                 sb.append(c);
                 escapeNext = false;
                 continue;
-            } else if (c == '\\') {
-                escapeNext = true;
-                continue;
-            } else if (detectSingleQuotes && c == '\'') {
+            }
+            if (c == escapeChar) {
+                if (singleQuoteEscapeChar || doubleQuoteEscapeChar) {
+                    if (i < input.length() - 1 && ((singleQuoteEscapeChar & inQuotation) ||
+                            doubleQuoteEscapeChar && inDoubleQuotation)) {
+                        char next = input.charAt(i + 1);
+                        if (escapeChar == next) {
+                            sb.append(next);
+                            i++;
+                            continue;
+                        }
+                    }
+                } else {
+                    escapeNext = true;
+                    continue;
+                }
+            }
+            if (detectSingleQuotes && c == '\'') {
                 if (inQuotation) {
                     inQuotation = false;
                 } else if (!inDoubleQuotation && startOrSplit) {
@@ -156,7 +178,6 @@ public class StringSplitter {
 
         }
         parts.add(sb.toString());
-
     }
 
     private boolean isInvisible(char c) {

@@ -65,6 +65,7 @@ public class CSVIterator extends BufferedStreamIterator<CSVRow> implements DataI
         colTypes = new HashMap<>(columnSettings.getColumnTypeMap());
         this.stringSplitter.setDetectQuotes(csvSettings.isQuoteDetection());
         this.stringSplitter.setDetectSingleQuotes(csvSettings.isSingleQuoteDetection());
+        this.stringSplitter.setEscapeChar(csvSettings.getEscapeChar());
         int j = 0;
         for (String col : columnSettings.getSelectColumns()) {
             selectedColumnsIndex.put(col, j++);
