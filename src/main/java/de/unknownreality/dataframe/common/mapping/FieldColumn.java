@@ -27,11 +27,7 @@ package de.unknownreality.dataframe.common.mapping;
 import de.unknownreality.dataframe.common.Row;
 import de.unknownreality.dataframe.type.DataFrameTypeManager;
 
-import java.beans.IntrospectionException;
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
 
 /**
  * Created by Alex on 08.03.2016.
@@ -89,13 +85,9 @@ public class FieldColumn {
             convertedVal = DataFrameTypeManager.get().parseOrNull(field.getType(), value.toString());
         }
         try {
-            if (Modifier.isPublic(field.getModifiers())) {
-                field.set(object, convertedVal);
-            } else {
-                PropertyDescriptor objPropertyDescriptor = new PropertyDescriptor(field.getName(), object.getClass());
-                objPropertyDescriptor.getWriteMethod().invoke(object, convertedVal);
-            }
-        } catch (IllegalAccessException | InvocationTargetException | IntrospectionException e) {
+            field.setAccessible(true);
+            field.set(object, convertedVal);
+        } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
     }
