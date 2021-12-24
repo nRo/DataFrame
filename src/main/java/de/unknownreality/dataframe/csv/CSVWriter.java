@@ -125,7 +125,7 @@ public class CSVWriter extends DataWriter {
                         || (settings.isQuoteStrings() && row.getType(i).getType() == String.class);
                 if (putInQuotes) {
                     if (escapeQuotes) {
-                        s = StringUtil.putInQuotes(s, '\"');
+                        s = StringUtil.putInQuotes(s, '\"', settings.getEscapeChar());
                     } else {
                         s = "\"" + s + "\"";
                     }

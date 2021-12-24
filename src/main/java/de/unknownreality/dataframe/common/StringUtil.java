@@ -33,8 +33,9 @@ public class StringUtil {
      * @param quoteChar quote char
      * @return string between quote chars
      */
-    public static String putInQuotes(String input, Character quoteChar) {
-        return quoteChar + input.replace(quoteChar.toString(), "\\" + quoteChar) + quoteChar;
+    public static String putInQuotes(String input, char quoteChar, char escapeChar) {
+        String quoteCharString = String.valueOf(quoteChar);
+        return quoteCharString + input.replace(quoteCharString, escapeChar + quoteCharString) + quoteCharString;
     }
 
 }

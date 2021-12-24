@@ -31,7 +31,7 @@ import java.util.List;
  * Created by Alex on 15.03.2016.
  */
 public class StringSplitter {
-
+    private static final char UTF8_BOM = 65279;
     public static StringSplitter create(){
         return new StringSplitter();
     }
@@ -114,7 +114,9 @@ public class StringSplitter {
         final StringBuilder sb = new StringBuilder(input.length());
         for (int i = 0; i < input.length(); i++) {
             c = input.charAt(i);
-            if (escapeNext) {
+            if ((i == 0 && c == UTF8_BOM) || isInvisible(c)) {
+                continue;
+            } else if (escapeNext) {
                 sb.append(c);
                 escapeNext = false;
                 continue;
@@ -155,6 +157,10 @@ public class StringSplitter {
         }
         parts.add(sb.toString());
 
+    }
+
+    private boolean isInvisible(char c) {
+        return Character.getType(c) == Character.CONTROL && c != '\t' && c != '\n' && c != '\r';
     }
 
     private interface Parts {

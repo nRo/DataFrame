@@ -45,9 +45,19 @@ public class CSVSettings implements FormatSettings {
     private Charset charset;
     private boolean singleQuoteDetection;
     private String naValue = Values.NA.toString();
+    private char escapeChar = '\\';
 
     public String getNaValue() {
         return naValue;
+    }
+
+
+    public char getEscapeChar() {
+        return escapeChar;
+    }
+
+    public void setEscapeChar(char escapeChar) {
+        this.escapeChar = escapeChar;
     }
 
     public void setNaValue(String naValue) {

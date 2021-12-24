@@ -25,8 +25,6 @@
 package de.unknownreality.dataframe.common;
 
 import de.unknownreality.dataframe.DataFrameException;
-import de.unknownreality.dataframe.common.StringSplitter;
-import de.unknownreality.dataframe.common.StringUtil;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -36,21 +34,21 @@ import org.junit.Test;
 public class StringUtilTest {
     @Test
     public void test() throws DataFrameException {
-        Assert.assertEquals("\"test\"", StringUtil.putInQuotes("test", '"'));
-        Assert.assertEquals("\"te\\\"st\"", StringUtil.putInQuotes("te\"st", '"'));
+        Assert.assertEquals("\"test\"", StringUtil.putInQuotes("test", '"', '\\'));
+        Assert.assertEquals("\"te\\\"st\"", StringUtil.putInQuotes("te\"st", '"', '\\'));
         StringSplitter stringSplitter = StringSplitter.create();
         String splitTest1 = "testA,testB,testC";
         String[] result = new String[3];
-        StringSplitter.create().splitQuoted(splitTest1,',',result);
-        Assert.assertArrayEquals(new String[]{"testA","testB","testC"},result);
+        StringSplitter.create().splitQuoted(splitTest1, ',', result);
+        Assert.assertArrayEquals(new String[]{"testA", "testB", "testC"}, result);
 
         Assert.assertArrayEquals(
-                new String[]{"testA","testB","testC"}
-                , stringSplitter.splitQuoted("'testA','testB','testC'",','));
+                new String[]{"testA", "testB", "testC"}
+                , stringSplitter.splitQuoted("'testA','testB','testC'", ','));
 
         Assert.assertArrayEquals(
-                new String[]{"testA","testB","testC"}
-                , stringSplitter.splitQuoted("\"testA\",\"testB\",\"testC\"",','));
+                new String[]{"testA", "testB", "testC"}
+                , stringSplitter.splitQuoted("\"testA\",\"testB\",\"testC\"", ','));
 
         Assert.assertArrayEquals(
                 new String[]{"testA,testB","testC"}

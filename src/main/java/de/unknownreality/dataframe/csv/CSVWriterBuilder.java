@@ -40,6 +40,8 @@ public class CSVWriterBuilder implements WriterBuilder<CSVWriter> {
     private boolean quoteStrings = false;
     private Charset charset;
     private String naValue = Values.NA.toString();
+    private char escapeChar = '\\';
+
 
     private CSVWriterBuilder() {
     }
@@ -54,18 +56,23 @@ public class CSVWriterBuilder implements WriterBuilder<CSVWriter> {
         return this;
     }
 
-    public CSVWriterBuilder withHeaderPrefix(String headerPrefix){
+    public CSVWriterBuilder withHeaderPrefix(String headerPrefix) {
         this.headerPrefix = headerPrefix;
         return this;
     }
 
-    public CSVWriterBuilder withHeader(boolean header){
+    public CSVWriterBuilder withHeader(boolean header) {
         this.containsHeader = header;
         return this;
     }
 
+    public CSVWriterBuilder withEscapeChar(char escapeChar) {
+        this.escapeChar = escapeChar;
+        return this;
+    }
+
     @Deprecated
-    public CSVWriterBuilder containsHeader(boolean header){
+    public CSVWriterBuilder containsHeader(boolean header) {
         this.containsHeader = header;
         return this;
     }
@@ -101,6 +108,7 @@ public class CSVWriterBuilder implements WriterBuilder<CSVWriter> {
         settings.setCharset(charset);
         settings.setQuoteStrings(quoteStrings);
         settings.setNaValue(naValue);
+        settings.setEscapeChar(escapeChar);
         return new CSVWriter(settings);
     }
 }
