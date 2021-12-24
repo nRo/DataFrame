@@ -24,6 +24,7 @@
 
 package de.unknownreality.dataframe.csv;
 
+import de.unknownreality.dataframe.Values;
 import de.unknownreality.dataframe.io.WriterBuilder;
 
 import java.nio.charset.Charset;
@@ -38,6 +39,7 @@ public class CSVWriterBuilder implements WriterBuilder<CSVWriter> {
     private boolean gzip = false;
     private boolean quoteStrings = false;
     private Charset charset;
+    private String naValue = Values.NA.toString();
 
     private CSVWriterBuilder() {
     }
@@ -83,6 +85,11 @@ public class CSVWriterBuilder implements WriterBuilder<CSVWriter> {
         return this;
     }
 
+    public CSVWriterBuilder withNaValue(String value) {
+        this.naValue = value;
+        return this;
+    }
+
 
     @Override
     public CSVWriter build() {
@@ -93,6 +100,7 @@ public class CSVWriterBuilder implements WriterBuilder<CSVWriter> {
         settings.setGzip(gzip);
         settings.setCharset(charset);
         settings.setQuoteStrings(quoteStrings);
+        settings.setNaValue(naValue);
         return new CSVWriter(settings);
     }
 }

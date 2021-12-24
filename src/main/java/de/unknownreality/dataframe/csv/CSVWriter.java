@@ -26,7 +26,6 @@ package de.unknownreality.dataframe.csv;
 
 import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.DataFrameColumn;
-import de.unknownreality.dataframe.Values;
 import de.unknownreality.dataframe.common.DataContainer;
 import de.unknownreality.dataframe.common.Row;
 import de.unknownreality.dataframe.common.StringUtil;
@@ -107,7 +106,7 @@ public class CSVWriter extends DataWriter {
         for (int i = 0; i < row.size(); i++) {
             String s;
             if (row.isNA(i)) {
-                s = Values.NA.toString();
+                s = settings.getNaValue();
             } else {
                 s = row.toString(i);
                 boolean putInQuotes = false;

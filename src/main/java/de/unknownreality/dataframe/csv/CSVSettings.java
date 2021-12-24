@@ -24,6 +24,7 @@
 
 package de.unknownreality.dataframe.csv;
 
+import de.unknownreality.dataframe.Values;
 import de.unknownreality.dataframe.io.FormatSettings;
 
 import java.nio.charset.Charset;
@@ -33,7 +34,7 @@ import java.util.List;
 /**
  * Created by Alex on 17.06.2017.
  */
-public class CSVSettings implements FormatSettings{
+public class CSVSettings implements FormatSettings {
     private char separator = '\t';
     private List<String> skipPrefixes = new ArrayList<>();
     private boolean containsHeader = true;
@@ -43,6 +44,15 @@ public class CSVSettings implements FormatSettings{
     private boolean quoteDetection;
     private Charset charset;
     private boolean singleQuoteDetection;
+    private String naValue = Values.NA.toString();
+
+    public String getNaValue() {
+        return naValue;
+    }
+
+    public void setNaValue(String naValue) {
+        this.naValue = naValue;
+    }
 
     public boolean isQuoteDetection() {
         return quoteDetection;
