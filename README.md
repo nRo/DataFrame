@@ -58,7 +58,7 @@ To build the library from sources you need JDK 21+ and Maven 3.9+:
     <dependency>
         <groupId>dev.gruen</groupId>
         <artifactId>dataframe</artifactId>
-        <version>0.9.0-SNAPSHOT</version>
+        <version>0.8.0-SNAPSHOT</version>
     </dependency>
 ...
 </dependencies>
@@ -72,34 +72,19 @@ sources and javadoc jars, signs the artifacts with GPG and uploads them using th
 The GitHub Actions workflow `release.yml` runs this for tags named `v*` and needs the secrets
 `CENTRAL_USERNAME`, `CENTRAL_PASSWORD`, `GPG_PRIVATE_KEY` and `GPG_PASSPHRASE`.
 
-Version 0.9.0
+Version 0.8.0
 -----
 See [CHANGELOG.md](CHANGELOG.md) for the complete list of changes.
 
-- **Java 21 or newer is required.** The build, dependencies and plugins were updated (ANTLR 4.13.2, SLF4J 2.0, JUnit 5, JaCoCo).
-- **UTF-8 is the default charset** on every read and write path (file, gzip, stream, url, resource and bytes).
-  A charset set by the caller is honored on every path.
-- Streams and readers are closed if loading fails. `BufferedStreamIterator` and its subclasses (e.g. `CSVIterator`) are `AutoCloseable`.
-- Errors (missing resources, mapped classes without a no-arg constructor, ...) are reported as `DataFrameRuntimeException`
-  with a descriptive message and the cause.
-- `DataFrame.print(PrintStream)` and `DataFrame.print(Appendable)` print to any target, `System.out` stays the default.
-- Removed deprecated API: `DataFrameBuilder.createFrom` and `CSVIterator.toDataFrame()`.
+- **Java 21 or newer is required**
+- **UTF-8 is the default charset**
+- **groupId and package changed to dev.gruen**
 
-### Migration from 0.7 / 0.8
-
+### Migration from 0.7
 | Change | What to do |
 |---|---|
 | The Maven `groupId` changed from `de.unknownreality` to `dev.gruen`, and the Java packages changed from `de.unknownreality.dataframe` to `dev.gruen.dataframe` | Change the `groupId` in your dependency declaration and replace `de.unknownreality.dataframe` with `dev.gruen.dataframe` in your imports. Older releases stay available under the old `groupId`. Old meta files are remapped automatically. |
 | Java 21 is required | Update your JDK and the `maven.compiler.release` of your project. |
-| UTF-8 is the default charset. Before, the platform charset was used. | Files that were written and read with a non UTF-8 platform charset (e.g. `windows-1252`) must now be read with `CSVReaderBuilder.create().withCharset(Charset.forName("windows-1252")).build()` (and written with `CSVWriterBuilder.withCharset(...)`). |
-| `DataFrameBuilder.createFrom(iterator)` and `CSVIterator.toDataFrame()` were removed | Use `DataFrame.load(...)`, `DataFrame.fromCSV(...)` or `DataFrame.builder().from(iterator)`. |
-| `DataReader.load(String resource, ClassLoader)` throws `DataFrameRuntimeException` if the resource does not exist | Handle the exception instead of an unspecific error later on. |
-| `DataMapper` throws `DataFrameRuntimeException` if the class can not be instantiated (before, the stack trace was printed and a `NullPointerException` followed) | Give mapped classes a no-arg constructor. The constructor does not need to be public. |
-| JUnit 4 was replaced by JUnit 5 (only relevant for contributors) | Use `org.junit.jupiter.api`. |
-
-The separator defaults were **not** changed: `FileFormat.CSV` (and `CSVFormat`) and `CSVReaderBuilder` use `';'`,
-`FileFormat.TSV` and `CSVWriterBuilder` use a tab. Set the separator explicitly (`withSeparator(',')`) to read or write
-comma separated files.
 
 Version 0.7.5
 -----
