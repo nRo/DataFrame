@@ -28,6 +28,18 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: GPG_PASSPHRASE
 
+      # Maven 3.10.0 (preinstalled on ubuntu-latest) writes resolver bookkeeping files (maven-metadata-local.xml,
+      # _remote.repositories) into target/central-staging, so Central rejects the bundle with
+      # "Bundle has content that does NOT have a .pom file". Use Maven 3.9.x until the plugin handles this.
+      - name: Install Maven 3.9.11
+        run: |
+          curl -fsSL https://archive.apache.org/dist/maven/maven-3/3.9.11/binaries/apache-maven-3.9.11-bin.tar.gz -o "$RUNNER_TEMP/maven.tar.gz"
+          tar -xzf "$RUNNER_TEMP/maven.tar.gz" -C "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/apache-maven-3.9.11/bin" >> "$GITHUB_PATH"
+
+      - name: Show Maven version
+        run: mvn -version
+
       # the 'release' profile attaches sources and javadoc, signs the artifacts and uploads them to the Central Portal
       - name: Deploy
         run: mvn -B -ntp -Prelease deploy
