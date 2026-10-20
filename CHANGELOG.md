@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [0.8.0] - unreleased
 
 ### Breaking changes
+- The Maven `groupId` changed from `de.unknownreality` to `dev.gruen`, and the Java packages were renamed from `de.unknownreality.dataframe` to `dev.gruen.dataframe`.
 - Java 21 or newer is required (`maven.compiler.release=21`). Before, Java 8 was the baseline.
 - UTF-8 is the default charset of `DataReader` and `DataWriter`. Before, the platform charset was used.
   Use `withCharset(...)` on `CSVReaderBuilder` / `CSVWriterBuilder` to read or write other encodings.

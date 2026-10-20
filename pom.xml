@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>de.unknownreality</groupId>
+    <groupId>dev.gruen</groupId>
     <artifactId>dataframe</artifactId>
     <version>0.8.0-SNAPSHOT</version>
     <properties>
@@ -129,7 +129,7 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <Automatic-Module-Name>de.unknownreality.dataframe</Automatic-Module-Name>
+                            <Automatic-Module-Name>dev.gruen.dataframe</Automatic-Module-Name>
                         </manifestEntries>
                     </archive>
                 </configuration>

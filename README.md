@@ -4,8 +4,8 @@ An easy-to-use DataFrame Library for Java.
 
 [![CI](https://github.com/nRo/DataFrame/actions/workflows/ci.yml/badge.svg)](https://github.com/nRo/DataFrame/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/nRo/DataFrame/branch/master/graph/badge.svg)](https://codecov.io/gh/nRo/DataFrame)
-[![Maven Central](https://img.shields.io/maven-central/v/de.unknownreality/dataframe.svg?label=Maven%20Central)](https://central.sonatype.com/artifact/de.unknownreality/dataframe)
-[![Javadocs](https://javadoc.io/badge2/de.unknownreality/dataframe/javadoc.svg)](https://javadoc.io/doc/de.unknownreality/dataframe)
+[![Maven Central](https://img.shields.io/maven-central/v/dev.gruen/dataframe.svg?label=Maven%20Central)](https://central.sonatype.com/artifact/dev.gruen/dataframe)
+[![Javadocs](https://javadoc.io/badge2/dev.gruen/dataframe/javadoc.svg)](https://javadoc.io/doc/dev.gruen/dataframe)
 ![Java 21+](https://img.shields.io/badge/Java-21%2B-blue)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.txt)
 
@@ -24,7 +24,7 @@ Add this to your `pom.xml`:
 <dependencies>
 ...
     <dependency>
-        <groupId>de.unknownreality</groupId>
+        <groupId>dev.gruen</groupId>
         <artifactId>dataframe</artifactId>
         <version>0.8.0</version>
     </dependency>
@@ -56,7 +56,7 @@ To build the library from sources you need JDK 21+ and Maven 3.9+:
 <dependencies>
 ...
     <dependency>
-        <groupId>de.unknownreality</groupId>
+        <groupId>dev.gruen</groupId>
         <artifactId>dataframe</artifactId>
         <version>0.9.0-SNAPSHOT</version>
     </dependency>
@@ -89,6 +89,7 @@ See [CHANGELOG.md](CHANGELOG.md) for the complete list of changes.
 
 | Change | What to do |
 |---|---|
+| The Maven `groupId` changed from `de.unknownreality` to `dev.gruen`, and the Java packages changed from `de.unknownreality.dataframe` to `dev.gruen.dataframe` | Change the `groupId` in your dependency declaration and replace `de.unknownreality.dataframe` with `dev.gruen.dataframe` in your imports. Older releases stay available under the old `groupId`. Old meta files are remapped automatically. |
 | Java 21 is required | Update your JDK and the `maven.compiler.release` of your project. |
 | UTF-8 is the default charset. Before, the platform charset was used. | Files that were written and read with a non UTF-8 platform charset (e.g. `windows-1252`) must now be read with `CSVReaderBuilder.create().withCharset(Charset.forName("windows-1252")).build()` (and written with `CSVWriterBuilder.withCharset(...)`). |
 | `DataFrameBuilder.createFrom(iterator)` and `CSVIterator.toDataFrame()` were removed | Use `DataFrame.load(...)`, `DataFrame.fromCSV(...)` or `DataFrame.builder().from(iterator)`. |

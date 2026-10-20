@@ -1,0 +1,132 @@
+package dev.gruen.dataframe.value;
+
+import dev.gruen.dataframe.DataFrame;
+import dev.gruen.dataframe.column.IntegerColumn;
+import dev.gruen.dataframe.group.DataGrouping;
+import dev.gruen.dataframe.type.DataFrameTypeManager;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+public class CustomValueTypeTest {
+    @Test
+    public void customValueSortTest() {
+        DataFrameTypeManager.get().register(new CustomColumn());
+
+        DataFrame df = DataFrame.create()
+                .addColumn(new IntegerColumn("id"))
+                .addColumn(new CustomColumn("x"));
+
+        df.append(1, new CustomColumn.Custom(1, 1));
+        df.append(2, new CustomColumn.Custom(2, 2));
+        df.append(3, new CustomColumn.Custom(1, 2));
+        df.append(4, new CustomColumn.Custom(2, 1));
+
+        df = df.sort("x");
+
+        Assertions.assertEquals(1, df.getRow(0).getInteger("id").intValue());
+        Assertions.assertEquals(3, df.getRow(1).getInteger("id").intValue());
+        Assertions.assertEquals(4, df.getRow(2).getInteger("id").intValue());
+        Assertions.assertEquals(2, df.getRow(3).getInteger("id").intValue());
+
+        DataFrameTypeManager.get().unregister(new CustomColumn());
+
+    }
+
+    @Test
+    public void customValueFilter() {
+        DataFrameTypeManager.get().register(new CustomColumn());
+
+        DataFrame df = DataFrame.create()
+                .addColumn(new IntegerColumn("id"))
+                .addColumn(new CustomColumn("x"));
+
+        df.append(1, new CustomColumn.Custom(1, 1));
+        df.append(2, new CustomColumn.Custom(2, 2));
+        df.append(3, new CustomColumn.Custom(1, 2));
+        df.append(4, new CustomColumn.Custom(2, 1));
+
+        df.filter("x == '[1,2]'");
+        Assertions.assertEquals(1, df.size());
+        Assertions.assertEquals(3, df.getRow(0).getInteger("id").intValue());
+
+        DataFrameTypeManager.get().unregister(new CustomColumn());
+
+    }
+
+    @Test
+    public void customValueGroup() {
+        DataFrameTypeManager.get().register(new CustomColumn());
+        DataFrame df = DataFrame.create()
+                .addColumn(new IntegerColumn("id"))
+                .addColumn(new CustomColumn("x"));
+
+        df.append(1, new CustomColumn.Custom(1, 1));
+        df.append(2, new CustomColumn.Custom(2, 2));
+        df.append(3, new CustomColumn.Custom(1, 1));
+        df.append(4, new CustomColumn.Custom(2, 2));
+        DataGrouping g = df.groupBy("x");
+
+        Assertions.assertEquals(2, g.size());
+        Assertions.assertEquals(2, g.getGroup(0).size());
+        Assertions.assertEquals(2, g.getGroup(1).size());
+        Assertions.assertEquals(new CustomColumn.Custom(1, 1), g.getGroup(0).getGroupValues().get("x"));
+        Assertions.assertEquals(new CustomColumn.Custom(2, 2), g.getGroup(1).getGroupValues().get("x"));
+        DataFrameTypeManager.get().unregister(new CustomColumn());
+
+    }
+
+
+    @Test
+    public void customValueJoin() {
+        DataFrameTypeManager.get().register(new CustomColumn());
+
+        DataFrame dfA = DataFrame.create()
+                .addColumn(new IntegerColumn("ida"))
+                .addColumn(new CustomColumn("x"));
+
+        dfA.append(1, new CustomColumn.Custom(1, 1));
+        dfA.append(2, new CustomColumn.Custom(2, 1));
+        dfA.append(3, new CustomColumn.Custom(1, 2));
+        dfA.append(4, new CustomColumn.Custom(2, 2));
+
+        DataFrame dfB = DataFrame.create()
+                .addColumn(new IntegerColumn("idb"))
+                .addColumn(new CustomColumn("x"));
+
+        dfB.append(4, new CustomColumn.Custom(1, 1));
+        dfB.append(3, new CustomColumn.Custom(2, 2));
+        dfB.append(2, new CustomColumn.Custom(1, 1));
+        dfB.append(1, new CustomColumn.Custom(2, 2));
+
+        DataFrame joined = dfA.joinInner(dfB, "x");
+        joined = joined.sort("ida");
+
+        Assertions.assertEquals(4, joined.size());
+        Assertions.assertEquals(1, joined.getRow(0).getInteger("ida").intValue());
+        Assertions.assertEquals(1, joined.getRow(1).getInteger("ida").intValue());
+        Assertions.assertEquals(4, joined.getRow(2).getInteger("ida").intValue());
+        Assertions.assertEquals(4, joined.getRow(3).getInteger("ida").intValue());
+        DataFrameTypeManager.get().register(new CustomColumn());
+
+    }
+
+    @Test
+    public void customValueAutodetect() {
+
+        String csv =
+                "A;B\n" +
+                        "1;[1,2]\n" +
+                        "2;[2,2]\n" +
+                        "3;[1,3]";
+        DataFrame dfA = DataFrame.fromCSV(csv, ';', "");
+        Assertions.assertEquals(Integer.class, dfA.getColumn("A").getValueType().getType());
+        Assertions.assertEquals(String.class, dfA.getColumn("B").getValueType().getType());
+
+        DataFrameTypeManager.get().register(new CustomColumn());
+        dfA = DataFrame.fromCSV(csv, ';', "");
+        Assertions.assertEquals(Integer.class, dfA.getColumn("A").getValueType().getType());
+        Assertions.assertEquals(CustomColumn.Custom.class, dfA.getColumn("B").getValueType().getType());
+        DataFrameTypeManager.get().register(new CustomColumn());
+
+    }
+}
