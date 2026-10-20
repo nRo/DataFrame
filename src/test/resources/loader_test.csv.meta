@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <dataFrameMeta>
 <dataFrame size="5"/>
-<readerBuilder class="dev.gruen.dataframe.csv.CSVReaderBuilder">
+<readerBuilder class="dev.gruen.dataframe.csv.CSVFormat">
 <readerAttribute name="headerPrefix" value="#"/>
 <readerAttribute name="gzip" value="false"/>
 <readerAttribute name="containsHeader" value="false"/>

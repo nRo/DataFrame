@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<dataFrameMeta>
+<dataFrame size="5"/>
+<readerBuilder class="de.unknownreality.dataframe.csv.CSVReaderBuilder">
+<readerAttribute name="headerPrefix" value="#"/>
+<readerAttribute name="gzip" value="false"/>
+<readerAttribute name="containsHeader" value="false"/>
+<readerAttribute name="separator" value=";"/>
+</readerBuilder>
+<columns>
+<column name="id" type="de.unknownreality.dataframe.column.IntegerColumn"/>
+<column name="value" type="de.unknownreality.dataframe.column.DoubleColumn"/>
+<column name="description" type="de.unknownreality.dataframe.column.StringColumn"/>
+</columns>
+</dataFrameMeta>

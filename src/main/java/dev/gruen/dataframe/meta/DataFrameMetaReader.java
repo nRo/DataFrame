@@ -58,6 +58,7 @@ public class DataFrameMetaReader {
     static {
         LEGACY_PACKAGES.put("de.unknownreality.dataframe.", "dev.gruen.dataframe.");
         LEGACY_PACKAGES.put("de.unknownreality.dataframe.csv.CSVReaderBuilder", "dev.gruen.dataframe.csv.CSVFormat");
+        LEGACY_PACKAGES.put("dev.gruen.dataframe.csv.CSVReaderBuilder", "dev.gruen.dataframe.csv.CSVFormat");
         LEGACY_PACKAGES.put("de.unknownreality.data.", "dev.gruen.dataframe.");
         LEGACY_PACKAGES.put("de.unknownreality.data.frame.", "dev.gruen.dataframe.");
         LEGACY_PACKAGES.put("de.unknownreality.data.csv.CSVReaderBuilder", "dev.gruen.dataframe.csv.CSVFormat");
