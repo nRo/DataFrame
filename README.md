@@ -2,43 +2,49 @@
 An easy-to-use DataFrame Library for Java.
 
 
-![travis](https://travis-ci.org/nRo/DataFrame.svg?branch=master)
+[![CI](https://github.com/nRo/DataFrame/actions/workflows/ci.yml/badge.svg)](https://github.com/nRo/DataFrame/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/nRo/DataFrame/branch/master/graph/badge.svg)](https://codecov.io/gh/nRo/DataFrame)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a03214f7198f4461ab341adecb75e0da)](https://www.codacy.com/app/nRo/DataFrame?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=nRo/DataFrame&amp;utm_campaign=Badge_Grade)
+[![Maven Central](https://img.shields.io/maven-central/v/dev.gruen/dataframe.svg?label=Maven%20Central)](https://central.sonatype.com/artifact/dev.gruen/dataframe)
+[![Javadocs](https://javadoc.io/badge2/dev.gruen/dataframe/javadoc.svg)](https://javadoc.io/doc/dev.gruen/dataframe)
+![Java 21+](https://img.shields.io/badge/Java-21%2B-blue)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.txt)
 
-Documentation
+Requirements
 -------
-[![Javadocs](http://javadoc.io/badge/de.unknownreality/dataframe.svg?color=blue)](http://javadoc.io/doc/de.unknownreality/dataframe)
+Java 21 or newer. The library is built and tested on JDK 21 and JDK 25.
+
+If you need to run on Java 8 to 17, use the last 0.7.x release (see [CHANGELOG.md](CHANGELOG.md)).
 
 Install
 -------
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/de.unknownreality/dataframe/badge.svg)](https://maven-badges.herokuapp.com/maven-central/de.unknownreality/dataframe)
-
-
-Add this to you pom.xml
+Add this to your `pom.xml`:
 
 ```xml
 <dependencies>
 ...
     <dependency>
-        <groupId>de.unknownreality</groupId>
+        <groupId>dev.gruen</groupId>
         <artifactId>dataframe</artifactId>
-        <version>0.7.6</version>
+        <version>0.8.0</version>
     </dependency>
 ...
 </dependencies>
 ```
 
+The latest published version is shown in the Maven Central badge above. The `0.8.0` release has to be published first
+(see [Release](#release)); until then build the snapshot from sources.
+
 Build
 -----
-To build the library from sources:
+To build the library from sources you need JDK 21+ and Maven 3.9+:
 
 1) Clone github repository
 
     $ git clone https://github.com/nRo/DataFrame.git
 
-2) Change to the created folder and run `mvn install`
+2) Change to the created folder and run `mvn verify` (compile, tests, coverage gate and SpotBugs).
+   Use `mvn install` to install the library into your local repository.
 
     $ cd DataFrame
     
@@ -50,13 +56,36 @@ To build the library from sources:
 <dependencies>
 ...
     <dependency>
-        <groupId>de.unknownreality</groupId>
+        <groupId>dev.gruen</groupId>
         <artifactId>dataframe</artifactId>
-        <version>0.7.6-SNAPSHOT</version>
+        <version>0.8.0-SNAPSHOT</version>
     </dependency>
 ...
 </dependencies>
 ```
+
+Release
+-----
+Releases are published to Maven Central with the `release` profile (`mvn -Prelease deploy`), which attaches the
+sources and javadoc jars, signs the artifacts with GPG and uploads them using the
+[central-publishing-maven-plugin](https://central.sonatype.org/publish/publish-portal-maven/).
+The GitHub Actions workflow `release.yml` runs this for tags named `v*` and needs the secrets
+`CENTRAL_USERNAME`, `CENTRAL_PASSWORD`, `GPG_PRIVATE_KEY` and `GPG_PASSPHRASE`.
+
+Version 0.8.0
+-----
+See [CHANGELOG.md](CHANGELOG.md) for the complete list of changes.
+
+- **Java 21 or newer is required**
+- **UTF-8 is the default charset**
+- **groupId and package changed to dev.gruen**
+
+### Migration from 0.7
+| Change | What to do |
+|---|---|
+| The Maven `groupId` changed from `de.unknownreality` to `dev.gruen`, and the Java packages changed from `de.unknownreality.dataframe` to `dev.gruen.dataframe` | Change the `groupId` in your dependency declaration and replace `de.unknownreality.dataframe` with `dev.gruen.dataframe` in your imports. Older releases stay available under the old `groupId`. Old meta files are remapped automatically. |
+| Java 21 is required | Update your JDK and the `maven.compiler.release` of your project. |
+
 Version 0.7.5
 -----
 -  **direct value access for DataRow object.**
@@ -84,6 +113,8 @@ In general, data groupings can now be used like normal DataFrames.
 
 Examples
 -----
+All examples are executed by `ReadmeExamplesTest` using the files in `src/test/resources`.
+
 Select all users called Meier or Schmitt from Germany, group by age and add column that contains the number of users with the respective age.
 Then sort by age and print
 ```java
@@ -157,7 +188,7 @@ Load a DataFrame with custom options and predefined column types.
 File file = new File("person.csv");
 
 CSVReader csvReader = CSVReaderBuilder.create()
-                .containsHeader(true)
+                .withHeader(true)
                 .withHeaderPrefix("#")
                 .withSeparator(';')
                 .setColumnType("person_id", Integer.class)
@@ -279,10 +310,7 @@ dataFrame.append("A",1,3);
 dataFrame.append("B",2,3);
 dataFrame.append("C",4,5);
 dataFrame.append("D",6,7);
-IntervalIndex index = new IntervalIndex("idx",
-    dataFrame.getNumberColumn("start"),
-    dataFrame.getNumberColumn("end"));
-dataFrame.addIndex(index);
+dataFrame.addIndex(IntervalIndex.create(dataFrame, "idx", "start", "end"));
 
 //returns a new dataframe containing all rows where (start,end) overlaps with (1,3)
 // -> A, B
@@ -316,7 +344,7 @@ dataFrame.getIntegerColumn("age").map(value -> value + 2);
 
 Filter and select rows using predicates.
 ```java
-//keep users with age between 18 and 60
+//keep users with age between 18 and 60 (both bounds are excluded)
 users.filter(FilterPredicate.btwn("age",18,60));
 
 //find all users with age > 18 an first_name == "Max"
@@ -396,7 +424,7 @@ Direct access to groups in a grouping.
 DataGrouping grouping = users.groupBy("age","first_name");
 
 //Get all users that are called John and are 18 years old
-DataGroup group = grouping.findByGroupValues(18, "John");
+DataGroup group = grouping.findByGroupValues(18, "John").getGroup();
 ```
 It is possible to apply aggregation function to data groups.
 In this example, a column "max_age" is added to the grouping DataFrame. 
