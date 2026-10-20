@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -41,7 +41,7 @@ public class CSVHeader extends BasicHeader {
 
     /**
      * Adds a new column without specified name.
-     * If no name is provided, names are created: <tt>V1,V2,V3...</tt>
+     * If no name is provided, names are created: <code>V1,V2,V3...</code>
      */
     public void add() {
         String name = "V" + (emptyColumnIndex++);

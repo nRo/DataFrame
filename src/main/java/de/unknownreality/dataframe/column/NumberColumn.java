@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -89,7 +89,7 @@ public abstract class NumberColumn<T extends Number, C extends NumberColumn<T, C
     }
 
     /**
-     * Returns a {@link Quantiles} object that can be used to calculate <tt>max</tt>, <tt>min</tt>, , <tt>median</tt> and quantiles.
+     * Returns a {@link Quantiles} object that can be used to calculate <code>max</code>, <code>min</code>, , <code>median</code> and quantiles.
      * The values are sorted only once. When the values in the column have changed. A new {@link Quantiles} object should be created.
      *
      * @return quantiles object
@@ -197,7 +197,7 @@ public abstract class NumberColumn<T extends Number, C extends NumberColumn<T, C
      * <p>Calls {@link #notifyDataFrameValueChanged(int)} to ensure data frame index consistency</p>
      *
      * @param column column containing the values that are added
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     public C add(NumberColumn<?, ?> column) {
         int naCount = 0;
@@ -229,7 +229,7 @@ public abstract class NumberColumn<T extends Number, C extends NumberColumn<T, C
      * <p>Calls {@link #notifyDataFrameValueChanged(int)} to ensure data frame index consistency</p>
      *
      * @param column column containing the values that are subtracted
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     public C subtract(NumberColumn<?, ?> column) {
         if (column.size() != size()) {
@@ -257,7 +257,7 @@ public abstract class NumberColumn<T extends Number, C extends NumberColumn<T, C
      * <p>Calls {@link #notifyDataFrameValueChanged(int)} to ensure data frame index consistency</p>
      *
      * @param column column containing the values that are multiplied
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     public C multiply(NumberColumn<?, ?> column) {
         if (column.size() != size()) {
@@ -285,7 +285,7 @@ public abstract class NumberColumn<T extends Number, C extends NumberColumn<T, C
      * <p>Calls {@link #notifyDataFrameValueChanged(int)} to ensure data frame index consistency</p>
      *
      * @param column column containing the values that are divided
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     public C divide(NumberColumn<?, ?> column) {
         if (column.size() != size()) {
@@ -314,7 +314,7 @@ public abstract class NumberColumn<T extends Number, C extends NumberColumn<T, C
      * <p>Calls {@link #notifyDataFrameValueChanged(int)} to ensure data frame index consistency</p>
      *
      * @param value value added to all values in this column
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     public C add(Number value) {
         int naCount = 0;
@@ -339,7 +339,7 @@ public abstract class NumberColumn<T extends Number, C extends NumberColumn<T, C
      * <p>Calls {@link #notifyDataFrameValueChanged(int)} to ensure data frame index consistency</p>
      *
      * @param value value subtracted from all values in this column
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     public C subtract(Number value) {
         int naCount = 0;
@@ -365,7 +365,7 @@ public abstract class NumberColumn<T extends Number, C extends NumberColumn<T, C
      * <p>Calls {@link #notifyDataFrameValueChanged(int)} to ensure data frame index consistency</p>
      *
      * @param value value multiplied to all values in this column
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     public C multiply(Number value) {
         int naCount = 0;
@@ -390,7 +390,7 @@ public abstract class NumberColumn<T extends Number, C extends NumberColumn<T, C
      * <p>Calls {@link #notifyDataFrameValueChanged(int)} to ensure data frame index consistency</p>
      *
      * @param value the value all values in this column are divided by
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     public C divide(Number value) {
         int naCount = 0;

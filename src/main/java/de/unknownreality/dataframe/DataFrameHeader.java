@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -49,7 +49,7 @@ public class DataFrameHeader implements TypeHeader<String> {
      *
      * @param headerName name of the added column
      * @param column     new data frame column
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     public <V> DataFrameHeader add(String headerName, DataFrameColumn<?, ?> column) {
         return add(headerName, column.getClass(), column.getValueType());
@@ -62,7 +62,7 @@ public class DataFrameHeader implements TypeHeader<String> {
      * @param name     column name
      * @param colClass column class
      * @param type     column value type
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     public DataFrameHeader add(String name, Class<? extends DataFrameColumn> colClass, ValueType<?> type) {
         int index = headers.size();
@@ -79,7 +79,7 @@ public class DataFrameHeader implements TypeHeader<String> {
      * @param name     column name
      * @param colClass column class
      * @param type     column value type
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     public DataFrameHeader set(String name, Class<? extends DataFrameColumn> colClass, ValueType<?> type) {
         Integer index = headerMap.get(name);
@@ -98,7 +98,7 @@ public class DataFrameHeader implements TypeHeader<String> {
      * @param replacement replacement column name
      * @param colClass    replacement column class
      * @param type        replacement column value type
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     public <V> DataFrameHeader replace(String existing, String replacement, Class<? extends DataFrameColumn> colClass, ValueType<?> type) {
         Integer index = headerMap.get(existing);
@@ -165,11 +165,11 @@ public class DataFrameHeader implements TypeHeader<String> {
     }
 
     /**
-     * Returns <tt>true</tt> if the other header is compatible with this header.
+     * Returns <code>true</code> if the other header is compatible with this header.
      * Compatible means that both headers contain the same columns with the same column classes.
      *
      * @param other object to test for compatibility
-     * @return <tt>true</tt> if the object is equal or compatible with this header
+     * @return <code>true</code> if the object is equal or compatible with this header
      */
     @Override
     public boolean equals(Object other) {
@@ -196,6 +196,11 @@ public class DataFrameHeader implements TypeHeader<String> {
             }
         }
         return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return headerMap.keySet().hashCode();
     }
 
     /**
@@ -253,10 +258,10 @@ public class DataFrameHeader implements TypeHeader<String> {
     }
 
     /**
-     * Returns <tt>true</tt> if the header contains a column with the input name
+     * Returns <code>true</code> if the header contains a column with the input name
      *
      * @param name input name
-     * @return <tt>true</tt> if header contains input name
+     * @return <code>true</code> if header contains input name
      */
     @Override
     public boolean contains(String name) {

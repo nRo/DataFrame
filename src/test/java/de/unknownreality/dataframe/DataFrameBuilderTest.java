@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -31,8 +31,8 @@ import de.unknownreality.dataframe.join.JoinColumn;
 import de.unknownreality.dataframe.join.JoinUtil;
 import de.unknownreality.dataframe.join.JoinedDataFrame;
 import de.unknownreality.dataframe.join.impl.DefaultJoinUtil;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -72,20 +72,20 @@ public class DataFrameBuilderTest {
         dataFrame.append(true, (byte) 0, 1f, 1, 1L, (short) 1, "A");
         dataFrame.append(false, (byte) 1, 2f, 2, 2L, (short) 2, "B");
 
-        Assert.assertEquals(7, dataFrame.getColumns().size());
+        Assertions.assertEquals(7, dataFrame.getColumns().size());
         Iterator<DataFrameColumn<?, ?>> columnIterator = dataFrame.getColumns().iterator();
-        Assert.assertEquals(true, columnIterator.next().get(0));
-        Assert.assertEquals((byte) 0, columnIterator.next().get(0));
-        Assert.assertEquals(1f, columnIterator.next().get(0));
-        Assert.assertEquals(1, columnIterator.next().get(0));
-        Assert.assertEquals(1L, columnIterator.next().get(0));
-        Assert.assertEquals((short) 1, columnIterator.next().get(0));
-        Assert.assertEquals("A", columnIterator.next().get(0));
+        Assertions.assertEquals(true, columnIterator.next().get(0));
+        Assertions.assertEquals((byte) 0, columnIterator.next().get(0));
+        Assertions.assertEquals(1f, columnIterator.next().get(0));
+        Assertions.assertEquals(1, columnIterator.next().get(0));
+        Assertions.assertEquals(1L, columnIterator.next().get(0));
+        Assertions.assertEquals((short) 1, columnIterator.next().get(0));
+        Assertions.assertEquals("A", columnIterator.next().get(0));
         dataFrame.groupBy("boolean");
-        Assert.assertEquals(1, groupCount.get());
+        Assertions.assertEquals(1, groupCount.get());
 
         DataFrame copy = dataFrame.copy();
         dataFrame.joinInner(copy, "byte");
-        Assert.assertEquals(1, joinCount.get());
+        Assertions.assertEquals(1, joinCount.get());
     }
 }

@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -28,8 +28,8 @@ import de.unknownreality.dataframe.column.DoubleColumn;
 import de.unknownreality.dataframe.column.FloatColumn;
 import de.unknownreality.dataframe.column.IntegerColumn;
 import de.unknownreality.dataframe.common.math.Quantiles;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,11 +56,11 @@ public class NumberColumnTest {
             count++;
         }
         dc.appendNA();
-        Assert.assertEquals(sum, dc.sum(), 0d);
-        Assert.assertEquals(sum / count, dc.mean(), 0d);
-        Assert.assertEquals(0d, dc.min(), 0d);
-        Assert.assertEquals(10d, dc.max(), 0d);
-        Assert.assertEquals(5d, dc.median(), 0d);
+        Assertions.assertEquals(sum, dc.sum(), 0d);
+        Assertions.assertEquals(sum / count, dc.mean(), 0d);
+        Assertions.assertEquals(0d, dc.min(), 0d);
+        Assertions.assertEquals(10d, dc.max(), 0d);
+        Assertions.assertEquals(5d, dc.median(), 0d);
 
         List<Integer> iVals = new ArrayList<>();
         for (int i = 0; i <= 10; i++) {
@@ -71,36 +71,36 @@ public class NumberColumnTest {
         DoubleColumn t = dc.copy();
         t.add(ic);
         for (int i = 0; i <= 10; i++) {
-            Assert.assertEquals(dVals.get(i) + iVals.get(i), t.get(i), 0d);
+            Assertions.assertEquals(dVals.get(i) + iVals.get(i), t.get(i), 0d);
         }
         t = dc.copy().subtract(ic);
         for (int i = 0; i <= 10; i++) {
-            Assert.assertEquals(dVals.get(i) - iVals.get(i), t.get(i), 0d);
+            Assertions.assertEquals(dVals.get(i) - iVals.get(i), t.get(i), 0d);
         }
         t = dc.copy().multiply(ic);
         for (int i = 0; i <= 10; i++) {
-            Assert.assertEquals(dVals.get(i) * iVals.get(i), t.get(i), 0d);
+            Assertions.assertEquals(dVals.get(i) * iVals.get(i), t.get(i), 0d);
         }
         t = dc.copy().divide(ic);
         for (int i = 0; i <= 10; i++) {
-            Assert.assertEquals(dVals.get(i) / iVals.get(i), t.get(i), 0d);
+            Assertions.assertEquals(dVals.get(i) / iVals.get(i), t.get(i), 0d);
         }
 
         t = dc.copy().add(5);
         for (int i = 0; i <= 10; i++) {
-            Assert.assertEquals(dVals.get(i) + 5, t.get(i), 0d);
+            Assertions.assertEquals(dVals.get(i) + 5, t.get(i), 0d);
         }
         t = dc.copy().subtract(5);
         for (int i = 0; i <= 10; i++) {
-            Assert.assertEquals(dVals.get(i) - 5, t.get(i), 0d);
+            Assertions.assertEquals(dVals.get(i) - 5, t.get(i), 0d);
         }
         t = dc.copy().multiply(5);
         for (int i = 0; i <= 10; i++) {
-            Assert.assertEquals(dVals.get(i) * 5, t.get(i), 0d);
+            Assertions.assertEquals(dVals.get(i) * 5, t.get(i), 0d);
         }
         t = dc.copy().divide(5);
         for (int i = 0; i <= 10; i++) {
-            Assert.assertEquals(dVals.get(i) / 5, t.get(i), 0d);
+            Assertions.assertEquals(dVals.get(i) / 5, t.get(i), 0d);
         }
     }
 
@@ -111,16 +111,16 @@ public class NumberColumnTest {
         dc.appendAll(Arrays.asList(3d, 2d, 5d, 1d, 4d));
 
         Quantiles<Double> quantiles = dc.getQuantiles();
-        Assert.assertEquals((Double)1d,quantiles.min());
-        Assert.assertEquals((Double)5d,quantiles.max());
-        Assert.assertEquals((Double)3d,quantiles.median());
-        Assert.assertEquals((Double)2d,quantiles.getQuantile(0.25));
-        Assert.assertEquals((Double)4d,quantiles.getQuantile(0.75));
+        Assertions.assertEquals((Double)1d,quantiles.min());
+        Assertions.assertEquals((Double)5d,quantiles.max());
+        Assertions.assertEquals((Double)3d,quantiles.median());
+        Assertions.assertEquals((Double)2d,quantiles.getQuantile(0.25));
+        Assertions.assertEquals((Double)4d,quantiles.getQuantile(0.75));
 
-        Assert.assertEquals((Double)1d,dc.min());
-        Assert.assertEquals((Double)5d,dc.max());
-        Assert.assertEquals((Double)3d,dc.median());
-        Assert.assertEquals((Double)2d,dc.getQuantile(0.25));
-        Assert.assertEquals((Double)4d,dc.getQuantile(0.75));
+        Assertions.assertEquals((Double)1d,dc.min());
+        Assertions.assertEquals((Double)5d,dc.max());
+        Assertions.assertEquals((Double)3d,dc.median());
+        Assertions.assertEquals((Double)2d,dc.getQuantile(0.25));
+        Assertions.assertEquals((Double)4d,dc.getQuantile(0.75));
     }
 }

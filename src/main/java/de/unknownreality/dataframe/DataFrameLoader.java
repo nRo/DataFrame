@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -24,6 +24,7 @@
 
 package de.unknownreality.dataframe;
 
+import de.unknownreality.dataframe.common.ReflectionUtil;
 import de.unknownreality.dataframe.csv.CSVReaderBuilder;
 import de.unknownreality.dataframe.filter.FilterPredicate;
 import de.unknownreality.dataframe.io.*;
@@ -31,11 +32,19 @@ import de.unknownreality.dataframe.meta.DataFrameMeta;
 import de.unknownreality.dataframe.meta.DataFrameMetaReader;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.net.URL;
 
 /**
+ * Loads {@link DataFrame DataFrames} from files, urls, classpath resources, streams and readers.
+ * <p>
+ * Binary sources are decoded as UTF-8 unless the {@link ReadFormat} defines another charset
+ * Gzip compressed sources are detected automatically.
+ * Streams opened by the loader are closed after loading or if loading fails.
+ * Errors are reported as {@link DataFrameRuntimeException}.
+ * <p>
  * Created by Alex on 08.06.2016.
  */
 public class DataFrameLoader {
@@ -632,10 +641,14 @@ public class DataFrameLoader {
 
     public static DataFrame loadResource(String path, String metaPath, ClassLoader classLoader, FilterPredicate filterPredicate) {
 
+        InputStream metaStream = classLoader.getResourceAsStream(metaPath);
+        if (metaStream == null) {
+            throw new DataFrameRuntimeException(String.format("meta resource '%s' not found", metaPath));
+        }
         DataFrameMeta dataFrameMeta;
-        try {
-            dataFrameMeta = DataFrameMetaReader.read(classLoader.getResourceAsStream(metaPath));
-        } catch (DataFrameException e) {
+        try (InputStream is = metaStream) {
+            dataFrameMeta = DataFrameMetaReader.read(is);
+        } catch (DataFrameException | IOException e) {
             throw new DataFrameRuntimeException("error reading meta file", e);
         }
         DataReader<?, ?> reader = getDataReader(dataFrameMeta);
@@ -644,26 +657,18 @@ public class DataFrameLoader {
     }
 
     private static DataReader<?, ?> getDataReader(DataFrameMeta meta) {
-        ReadFormat<?, ?> readFormat;
-        try {
-            readFormat = meta.getReadFormatClass().newInstance();
-        } catch (Exception e) {
-            throw new DataFrameRuntimeException("error creating readformat instance", e);
-        }
+        ReadFormat<?, ?> readFormat = ReflectionUtil.newInstance(meta.getReadFormatClass());
         ReaderBuilder<?, ?> readerBuilder;
         try {
             readerBuilder = readFormat.getReaderBuilder();
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             throw new DataFrameRuntimeException("error creating readerBuilder instance", e);
         }
-        DataReader<?, ?> reader;
         try {
-            reader = readerBuilder.loadSettings(meta.getAttributes()).build();
+            return readerBuilder.loadSettings(meta.getAttributes()).build();
         } catch (Exception e) {
             throw new DataFrameRuntimeException("error loading readerBuilder attributes", e);
         }
-
-        return reader;
     }
 
 

@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -45,10 +45,10 @@ public interface Header<T> extends Iterable<T> {
     T get(int index);
 
     /**
-     * Returns <tt>true</tt> if the header contains a specific entry
+     * Returns <code>true</code> if the header contains a specific entry
      *
      * @param value entry to be tested
-     * @return <tt>true</tt> if header contains entry
+     * @return <code>true</code> if header contains entry
      */
     boolean contains(T value);
 

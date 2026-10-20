@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -65,11 +65,7 @@ public class CountTransformer<T> implements ColumnDataFrameTransform<DataFrameCo
             if (ignoreNA && source.isNA(i)) {
                 continue;
             }
-            T v = source.get(i);
-            Integer count = counts.get(v);
-            count = count == null ? 0 : count;
-            count++;
-            counts.put(v, count);
+            counts.merge(source.get(i), 1, Integer::sum);
         }
         for (Map.Entry<T, Integer> entry : counts.entrySet()) {
             valueColumn.append(entry.getKey());

@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -63,7 +63,7 @@ public class Printer extends DataWriter {
     private String innerCrossConnection = "┼";
     private int defaultColumnWidth = 12;
     private int defaultMaxContentWidth = 10;
-    private final int maxAutoWidth = 500;
+    private static final int maxAutoWidth = 500;
     private final Map<Object, ColumnPrintSettings> columnSettings = new HashMap<>();
     private ValueFormatter defaultValueFormatter = new DefaultValueFormatter();
     private ValueFormatter defaultHeaderFormatter = (t, v, m) -> "#" + v.toString();
@@ -303,8 +303,7 @@ public class Printer extends DataWriter {
 
     private ValueFormatter getDefaultValueFormatter(DataContainer<?, ?> dataContainer, int colIdx) {
         Header<?> header = dataContainer.getHeader();
-        if (header instanceof TypeHeader<?>) {
-            TypeHeader<?> typeHeader = (TypeHeader<?>) header;
+        if (header instanceof TypeHeader<?> typeHeader) {
             Class<?> type = typeHeader.getValueType(colIdx).getType();
             return getDefaultValueFormatter(type);
         }

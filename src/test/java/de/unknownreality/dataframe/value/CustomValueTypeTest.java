@@ -4,8 +4,8 @@ import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.column.IntegerColumn;
 import de.unknownreality.dataframe.group.DataGrouping;
 import de.unknownreality.dataframe.type.DataFrameTypeManager;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class CustomValueTypeTest {
     @Test
@@ -23,10 +23,10 @@ public class CustomValueTypeTest {
 
         df = df.sort("x");
 
-        Assert.assertEquals(1, df.getRow(0).getInteger("id").intValue());
-        Assert.assertEquals(3, df.getRow(1).getInteger("id").intValue());
-        Assert.assertEquals(4, df.getRow(2).getInteger("id").intValue());
-        Assert.assertEquals(2, df.getRow(3).getInteger("id").intValue());
+        Assertions.assertEquals(1, df.getRow(0).getInteger("id").intValue());
+        Assertions.assertEquals(3, df.getRow(1).getInteger("id").intValue());
+        Assertions.assertEquals(4, df.getRow(2).getInteger("id").intValue());
+        Assertions.assertEquals(2, df.getRow(3).getInteger("id").intValue());
 
         DataFrameTypeManager.get().unregister(new CustomColumn());
 
@@ -46,8 +46,8 @@ public class CustomValueTypeTest {
         df.append(4, new CustomColumn.Custom(2, 1));
 
         df.filter("x == '[1,2]'");
-        Assert.assertEquals(1, df.size());
-        Assert.assertEquals(3, df.getRow(0).getInteger("id").intValue());
+        Assertions.assertEquals(1, df.size());
+        Assertions.assertEquals(3, df.getRow(0).getInteger("id").intValue());
 
         DataFrameTypeManager.get().unregister(new CustomColumn());
 
@@ -66,11 +66,11 @@ public class CustomValueTypeTest {
         df.append(4, new CustomColumn.Custom(2, 2));
         DataGrouping g = df.groupBy("x");
 
-        Assert.assertEquals(2, g.size());
-        Assert.assertEquals(2, g.getGroup(0).size());
-        Assert.assertEquals(2, g.getGroup(1).size());
-        Assert.assertEquals(new CustomColumn.Custom(1, 1), g.getGroup(0).getGroupValues().get("x"));
-        Assert.assertEquals(new CustomColumn.Custom(2, 2), g.getGroup(1).getGroupValues().get("x"));
+        Assertions.assertEquals(2, g.size());
+        Assertions.assertEquals(2, g.getGroup(0).size());
+        Assertions.assertEquals(2, g.getGroup(1).size());
+        Assertions.assertEquals(new CustomColumn.Custom(1, 1), g.getGroup(0).getGroupValues().get("x"));
+        Assertions.assertEquals(new CustomColumn.Custom(2, 2), g.getGroup(1).getGroupValues().get("x"));
         DataFrameTypeManager.get().unregister(new CustomColumn());
 
     }
@@ -101,11 +101,11 @@ public class CustomValueTypeTest {
         DataFrame joined = dfA.joinInner(dfB, "x");
         joined = joined.sort("ida");
 
-        Assert.assertEquals(4, joined.size());
-        Assert.assertEquals(1, joined.getRow(0).getInteger("ida").intValue());
-        Assert.assertEquals(1, joined.getRow(1).getInteger("ida").intValue());
-        Assert.assertEquals(4, joined.getRow(2).getInteger("ida").intValue());
-        Assert.assertEquals(4, joined.getRow(3).getInteger("ida").intValue());
+        Assertions.assertEquals(4, joined.size());
+        Assertions.assertEquals(1, joined.getRow(0).getInteger("ida").intValue());
+        Assertions.assertEquals(1, joined.getRow(1).getInteger("ida").intValue());
+        Assertions.assertEquals(4, joined.getRow(2).getInteger("ida").intValue());
+        Assertions.assertEquals(4, joined.getRow(3).getInteger("ida").intValue());
         DataFrameTypeManager.get().register(new CustomColumn());
 
     }
@@ -119,13 +119,13 @@ public class CustomValueTypeTest {
                         "2;[2,2]\n" +
                         "3;[1,3]";
         DataFrame dfA = DataFrame.fromCSV(csv, ';', "");
-        Assert.assertEquals(Integer.class, dfA.getColumn("A").getValueType().getType());
-        Assert.assertEquals(String.class, dfA.getColumn("B").getValueType().getType());
+        Assertions.assertEquals(Integer.class, dfA.getColumn("A").getValueType().getType());
+        Assertions.assertEquals(String.class, dfA.getColumn("B").getValueType().getType());
 
         DataFrameTypeManager.get().register(new CustomColumn());
         dfA = DataFrame.fromCSV(csv, ';', "");
-        Assert.assertEquals(Integer.class, dfA.getColumn("A").getValueType().getType());
-        Assert.assertEquals(CustomColumn.Custom.class, dfA.getColumn("B").getValueType().getType());
+        Assertions.assertEquals(Integer.class, dfA.getColumn("A").getValueType().getType());
+        Assertions.assertEquals(CustomColumn.Custom.class, dfA.getColumn("B").getValueType().getType());
         DataFrameTypeManager.get().register(new CustomColumn());
 
     }

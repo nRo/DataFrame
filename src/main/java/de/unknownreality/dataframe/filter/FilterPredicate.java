@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -24,6 +24,7 @@
 
 package de.unknownreality.dataframe.filter;
 
+import de.unknownreality.dataframe.DataFrameRuntimeException;
 import de.unknownreality.dataframe.common.Row;
 import de.unknownreality.dataframe.filter.compile.PredicateCompiler;
 
@@ -41,10 +42,10 @@ public abstract class FilterPredicate {
     public static final FilterPredicate EMPTY_FILTER = empty();
 
     /**
-     * Returns <tt>true</tt> if the row is valid for this predicate
+     * Returns <code>true</code> if the row is valid for this predicate
      *
      * @param row tested row
-     * @return <tt>true</tt> if the row is valid
+     * @return <code>true</code> if the row is valid
      */
     public abstract boolean valid(Row<?, String> row);
 
@@ -57,7 +58,7 @@ public abstract class FilterPredicate {
     public abstract String toString();
 
     /**
-     * Creates an <tt>empty</tt> predicate. Always returns <tt>true</tt>.
+     * Creates an <code>empty</code> predicate. Always returns <code>true</code>.
      * @return empty predicate
      */
     public static FilterPredicate empty(){
@@ -75,10 +76,10 @@ public abstract class FilterPredicate {
     }
 
     /**
-     * Creates a new <tt>AND</tt> predicate using this predicate and an input predicate
+     * Creates a new <code>AND</code> predicate using this predicate and an input predicate
      *
      * @param p input predicate
-     * @return <tt>AND</tt> predicate
+     * @return <code>AND</code> predicate
      * @see #and(FilterPredicate, FilterPredicate)
      */
     public FilterPredicate and(FilterPredicate p) {
@@ -87,10 +88,10 @@ public abstract class FilterPredicate {
 
 
     /**
-     * Creates a new <tt>OR</tt> predicate using this predicate and an input predicate
+     * Creates a new <code>OR</code> predicate using this predicate and an input predicate
      *
      * @param p input predicate
-     * @return <tt>OR</tt> predicate
+     * @return <code>OR</code> predicate
      * @see #or(FilterPredicate, FilterPredicate)
      */
     public FilterPredicate or(FilterPredicate p) {
@@ -98,10 +99,10 @@ public abstract class FilterPredicate {
     }
 
     /**
-     * Creates a new <tt>XOR</tt> predicate using this predicate and an input predicate
+     * Creates a new <code>XOR</code> predicate using this predicate and an input predicate
      *
      * @param p input predicate
-     * @return <tt>XOR</tt> predicate
+     * @return <code>XOR</code> predicate
      * @see #xor(FilterPredicate, FilterPredicate)
      */
     public FilterPredicate xor(FilterPredicate p) {
@@ -110,10 +111,10 @@ public abstract class FilterPredicate {
 
 
     /**
-     * Creates a new <tt>NOR</tt> predicate using this predicate and an input predicate
+     * Creates a new <code>NOR</code> predicate using this predicate and an input predicate
      *
      * @param p input predicate
-     * @return <tt>NOR</tt> predicate
+     * @return <code>NOR</code> predicate
      * @see #xor(FilterPredicate, FilterPredicate)
      */
     public FilterPredicate nor(FilterPredicate p) {
@@ -153,12 +154,12 @@ public abstract class FilterPredicate {
 
 
     /**
-     * Compares two predicates and returns <tt>true</tt> if the results are not equal
+     * Compares two predicates and returns <code>true</code> if the results are not equal
      * <code>return p1.valid(row) != p2.valid(row)</code>
      *
      * @param p1 first input predicate
      * @param p2 second input predicate
-     * @return <tt>true</tt> if one input predicates returns <tt>true</tt> and the other returns <tt>false</tt>
+     * @return <code>true</code> if one input predicates returns <code>true</code> and the other returns <code>false</code>
      */
     public static FilterPredicate ne(final FilterPredicate p1, final FilterPredicate p2) {
         return new FilterPredicate() {
@@ -175,12 +176,12 @@ public abstract class FilterPredicate {
     }
 
     /**
-     * Compares two predicates and returns <tt>true</tt> if the results are equal
+     * Compares two predicates and returns <code>true</code> if the results are equal
      * <code>return p1.valid(row) == p2.valid(row)</code>
      *
      * @param p1 first input predicate
      * @param p2 second input predicate
-     * @return <tt>true</tt> if both input predicates return either <tt>true</tt> or <tt>false</tt>
+     * @return <code>true</code> if both input predicates return either <code>true</code> or <code>false</code>
      */
     public static FilterPredicate eq(final FilterPredicate p1, final FilterPredicate p2) {
         return new FilterPredicate() {
@@ -198,11 +199,11 @@ public abstract class FilterPredicate {
 
 
     /**
-     * Returns <tt>true</tt> if all input predicates return <tt>true</tt>.
+     * Returns <code>true</code> if all input predicates return <code>true</code>.
      * <code>return p1.valid(row) AND p2.valid(row) AND ... AND pn.valid(row)</code>
      *
      * @param predicates input predicates
-     * @return <tt>true</tt> if all input predicates return  <tt>true</tt>
+     * @return <code>true</code> if all input predicates return  <code>true</code>
      */
     public static FilterPredicate and(final FilterPredicate... predicates) {
         return new FilterPredicate() {
@@ -231,11 +232,11 @@ public abstract class FilterPredicate {
     }
 
     /**
-     * Returns <tt>true</tt> if at least one input predicate returns <tt>true</tt>.
+     * Returns <code>true</code> if at least one input predicate returns <code>true</code>.
      * <code>return p1.valid(row) OR p2.valid(row) OR ... OR pn.valid(row)</code>
      *
      * @param predicates input predicates
-     * @return <tt>true</tt> if at least one input predicate returns <tt>true</tt>
+     * @return <code>true</code> if at least one input predicate returns <code>true</code>
      */
     public static FilterPredicate or(final FilterPredicate... predicates) {
         return new FilterPredicate() {
@@ -265,12 +266,12 @@ public abstract class FilterPredicate {
 
 
     /**
-     * Returns <tt>true</tt> if both input predicates return <tt>true</tt>.
+     * Returns <code>true</code> if both input predicates return <code>true</code>.
      * <code>return p1.valid(row) AND p2.valid(row)</code>
      *
      * @param p1 first input predicate
      * @param p2 second input predicate
-     * @return <tt>true</tt> if both input predicates return  <tt>true</tt>
+     * @return <code>true</code> if both input predicates return  <code>true</code>
      */
     public static FilterPredicate and(final FilterPredicate p1, final FilterPredicate p2) {
         return new FilterPredicate() {
@@ -287,12 +288,12 @@ public abstract class FilterPredicate {
     }
 
     /**
-     * Returns <tt>true</tt> if at least one input predicate returns <tt>true</tt>.
+     * Returns <code>true</code> if at least one input predicate returns <code>true</code>.
      * <code>return p1.valid(row) OR p2.valid(row)</code>
      *
      * @param p1 first input predicate
      * @param p2 second input predicate
-     * @return <tt>true</tt> if at least one input predicate returns <tt>true</tt>
+     * @return <code>true</code> if at least one input predicate returns <code>true</code>
      */
     public static FilterPredicate or(final FilterPredicate p1, final FilterPredicate p2) {
         return new FilterPredicate() {
@@ -309,12 +310,12 @@ public abstract class FilterPredicate {
     }
 
     /**
-     * Returns <tt>true</tt> if one input predicate returns <tt>true</tt> and the other predicate returns <tt>false</tt>.
+     * Returns <code>true</code> if one input predicate returns <code>true</code> and the other predicate returns <code>false</code>.
      * <code>return p1.valid(row) OR p2.valid(row)</code>
      *
      * @param p1 first input predicate
      * @param p2 second input predicate
-     * @return <tt>true</tt> if one input predicate returns <tt>true</tt> and the other returns <tt>false</tt>
+     * @return <code>true</code> if one input predicate returns <code>true</code> and the other returns <code>false</code>
      */
     public static FilterPredicate xor(final FilterPredicate p1, final FilterPredicate p2) {
         return new FilterPredicate() {
@@ -333,12 +334,12 @@ public abstract class FilterPredicate {
     }
 
     /**
-     * Returns <tt>true</tt> if one input predicate returns <tt>true</tt> and the other predicate returns <tt>false</tt>.
+     * Returns <code>true</code> if one input predicate returns <code>true</code> and the other predicate returns <code>false</code>.
      * <code>return !p1.valid(row) AND !p2.valid(row)</code>
      *
      * @param p1 first input predicate
      * @param p2 second input predicate
-     * @return <tt>true</tt> if one input predicate returns <tt>true</tt> and the other returns <tt>false</tt>
+     * @return <code>true</code> if one input predicate returns <code>true</code> and the other returns <code>false</code>
      */
     public static FilterPredicate nor(final FilterPredicate p1, final FilterPredicate p2) {
         return new FilterPredicate() {
@@ -361,7 +362,7 @@ public abstract class FilterPredicate {
      *
      * @param name  row column name
      * @param value value for comparison
-     * @return <tt>'not equals'</tt> predicate
+     * @return <code>'not equals'</code> predicate
      * @see de.unknownreality.dataframe.filter.ComparePredicate.Operation#NE
      */
     public static FilterPredicate ne(final String name, final Object value) {
@@ -373,7 +374,7 @@ public abstract class FilterPredicate {
      *
      * @param nameA  first row column name
      * @param nameB  second row column name
-     * @return <tt>'not equals'</tt> predicate
+     * @return <code>'not equals'</code> predicate
      * @see de.unknownreality.dataframe.filter.ComparePredicate.Operation#NE
      */
     public static FilterPredicate neColumn(final String nameA, final String nameB) {
@@ -385,7 +386,7 @@ public abstract class FilterPredicate {
      *
      * @param name  row column name
      * @param value value for comparison
-     * @return <tt>'equals'</tt> predicate
+     * @return <code>'equals'</code> predicate
      * @see de.unknownreality.dataframe.filter.ComparePredicate.Operation#EQ
      */
     public static FilterPredicate eq(final String name, final Object value) {
@@ -397,7 +398,7 @@ public abstract class FilterPredicate {
      *
      * @param nameA  first row column name
      * @param nameB  second row column name
-     * @return <tt>'equals'</tt> predicate
+     * @return <code>'equals'</code> predicate
      * @see de.unknownreality.dataframe.filter.ComparePredicate.Operation#EQ
      */
     public static FilterPredicate eqColumn(final String nameA, final String nameB) {
@@ -410,7 +411,7 @@ public abstract class FilterPredicate {
      *
      * @param name  row column name
      * @param value value for comparison
-     * @return <tt>'greater than'</tt> predicate
+     * @return <code>'greater than'</code> predicate
      * @see de.unknownreality.dataframe.filter.ComparePredicate.Operation#GT
      */
     public static FilterPredicate gt(final String name, final Object value) {
@@ -422,7 +423,7 @@ public abstract class FilterPredicate {
      *
      * @param nameA  first row column name
      * @param nameB  second row column name
-     * @return <tt>'greater than'</tt> predicate
+     * @return <code>'greater than'</code> predicate
      * @see de.unknownreality.dataframe.filter.ComparePredicate.Operation#GT
      */
     public static FilterPredicate gtColumn(final String nameA, final String nameB) {
@@ -435,7 +436,7 @@ public abstract class FilterPredicate {
      *
      * @param name  row column name
      * @param value value for comparison
-     * @return <tt>'lower than'</tt> predicate
+     * @return <code>'lower than'</code> predicate
      * @see de.unknownreality.dataframe.filter.ComparePredicate.Operation#LT
      */
     public static FilterPredicate lt(final String name, final Object value) {
@@ -448,7 +449,7 @@ public abstract class FilterPredicate {
      *
      * @param nameA  first row column name
      * @param nameB  second row column name
-     * @return <tt>'lower than'</tt> predicate
+     * @return <code>'lower than'</code> predicate
      * @see de.unknownreality.dataframe.filter.ComparePredicate.Operation#LT
      */
     public static FilterPredicate ltColumn(final String nameA, final String nameB) {
@@ -460,7 +461,7 @@ public abstract class FilterPredicate {
      *
      * @param name  row column name
      * @param value value for comparison
-     * @return <tt>'greater or equal'</tt> predicate
+     * @return <code>'greater or equal'</code> predicate
      * @see de.unknownreality.dataframe.filter.ComparePredicate.Operation#GE
      */
     public static FilterPredicate ge(final String name, final Object value) {
@@ -473,7 +474,7 @@ public abstract class FilterPredicate {
      *
      * @param nameA  first row column name
      * @param nameB  second row column name
-     * @return <tt>'greater or equal'</tt> predicate
+     * @return <code>'greater or equal'</code> predicate
      * @see de.unknownreality.dataframe.filter.ComparePredicate.Operation#LE
      */
     public static FilterPredicate geColumn(final String nameA, final String nameB) {
@@ -486,7 +487,7 @@ public abstract class FilterPredicate {
      *
      * @param name  row column name
      * @param value value for comparison
-     * @return <tt>'lower or equal'</tt> predicate
+     * @return <code>'lower or equal'</code> predicate
      * @see de.unknownreality.dataframe.filter.ComparePredicate.Operation#LE
      */
     public static FilterPredicate le(final String name, final Object value) {
@@ -498,7 +499,7 @@ public abstract class FilterPredicate {
      *
      * @param nameA  first row column name
      * @param nameB  second row column name
-     * @return <tt>'lower or equal'</tt> predicate
+     * @return <code>'lower or equal'</code> predicate
      * @see de.unknownreality.dataframe.filter.ComparePredicate.Operation#LE
      */
     public static FilterPredicate leColumn(final String nameA, final String nameB) {
@@ -511,7 +512,7 @@ public abstract class FilterPredicate {
      *
      * @param name   row column name
      * @param values values for comparison
-     * @return <tt>'in'</tt> predicate.
+     * @return <code>'in'</code> predicate.
      */
     public static FilterPredicate in(final String name, final Object[] values) {
         return in(name, Arrays.asList(values));
@@ -523,7 +524,7 @@ public abstract class FilterPredicate {
      *
      * @param name   row column name
      * @param values values for comparison
-     * @return <tt>'in'</tt> predicate.
+     * @return <code>'in'</code> predicate.
      */
     public static FilterPredicate in(final String name, final Collection<Object> values) {
         return in(name, new HashSet<>(values));
@@ -535,7 +536,7 @@ public abstract class FilterPredicate {
      *
      * @param name   row column name
      * @param values values for comparison
-     * @return <tt>'in'</tt> predicate.
+     * @return <code>'in'</code> predicate.
      */
     public static FilterPredicate in(final String name, final Set<Object> values) {
         return new FilterPredicate() {
@@ -558,7 +559,7 @@ public abstract class FilterPredicate {
      * @param name row column name
      * @param low  low value
      * @param high high value
-     * @return <tt>'between'</tt> predicate.
+     * @return <code>'between'</code> predicate.
      */
     public static FilterPredicate btwn(final String name, Object low, Object high) {
         return FilterPredicate.and(FilterPredicate.gt(name, low), FilterPredicate.lt(name, high));
@@ -569,10 +570,13 @@ public abstract class FilterPredicate {
      *
      * @param name    row column name
      * @param query LIKE query
-     * @return <tt>'LIKE'</tt> predicate.
+     * @return <code>'LIKE'</code> predicate.
      */
     public static FilterPredicate like(final String name, Object query) {
-        return new LikePredicate(name, query != null ? query.toString() : null);
+        if (query == null) {
+            throw new DataFrameRuntimeException("LIKE query is null");
+        }
+        return new LikePredicate(name, query.toString());
     }
     /**
      * Returns a {@link LikePredicate} that checks whether the row column value matches a specified LIKE query.
@@ -580,7 +584,7 @@ public abstract class FilterPredicate {
      *
      * @param name    row column name
      * @param query LIKE query
-     * @return <tt>'LIKE'</tt> predicate.
+     * @return <code>'LIKE'</code> predicate.
      */
     public static FilterPredicate like(final String name, String query) {
         return new LikePredicate(name, query);
@@ -591,7 +595,7 @@ public abstract class FilterPredicate {
      *
      * @param name    row column name
      * @param pattern match pattern
-     * @return <tt>'matches'</tt> predicate.
+     * @return <code>'matches'</code> predicate.
      */
     public static FilterPredicate matches(final String name, Pattern pattern) {
         return new MatchPredicate(name, pattern);
@@ -602,7 +606,7 @@ public abstract class FilterPredicate {
      *
      * @param name          row column name
      * @param patternString match pattern string
-     * @return <tt>'matches'</tt> predicate.
+     * @return <code>'matches'</code> predicate.
      * @see #matches(String, Pattern)
      */
     public static FilterPredicate matches(final String name, String patternString) {

@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -25,8 +25,8 @@
 package de.unknownreality.dataframe.common;
 
 import de.unknownreality.dataframe.DataFrameException;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * Created by Alex on 28.06.2017.
@@ -34,94 +34,94 @@ import org.junit.Test;
 public class StringUtilTest {
     @Test
     public void test() throws DataFrameException {
-        Assert.assertEquals("\"test\"", StringUtil.putInQuotes("test", '"', '\\'));
-        Assert.assertEquals("\"te\\\"st\"", StringUtil.putInQuotes("te\"st", '"', '\\'));
+        Assertions.assertEquals("\"test\"", StringUtil.putInQuotes("test", '"', '\\'));
+        Assertions.assertEquals("\"te\\\"st\"", StringUtil.putInQuotes("te\"st", '"', '\\'));
         StringSplitter stringSplitter = StringSplitter.create();
         String splitTest1 = "testA,testB,testC";
         String[] result = new String[3];
         StringSplitter.create().splitQuoted(splitTest1, ',', result);
-        Assert.assertArrayEquals(new String[]{"testA", "testB", "testC"}, result);
+        Assertions.assertArrayEquals(new String[]{"testA", "testB", "testC"}, result);
 
-        Assert.assertArrayEquals(
+        Assertions.assertArrayEquals(
                 new String[]{"testA", "testB", "testC"}
                 , stringSplitter.splitQuoted("'testA','testB','testC'", ','));
 
-        Assert.assertArrayEquals(
+        Assertions.assertArrayEquals(
                 new String[]{"testA", "testB", "testC"}
                 , stringSplitter.splitQuoted("\"testA\",\"testB\",\"testC\"", ','));
 
-        Assert.assertArrayEquals(
+        Assertions.assertArrayEquals(
                 new String[]{"testA,testB","testC"}
                 , stringSplitter.splitQuoted("'testA,testB',testC",','));
 
 
 
-        Assert.assertArrayEquals(
+        Assertions.assertArrayEquals(
                 new String[]{"testA","testB,testC"}
                 , stringSplitter.splitQuoted("testA,\"testB,testC\"",','));
 
-        Assert.assertArrayEquals(
+        Assertions.assertArrayEquals(
                 new String[]{"testA"}
                 , stringSplitter.splitQuoted("testA",','));
 
-        Assert.assertArrayEquals(
+        Assertions.assertArrayEquals(
                 new String[]{"testA,testB"}
                 , stringSplitter.splitQuoted("'testA,testB'",','));
 
-        Assert.assertArrayEquals(
+        Assertions.assertArrayEquals(
                 new String[]{"testB,testC"}
                 , stringSplitter.splitQuoted("\"testB,testC\"",','));
 
-        Assert.assertArrayEquals(
+        Assertions.assertArrayEquals(
                 new String[]{}
                 , stringSplitter.splitQuoted("",','));
 
-        Assert.assertArrayEquals(
+        Assertions.assertArrayEquals(
                 new String[]{""}
                 , stringSplitter.splitQuoted("\"\"",','));
 
-        Assert.assertArrayEquals(
+        Assertions.assertArrayEquals(
                 new String[]{""}
                 , stringSplitter.splitQuoted("''",','));
 
 
-        Assert.assertArrayEquals(
+        Assertions.assertArrayEquals(
                 new String[]{"testA,testB","testC"}
                 , stringSplitter.splitQuoted("testA\\,testB,testC",','));
 
-        Assert.assertArrayEquals(
+        Assertions.assertArrayEquals(
                 new String[]{"test\"A\"","testB","testC"}
                 , stringSplitter.splitQuoted("test\"A\",testB,testC",','));
 
-        Assert.assertArrayEquals(
+        Assertions.assertArrayEquals(
                 new String[]{"test\"A","testB","testC"}
                 , stringSplitter.splitQuoted("test\"A,testB,testC",','));
-        Assert.assertArrayEquals(
+        Assertions.assertArrayEquals(
                 new String[]{"\'testA\'","testB","testC"}
                 , stringSplitter.splitQuoted("\\'testA\\',testB,testC",','));
 
-        Assert.assertArrayEquals(
+        Assertions.assertArrayEquals(
                 new String[]{"testA","testB,testC","testD"}
                 , stringSplitter.splitQuoted("testA,\'testB,testC\',testD",','));
 
         stringSplitter.setDetectSingleQuotes(false);
-        Assert.assertArrayEquals(
+        Assertions.assertArrayEquals(
                 new String[]{"testA","'testB","testC'","testD"}
                 , stringSplitter.splitQuoted("testA,\'testB,testC\',testD", ','));
 
 
-        Assert.assertArrayEquals(
+        Assertions.assertArrayEquals(
                 new String[]{"testA", "testB,testC", "testD"}
                 , stringSplitter.splitQuoted("testA,\"testB,testC\",testD", ','));
         stringSplitter.setDetectQuotes(false);
-        Assert.assertArrayEquals(
+        Assertions.assertArrayEquals(
                 new String[]{"testA", "\"testB", "testC\"", "testD"}
                 , stringSplitter.splitQuoted("testA,\"testB,testC\",testD", ','));
 
 
         stringSplitter.setDetectQuotes(true);
         stringSplitter.setEscapeChar('\"');
-        Assert.assertArrayEquals(
+        Assertions.assertArrayEquals(
                 new String[]{"testA", "\"testB,testC\"", "testD"}
                 , stringSplitter.splitQuoted("testA,\"\"\"testB,testC\"\"\",testD", ','));
 

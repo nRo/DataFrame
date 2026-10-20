@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -34,8 +34,8 @@ import de.unknownreality.dataframe.column.IntegerColumn;
 import de.unknownreality.dataframe.column.StringColumn;
 import de.unknownreality.dataframe.common.mapping.DataMapper;
 import de.unknownreality.dataframe.common.mapping.MappedColumn;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
@@ -63,20 +63,20 @@ public class MappingTest {
 
         List<TestObject> mappedObject = dataFrame.map(TestObject.class);
 
-        Assert.assertEquals(dataFrame.size(), mappedObject.size());
+        Assertions.assertEquals(dataFrame.size(), mappedObject.size());
         for (int i = 0; i < dataFrame.size(); i++) {
             DataRow row = dataFrame.getRow(i);
-            Assert.assertEquals(row.getString("name"), mappedObject.get(i).getName());
-            Assert.assertEquals(row.getDouble("x"), mappedObject.get(i).getX());
-            Assert.assertEquals(row.getDouble("y"), mappedObject.get(i).getY());
+            Assertions.assertEquals(row.getString("name"), mappedObject.get(i).getName());
+            Assertions.assertEquals(row.getDouble("x"), mappedObject.get(i).getX());
+            Assertions.assertEquals(row.getDouble("y"), mappedObject.get(i).getY());
         }
 
         int i = 0;
         for(TestObject testObject : DataMapper.mapEach(dataFrame,TestObject.class)){
             DataRow row = dataFrame.getRow(i);
-            Assert.assertEquals(row.getString("name"),testObject.getName());
-            Assert.assertEquals(row.getDouble("x"), testObject.getX());
-            Assert.assertEquals(row.getDouble("y"), testObject.getY());
+            Assertions.assertEquals(row.getString("name"),testObject.getName());
+            Assertions.assertEquals(row.getDouble("x"), testObject.getX());
+            Assertions.assertEquals(row.getDouble("y"), testObject.getY());
             i++;
         }
     }

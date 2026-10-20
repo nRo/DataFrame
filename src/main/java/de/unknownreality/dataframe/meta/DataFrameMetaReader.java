@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -38,11 +38,11 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 
 /**
  * Created by Alex on 07.06.2016.
@@ -54,7 +54,7 @@ public class DataFrameMetaReader {
      * Map containing legacy package names.
      * This map is used to rename Reader and Column classes in an old Meta file.
      */
-    private static final Map<String, String> LEGACY_PACKAGES = new TreeMap<>((o1, o2) -> -Integer.compare(o1.length(), o2.length()));
+    private static final Map<String, String> LEGACY_PACKAGES = new TreeMap<>(Comparator.comparingInt(String::length).reversed());
     static {
         LEGACY_PACKAGES.put("de.unknownreality.data.", "de.unknownreality.dataframe.");
         LEGACY_PACKAGES.put("de.unknownreality.data.frame.", "de.unknownreality.dataframe.");
@@ -218,9 +218,9 @@ public class DataFrameMetaReader {
      * @throws DataFrameException thrown if the file can not be converted to a data frame meta
      */
     public static DataFrameMeta read(File file) throws DataFrameException {
-        try {
-            return read(new FileInputStream(file));
-        } catch (FileNotFoundException e) {
+        try (InputStream is = new FileInputStream(file)) {
+            return read(is);
+        } catch (IOException e) {
             throw new DataFrameException("error reading the meta file", e);
         }
     }

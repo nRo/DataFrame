@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -33,18 +33,13 @@ import de.unknownreality.dataframe.column.IntegerColumn;
 import de.unknownreality.dataframe.column.StringColumn;
 import de.unknownreality.dataframe.filter.compile.PredicateCompiler;
 import de.unknownreality.dataframe.filter.compile.PredicateCompilerException;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * Created by Alex on 12.03.2016.
  */
 public class PredicateValueReaderTest {
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
-
     @Test
     public void test() {
 
@@ -66,101 +61,101 @@ public class PredicateValueReaderTest {
 
         FilterPredicate predicate = PredicateCompiler.compile("(.name != 'a') AND (x < 3)");
         DataFrame filtered = dataFrame.select(predicate);
-        Assert.assertEquals(1, filtered.size());
-        Assert.assertEquals("b", filtered.getRow(0).getString("name"));
+        Assertions.assertEquals(1, filtered.size());
+        Assertions.assertEquals("b", filtered.getRow(0).getString("name"));
 
         filtered = dataFrame.select("(name != 'a' && z) OR (name != 'd' && !z)");
-        Assert.assertEquals(2, filtered.size());
-        Assert.assertEquals("b", filtered.getRow(0).getString("name"));
-        Assert.assertEquals("c", filtered.getRow(1).getString("name"));
+        Assertions.assertEquals(2, filtered.size());
+        Assertions.assertEquals("b", filtered.getRow(0).getString("name"));
+        Assertions.assertEquals("c", filtered.getRow(1).getString("name"));
 
 
         filtered = dataFrame.select("x >= 1");
-        Assert.assertEquals(4, filtered.size());
+        Assertions.assertEquals(4, filtered.size());
 
         filtered = dataFrame.select("x > 1");
-        Assert.assertEquals(3, filtered.size());
+        Assertions.assertEquals(3, filtered.size());
 
         filtered = dataFrame.select("x < 1.5");
-        Assert.assertEquals(1, filtered.size());
+        Assertions.assertEquals(1, filtered.size());
 
         filtered = dataFrame.select("x <= 1");
-        Assert.assertEquals(1, filtered.size());
+        Assertions.assertEquals(1, filtered.size());
 
 
         filtered = dataFrame.select("r >= '123'");
-        Assert.assertEquals(4, filtered.size());
+        Assertions.assertEquals(4, filtered.size());
 
         filtered = dataFrame.select("r > '123'");
-        Assert.assertEquals(3, filtered.size());
+        Assertions.assertEquals(3, filtered.size());
 
         filtered = dataFrame.select("r < 'xyz'");
-        Assert.assertEquals(4, filtered.size());
+        Assertions.assertEquals(4, filtered.size());
 
         filtered = dataFrame.select("r <= '123'");
-        Assert.assertEquals(1, filtered.size());
+        Assertions.assertEquals(1, filtered.size());
 
         filtered = dataFrame.select("((((.name != 'a')) AND (x < 3.5))) OR((y == 2))");
-        Assert.assertEquals(3, filtered.size());
-        Assert.assertEquals("b", filtered.getRow(0).getString("name"));
-        Assert.assertEquals("c", filtered.getRow(1).getString("name"));
-        Assert.assertEquals("d", filtered.getRow(2).getString("name"));
+        Assertions.assertEquals(3, filtered.size());
+        Assertions.assertEquals("b", filtered.getRow(0).getString("name"));
+        Assertions.assertEquals("c", filtered.getRow(1).getString("name"));
+        Assertions.assertEquals("d", filtered.getRow(2).getString("name"));
 
 
         filtered = dataFrame.select("r ~= /[a-z]+.+/");
-        Assert.assertEquals(3, filtered.size());
+        Assertions.assertEquals(3, filtered.size());
 
         filtered = dataFrame.select(".r ~= /[a-z]+\\/[0-9]+/");
-        Assert.assertEquals(1, filtered.size());
-        Assert.assertEquals("b", filtered.getRow(0).getString("name"));
+        Assertions.assertEquals(1, filtered.size());
+        Assertions.assertEquals("b", filtered.getRow(0).getString("name"));
 
 
         filtered = dataFrame.select("!(name == 'a')");
-        Assert.assertEquals(3, filtered.size());
+        Assertions.assertEquals(3, filtered.size());
 
 
         filtered = dataFrame.select("!((name == 'a') OR (.x > 2))");
-        Assert.assertEquals(1, filtered.size());
-        Assert.assertEquals("b", filtered.getRow(0).getString("name"));
+        Assertions.assertEquals(1, filtered.size());
+        Assertions.assertEquals("b", filtered.getRow(0).getString("name"));
 
 
         filtered = dataFrame.select("z == true");
-        Assert.assertEquals(2, filtered.size());
+        Assertions.assertEquals(2, filtered.size());
 
         filtered = dataFrame.select("(.z == true) XOR (v == true)");
-        Assert.assertEquals(2, filtered.size());
+        Assertions.assertEquals(2, filtered.size());
 
         DataFrame filtered2 = dataFrame.select(".z XOR v");
-        Assert.assertEquals(2, filtered2.size());
-        Assert.assertEquals(filtered, filtered2);
+        Assertions.assertEquals(2, filtered2.size());
+        Assertions.assertEquals(filtered, filtered2);
 
 
         filtered = dataFrame.select("(z == true) NOR (v == true)");
-        Assert.assertEquals(1, filtered.size());
+        Assertions.assertEquals(1, filtered.size());
         filtered2 = dataFrame.select("z NOR v");
-        Assert.assertEquals(1, filtered.size());
-        Assert.assertEquals(filtered, filtered2);
+        Assertions.assertEquals(1, filtered.size());
+        Assertions.assertEquals(filtered, filtered2);
 
 
         filtered = dataFrame.select(".z == .v");
-        Assert.assertEquals(2, filtered.size());
-        Assert.assertEquals("a", filtered.getRow(0).getString("name"));
-        Assert.assertEquals("d", filtered.getRow(1).getString("name"));
+        Assertions.assertEquals(2, filtered.size());
+        Assertions.assertEquals("a", filtered.getRow(0).getString("name"));
+        Assertions.assertEquals("d", filtered.getRow(1).getString("name"));
 
         filtered = dataFrame.select(".z != .v");
-        Assert.assertEquals(2, filtered.size());
-        Assert.assertEquals("b", filtered.getRow(0).getString("name"));
-        Assert.assertEquals("c", filtered.getRow(1).getString("name"));
+        Assertions.assertEquals(2, filtered.size());
+        Assertions.assertEquals("b", filtered.getRow(0).getString("name"));
+        Assertions.assertEquals("c", filtered.getRow(1).getString("name"));
 
         filtered = dataFrame.select(".z && .v");
-        Assert.assertEquals(1, filtered.size());
-        Assert.assertEquals("a", filtered.getRow(0).getString("name"));
+        Assertions.assertEquals(1, filtered.size());
+        Assertions.assertEquals("a", filtered.getRow(0).getString("name"));
 
         filtered = dataFrame.select("z || v");
-        Assert.assertEquals(3, filtered.size());
+        Assertions.assertEquals(3, filtered.size());
 
         filtered = dataFrame.select("n == null");
-        Assert.assertEquals(2, filtered.size());
+        Assertions.assertEquals(2, filtered.size());
     }
 
 
@@ -177,49 +172,49 @@ public class PredicateValueReaderTest {
         dataFrame.append("A F C", 6);
         dataFrame.append("G C H", 7);
         DataFrame filtered = dataFrame.select("name LIKE 'A B C'");
-        Assert.assertEquals(2, filtered.size());
+        Assertions.assertEquals(2, filtered.size());
 
         filtered = dataFrame.select("name LIKE 'A _ C'");
-        Assert.assertEquals(4, filtered.size());
+        Assertions.assertEquals(4, filtered.size());
 
         filtered = dataFrame.select("name LIKE '%C'");
-        Assert.assertEquals(5, filtered.size());
+        Assertions.assertEquals(5, filtered.size());
 
         filtered = dataFrame.select("name LIKE 'A%'");
-        Assert.assertEquals(4, filtered.size());
+        Assertions.assertEquals(4, filtered.size());
 
         filtered = dataFrame.select("name LIKE 'E%'");
-        Assert.assertEquals(1, filtered.size());
+        Assertions.assertEquals(1, filtered.size());
 
         filtered = dataFrame.select("name LIKE '% _ C'");
-        Assert.assertEquals(5, filtered.size());
+        Assertions.assertEquals(5, filtered.size());
 
         filtered = dataFrame.select("name LIKE '% _ %'");
-        Assert.assertEquals(7, filtered.size());
+        Assertions.assertEquals(7, filtered.size());
 
         filtered = dataFrame.select("name LIKE '%D%'");
-        Assert.assertEquals(2, filtered.size());
+        Assertions.assertEquals(2, filtered.size());
 
         filtered = dataFrame.select("name LIKE '%D%'");
-        Assert.assertEquals(2, filtered.size());
+        Assertions.assertEquals(2, filtered.size());
 
         filtered = dataFrame.select("name LIKE '%C%'");
-        Assert.assertEquals(7, filtered.size());
+        Assertions.assertEquals(7, filtered.size());
 
         filtered = dataFrame.select("name LIKE 'A'");
-        Assert.assertEquals(0, filtered.size());
+        Assertions.assertEquals(0, filtered.size());
 
         filtered = dataFrame.select("name LIKE '_'");
-        Assert.assertEquals(0, filtered.size());
+        Assertions.assertEquals(0, filtered.size());
 
         filtered = dataFrame.select("name LIKE '%AAAAAAAA'");
-        Assert.assertEquals(0, filtered.size());
+        Assertions.assertEquals(0, filtered.size());
 
         filtered = dataFrame.select("name LIKE '%AAAAAAAA%'");
-        Assert.assertEquals(0, filtered.size());
+        Assertions.assertEquals(0, filtered.size());
 
         filtered = dataFrame.select("name LIKE 'AAAAAAAA%'");
-        Assert.assertEquals(0, filtered.size());
+        Assertions.assertEquals(0, filtered.size());
     }
 
     @Test
@@ -238,65 +233,69 @@ public class PredicateValueReaderTest {
 
 
         DataFrame filtered = dataFrame.select("x == 3.5");
-        Assert.assertEquals(1, filtered.size());
-        Assert.assertEquals("c", filtered.getRow(0).getString("name"));
+        Assertions.assertEquals(1, filtered.size());
+        Assertions.assertEquals("c", filtered.getRow(0).getString("name"));
 
         filtered = dataFrame.select("x > 4");
-        Assert.assertEquals(1, filtered.size());
-        Assert.assertEquals("e", filtered.getRow(0).getString("name"));
+        Assertions.assertEquals(1, filtered.size());
+        Assertions.assertEquals("e", filtered.getRow(0).getString("name"));
 
         filtered = dataFrame.select("x <= 3.5");
-        Assert.assertEquals(3, filtered.size());
-        Assert.assertEquals("a", filtered.getRow(0).getString("name"));
-        Assert.assertEquals("b", filtered.getRow(1).getString("name"));
-        Assert.assertEquals("c", filtered.getRow(2).getString("name"));
+        Assertions.assertEquals(3, filtered.size());
+        Assertions.assertEquals("a", filtered.getRow(0).getString("name"));
+        Assertions.assertEquals("b", filtered.getRow(1).getString("name"));
+        Assertions.assertEquals("c", filtered.getRow(2).getString("name"));
 
         filtered = dataFrame.select("x >= 2 && x < 5.5");
-        Assert.assertEquals(3, filtered.size());
-        Assert.assertEquals("b", filtered.getRow(0).getString("name"));
-        Assert.assertEquals("c", filtered.getRow(1).getString("name"));
-        Assert.assertEquals("e", filtered.getRow(2).getString("name"));
+        Assertions.assertEquals(3, filtered.size());
+        Assertions.assertEquals("b", filtered.getRow(0).getString("name"));
+        Assertions.assertEquals("c", filtered.getRow(1).getString("name"));
+        Assertions.assertEquals("e", filtered.getRow(2).getString("name"));
 
         filtered = dataFrame.select("x == null");
-        Assert.assertEquals(1, filtered.size());
-        Assert.assertEquals("d", filtered.getRow(0).getString("name"));
+        Assertions.assertEquals(1, filtered.size());
+        Assertions.assertEquals("d", filtered.getRow(0).getString("name"));
 
 
         filtered = dataFrame.select("z == 5.4321");
-        Assert.assertEquals(1, filtered.size());
-        Assert.assertEquals("e", filtered.getRow(0).getString("name"));
+        Assertions.assertEquals(1, filtered.size());
+        Assertions.assertEquals("e", filtered.getRow(0).getString("name"));
 
         filtered = dataFrame.select("z == 10");
-        Assert.assertEquals(1, filtered.size());
-        Assert.assertEquals("a", filtered.getRow(0).getString("name"));
+        Assertions.assertEquals(1, filtered.size());
+        Assertions.assertEquals("a", filtered.getRow(0).getString("name"));
 
 
         filtered = dataFrame.select("z >= 4.5 && z < 5.5");
-        Assert.assertEquals(2, filtered.size());
-        Assert.assertEquals("d", filtered.getRow(0).getString("name"));
-        Assert.assertEquals("e", filtered.getRow(1).getString("name"));
+        Assertions.assertEquals(2, filtered.size());
+        Assertions.assertEquals("d", filtered.getRow(0).getString("name"));
+        Assertions.assertEquals("e", filtered.getRow(1).getString("name"));
 
         filtered = dataFrame.select("z > 6");
-        Assert.assertEquals(0, filtered.size());
+        Assertions.assertEquals(0, filtered.size());
     }
 
-    @Test(expected = PredicateCompilerException.class)
+    @Test
     public void testWrongOperation() {
-        PredicateCompiler.compile("((name != 'a') X (x < 3.5)) OR (y == 2)");
+        Assertions.assertThrows(PredicateCompilerException.class,
+                () -> PredicateCompiler.compile("((name != 'a') X (x < 3.5)) OR (y == 2)"));
     }
 
-    @Test(expected = PredicateCompilerException.class)
+    @Test
     public void testBrackets() {
-        PredicateCompiler.compile("((name != 'a') AND (x < 3.5) OR (y == 2)");
+        Assertions.assertThrows(PredicateCompilerException.class,
+                () -> PredicateCompiler.compile("((name != 'a') AND (x < 3.5) OR (y == 2)"));
     }
 
-    @Test(expected = PredicateCompilerException.class)
+    @Test
     public void testValue() {
-        PredicateCompiler.compile("((name != 'a') AND (x < a) OR (y == 2)");
+        Assertions.assertThrows(PredicateCompilerException.class,
+                () -> PredicateCompiler.compile("((name != 'a') AND (x < a) OR (y == 2)"));
     }
 
-    @Test(expected = PredicateCompilerException.class)
+    @Test
     public void testColValue() {
-        PredicateCompiler.compile("((name != .a) AND (x < a) OR (y == 2)");
+        Assertions.assertThrows(PredicateCompilerException.class,
+                () -> PredicateCompiler.compile("((name != .a) AND (x < a) OR (y == 2)"));
     }
 }

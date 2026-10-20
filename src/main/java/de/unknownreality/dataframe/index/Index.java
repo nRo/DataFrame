@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -72,17 +72,17 @@ public interface Index {
 
 
     /**
-     * Returns <tt>true</tt> if this index contains the specified column
+     * Returns <code>true</code> if this index contains the specified column
      *
      * @param column column to tes t
-     * @return <tt>true</tt> if column is contained in this index
+     * @return <code>true</code> if column is contained in this index
      */
     boolean containsColumn(DataFrameColumn<?, ?> column);
 
     /**
-     * Returns <tt>true</tt> if this index is unique
+     * Returns <code>true</code> if this index is unique
      *
-     * @return <tt>true</tt> if this index is unique
+     * @return <code>true</code> if this index is unique
      */
     boolean isUnique();
 

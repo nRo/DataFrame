@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -32,10 +32,8 @@ import de.unknownreality.dataframe.csv.CSVReaderBuilder;
 import de.unknownreality.dataframe.io.ReadFormat;
 import de.unknownreality.dataframe.meta.DataFrameMeta;
 import de.unknownreality.dataframe.meta.DataFrameMetaReader;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 
@@ -43,9 +41,6 @@ import java.io.File;
  * Created by Alex on 12.03.2016.
  */
 public class DataFrameMetaTest {
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
-
     @Test
     public void testMetaWriter() throws  Exception{
         DataFrame res = DataFrame.fromCSV("loader_test.csv", DataFrameLoaderTest.class.getClassLoader(), ';', false);
@@ -55,19 +50,19 @@ public class DataFrameMetaTest {
         File tmpFile = File.createTempFile("dataframe", ".csv");
         res.writeCSV(tmpFile,';', true);
         DataFrameMeta meta = DataFrameMetaReader.read(new File(tmpFile.getAbsolutePath()+".dfm"));
-        Assert.assertEquals("", meta.getAttributes().get("headerPrefix"));
-        Assert.assertEquals(";", meta.getAttributes().get("separator"));
-        Assert.assertEquals("false", meta.getAttributes().get("gzip"));
-        Assert.assertEquals("true", meta.getAttributes().get("containsHeader"));
-        Assert.assertEquals(5, meta.getSize());
+        Assertions.assertEquals("", meta.getAttributes().get("headerPrefix"));
+        Assertions.assertEquals(";", meta.getAttributes().get("separator"));
+        Assertions.assertEquals("false", meta.getAttributes().get("gzip"));
+        Assertions.assertEquals("true", meta.getAttributes().get("containsHeader"));
+        Assertions.assertEquals(5, meta.getSize());
 
         ReadFormat readFormat = meta.getReadFormatClass().newInstance();
-        Assert.assertEquals(CSVFormat.class, readFormat.getClass());
+        Assertions.assertEquals(CSVFormat.class, readFormat.getClass());
 
 
-        Assert.assertEquals(IntegerColumn.class, meta.getColumns().get("A"));
-        Assert.assertEquals(DoubleColumn.class, meta.getColumns().get("B"));
-        Assert.assertEquals(StringColumn.class, meta.getColumns().get("C"));
+        Assertions.assertEquals(IntegerColumn.class, meta.getColumns().get("A"));
+        Assertions.assertEquals(DoubleColumn.class, meta.getColumns().get("B"));
+        Assertions.assertEquals(StringColumn.class, meta.getColumns().get("C"));
 
         tmpFile.delete();
 
@@ -76,20 +71,20 @@ public class DataFrameMetaTest {
     @Test
     public void testMetaReader() throws Exception {
         DataFrameMeta meta = DataFrameMetaReader.read(DataFrameMetaTest.class.getResourceAsStream("/loader_test.csv.meta"));
-        Assert.assertEquals("#", meta.getAttributes().get("headerPrefix"));
-        Assert.assertEquals(";", meta.getAttributes().get("separator"));
-        Assert.assertEquals("false", meta.getAttributes().get("gzip"));
-        Assert.assertEquals("false", meta.getAttributes().get("containsHeader"));
+        Assertions.assertEquals("#", meta.getAttributes().get("headerPrefix"));
+        Assertions.assertEquals(";", meta.getAttributes().get("separator"));
+        Assertions.assertEquals("false", meta.getAttributes().get("gzip"));
+        Assertions.assertEquals("false", meta.getAttributes().get("containsHeader"));
 
-        Assert.assertEquals(5, meta.getSize());
+        Assertions.assertEquals(5, meta.getSize());
 
 
         ReadFormat readFormat = meta.getReadFormatClass().newInstance();
-        Assert.assertEquals(CSVFormat.class, readFormat.getClass());
+        Assertions.assertEquals(CSVFormat.class, readFormat.getClass());
 
-        Assert.assertEquals(IntegerColumn.class, meta.getColumns().get("id"));
-        Assert.assertEquals(DoubleColumn.class, meta.getColumns().get("value"));
-        Assert.assertEquals(StringColumn.class, meta.getColumns().get("description"));
+        Assertions.assertEquals(IntegerColumn.class, meta.getColumns().get("id"));
+        Assertions.assertEquals(DoubleColumn.class, meta.getColumns().get("value"));
+        Assertions.assertEquals(StringColumn.class, meta.getColumns().get("description"));
 
     }
 
@@ -97,29 +92,29 @@ public class DataFrameMetaTest {
     @Test
     public void testMetaLegacyReader() throws Exception {
         DataFrameMeta meta = DataFrameMetaReader.read(DataFrameMetaTest.class.getResourceAsStream("/legacy_meta.dfm"));
-        Assert.assertEquals("#", meta.getAttributes().get("headerPrefix"));
-        Assert.assertEquals("\t", meta.getAttributes().get("separator"));
-        Assert.assertEquals("true", meta.getAttributes().get("gzip"));
-        Assert.assertEquals("false", meta.getAttributes().get("containsHeader"));
+        Assertions.assertEquals("#", meta.getAttributes().get("headerPrefix"));
+        Assertions.assertEquals("\t", meta.getAttributes().get("separator"));
+        Assertions.assertEquals("true", meta.getAttributes().get("gzip"));
+        Assertions.assertEquals("false", meta.getAttributes().get("containsHeader"));
 
-        Assert.assertEquals(-1, meta.getSize());
+        Assertions.assertEquals(-1, meta.getSize());
 
 
         ReadFormat readFormat = meta.getReadFormatClass().newInstance();
-        Assert.assertEquals(CSVFormat.class, readFormat.getClass());
+        Assertions.assertEquals(CSVFormat.class, readFormat.getClass());
 
         CSVReaderBuilder csvReaderBuilder = (CSVReaderBuilder) readFormat.getReaderBuilder();
         csvReaderBuilder.loadSettings(meta.getAttributes());
 
 
-       /* Assert.assertEquals("#", csvReaderBuilder.getHeaderPrefix());
-        Assert.assertEquals(new Character('\t'), csvReaderBuilder.getSeparator());
-        Assert.assertEquals(false, csvReaderBuilder.isContainsHeader());
-        Assert.assertEquals(3,meta.getMetaColumns().size());*/
+       /* Assertions.assertEquals("#", csvReaderBuilder.getHeaderPrefix());
+        Assertions.assertEquals(new Character('\t'), csvReaderBuilder.getSeparator());
+        Assertions.assertEquals(false, csvReaderBuilder.isContainsHeader());
+        Assertions.assertEquals(3,meta.getMetaColumns().size());*/
 
-        Assert.assertEquals(IntegerColumn.class, meta.getColumns().get("id"));
-        Assert.assertEquals(DoubleColumn.class, meta.getColumns().get("value"));
-        Assert.assertEquals(StringColumn.class, meta.getColumns().get("description"));
+        Assertions.assertEquals(IntegerColumn.class, meta.getColumns().get("id"));
+        Assertions.assertEquals(DoubleColumn.class, meta.getColumns().get("value"));
+        Assertions.assertEquals(StringColumn.class, meta.getColumns().get("description"));
 
     }
 

@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -34,6 +34,7 @@ import de.unknownreality.dataframe.join.JoinUtil;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Alex on 09.03.2016.
@@ -50,26 +51,8 @@ public class DataFrameBuilder {
     protected DataFrameBuilder() {
     }
 
-    protected DataFrameBuilder(DataIterator<?> dataIterator) {
-        this.dataIterator = dataIterator;
-    }
-
     public static DataFrame createDefault() {
         return new DefaultDataFrame();
-    }
-
-    /**
-     * Creates a data frame builder instance based on a parent data container.
-     *
-     * @param dataIterator parent data reader
-     * @return data frame builder
-     *
-     * @deprecated use {@link DataFrame#load} instead.
-     *
-     * */
-    @Deprecated
-    public static DataFrameBuilder createFrom(DataIterator<?> dataIterator) {
-        return new DataFrameBuilder(dataIterator);
     }
 
     public static DataFrameBuilder create() {
@@ -80,7 +63,7 @@ public class DataFrameBuilder {
      * Defines the name of the resulting dataframe
      *
      * @param name data frame name
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     public DataFrameBuilder withName(String name) {
         this.name = name;
@@ -91,7 +74,7 @@ public class DataFrameBuilder {
      * Adds a new column to the builder.
      *
      * @param column data frame column
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     public DataFrameBuilder addColumn(DataFrameColumn<?, ?> column) {
         columns.put(column.getName(), column);
@@ -102,7 +85,7 @@ public class DataFrameBuilder {
      * Adds a new {@link BooleanColumn} to the builder.
      *
      * @param name name of the column
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     public DataFrameBuilder addBooleanColumn(String name) {
         BooleanColumn column = new BooleanColumn(name);
@@ -113,7 +96,7 @@ public class DataFrameBuilder {
      * Adds a new {@link ByteColumn} to the builder.
      *
      * @param name name of the column
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     public DataFrameBuilder addByteColumn(String name) {
         ByteColumn column = new ByteColumn(name);
@@ -124,7 +107,7 @@ public class DataFrameBuilder {
      * Adds a new {@link DoubleColumn} to the builder.
      *
      * @param name name of the column
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     public DataFrameBuilder addDoubleColumn(String name) {
         DoubleColumn column = new DoubleColumn(name);
@@ -135,7 +118,7 @@ public class DataFrameBuilder {
      * Adds a new {@link FloatColumn} to the builder.
      *
      * @param name name of the column
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     public DataFrameBuilder addFloatColumn(String name) {
         FloatColumn column = new FloatColumn(name);
@@ -146,7 +129,7 @@ public class DataFrameBuilder {
      * Adds a new {@link IntegerColumn} to the builder.
      *
      * @param name name of the column
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     public DataFrameBuilder addIntegerColumn(String name) {
         IntegerColumn column = new IntegerColumn(name);
@@ -157,7 +140,7 @@ public class DataFrameBuilder {
      * Adds a new {@link LongColumn} to the builder.
      *
      * @param name name of the column
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     public DataFrameBuilder addLongColumn(String name) {
         LongColumn column = new LongColumn(name);
@@ -168,7 +151,7 @@ public class DataFrameBuilder {
      * Adds a new {@link ShortColumn} to the builder.
      *
      * @param name name of the column
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     public DataFrameBuilder addShortColumn(String name) {
         ShortColumn column = new ShortColumn(name);
@@ -179,7 +162,7 @@ public class DataFrameBuilder {
      * Adds a new {@link StringColumn} to the builder.
      *
      * @param name name of the column
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     public DataFrameBuilder addStringColumn(String name) {
         StringColumn column = new StringColumn(name);
@@ -218,7 +201,7 @@ public class DataFrameBuilder {
      *
      * @param header column name in the parent data container
      * @param column data frame column
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     public DataFrameBuilder addColumn(String header, DataFrameColumn<?, ?> column) {
         columns.put(header, column);
@@ -238,9 +221,9 @@ public class DataFrameBuilder {
         if (dataIterator != null) {
             List<ColumnInformation> columnInformationList = new ArrayList<>();
             int i = 0;
-            for (String n : columns.keySet()) {
-                ColumnInformation columnInformation = new ColumnInformation(i, n);
-                columnInformation.setColumnType(columns.get(n).getClass());
+            for (Map.Entry<String, DataFrameColumn<?, ?>> entry : columns.entrySet()) {
+                ColumnInformation columnInformation = new ColumnInformation(i, entry.getKey());
+                columnInformation.setColumnType(entry.getValue().getClass());
                 columnInformationList.add(columnInformation);
                 i++;
             }
@@ -250,9 +233,9 @@ public class DataFrameBuilder {
             return DataFrameConverter.fromDataIterator(dataIterator, columnInformationList, filterPredicate);
         }
         DefaultDataFrame dataFrame = new DefaultDataFrame(name);
-        for (String n : columns.keySet()) {
-            DataFrameColumn<?, ?> col = columns.get(n);
-            col.setName(n);
+        for (Map.Entry<String, DataFrameColumn<?, ?>> entry : columns.entrySet()) {
+            DataFrameColumn<?, ?> col = entry.getValue();
+            col.setName(entry.getKey());
             dataFrame.addColumn(col);
         }
         if (joinUtil != null) {

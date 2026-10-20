@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -57,7 +57,7 @@ public class DefaultJoinUtil implements JoinUtil {
     public static final OuterJoin OUTER = new OuterJoin();
 
     /**
-     * Joins two data frames using the <tt>LEFT JOIN</tt> method and the default header name suffixes
+     * Joins two data frames using the <code>LEFT JOIN</code> method and the default header name suffixes
      *
      * @param dfA         first data frame
      * @param dfB         second data frame
@@ -70,7 +70,7 @@ public class DefaultJoinUtil implements JoinUtil {
     }
 
     /**
-     * Joins two data frames using the <tt>LEFT JOIN</tt> method and specified suffixes for the column header names
+     * Joins two data frames using the <code>LEFT JOIN</code> method and specified suffixes for the column header names
      *
      * @param dfA         first data frame
      * @param dfB         second data frame
@@ -86,7 +86,7 @@ public class DefaultJoinUtil implements JoinUtil {
     }
 
     /**
-     * Joins two data frames using the <tt>RIGHT JOIN</tt> method and the default header name suffixes
+     * Joins two data frames using the <code>RIGHT JOIN</code> method and the default header name suffixes
      *
      * @param dfA         first data frame
      * @param dfB         second data frame
@@ -99,7 +99,7 @@ public class DefaultJoinUtil implements JoinUtil {
     }
 
     /**
-     * Joins two data frames using the <tt>RIGHT JOIN</tt> method and specified suffixes for the column header names
+     * Joins two data frames using the <code>RIGHT JOIN</code> method and specified suffixes for the column header names
      *
      * @param dfA         first data frame
      * @param dfB         second data frame
@@ -117,7 +117,7 @@ public class DefaultJoinUtil implements JoinUtil {
 
 
     /**
-     * Joins two data frames using the <tt>INNER JOIN</tt> method and the default header name suffixes
+     * Joins two data frames using the <code>INNER JOIN</code> method and the default header name suffixes
      *
      * @param dfA         first data frame
      * @param dfB         second data frame
@@ -130,7 +130,7 @@ public class DefaultJoinUtil implements JoinUtil {
     }
 
     /**
-     * Joins two data frames using the <tt>INNER JOIN</tt> method and specified suffixes for the column header names
+     * Joins two data frames using the <code>INNER JOIN</code> method and specified suffixes for the column header names
      *
      * @param dfA         first data frame
      * @param dfB         second data frame
@@ -145,7 +145,7 @@ public class DefaultJoinUtil implements JoinUtil {
     }
 
     /**
-     * Joins two data frames using the <tt>OUTER JOIN</tt> method and the default header name suffixes
+     * Joins two data frames using the <code>OUTER JOIN</code> method and the default header name suffixes
      *
      * @param dfA         first data frame
      * @param dfB         second data frame
@@ -158,7 +158,7 @@ public class DefaultJoinUtil implements JoinUtil {
     }
 
     /**
-     * Joins two data frames using the <tt>OUTER JOIN</tt> method and specified suffixes for the column header names
+     * Joins two data frames using the <code>OUTER JOIN</code> method and specified suffixes for the column header names
      *
      * @param dfA         first data frame
      * @param dfB         second data frame

@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -64,10 +64,10 @@ public class JoinInfo {
     }
 
     /**
-     * Returns <tt>true</tt> if the specified data frame equals the first data frames used for the join.
+     * Returns <code>true</code> if the specified data frame equals the first data frames used for the join.
      *
      * @param dataFrame input data frame
-     * @return <tt>true</tt> if the data frame equals the first data frame
+     * @return <code>true</code> if the data frame equals the first data frame
      */
     public boolean isA(DataFrame dataFrame) {
         DataFrame df;
@@ -75,10 +75,10 @@ public class JoinInfo {
     }
 
     /**
-     * Returns <tt>true</tt> if the specified data frame equals the second data frames used for the join.
+     * Returns <code>true</code> if the specified data frame equals the second data frames used for the join.
      *
      * @param dataFrame input data frame
-     * @return <tt>true</tt> if the data frame equals the second data frame
+     * @return <code>true</code> if the data frame equals the second data frame
      */
     public boolean isB(DataFrame dataFrame) {
         DataFrame df;

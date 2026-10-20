@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -32,9 +32,8 @@ import de.unknownreality.dataframe.io.WriteFormat;
 import de.unknownreality.dataframe.meta.DataFrameMeta;
 import de.unknownreality.dataframe.meta.DataFrameMetaWriter;
 
-import java.io.File;
-import java.io.OutputStream;
-import java.io.Writer;
+import java.io.*;
+import java.nio.CharBuffer;
 
 /**
  * Created by Alex on 23.06.2017.
@@ -379,5 +378,109 @@ public class DataFrameWriter {
     public static void print(DataFrame dataFrame, WriteFormat writeFormat) {
         write(System.out, dataFrame, writeFormat);
 
+    }
+
+    /**
+     * Prints a dataframe to a {@link PrintStream} using the default print format ({@link #DEFAULT_PRINT_FORMAT}).
+     *
+     * @param dataFrame input dataframe
+     * @param out       target print stream
+     */
+    public static void print(DataFrame dataFrame, PrintStream out) {
+        write(out, dataFrame, DEFAULT_PRINT_FORMAT);
+    }
+
+    /**
+     * Prints a dataframe to a {@link PrintStream} using a specified {@link DataWriter}.
+     *
+     * @param dataFrame  input dataframe
+     * @param dataWriter data writer used to print the dataframe
+     * @param out        target print stream
+     */
+    public static void print(DataFrame dataFrame, DataWriter dataWriter, PrintStream out) {
+        write(out, dataFrame, dataWriter);
+    }
+
+    /**
+     * Prints a dataframe to a {@link PrintStream} using a specified {@link WriteFormat}.
+     *
+     * @param dataFrame   input dataframe
+     * @param writeFormat write format used to print the dataframe
+     * @param out         target print stream
+     */
+    public static void print(DataFrame dataFrame, WriteFormat writeFormat, PrintStream out) {
+        write(out, dataFrame, writeFormat);
+    }
+
+    /**
+     * Prints a dataframe to an {@link Appendable} (e.g. a {@link StringBuilder}) using the default print format ({@link #DEFAULT_PRINT_FORMAT}).
+     * The appendable is not closed.
+     *
+     * @param dataFrame input dataframe
+     * @param out       target appendable
+     */
+    public static void print(DataFrame dataFrame, Appendable out) {
+        print(dataFrame, DEFAULT_PRINT_FORMAT, out);
+    }
+
+    /**
+     * Prints a dataframe to an {@link Appendable} using a specified {@link DataWriter}.
+     * The appendable is not closed.
+     *
+     * @param dataFrame  input dataframe
+     * @param dataWriter data writer used to print the dataframe
+     * @param out        target appendable
+     */
+    public static void print(DataFrame dataFrame, DataWriter dataWriter, Appendable out) {
+        Writer writer = asWriter(out);
+        write(writer, dataFrame, dataWriter);
+        flush(writer);
+    }
+
+    /**
+     * Prints a dataframe to an {@link Appendable} using a specified {@link WriteFormat}.
+     * The appendable is not closed.
+     *
+     * @param dataFrame   input dataframe
+     * @param writeFormat write format used to print the dataframe
+     * @param out         target appendable
+     */
+    public static void print(DataFrame dataFrame, WriteFormat writeFormat, Appendable out) {
+        print(dataFrame, writeFormat.getWriterBuilder().build(), out);
+    }
+
+    private static void flush(Writer writer) {
+        try {
+            writer.flush();
+        } catch (IOException e) {
+            throw new DataFrameRuntimeException("error flushing the print target", e);
+        }
+    }
+
+    private static Writer asWriter(Appendable appendable) {
+        if (appendable == null) {
+            throw new DataFrameRuntimeException("print target is null");
+        }
+        if (appendable instanceof Writer writer) {
+            return writer;
+        }
+        return new Writer() {
+            @Override
+            public void write(char[] cbuf, int off, int len) throws IOException {
+                appendable.append(CharBuffer.wrap(cbuf, off, len));
+            }
+
+            @Override
+            public void flush() throws IOException {
+                if (appendable instanceof Flushable flushable) {
+                    flushable.flush();
+                }
+            }
+
+            @Override
+            public void close() throws IOException {
+                flush();
+            }
+        };
     }
 }

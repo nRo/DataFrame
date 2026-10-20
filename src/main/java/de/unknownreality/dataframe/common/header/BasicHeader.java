@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -64,10 +64,10 @@ public class BasicHeader implements Header<String> {
     }
 
     /**
-     * Returns <tt>true</tt> if this header contains the specified column header name
+     * Returns <code>true</code> if this header contains the specified column header name
      *
      * @param name column name
-     * @return <tt>true</tt> if this header contains the column name
+     * @return <code>true</code> if this header contains the column name
      */
     @Override
     public boolean contains(String name) {

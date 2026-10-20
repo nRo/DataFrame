@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -24,6 +24,7 @@
 
 package de.unknownreality.dataframe.common.mapping;
 
+import de.unknownreality.dataframe.DataFrameRuntimeException;
 import de.unknownreality.dataframe.common.Row;
 import de.unknownreality.dataframe.type.DataFrameTypeManager;
 
@@ -87,8 +88,9 @@ public class FieldColumn {
         try {
             field.setAccessible(true);
             field.set(object, convertedVal);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+        } catch (IllegalAccessException | RuntimeException e) {
+            throw new DataFrameRuntimeException(
+                    String.format("error setting field '%s' of class '%s'", field.getName(), field.getDeclaringClass().getName()), e);
         }
     }
 }

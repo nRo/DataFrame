@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <!-- generated ANTLR parser -->
+    <Match>
+        <Package name="de.unknownreality.dataframe.generated"/>
+    </Match>
+
+    <!-- Accepted by design: a DataFrame wraps and exposes mutable columns and rows without defensive copies. -->
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2,MS_EXPOSE_REP"/>
+    </Match>
+
+    <!-- Accepted by design: constructors validate arguments and throw, there are no security sensitive finalizers. -->
+    <Match>
+        <Bug pattern="CT_CONSTRUCTOR_THROW"/>
+    </Match>
+
+    <!-- Accepted: data frame subclasses (groupings, joins) intentionally inherit the equals logic of DefaultDataFrame. -->
+    <Match>
+        <Bug pattern="EQ_DOESNT_OVERRIDE_EQUALS"/>
+    </Match>
+
+    <!-- Accepted: data frames and iterators are documented as not thread-safe. -->
+    <Match>
+        <Bug pattern="AT_NONATOMIC_OPERATIONS_ON_SHARED_VARIABLE,AT_STALE_THREAD_WRITE_OF_PRIMITIVE"/>
+    </Match>
+
+    <!-- False positive: DataReader#loadStream closes the stream if the iterator can not be created. -->
+    <Match>
+        <Class name="de.unknownreality.dataframe.io.DataReader"/>
+        <Bug pattern="OBL_UNSATISFIED_OBLIGATION"/>
+    </Match>
+
+    <!-- Defensive null checks of values that are looked up from type managers that may return null for unknown types. -->
+    <Match>
+        <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+    </Match>
+</FindBugsFilter>

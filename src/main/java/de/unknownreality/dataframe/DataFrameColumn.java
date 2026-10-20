@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -49,7 +49,7 @@ public abstract class DataFrameColumn<T, C extends DataFrameColumn<T, C>> implem
     /**
      * Used to return the right column type for
      *
-     * @return <tt>self</tt>
+     * @return <code>self</code>
      */
     protected abstract C getThis();
 
@@ -58,7 +58,7 @@ public abstract class DataFrameColumn<T, C extends DataFrameColumn<T, C>> implem
      * Can be used during dataframe creation if the size is known.
      *
      * @param capacity capacity
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     public abstract C setCapacity(int capacity);
 
@@ -98,7 +98,7 @@ public abstract class DataFrameColumn<T, C extends DataFrameColumn<T, C>> implem
      * <p>Calls {@link #notifyDataFrameValueChanged(int)} to ensure data frame index consistency</p>
      *
      * @param comparator the comparator used to sort the column values
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     public final C sort(Comparator<T> comparator) {
         doSort(comparator);
@@ -117,7 +117,7 @@ public abstract class DataFrameColumn<T, C extends DataFrameColumn<T, C>> implem
      * Sorts the column values by their natural ordering
      * <p>Calls {@link #notifyDataFrameValueChanged(int)} to ensure data frame index consistency</p>
      *
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     public final C sort() {
         doSort();
@@ -134,16 +134,15 @@ public abstract class DataFrameColumn<T, C extends DataFrameColumn<T, C>> implem
      */
     public Double toDouble(int index) {
         T v = get(index);
-        try{
-            return ((Number) v).doubleValue();
+        if (v instanceof Number number) {
+            return number.doubleValue();
         }
-        catch (Exception e){
-            // try parsing now
+        if (v == null) {
+            return Double.NaN;
         }
-        try{
+        try {
             return Double.parseDouble(String.valueOf(v));
-        }
-        catch (Exception e){
+        } catch (NumberFormatException e) {
             return Double.NaN;
         }
     }
@@ -182,7 +181,7 @@ public abstract class DataFrameColumn<T, C extends DataFrameColumn<T, C>> implem
      *
      * @param index index of the new value
      * @param value value to be doSet
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     public final C set(int index, T value) {
         doSet(index, value);
@@ -198,7 +197,7 @@ public abstract class DataFrameColumn<T, C extends DataFrameColumn<T, C>> implem
      *
      * @param index index of the new value
      * @param value value to be doSet
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     public final C setRaw(int index, Object value) {
         return set(index, getValueType().convertRaw(value));
@@ -220,7 +219,7 @@ public abstract class DataFrameColumn<T, C extends DataFrameColumn<T, C>> implem
      * <p>Calls{@link #notifyDataFrameColumnChanged()} to ensure data frame index consistency</p>
      *
      * @param mapFunction The function applied to each value
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     public final C map(MapFunction<T> mapFunction) {
         doMap(mapFunction);
@@ -237,7 +236,7 @@ public abstract class DataFrameColumn<T, C extends DataFrameColumn<T, C>> implem
      * Reverses the order of the column values
      * <p>Calls{@link #notifyDataFrameColumnChanged()} to ensure data frame index consistency</p>
      *
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     public final C reverse() {
         doReverse();
@@ -307,18 +306,18 @@ public abstract class DataFrameColumn<T, C extends DataFrameColumn<T, C>> implem
     public abstract List<T> toList();
 
     /**
-     * Returns <tt>true</tt> if <b>all</b> values of a specified collection are present in this column.
+     * Returns <code>true</code> if <b>all</b> values of a specified collection are present in this column.
      *
      * @param c Collection that contains the tested values
-     * @return <tt>true</tt> if all values are present in this column
+     * @return <code>true</code> if all values are present in this column
      */
     public abstract boolean containsAll(Collection<?> c);
 
     /**
-     * Returns <tt>true</tt> if the specified value exists in this column.
+     * Returns <code>true</code> if the specified value exists in this column.
      *
      * @param o value that is tested
-     * @return <tt>true</tt> if this column contains the specified value
+     * @return <code>true</code> if this column contains the specified value
      */
     public abstract boolean contains(T o);
 
@@ -326,7 +325,7 @@ public abstract class DataFrameColumn<T, C extends DataFrameColumn<T, C>> implem
      * Used by {@link #append(T)} to append a value to this column.
      *
      * @param value value to be appended
-     * @return <tt>true</tt> if the value is successfully appended
+     * @return <code>true</code> if the value is successfully appended
      */
     protected abstract boolean doAppend(T value);
 
@@ -351,7 +350,7 @@ public abstract class DataFrameColumn<T, C extends DataFrameColumn<T, C>> implem
      * <p>Calls{@link #validateAppend()} to ensure data frame index consistency</p>
      *
      * @param value value to be appended
-     * @return <tt>true</tt> if the value is successfully appended
+     * @return <code>true</code> if the value is successfully appended
      * @see #validateAppend()
      */
     public final boolean append(T value) {
@@ -371,7 +370,7 @@ public abstract class DataFrameColumn<T, C extends DataFrameColumn<T, C>> implem
      * <p>Calls{@link #validateAppend()} to ensure data frame index consistency</p>
      *
      * @param value value to be appended
-     * @return <tt>true</tt> if the value is successfully appended
+     * @return <code>true</code> if the value is successfully appended
      * @see #validateAppend()
      */
     public final boolean appendRaw(Object value) {
@@ -385,7 +384,7 @@ public abstract class DataFrameColumn<T, C extends DataFrameColumn<T, C>> implem
      * @param <H>        header value type
      * @param row        row containing the value
      * @param headerName headerName of the value within the row
-     * @return <tt>true</tt> if the value is successfully appended
+     * @return <code>true</code> if the value is successfully appended
      * @see #validateAppend()
      */
     public final<H> boolean append(Row<?,H> row,H headerName) {
@@ -404,7 +403,7 @@ public abstract class DataFrameColumn<T, C extends DataFrameColumn<T, C>> implem
      *
      * @param row row containing the value
      * @param index index of the value within the row
-     * @return <tt>true</tt> if the value is successfully appended
+     * @return <code>true</code> if the value is successfully appended
      * @see #validateAppend()
      */
     public final boolean append(Row<?,?> row,int index) {
@@ -422,7 +421,7 @@ public abstract class DataFrameColumn<T, C extends DataFrameColumn<T, C>> implem
      * Used by {@link #appendAll(Collection)}} to append a collection of values.
      *
      * @param c collection containing values to be added to this column
-     * @return <tt>true</tt> if the value is successfully appended
+     * @return <code>true</code> if the value is successfully appended
      * @see #append(T)
      */
     protected abstract boolean doAppendAll(Collection<? extends T> c);
@@ -432,7 +431,7 @@ public abstract class DataFrameColumn<T, C extends DataFrameColumn<T, C>> implem
      * <p>Calls {@link #validateAppend()} to ensure data frame index consistency</p>
      *
      * @param c collection containing values to be added to this column
-     * @return <tt>true</tt> if all values are appended successfully
+     * @return <code>true</code> if all values are appended successfully
      * @see #append(T)
      */
     public final boolean appendAll(Collection<? extends T> c) {
@@ -448,7 +447,7 @@ public abstract class DataFrameColumn<T, C extends DataFrameColumn<T, C>> implem
     /**
      * Used by {@link #appendNA()} to append NA at the end of this column.
      *
-     * @return <tt>true</tt> if value was appended successfully
+     * @return <code>true</code> if value was appended successfully
      * @see #appendNA()
      */
     protected abstract boolean doAppendNA();
@@ -458,7 +457,7 @@ public abstract class DataFrameColumn<T, C extends DataFrameColumn<T, C>> implem
      * Appends a {@link Values#NA NA value} to the end of this column.
      * <p>Calls {@link #validateAppend()} to ensure data frame index consistency</p>
      *
-     * @return <tt>true</tt> if value was appended successfully
+     * @return <code>true</code> if value was appended successfully
      */
     public final boolean appendNA() {
         try {
@@ -479,25 +478,25 @@ public abstract class DataFrameColumn<T, C extends DataFrameColumn<T, C>> implem
 
 
     /**
-     * Returns <tt>true</tt> if this column contains no values.
+     * Returns <code>true</code> if this column contains no values.
      *
-     * @return <tt>true</tt> if this column is empty.
+     * @return <code>true</code> if this column is empty.
      */
     public abstract boolean isEmpty();
 
 
     /**
-     * Returns <tt>true</tt> if the value at the specified index equals {@link Values#NA NA}.
+     * Returns <code>true</code> if the value at the specified index equals {@link Values#NA NA}.
      *
-     * @param index index to be tested for <tt>NA</tt>
-     * @return <tt>true</tt> if the specified index is <tt>NA</tt>
+     * @param index index to be tested for <code>NA</code>
+     * @return <code>true</code> if the specified index is <code>NA</code>
      */
     public abstract boolean isNA(int index);
 
     /**
      * Used by {@link #setNA(int)} to set a specified index to {@link Values#NA NA}.
      *
-     * @param index index to be doSet to <tt>NA</tt>
+     * @param index index to be doSet to <code>NA</code>
      */
     protected abstract void doSetNA(int index);
 
@@ -506,7 +505,7 @@ public abstract class DataFrameColumn<T, C extends DataFrameColumn<T, C>> implem
      * <p>Calls {@link #notifyDataFrameValueChanged(int)} to ensure data frame index consistency</p>
      *
      * @param index index to be set NA
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     public final C setNA(int index) {
         doSetNA(index);

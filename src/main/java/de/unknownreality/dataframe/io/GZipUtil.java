@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -38,25 +38,27 @@ public class GZipUtil {
     private static final Logger log = LoggerFactory.getLogger(GZipUtil.class);
 
     /**
-     * Returns <tt>true</tt> if the specified file is gzipped
+     * Returns <code>true</code> if the specified file is gzipped
      *
      * @param file file to test
-     * @return <tt>true</tt> if file is gzipped
+     * @return <code>true</code> if file is gzipped
      */
     public static boolean isGzipped(File file) {
-        try {
-            return isGzipped(new FileInputStream(file));
-        } catch (Exception e) {
+        try (InputStream is = new BufferedInputStream(new FileInputStream(file))) {
+            return isGzipped(is);
+        } catch (IOException e) {
             log.error("error opening file", e);
         }
         return false;
     }
 
     /**
-     * Returns <tt>true</tt> if specified {@link InputStream} is gzipped
+     * Returns <code>true</code> if specified {@link InputStream} is gzipped.
+     * The stream should support mark/reset (e.g. {@link BufferedInputStream}), otherwise
+     * the first two bytes are consumed and can not be restored.
      *
      * @param is Input stream to test
-     * @return <tt>true</tt> if input stream is gzipped
+     * @return <code>true</code> if input stream is gzipped
      */
     public static boolean isGzipped(InputStream is) {
         if (!is.markSupported()) {

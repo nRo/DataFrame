@@ -21,7 +21,7 @@ public class StringType extends ComparableType<String> {
     public String read(DataInputStream dis) throws IOException {
         int length = dis.readInt();
         byte[] data = new byte[length];
-        dis.read(data);
+        dis.readFully(data);
         return new String(data, charSet);
     }
 
@@ -29,6 +29,7 @@ public class StringType extends ComparableType<String> {
     public String read(ByteBuffer buf) {
         int length = buf.getInt();
         byte[] data = new byte[length];
+        buf.get(data);
         return new String(data, charSet);
     }
 

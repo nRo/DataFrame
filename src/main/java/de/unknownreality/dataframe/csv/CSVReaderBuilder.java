@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -56,6 +56,14 @@ public class CSVReaderBuilder implements ReaderBuilder<CSVRow, CSVReader> {
         return new CSVReaderBuilder();
     }
 
+    /**
+     * Sets the column separator.
+     * <p>The default separator of this builder is <code>';'</code>, the same as {@link CSVFormat} and
+     * {@link de.unknownreality.dataframe.io.FileFormat#CSV}. Use this method to read comma separated files.</p>
+     *
+     * @param separator column separator
+     * @return self for method chaining
+     */
     public CSVReaderBuilder withSeparator(char separator) {
         this.separator = separator;
         return this;
@@ -82,6 +90,14 @@ public class CSVReaderBuilder implements ReaderBuilder<CSVRow, CSVReader> {
         return this;
     }
 
+    /**
+     * Sets the charset used to decode the input.
+     * The charset is applied to every source (file, gzip, stream, url, resource and bytes).
+     * If no charset is set, UTF-8 is used.
+     *
+     * @param charset charset of the input
+     * @return self for method chaining
+     */
     public CSVReaderBuilder withCharset(Charset charset) {
         this.charset = charset;
         return this;

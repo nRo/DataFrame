@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -67,7 +67,7 @@ public class JoinOperationUtil {
     /**
      * Fills an value array with {@link Values#NA}
      *
-     * @param joinedRowValues array with <tt>NA</tt> values
+     * @param joinedRowValues array with <code>NA</code> values
      */
     public static void fillNA(Object[] joinedRowValues) {
         for (int i = 0; i < joinedRowValues.length; i++) {

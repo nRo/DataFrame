@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -64,10 +64,13 @@ public class CSVWriter extends DataWriter {
     public void write(OutputStream os, DataContainer<? extends Header<?>, ? extends Row<?, ?>> dataContainer) {
         if (settings.isGzip()) {
             try {
-                os = new GZIPOutputStream(os);
+                GZIPOutputStream gzipOutputStream = new GZIPOutputStream(os);
+                super.write(gzipOutputStream, dataContainer);
+                gzipOutputStream.finish();
             } catch (IOException e) {
-                throw new CSVRuntimeException("error creating gzip output stream", e);
+                throw new CSVRuntimeException("error writing gzip output stream", e);
             }
+            return;
         }
         super.write(os, dataContainer);
     }
@@ -144,7 +147,7 @@ public class CSVWriter extends DataWriter {
     public void write(File file, DataContainer<? extends Header<?>, ? extends Row<?, ?>> dataContainer) {
         if (settings.isGzip()) {
             try (OutputStream outputStream = new GZIPOutputStream(new FileOutputStream(file))) {
-                write(new BufferedWriter(new OutputStreamWriter(outputStream)), dataContainer);
+                write(new BufferedWriter(new OutputStreamWriter(outputStream, getCharset())), dataContainer);
                 return;
             } catch (IOException e) {
                 throw new CSVRuntimeException(String.format("error writing file '%s'", file.getAbsolutePath()), e);

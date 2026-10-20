@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -73,7 +73,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * Sets the primary key columns using column names
      *
      * @param colNames primary key columns
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame setPrimaryKey(String... colNames);
 
@@ -81,14 +81,14 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * Sets the primary key columns using column objects
      *
      * @param cols primary key columns
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame setPrimaryKey(DataFrameColumn<?, ?>... cols);
 
     /**
      * Removes the current primary key
      *
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame removePrimaryKey();
 
@@ -96,7 +96,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * Removes the index with the specified name
      *
      * @param name name of index
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame removeIndex(String name);
 
@@ -106,7 +106,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      *
      * @param name    current column name
      * @param newName new column name
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame renameColumn(String name, String newName);
 
@@ -133,7 +133,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * If the column is already part of another data frame a {@link DataFrameRuntimeException} is thrown.
      *
      * @param column column to add
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame addColumn(DataFrameColumn<?, ?> column);
 
@@ -143,7 +143,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param type class of column values
      * @param name column name
      * @param <T>  type of column values
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     <T> DataFrame addColumn(Class<T> type, String name);
 
@@ -154,7 +154,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param name                 column name
      * @param dataFrameTypeManager provided column type map
      * @param <T>                  type of column values
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      * @see #addColumn(Class, String, ColumnAppender)
      */
     <T> DataFrame addColumn(Class<T> type, String name, DataFrameTypeManager dataFrameTypeManager);
@@ -169,7 +169,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param appender             column appender (value generator)
      * @param <T>                  type of column values
      * @param <C>                  type of created column
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      * @see #addColumn(Class, String, ColumnAppender)
      */
     <T, C extends DataFrameColumn<T, C>> DataFrame addColumn(Class<T> type, String name, DataFrameTypeManager dataFrameTypeManager, ColumnAppender<T> appender);
@@ -183,7 +183,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * @param appender column appender (value generator)
      * @param <T>      type of column values
      * @param <C>      type of created column
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      * @see #addColumn(DataFrameColumn)
      */
     <T, C extends DataFrameColumn<T, C>> DataFrame addColumn(Class<C> type, String name, ColumnAppender<T> appender);
@@ -193,7 +193,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * Adds a new {@link BooleanColumn} to the dataframe.
      *
      * @param name name of the column
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame addBooleanColumn(String name);
 
@@ -201,7 +201,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * Adds a new {@link ByteColumn} to the dataframe.
      *
      * @param name name of the column
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame addByteColumn(String name);
 
@@ -209,7 +209,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * Adds a new {@link DoubleColumn} to the dataframe.
      *
      * @param name name of the column
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame addDoubleColumn(String name);
 
@@ -217,7 +217,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * Adds a new {@link FloatColumn} to the dataframe.
      *
      * @param name name of the column
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame addFloatColumn(String name);
 
@@ -225,7 +225,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * Adds a new {@link IntegerColumn} to the dataframe.
      *
      * @param name name of the column
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame addIntegerColumn(String name);
 
@@ -233,7 +233,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * Adds a new {@link LongColumn} to the dataframe.
      *
      * @param name name of the column
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame addLongColumn(String name);
 
@@ -241,7 +241,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * Adds a new {@link ShortColumn} to the dataframe.
      *
      * @param name name of the column
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame addShortColumn(String name);
 
@@ -249,7 +249,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * Adds a new {@link StringColumn} to the dataframe.
      *
      * @param name name of the column
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame addStringColumn(String name);
 
@@ -257,7 +257,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * Adds a collection of columns to this data frame
      *
      * @param columns columns to add
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame addColumns(Collection<DataFrameColumn<?, ?>> columns);
 
@@ -265,7 +265,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * Adds an array of columns to this data frame
      *
      * @param columns columns to add
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame addColumns(DataFrameColumn<?, ?>... columns);
 
@@ -282,7 +282,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      *
      * @param dataFrame other dataframe
      * @param rowIndex  row in other dataframe
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame append(DataFrame dataFrame, int rowIndex);
 
@@ -296,10 +296,10 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * The only correct call to this method is:<br>
      * <code>append(String, Double, Integer)</code>
      * </p>
-     * <p>empty column values must be provided as <tt>null</tt> or {@link Values#NA NA}</p>
+     * <p>empty column values must be provided as <code>null</code> or {@link Values#NA NA}</p>
      *
      * @param values values for the appended row
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame append(Object... values);
 
@@ -307,7 +307,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * Appends a new data row. Only row values matching a dataframe column are appended
      *
      * @param row row containing the new values
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame append(DataRow row);
 
@@ -316,16 +316,16 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * The order of the row values must match the column order in the dataframe.
      *
      * @param row row containing the new values
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame appendMatchingRow(DataRow row);
 
     /**
      * Persists the updated values of a data row.
-     * <tt>null</tt> values are ignored. Use {@link Values#NA NA} instead-
+     * <code>null</code> values are ignored. Use {@link Values#NA NA} instead-
      *
      * @param dataRow data row with updated values
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame update(DataRow dataRow);
 
@@ -335,7 +335,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * Clears all rows in this data frame and sets new rows using the provided {@link DataRows}.
      *
      * @param rows new collection of rows
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame set(DataRows rows);
 
@@ -344,7 +344,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * Removes a column from this data frame
      *
      * @param header column header name
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame removeColumn(String header);
 
@@ -352,7 +352,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * Removes a column from this data frame
      *
      * @param column column to remove
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame removeColumn(DataFrameColumn<?, ?> column);
 
@@ -360,7 +360,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * Sorts the rows in this data frame by one or more {@link SortColumn}
      *
      * @param columns sort columns
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame sort(SortColumn... columns);
 
@@ -368,15 +368,15 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * Sorts the rows in this data frame using a custom {@link Comparator}
      *
      * @param comp comparator used to sort the rows
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame sort(Comparator<DataRow> comp);
 
     /**
-     * Sorts the rows in this data frame using one column and the default sort direction (<tt>ascending</tt>)
+     * Sorts the rows in this data frame using one column and the default sort direction (<code>ascending</code>)
      *
      * @param name sort column
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame sort(String name);
 
@@ -385,14 +385,14 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      *
      * @param name sort column
      * @param dir  sort direction
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame sort(String name, SortColumn.Direction dir);
 
     /**
      * Shuffles all rows
      *
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame shuffle();
 
@@ -465,7 +465,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * <p><code>if(!predicate.valid(row)) -&gt; remove(row)</code></p>
      *
      * @param predicateString filter predicate string
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame filter(String predicateString);
 
@@ -477,7 +477,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * <p><code>if(!predicate.valid(row)) -&gt; remove(row)</code></p>
      *
      * @param predicate filter predicate
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame filter(FilterPredicate predicate);
 
@@ -527,7 +527,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     /**
      * Reverses all columns
      *
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame reverse();
 
@@ -537,7 +537,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      *
      * @param indexName   name of new index
      * @param columnNames index columns
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame addIndex(String indexName, String... columnNames);
 
@@ -547,7 +547,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      *
      * @param indexName name of new index
      * @param columns   index columns
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame addIndex(String indexName, DataFrameColumn<?, ?>... columns);
 
@@ -555,7 +555,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * Adds a new index to the dataframe
      *
      * @param index index to add
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame addIndex(Index index);
 
@@ -575,28 +575,28 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
 
     /**
      * Sets this data frame to a subset of itself.
-     * Only rows between <tt>from</tt> and <tt>to</tt> remain in this data frame
+     * Only rows between <code>from</code> and <code>to</code> remain in this data frame
      *
      * @param from lowest remaining row index
      * @param to   highest remaining row index
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame subset(int from, int to);
 
     /**
      * Sets this data frame to a subset of itself.
-     * Only rows between <tt>from</tt> and <tt>to</tt> remain in this data frame
+     * Only rows between <code>from</code> and <code>to</code> remain in this data frame
      *
      * @param from lowest remaining row index
      * @param to   highest remaining row index
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame filterSubset(int from, int to);
 
 
     /**
      * Creates a new data frame from a subset of this data frame.
-     * Rows between <tt>from</tt> and <tt>to</tt> are added to the new data frame.
+     * Rows between <code>from</code> and <code>to</code> are added to the new data frame.
      *
      * @param from lowest row index
      * @param to   highest row index
@@ -605,11 +605,11 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     DataFrame selectSubset(int from, int to);
 
     /**
-     * Returns a list the list of rows between <tt>from</tt> and <tt>to</tt>.
+     * Returns a list the list of rows between <code>from</code> and <code>to</code>.
      *
      * @param from lowest row index
      * @param to   highest row index
-     * @return list of rows between <tt>from</tt> and <tt>to</tt>
+     * @return list of rows between <code>from</code> and <code>to</code>
      */
     DataRows getRows(int from, int to);
 
@@ -633,7 +633,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * Throws a {@link DataFrameRuntimeException} if the data frames are not compatible.
      *
      * @param other other data frame
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame concat(DataFrame other);
 
@@ -642,7 +642,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * Throws a {@link DataFrameRuntimeException} if the data frames are not compatible.
      *
      * @param dataFrames other data frames
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame concat(Collection<DataFrame> dataFrames);
 
@@ -651,15 +651,15 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      * Throws a {@link DataFrameRuntimeException} if the data frames are not compatible.
      *
      * @param dataFrames other data frames
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     DataFrame concat(DataFrame... dataFrames);
 
     /**
-     * Returns <tt>true</tt> if the header of an input data frame equals the header of this data frame.
+     * Returns <code>true</code> if the header of an input data frame equals the header of this data frame.
      *
      * @param input input data frame
-     * @return <tt>true</tt> if the other data frame is compatible with this data frame.
+     * @return <code>true</code> if the other data frame is compatible with this data frame.
      * @see DataFrameHeader#equals(Object)
      */
     boolean isCompatible(DataFrame input);
@@ -791,7 +791,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     DataGrouping groupBy(String... column);
 
     /**
-     * Joins this data frame with another data frame using the <tt>LEFT JOIN</tt> method.
+     * Joins this data frame with another data frame using the <code>LEFT JOIN</code> method.
      *
      * @param dataFrame   other data frame
      * @param joinColumns join columns
@@ -801,7 +801,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     JoinedDataFrame joinLeft(DataFrame dataFrame, String... joinColumns);
 
     /**
-     * Joins this data frame with another data frame using the <tt>LEFT JOIN</tt> method.
+     * Joins this data frame with another data frame using the <code>LEFT JOIN</code> method.
      *
      * @param dataFrame   other data frame
      * @param joinColumns join columns
@@ -811,7 +811,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     JoinedDataFrame joinLeft(DataFrame dataFrame, JoinColumn... joinColumns);
 
     /**
-     * Joins this data frame with another data frame using the <tt>LEFT JOIN</tt> method.
+     * Joins this data frame with another data frame using the <code>LEFT JOIN</code> method.
      * Column names are altered using the provided suffixes.
      *
      * @param dataFrame   other data frame
@@ -824,7 +824,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     JoinedDataFrame joinLeft(DataFrame dataFrame, String suffixA, String suffixB, JoinColumn... joinColumns);
 
     /**
-     * Joins this data frame with another data frame using the <tt>RIGHT JOIN</tt> method.
+     * Joins this data frame with another data frame using the <code>RIGHT JOIN</code> method.
      *
      * @param dataFrame   other data frame
      * @param joinColumns join columns
@@ -834,7 +834,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     JoinedDataFrame joinRight(DataFrame dataFrame, String... joinColumns);
 
     /**
-     * Joins this data frame with another data frame using the <tt>LEFT JOIN</tt> method.
+     * Joins this data frame with another data frame using the <code>LEFT JOIN</code> method.
      *
      * @param dataFrame   other data frame
      * @param joinColumns join columns
@@ -844,7 +844,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     JoinedDataFrame joinRight(DataFrame dataFrame, JoinColumn... joinColumns);
 
     /**
-     * Joins this data frame with another data frame using the <tt>RIGHT JOIN</tt> method.
+     * Joins this data frame with another data frame using the <code>RIGHT JOIN</code> method.
      * Column names are altered using the provided suffixes.
      *
      * @param dataFrame   other data frame
@@ -857,7 +857,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     JoinedDataFrame joinRight(DataFrame dataFrame, String suffixA, String suffixB, JoinColumn... joinColumns);
 
     /**
-     * Joins this data frame with another data frame using the <tt>INNER JOIN</tt> method.
+     * Joins this data frame with another data frame using the <code>INNER JOIN</code> method.
      *
      * @param dataFrame   other data frame
      * @param joinColumns join columns
@@ -867,7 +867,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     JoinedDataFrame joinInner(DataFrame dataFrame, String... joinColumns);
 
     /**
-     * Joins this data frame with another data frame using the <tt>INNER JOIN</tt> method.
+     * Joins this data frame with another data frame using the <code>INNER JOIN</code> method.
      *
      * @param dataFrame   other data frame
      * @param joinColumns join columns
@@ -877,7 +877,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     JoinedDataFrame joinInner(DataFrame dataFrame, JoinColumn... joinColumns);
 
     /**
-     * Joins this data frame with another data frame using the <tt>INNER JOIN</tt> method.
+     * Joins this data frame with another data frame using the <code>INNER JOIN</code> method.
      * Column names are altered using the provided suffixes.
      *
      * @param dataFrame   other data frame
@@ -890,7 +890,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     JoinedDataFrame joinInner(DataFrame dataFrame, String suffixA, String suffixB, JoinColumn... joinColumns);
 
     /**
-     * Joins this data frame with another data frame using the <tt>OUTER JOIN</tt> method.
+     * Joins this data frame with another data frame using the <code>OUTER JOIN</code> method.
      *
      * @param dataFrame   other data frame
      * @param joinColumns join columns
@@ -900,7 +900,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     JoinedDataFrame joinOuter(DataFrame dataFrame, String... joinColumns);
 
     /**
-     * Joins this data frame with another data frame using the <tt>OUTER JOIN</tt> method.
+     * Joins this data frame with another data frame using the <code>OUTER JOIN</code> method.
      *
      * @param dataFrame   other data frame
      * @param joinColumns join columns
@@ -910,7 +910,7 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     JoinedDataFrame joinOuter(DataFrame dataFrame, JoinColumn... joinColumns);
 
     /**
-     * Joins this data frame with another data frame using the <tt>OUTER JOIN</tt> method.
+     * Joins this data frame with another data frame using the <code>OUTER JOIN</code> method.
      * Column names are altered using the provided suffixes.
      *
      * @param dataFrame   other data frame
@@ -931,18 +931,18 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
     DataFrame copy();
 
     /**
-     * Returns <tt>true</tt> if this data frame contains the input column
+     * Returns <code>true</code> if this data frame contains the input column
      *
      * @param column input column
-     * @return <tt>true</tt> if this data frame contains the input column
+     * @return <code>true</code> if this data frame contains the input column
      */
     boolean containsColumn(DataFrameColumn<?, ?> column);
 
     /**
-     * Returns <tt>true</tt> if the input column is part of at least one index
+     * Returns <code>true</code> if the input column is part of at least one index
      *
      * @param column input column
-     * @return <tt>true</tt> if column is part of index
+     * @return <code>true</code> if column is part of index
      */
     boolean isIndexColumn(DataFrameColumn<?, ?> column);
 
@@ -1743,6 +1743,25 @@ public interface DataFrame extends DataContainer<DataFrameHeader, DataRow> {
      */
     default void print(WriteFormat writeFormat) {
         DataFrameWriter.print(this, writeFormat);
+    }
+
+    /**
+     * Prints this dataframe to a {@link PrintStream} using the default print format ({@link DataFrameWriter#DEFAULT_PRINT_FORMAT}).
+     *
+     * @param out target print stream
+     */
+    default void print(PrintStream out) {
+        DataFrameWriter.print(this, out);
+    }
+
+    /**
+     * Prints this dataframe to an {@link Appendable} (e.g. a {@link StringBuilder}) using the default print format
+     * ({@link DataFrameWriter#DEFAULT_PRINT_FORMAT}). The appendable is not closed.
+     *
+     * @param out target appendable
+     */
+    default void print(Appendable out) {
+        DataFrameWriter.print(this, out);
     }
 
     /**

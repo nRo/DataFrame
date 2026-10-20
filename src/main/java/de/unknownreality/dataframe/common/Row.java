@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -61,20 +61,20 @@ public interface Row<V, H> extends KeyValueGetter<H, V> {
     }
 
     /**
-     * Returns <tt>true</tt> if the value at the specified column name is {@link Values#NA NA}.
+     * Returns <code>true</code> if the value at the specified column name is {@link Values#NA NA}.
      *
      * @param headerName column name
-     * @return <tt>true</tt> if the value in this column is NA
+     * @return <code>true</code> if the value in this column is NA
      */
     default boolean isNA(H headerName) {
         return get(headerName) == Values.NA || get(headerName) == null;
     }
 
     /**
-     * Returns <tt>true</tt> if the value at the specified index is {@link Values#NA NA}.
+     * Returns <code>true</code> if the value at the specified index is {@link Values#NA NA}.
      *
      * @param index column index
-     * @return <tt>true</tt> if the value in this column is NA
+     * @return <code>true</code> if the value in this column is NA
      */
     default boolean isNA(int index) {
         return get(index) == Values.NA || get(index) == null;
@@ -101,7 +101,7 @@ public interface Row<V, H> extends KeyValueGetter<H, V> {
 
     /**
      * Returns an entity using head name as a specified type.
-     * This method returns <tt>null</tt> if anything goes wrong.
+     * This method returns <code>null</code> if anything goes wrong.
      *
      * @param headerName header name of column
      * @param cl         class of resulting entity
@@ -124,7 +124,7 @@ public interface Row<V, H> extends KeyValueGetter<H, V> {
 
     /**
      * Returns the entity as a specified type
-     * This method returns <tt>null</tt> if anything goes wrong.
+     * This method returns <code>null</code> if anything goes wrong.
      *
      * @param index entity index in this row
      * @param cl    class of resulting entity

@@ -3,8 +3,8 @@ package de.unknownreality.dataframe.value;
 import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.csv.CSVReader;
 import de.unknownreality.dataframe.csv.CSVReaderBuilder;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.io.StringWriter;
 
@@ -35,7 +35,7 @@ public class ValueTypeTest {
         StringWriter stringWriter = new StringWriter();
         df.writeCSV(stringWriter, '\t', true);
         String csv = stringWriter.toString();
-        Assert.assertEquals(expectedCSVNull, csv);
+        Assertions.assertEquals(expectedCSVNull, csv);
 
         CSVReader reader = CSVReaderBuilder.create()
                 .setColumnType("byte", Byte.class)
@@ -51,6 +51,6 @@ public class ValueTypeTest {
                 .build();
 
         DataFrame parsedDF = DataFrame.load(csv, reader);
-        Assert.assertEquals(df, parsedDF);
+        Assertions.assertEquals(df, parsedDF);
     }
 }

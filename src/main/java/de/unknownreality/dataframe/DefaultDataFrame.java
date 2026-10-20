@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -392,7 +392,7 @@ public class DefaultDataFrame implements DataFrame {
 
     /**
      * @param row row containing the new values
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      * {@inheritDoc} {@link Values#NA NA} is added for all columns with no value in the provided row.
      */
     @Override
@@ -864,7 +864,9 @@ public class DefaultDataFrame implements DataFrame {
     }
 
 
-    @SuppressWarnings("unchecked")
+    // unchecked: the generic type arguments of NumberColumn can not be expressed by a class literal.
+    // The column type is verified by getColumn(String, Class).
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public <T extends Number, C extends NumberColumn<T, C>> NumberColumn<T, C> getNumberColumn(String name) {
         return getColumn(name, NumberColumn.class);
@@ -1233,5 +1235,11 @@ public class DefaultDataFrame implements DataFrame {
             }
         }
         return true;
+    }
+
+    @Override
+    public int hashCode() {
+        // consistent with equals: equal data frames have the same size
+        return Integer.hashCode(size());
     }
 }

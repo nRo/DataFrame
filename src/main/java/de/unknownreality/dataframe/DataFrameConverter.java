@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -104,7 +104,6 @@ public class DataFrameConverter {
      * @param filterPredicate    row filter
      * @return created data frame
      */
-    @SuppressWarnings("unchecked")
     public static <R extends Row<?, ?>> DataFrame fromDataIterator(DataIterator<R> dataIterator, int expectedSize, List<ColumnInformation> columnsInformation, FilterPredicate filterPredicate) {
 
         if (columnsInformation == null) {
@@ -123,7 +122,7 @@ public class DataFrameConverter {
             ColumnInformation columnInformation = columnsInformation.get(i);
             Class<? extends DataFrameColumn> colType = columnInformation.getColumnType();
 
-            DataFrameColumn<?, ?> col = DataFrameTypeManager.get().createColumn(colType);
+            DataFrameColumn<?, ?> col = createColumn(colType);
             if (expectedSize > BasicColumn.INIT_SIZE) {
                 col.setCapacity(expectedSize);
             }
@@ -151,8 +150,9 @@ public class DataFrameConverter {
                 }
                 try {
                     val = columns[i].getValueFromRow(row, columnInformation.getIndex());
-                } catch (Exception e) {
+                } catch (RuntimeException e) {
                     log.warn("error parsing value ({}), NA added", e.getMessage());
+                    log.debug("cause of the value parsing error in row {}, column '{}'", r, columnInformation.getName(), e);
                 }
                 if (val == null || Values.NA.isNA(val) ||
                         val instanceof String && ("".equals(val.toString()) || "null".equals(val.toString()))) {
@@ -180,6 +180,14 @@ public class DataFrameConverter {
         }
 
         return dataFrame;
+    }
+
+    /**
+     * Creates a column for a column type that is only known at runtime.
+     */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static DataFrameColumn<?, ?> createColumn(Class<? extends DataFrameColumn> colType) {
+        return DataFrameTypeManager.get().createColumn((Class) colType);
     }
 
     private static boolean doSample(int row) {

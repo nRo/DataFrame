@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@
 package de.unknownreality.dataframe.common.mapping;
 
 import de.unknownreality.dataframe.common.DataContainer;
+import de.unknownreality.dataframe.common.ReflectionUtil;
 import de.unknownreality.dataframe.common.Row;
 import de.unknownreality.dataframe.common.header.Header;
 import org.slf4j.Logger;
@@ -136,7 +137,7 @@ public class DataMapper<T> implements Iterable<T> {
      *
      * @param headerName column header name
      * @param header     header object
-     * @return <tt>true</tt> header contains name
+     * @return <code>true</code> header contains name
      */
     private <T> boolean isValid(T headerName, Header<T> header) {
         return !"".equals(headerName) && header.contains(headerName);
@@ -148,14 +149,10 @@ public class DataMapper<T> implements Iterable<T> {
      *
      * @param row row from the data container
      * @return mapped entity
+     * @throws de.unknownreality.dataframe.DataFrameRuntimeException if the mapped class can not be instantiated
      */
     private <R extends Row<?, String>> T processRow(R row) {
-        T obj = null;
-        try {
-            obj = cl.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        T obj = ReflectionUtil.newInstance(cl);
         for (FieldColumn fieldColumn : columns) {
             fieldColumn.set(row, obj);
         }

@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -37,7 +37,7 @@ import java.util.*;
  */
 public class DataFrameTypeManager {
 
-    private static final List<DataFrameColumn<?, ?>> DEFAULT_COLUMN = Arrays.asList(
+    private static final List<DataFrameColumn<?, ?>> DEFAULT_COLUMN = List.of(
             new StringColumn(),
             new CharacterColumn(),
             new DoubleColumn(),
@@ -92,7 +92,7 @@ public class DataFrameTypeManager {
      * @param col column class
      * @param <T> column value type
      * @param <C> column type
-     * @return <tt>self</tt> for method chaining
+     * @return <code>self</code> for method chaining
      */
     public <T, C extends DataFrameColumn<T, C>> DataFrameTypeManager register(DataFrameColumn<?, ?> col) {
         col = col.copyEmpty();
@@ -113,7 +113,6 @@ public class DataFrameTypeManager {
      * removes a custom column type
      *
      * @param col column class
-     * @return <tt>self</tt> for method chaining
      */
     public void unregister(DataFrameColumn<?, ?> col) {
         if (!typeExists(col.getValueType().getType())) {

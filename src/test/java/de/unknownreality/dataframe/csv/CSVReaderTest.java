@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -26,10 +26,8 @@ package de.unknownreality.dataframe.csv;
 
 import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.DataRow;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
@@ -37,9 +35,6 @@ import java.io.IOException;
  * Created by Alex on 12.03.2016.
  */
 public class CSVReaderTest {
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
-
     @Test
     public void testReader() throws IOException {
         String testCSV = "#A\tB\tC\n1\tX\t3\n1\tX\t3\n";
@@ -49,27 +44,27 @@ public class CSVReaderTest {
                 .withSeparator('\t').build();
 
         CSVIterator csvRows = reader.load(testCSV);
-        Assert.assertEquals("A", csvRows.getColumnsInformation().get(0).getName());
-        Assert.assertEquals("B", csvRows.getColumnsInformation().get(1).getName());
-        Assert.assertEquals("C", csvRows.getColumnsInformation().get(2).getName());
+        Assertions.assertEquals("A", csvRows.getColumnsInformation().get(0).getName());
+        Assertions.assertEquals("B", csvRows.getColumnsInformation().get(1).getName());
+        Assertions.assertEquals("C", csvRows.getColumnsInformation().get(2).getName());
 
         for (CSVRow row : csvRows) {
-            Assert.assertEquals("1", row.get(0));
-            Assert.assertEquals("X", row.get(1));
-            Assert.assertEquals("3", row.get(2));
+            Assertions.assertEquals("1", row.get(0));
+            Assertions.assertEquals("X", row.get(1));
+            Assertions.assertEquals("3", row.get(2));
 
-            Assert.assertEquals("1", row.get("A"));
-            Assert.assertEquals("X", row.get("B"));
-            Assert.assertEquals("3", row.get("C"));
+            Assertions.assertEquals("1", row.get("A"));
+            Assertions.assertEquals("X", row.get("B"));
+            Assertions.assertEquals("3", row.get("C"));
         }
         DataFrame dataFrame = DataFrame.load(testCSV,reader);
         for (DataRow row : dataFrame) {
-            Assert.assertEquals((Integer)1, row.getInteger(0));
-            Assert.assertEquals("X", row.get(1));
-            Assert.assertEquals((Integer)3, row.getInteger(2));
-            Assert.assertEquals((Integer)1, row.getInteger("A"));
-            Assert.assertEquals("X", row.get("B"));
-            Assert.assertEquals((Integer)3, row.getInteger("C"));
+            Assertions.assertEquals((Integer)1, row.getInteger(0));
+            Assertions.assertEquals("X", row.get(1));
+            Assertions.assertEquals((Integer)3, row.getInteger(2));
+            Assertions.assertEquals((Integer)1, row.getInteger("A"));
+            Assertions.assertEquals("X", row.get("B"));
+            Assertions.assertEquals((Integer)3, row.getInteger("C"));
         }
     }
 
@@ -84,23 +79,23 @@ public class CSVReaderTest {
                 .build();
 
         CSVIterator csvRows = reader.load(testCSV);
-        Assert.assertEquals(2,csvRows.getColumnsInformation().size());
-        Assert.assertEquals("A", csvRows.getColumnsInformation().get(0).getName());
-        Assert.assertEquals("B", csvRows.getColumnsInformation().get(1).getName());
+        Assertions.assertEquals(2,csvRows.getColumnsInformation().size());
+        Assertions.assertEquals("A", csvRows.getColumnsInformation().get(0).getName());
+        Assertions.assertEquals("B", csvRows.getColumnsInformation().get(1).getName());
 
         for (CSVRow row : csvRows) {
-            Assert.assertEquals("1", row.get(0));
-            Assert.assertEquals("X", row.get(1));
+            Assertions.assertEquals("1", row.get(0));
+            Assertions.assertEquals("X", row.get(1));
 
-            Assert.assertEquals("1", row.get("A"));
-            Assert.assertEquals("X", row.get("B"));
+            Assertions.assertEquals("1", row.get("A"));
+            Assertions.assertEquals("X", row.get("B"));
         }
         DataFrame dataFrame = DataFrame.load(testCSV,reader);
         for (DataRow row : dataFrame) {
-            Assert.assertEquals((Integer)1, row.getInteger(0));
-            Assert.assertEquals("X", row.get(1));
-            Assert.assertEquals((Integer)1, row.getInteger("A"));
-            Assert.assertEquals("X", row.get("B"));
+            Assertions.assertEquals((Integer)1, row.getInteger(0));
+            Assertions.assertEquals("X", row.get(1));
+            Assertions.assertEquals((Integer)1, row.getInteger("A"));
+            Assertions.assertEquals("X", row.get("B"));
         }
     }
 
@@ -115,24 +110,24 @@ public class CSVReaderTest {
                 .build();
 
         CSVIterator csvRows = reader.load(testCSV);
-        Assert.assertEquals(2,csvRows.getColumnsInformation().size());
-        Assert.assertEquals("B", csvRows.getColumnsInformation().get(0).getName());
-        Assert.assertEquals("C", csvRows.getColumnsInformation().get(1).getName());
+        Assertions.assertEquals(2,csvRows.getColumnsInformation().size());
+        Assertions.assertEquals("B", csvRows.getColumnsInformation().get(0).getName());
+        Assertions.assertEquals("C", csvRows.getColumnsInformation().get(1).getName());
 
         for (CSVRow row : csvRows) {
-            Assert.assertEquals("X", row.get(0));
-            Assert.assertEquals("3", row.get(1));
-            Assert.assertEquals("X", row.get("B"));
-            Assert.assertEquals("3", row.get("C"));
+            Assertions.assertEquals("X", row.get(0));
+            Assertions.assertEquals("3", row.get(1));
+            Assertions.assertEquals("X", row.get("B"));
+            Assertions.assertEquals("3", row.get("C"));
 
         }
 
         DataFrame dataFrame = DataFrame.load(testCSV,reader);
         for (DataRow row : dataFrame) {
-            Assert.assertEquals("X", row.get(0));
-            Assert.assertEquals((Integer)3, row.getInteger(1));
-            Assert.assertEquals("X", row.get("B"));
-            Assert.assertEquals((Integer)3, row.getInteger("C"));
+            Assertions.assertEquals("X", row.get(0));
+            Assertions.assertEquals((Integer)3, row.getInteger(1));
+            Assertions.assertEquals("X", row.get("B"));
+            Assertions.assertEquals((Integer)3, row.getInteger("C"));
         }
     }
     @Test
@@ -160,23 +155,23 @@ public class CSVReaderTest {
                 .build();
 
         CSVIterator csvRows = reader.load(testCSV);
-        Assert.assertEquals(2,csvRows.getColumnsInformation().size());
-        Assert.assertEquals("A", csvRows.getColumnsInformation().get(0).getName());
-        Assert.assertEquals("C", csvRows.getColumnsInformation().get(1).getName());
+        Assertions.assertEquals(2,csvRows.getColumnsInformation().size());
+        Assertions.assertEquals("A", csvRows.getColumnsInformation().get(0).getName());
+        Assertions.assertEquals("C", csvRows.getColumnsInformation().get(1).getName());
 
         for (CSVRow row : csvRows) {
-            Assert.assertEquals("1", row.get(0));
-            Assert.assertEquals("3", row.get(1));
-            Assert.assertEquals("1", row.get("A"));
-            Assert.assertEquals("3", row.get("C"));
+            Assertions.assertEquals("1", row.get(0));
+            Assertions.assertEquals("3", row.get(1));
+            Assertions.assertEquals("1", row.get("A"));
+            Assertions.assertEquals("3", row.get("C"));
         }
 
         DataFrame dataFrame = DataFrame.load(testCSV,reader);
         for (DataRow row : dataFrame) {
-            Assert.assertEquals((Integer)1, row.getInteger(0));
-            Assert.assertEquals((Integer)3, row.getInteger(1));
-            Assert.assertEquals((Integer)1, row.getInteger("A"));
-            Assert.assertEquals((Integer)3, row.getInteger("C"));
+            Assertions.assertEquals((Integer)1, row.getInteger(0));
+            Assertions.assertEquals((Integer)3, row.getInteger(1));
+            Assertions.assertEquals((Integer)1, row.getInteger("A"));
+            Assertions.assertEquals((Integer)3, row.getInteger("C"));
         }
     }
 

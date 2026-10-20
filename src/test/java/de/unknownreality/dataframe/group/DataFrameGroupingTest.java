@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -34,8 +34,8 @@ import de.unknownreality.dataframe.csv.CSVReaderBuilder;
 import de.unknownreality.dataframe.filter.FilterPredicate;
 import de.unknownreality.dataframe.group.aggr.Aggregate;
 import de.unknownreality.dataframe.group.impl.TreeGroupUtil;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * Created by Alex on 12.03.2016.
@@ -65,7 +65,7 @@ public class DataFrameGroupingTest {
                 .build();
 
         DataFrame dataFrame = DataFrameLoader.load("data_grouping.csv", DataFrameGroupingTest.class.getClassLoader(), csvReader);
-        Assert.assertEquals(8, dataFrame.size());
+        Assertions.assertEquals(8, dataFrame.size());
 
         /*
         Groups:
@@ -79,18 +79,18 @@ public class DataFrameGroupingTest {
         DataGrouping dataGroups = dataFrame.groupBy("ID", "NAME")
                 .agg("MAX", Aggregate.max("VALUE"))
                 .agg("MIN", Aggregate.max("VALUE"));
-        Assert.assertEquals(6, dataGroups.size());
+        Assertions.assertEquals(6, dataGroups.size());
 
-        Assert.assertEquals("ID=1, NAME=A", dataGroups.findByGroupValues(1, "A").getGroup().getGroupDescription());
-        Assert.assertEquals("ID=1, NAME=B", dataGroups.findByGroupValues(1, "B").getGroup().getGroupDescription());
-        Assert.assertEquals("ID=2, NAME=A", dataGroups.findByGroupValues(2, "A").getGroup().getGroupDescription());
-        Assert.assertEquals("ID=2, NAME=C", dataGroups.findByGroupValues(2, "C").getGroup().getGroupDescription());
-        Assert.assertEquals("ID=3, NAME=B", dataGroups.findByGroupValues(3, "B").getGroup().getGroupDescription());
-        Assert.assertEquals("ID=4, NAME=B", dataGroups.findByGroupValues(4, "B").getGroup().getGroupDescription());
-        Assert.assertEquals(IntegerColumn.class, dataGroups.getColumn("MIN").getClass());
+        Assertions.assertEquals("ID=1, NAME=A", dataGroups.findByGroupValues(1, "A").getGroup().getGroupDescription());
+        Assertions.assertEquals("ID=1, NAME=B", dataGroups.findByGroupValues(1, "B").getGroup().getGroupDescription());
+        Assertions.assertEquals("ID=2, NAME=A", dataGroups.findByGroupValues(2, "A").getGroup().getGroupDescription());
+        Assertions.assertEquals("ID=2, NAME=C", dataGroups.findByGroupValues(2, "C").getGroup().getGroupDescription());
+        Assertions.assertEquals("ID=3, NAME=B", dataGroups.findByGroupValues(3, "B").getGroup().getGroupDescription());
+        Assertions.assertEquals("ID=4, NAME=B", dataGroups.findByGroupValues(4, "B").getGroup().getGroupDescription());
+        Assertions.assertEquals(IntegerColumn.class, dataGroups.getColumn("MIN").getClass());
 
-        Assert.assertEquals(IntegerColumn.class, dataGroups.getColumn("MIN").getClass());
-        Assert.assertEquals(IntegerColumn.class, dataGroups.getColumn("MAX").getClass());
+        Assertions.assertEquals(IntegerColumn.class, dataGroups.getColumn("MIN").getClass());
+        Assertions.assertEquals(IntegerColumn.class, dataGroups.getColumn("MAX").getClass());
 
 
         testGroup(dataGroups.findByGroupValues(1, "A"), 1, 6);
@@ -102,15 +102,15 @@ public class DataFrameGroupingTest {
 
 
         dataGroups.agg("count2", (DataGroup::size));
-        Assert.assertEquals((Integer) 2, dataGroups.findByGroupValues(1, "A").getInteger("count2"));
-        Assert.assertEquals((Integer) 1, dataGroups.findByGroupValues(1, "B").getInteger("count2"));
-        Assert.assertEquals((Integer) 1, dataGroups.findByGroupValues(2, "A").getInteger("count2"));
-        Assert.assertEquals((Integer) 2, dataGroups.findByGroupValues(3, "B").getInteger("count2"));
-        Assert.assertEquals((Integer) 1, dataGroups.findByGroupValues(2, "C").getInteger("count2"));
-        Assert.assertEquals((Integer) 1, dataGroups.findByGroupValues(4, "B").getInteger("count2"));
+        Assertions.assertEquals((Integer) 2, dataGroups.findByGroupValues(1, "A").getInteger("count2"));
+        Assertions.assertEquals((Integer) 1, dataGroups.findByGroupValues(1, "B").getInteger("count2"));
+        Assertions.assertEquals((Integer) 1, dataGroups.findByGroupValues(2, "A").getInteger("count2"));
+        Assertions.assertEquals((Integer) 2, dataGroups.findByGroupValues(3, "B").getInteger("count2"));
+        Assertions.assertEquals((Integer) 1, dataGroups.findByGroupValues(2, "C").getInteger("count2"));
+        Assertions.assertEquals((Integer) 1, dataGroups.findByGroupValues(4, "B").getInteger("count2"));
 
         DataFrame grouping2 = dataGroups.select(FilterPredicate.and(FilterPredicate.lt("ID", 4), FilterPredicate.in("NAME", new String[]{"A", "B"})));
-        Assert.assertEquals(4, grouping2.size());
+        Assertions.assertEquals(4, grouping2.size());
 
 
     }
@@ -140,7 +140,7 @@ public class DataFrameGroupingTest {
 
         DataFrame dataFrame = DataFrameLoader.load("data_grouping.csv", DataFrameGroupingTest.class.getClassLoader(), csvReader);
         ((DefaultDataFrame) dataFrame).setGroupUtil(new TreeGroupUtil());
-        Assert.assertEquals(8, dataFrame.size());
+        Assertions.assertEquals(8, dataFrame.size());
 
         /*
         Groups:
@@ -154,10 +154,10 @@ public class DataFrameGroupingTest {
         DataGrouping dataGroups = dataFrame.groupBy("ID", "NAME")
                 .agg("MAX", Aggregate.max("VALUE"))
                 .agg("MIN", Aggregate.max("VALUE"));
-        Assert.assertEquals(6, dataGroups.size());
+        Assertions.assertEquals(6, dataGroups.size());
 
-        Assert.assertEquals(IntegerColumn.class, dataGroups.getColumn("MIN").getClass());
-        Assert.assertEquals(IntegerColumn.class, dataGroups.getColumn("MAX").getClass());
+        Assertions.assertEquals(IntegerColumn.class, dataGroups.getColumn("MIN").getClass());
+        Assertions.assertEquals(IntegerColumn.class, dataGroups.getColumn("MAX").getClass());
 
 
         testGroup(dataGroups.findByGroupValues(1, "A"), 1, 6);
@@ -169,15 +169,15 @@ public class DataFrameGroupingTest {
 
 
         dataGroups.agg("count2", (DataGroup::size));
-        Assert.assertEquals((Integer) 2, dataGroups.findByGroupValues(1, "A").getInteger("count2"));
-        Assert.assertEquals((Integer) 1, dataGroups.findByGroupValues(1, "B").getInteger("count2"));
-        Assert.assertEquals((Integer) 1, dataGroups.findByGroupValues(2, "A").getInteger("count2"));
-        Assert.assertEquals((Integer) 2, dataGroups.findByGroupValues(3, "B").getInteger("count2"));
-        Assert.assertEquals((Integer) 1, dataGroups.findByGroupValues(2, "C").getInteger("count2"));
-        Assert.assertEquals((Integer) 1, dataGroups.findByGroupValues(4, "B").getInteger("count2"));
+        Assertions.assertEquals((Integer) 2, dataGroups.findByGroupValues(1, "A").getInteger("count2"));
+        Assertions.assertEquals((Integer) 1, dataGroups.findByGroupValues(1, "B").getInteger("count2"));
+        Assertions.assertEquals((Integer) 1, dataGroups.findByGroupValues(2, "A").getInteger("count2"));
+        Assertions.assertEquals((Integer) 2, dataGroups.findByGroupValues(3, "B").getInteger("count2"));
+        Assertions.assertEquals((Integer) 1, dataGroups.findByGroupValues(2, "C").getInteger("count2"));
+        Assertions.assertEquals((Integer) 1, dataGroups.findByGroupValues(4, "B").getInteger("count2"));
 
         DataFrame grouping2 = dataGroups.select(FilterPredicate.and(FilterPredicate.lt("ID", 4), FilterPredicate.in("NAME", new String[]{"A", "B"})));
-        Assert.assertEquals(4, grouping2.size());
+        Assertions.assertEquals(4, grouping2.size());
 
 
     }
@@ -199,7 +199,7 @@ public class DataFrameGroupingTest {
                 .agg("desc", DataGroup::getGroupDescription);
 
         DataFrame result = DataFrame.fromCSV("data_group_agg_result.csv", DataFrame.class.getClassLoader(), ';', true);
-        Assert.assertEquals(result, grouping);
+        Assertions.assertEquals(result, grouping);
     }
 
     @Test
@@ -217,9 +217,9 @@ public class DataFrameGroupingTest {
         dataFrame.append(3, null);
         DataGrouping grouping = dataFrame.groupBy("id")
                 .agg("max_value", Aggregate.max("value"));
-        Assert.assertEquals(3.0, grouping.getValue(1, 0));
-        Assert.assertEquals(4.0, grouping.getValue(1, 1));
-        Assert.assertEquals(2.0, grouping.getValue(1, 2));
+        Assertions.assertEquals(3.0, grouping.getValue(1, 0));
+        Assertions.assertEquals(4.0, grouping.getValue(1, 1));
+        Assertions.assertEquals(2.0, grouping.getValue(1, 2));
     }
 
     @Test
@@ -235,18 +235,22 @@ public class DataFrameGroupingTest {
         dataFrame.append(2, "y");
         dataFrame.append(3, "z");
         dataFrame.append(3, null);
-        Assert.assertThrows("column 'name' has wrong type", DataFrameRuntimeException.class,
+        Assertions.assertThrows(DataFrameRuntimeException.class,
                 () -> dataFrame.groupBy("id")
-                        .agg("names", Aggregate.mean("name")));
-        Assert.assertThrows("column 'name' has wrong type", DataFrameRuntimeException.class,
+                        .agg("names", Aggregate.mean("name")),
+                "column 'name' has wrong type");
+        Assertions.assertThrows(DataFrameRuntimeException.class,
                 () -> dataFrame.groupBy("id")
-                        .agg("names", Aggregate.min("name")));
-        Assert.assertThrows("column 'name' has wrong type", DataFrameRuntimeException.class,
+                        .agg("names", Aggregate.min("name")),
+                "column 'name' has wrong type");
+        Assertions.assertThrows(DataFrameRuntimeException.class,
                 () -> dataFrame.groupBy("id")
-                        .agg("names", Aggregate.max("name")));
-        Assert.assertThrows("column 'name' has wrong type", DataFrameRuntimeException.class,
+                        .agg("names", Aggregate.max("name")),
+                "column 'name' has wrong type");
+        Assertions.assertThrows(DataFrameRuntimeException.class,
                 () -> dataFrame.groupBy("id")
-                        .agg("names", Aggregate.median("name")));
+                        .agg("names", Aggregate.median("name")),
+                "column 'name' has wrong type");
     }
 
     @Test
@@ -264,9 +268,9 @@ public class DataFrameGroupingTest {
         dataFrame.append(3, null);
         DataGrouping grouping = dataFrame.groupBy("id")
                 .agg("min_value", Aggregate.min("value"));
-        Assert.assertEquals(1.0, grouping.getValue(1, 0));
-        Assert.assertEquals(1.0, grouping.getValue(1, 1));
-        Assert.assertEquals(2.0, grouping.getValue(1, 2));
+        Assertions.assertEquals(1.0, grouping.getValue(1, 0));
+        Assertions.assertEquals(1.0, grouping.getValue(1, 1));
+        Assertions.assertEquals(2.0, grouping.getValue(1, 2));
     }
 
     @Test
@@ -283,9 +287,9 @@ public class DataFrameGroupingTest {
         dataFrame.append(3, null);
         DataGrouping grouping = dataFrame.groupBy("id")
                 .agg("first_value", Aggregate.first("value"));
-        Assert.assertEquals(1.0, grouping.getValue(1, 0));
-        Assert.assertEquals(4.0, grouping.getValue(1, 1));
-        Assert.assertEquals(2.0, grouping.getValue(1, 2));
+        Assertions.assertEquals(1.0, grouping.getValue(1, 0));
+        Assertions.assertEquals(4.0, grouping.getValue(1, 1));
+        Assertions.assertEquals(2.0, grouping.getValue(1, 2));
     }
 
     @Test
@@ -302,9 +306,9 @@ public class DataFrameGroupingTest {
         dataFrame.append(3, null);
         DataGrouping grouping = dataFrame.groupBy("id")
                 .agg("first_value", Aggregate.last("value"));
-        Assert.assertEquals(3.0, grouping.getValue(1, 0));
-        Assert.assertEquals(1.0, grouping.getValue(1, 1));
-        Assert.assertNull(grouping.getValue(1, 2));
+        Assertions.assertEquals(3.0, grouping.getValue(1, 0));
+        Assertions.assertEquals(1.0, grouping.getValue(1, 1));
+        Assertions.assertNull(grouping.getValue(1, 2));
     }
 
     @Test
@@ -322,9 +326,9 @@ public class DataFrameGroupingTest {
         dataFrame.append(3, null);
         DataGrouping grouping = dataFrame.groupBy("id")
                 .agg("avg_value", Aggregate.naCount("value"));
-        Assert.assertEquals(0, grouping.getValue(1, 0));
-        Assert.assertEquals(1, grouping.getValue(1, 1));
-        Assert.assertEquals(2, grouping.getValue(1, 2));
+        Assertions.assertEquals(0, grouping.getValue(1, 0));
+        Assertions.assertEquals(1, grouping.getValue(1, 1));
+        Assertions.assertEquals(2, grouping.getValue(1, 2));
     }
 
     @Test
@@ -342,9 +346,9 @@ public class DataFrameGroupingTest {
         dataFrame.append(3, null);
         DataGrouping grouping = dataFrame.groupBy("id")
                 .agg("mean_value", Aggregate.mean("value"));
-        Assert.assertEquals(2.0, grouping.getValue(1, 0));
-        Assert.assertEquals(2.5, grouping.getValue(1, 1));
-        Assert.assertEquals(2.0, grouping.getValue(1, 2));
+        Assertions.assertEquals(2.0, grouping.getValue(1, 0));
+        Assertions.assertEquals(2.5, grouping.getValue(1, 1));
+        Assertions.assertEquals(2.0, grouping.getValue(1, 2));
     }
 
     @Test
@@ -364,9 +368,9 @@ public class DataFrameGroupingTest {
         dataFrame.append(3, null);
         DataGrouping grouping = dataFrame.groupBy("id")
                 .agg("median_value", Aggregate.median("value"));
-        Assert.assertEquals(3.0, grouping.getValue(1, 0));
-        Assert.assertEquals(4.0, grouping.getValue(1, 1));
-        Assert.assertEquals(2.0, grouping.getValue(1, 2));
+        Assertions.assertEquals(3.0, grouping.getValue(1, 0));
+        Assertions.assertEquals(4.0, grouping.getValue(1, 1));
+        Assertions.assertEquals(2.0, grouping.getValue(1, 2));
     }
 
     @Test
@@ -388,9 +392,9 @@ public class DataFrameGroupingTest {
         dataFrame.append(3, 2.0);
         DataGrouping grouping = dataFrame.groupBy("id")
                 .agg("mean_value", Aggregate.quantile("value", 0.25));
-        Assert.assertEquals(1.0, grouping.getValue(1, 0));
-        Assert.assertEquals(1.0, grouping.getValue(1, 1));
-        Assert.assertEquals(2.0, grouping.getValue(1, 2));
+        Assertions.assertEquals(1.0, grouping.getValue(1, 0));
+        Assertions.assertEquals(1.0, grouping.getValue(1, 1));
+        Assertions.assertEquals(2.0, grouping.getValue(1, 2));
     }
 
     @Test
@@ -408,9 +412,9 @@ public class DataFrameGroupingTest {
         dataFrame.append(3, null);
         DataGrouping grouping = dataFrame.groupBy("id")
                 .agg("names", Aggregate.join(",", "name"));
-        Assert.assertEquals("x,y,z", grouping.getValue(1, 0));
-        Assert.assertEquals("x,y", grouping.getValue(1, 1));
-        Assert.assertEquals("z,", grouping.getValue(1, 2));
+        Assertions.assertEquals("x,y,z", grouping.getValue(1, 0));
+        Assertions.assertEquals("x,y", grouping.getValue(1, 1));
+        Assertions.assertEquals("z,", grouping.getValue(1, 2));
     }
 
     @Test
@@ -428,16 +432,16 @@ public class DataFrameGroupingTest {
         dataFrame.append(3, null);
         DataGrouping grouping = dataFrame.groupBy("id")
                 .agg("names", Aggregate.filterCount("name ~= /[a-z]+[0-9]/"));
-        Assert.assertEquals(1, grouping.getValue(1, 0));
-        Assert.assertEquals(0, grouping.getValue(1, 1));
-        Assert.assertEquals(1, grouping.getValue(1, 2));
+        Assertions.assertEquals(1, grouping.getValue(1, 0));
+        Assertions.assertEquals(0, grouping.getValue(1, 1));
+        Assertions.assertEquals(1, grouping.getValue(1, 2));
     }
 
     public static void testGroup(GroupRow groupRow, int... values) {
-        Assert.assertEquals(values.length, groupRow.getGroup().size());
+        Assertions.assertEquals(values.length, groupRow.getGroup().size());
         int i = 0;
         for (DataRow row : groupRow.getGroup()) {
-            Assert.assertEquals(values[i++], (int) row.getInteger("VALUE"));
+            Assertions.assertEquals(values[i++], (int) row.getInteger("VALUE"));
         }
     }
 

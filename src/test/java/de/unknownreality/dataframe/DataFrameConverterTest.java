@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -24,8 +24,8 @@
 
 package de.unknownreality.dataframe;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.Locale;
 
@@ -41,10 +41,10 @@ public class DataFrameConverterTest {
         }
 
         DataFrame df = DataFrame.fromCSV(csvString.toString(), ';', true);
-        Assert.assertEquals(Integer.class, df.getHeader().getValueType("x").getType());
-        Assert.assertEquals(Double.class, df.getHeader().getValueType("y").getType());
-        Assert.assertEquals(String.class, df.getHeader().getValueType("v").getType());
-        Assert.assertEquals(Boolean.class, df.getHeader().getValueType("b").getType());
+        Assertions.assertEquals(Integer.class, df.getHeader().getValueType("x").getType());
+        Assertions.assertEquals(Double.class, df.getHeader().getValueType("y").getType());
+        Assertions.assertEquals(String.class, df.getHeader().getValueType("v").getType());
+        Assertions.assertEquals(Boolean.class, df.getHeader().getValueType("b").getType());
 
 
         csvString = new StringBuilder();
@@ -59,9 +59,9 @@ public class DataFrameConverterTest {
         }
 
         df = DataFrame.fromCSV(csvString.toString(), ';', true);
-        Assert.assertEquals(String.class, df.getHeader().getValueType("x").getType());
-        Assert.assertEquals(Double.class, df.getHeader().getValueType("y").getType());
-        Assert.assertEquals(String.class, df.getHeader().getValueType("v").getType());
-        Assert.assertEquals(Boolean.class, df.getHeader().getValueType("b").getType());
+        Assertions.assertEquals(String.class, df.getHeader().getValueType("x").getType());
+        Assertions.assertEquals(Double.class, df.getHeader().getValueType("y").getType());
+        Assertions.assertEquals(String.class, df.getHeader().getValueType("v").getType());
+        Assertions.assertEquals(Boolean.class, df.getHeader().getValueType("b").getType());
     }
 }

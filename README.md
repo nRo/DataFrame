@@ -2,21 +2,23 @@
 An easy-to-use DataFrame Library for Java.
 
 
-![travis](https://travis-ci.org/nRo/DataFrame.svg?branch=master)
+[![CI](https://github.com/nRo/DataFrame/actions/workflows/ci.yml/badge.svg)](https://github.com/nRo/DataFrame/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/nRo/DataFrame/branch/master/graph/badge.svg)](https://codecov.io/gh/nRo/DataFrame)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a03214f7198f4461ab341adecb75e0da)](https://www.codacy.com/app/nRo/DataFrame?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=nRo/DataFrame&amp;utm_campaign=Badge_Grade)
+[![Maven Central](https://img.shields.io/maven-central/v/de.unknownreality/dataframe.svg?label=Maven%20Central)](https://central.sonatype.com/artifact/de.unknownreality/dataframe)
+[![Javadocs](https://javadoc.io/badge2/de.unknownreality/dataframe/javadoc.svg)](https://javadoc.io/doc/de.unknownreality/dataframe)
+![Java 21+](https://img.shields.io/badge/Java-21%2B-blue)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.txt)
 
-Documentation
+Requirements
 -------
-[![Javadocs](http://javadoc.io/badge/de.unknownreality/dataframe.svg?color=blue)](http://javadoc.io/doc/de.unknownreality/dataframe)
+Java 21 or newer. The library is built and tested on JDK 21 and JDK 25.
+
+If you need to run on Java 8 to 17, use the last 0.7.x release (see [CHANGELOG.md](CHANGELOG.md)).
 
 Install
 -------
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/de.unknownreality/dataframe/badge.svg)](https://maven-badges.herokuapp.com/maven-central/de.unknownreality/dataframe)
-
-
-Add this to you pom.xml
+Add this to your `pom.xml`:
 
 ```xml
 <dependencies>
@@ -24,21 +26,25 @@ Add this to you pom.xml
     <dependency>
         <groupId>de.unknownreality</groupId>
         <artifactId>dataframe</artifactId>
-        <version>0.7.6</version>
+        <version>0.8.0</version>
     </dependency>
 ...
 </dependencies>
 ```
 
+The latest published version is shown in the Maven Central badge above. The `0.8.0` release has to be published first
+(see [Release](#release)); until then build the snapshot from sources.
+
 Build
 -----
-To build the library from sources:
+To build the library from sources you need JDK 21+ and Maven 3.9+:
 
 1) Clone github repository
 
     $ git clone https://github.com/nRo/DataFrame.git
 
-2) Change to the created folder and run `mvn install`
+2) Change to the created folder and run `mvn verify` (compile, tests, coverage gate and SpotBugs).
+   Use `mvn install` to install the library into your local repository.
 
     $ cd DataFrame
     
@@ -52,11 +58,48 @@ To build the library from sources:
     <dependency>
         <groupId>de.unknownreality</groupId>
         <artifactId>dataframe</artifactId>
-        <version>0.7.6-SNAPSHOT</version>
+        <version>0.9.0-SNAPSHOT</version>
     </dependency>
 ...
 </dependencies>
 ```
+
+Release
+-----
+Releases are published to Maven Central with the `release` profile (`mvn -Prelease deploy`), which attaches the
+sources and javadoc jars, signs the artifacts with GPG and uploads them using the
+[central-publishing-maven-plugin](https://central.sonatype.org/publish/publish-portal-maven/).
+The GitHub Actions workflow `release.yml` runs this for tags named `v*` and needs the secrets
+`CENTRAL_USERNAME`, `CENTRAL_PASSWORD`, `GPG_PRIVATE_KEY` and `GPG_PASSPHRASE`.
+
+Version 0.9.0
+-----
+See [CHANGELOG.md](CHANGELOG.md) for the complete list of changes.
+
+- **Java 21 or newer is required.** The build, dependencies and plugins were updated (ANTLR 4.13.2, SLF4J 2.0, JUnit 5, JaCoCo).
+- **UTF-8 is the default charset** on every read and write path (file, gzip, stream, url, resource and bytes).
+  A charset set by the caller is honored on every path.
+- Streams and readers are closed if loading fails. `BufferedStreamIterator` and its subclasses (e.g. `CSVIterator`) are `AutoCloseable`.
+- Errors (missing resources, mapped classes without a no-arg constructor, ...) are reported as `DataFrameRuntimeException`
+  with a descriptive message and the cause.
+- `DataFrame.print(PrintStream)` and `DataFrame.print(Appendable)` print to any target, `System.out` stays the default.
+- Removed deprecated API: `DataFrameBuilder.createFrom` and `CSVIterator.toDataFrame()`.
+
+### Migration from 0.7 / 0.8
+
+| Change | What to do |
+|---|---|
+| Java 21 is required | Update your JDK and the `maven.compiler.release` of your project. |
+| UTF-8 is the default charset. Before, the platform charset was used. | Files that were written and read with a non UTF-8 platform charset (e.g. `windows-1252`) must now be read with `CSVReaderBuilder.create().withCharset(Charset.forName("windows-1252")).build()` (and written with `CSVWriterBuilder.withCharset(...)`). |
+| `DataFrameBuilder.createFrom(iterator)` and `CSVIterator.toDataFrame()` were removed | Use `DataFrame.load(...)`, `DataFrame.fromCSV(...)` or `DataFrame.builder().from(iterator)`. |
+| `DataReader.load(String resource, ClassLoader)` throws `DataFrameRuntimeException` if the resource does not exist | Handle the exception instead of an unspecific error later on. |
+| `DataMapper` throws `DataFrameRuntimeException` if the class can not be instantiated (before, the stack trace was printed and a `NullPointerException` followed) | Give mapped classes a no-arg constructor. The constructor does not need to be public. |
+| JUnit 4 was replaced by JUnit 5 (only relevant for contributors) | Use `org.junit.jupiter.api`. |
+
+The separator defaults were **not** changed: `FileFormat.CSV` (and `CSVFormat`) and `CSVReaderBuilder` use `';'`,
+`FileFormat.TSV` and `CSVWriterBuilder` use a tab. Set the separator explicitly (`withSeparator(',')`) to read or write
+comma separated files.
+
 Version 0.7.5
 -----
 -  **direct value access for DataRow object.**
@@ -84,6 +127,8 @@ In general, data groupings can now be used like normal DataFrames.
 
 Examples
 -----
+All examples are executed by `ReadmeExamplesTest` using the files in `src/test/resources`.
+
 Select all users called Meier or Schmitt from Germany, group by age and add column that contains the number of users with the respective age.
 Then sort by age and print
 ```java
@@ -157,7 +202,7 @@ Load a DataFrame with custom options and predefined column types.
 File file = new File("person.csv");
 
 CSVReader csvReader = CSVReaderBuilder.create()
-                .containsHeader(true)
+                .withHeader(true)
                 .withHeaderPrefix("#")
                 .withSeparator(';')
                 .setColumnType("person_id", Integer.class)
@@ -279,10 +324,7 @@ dataFrame.append("A",1,3);
 dataFrame.append("B",2,3);
 dataFrame.append("C",4,5);
 dataFrame.append("D",6,7);
-IntervalIndex index = new IntervalIndex("idx",
-    dataFrame.getNumberColumn("start"),
-    dataFrame.getNumberColumn("end"));
-dataFrame.addIndex(index);
+dataFrame.addIndex(IntervalIndex.create(dataFrame, "idx", "start", "end"));
 
 //returns a new dataframe containing all rows where (start,end) overlaps with (1,3)
 // -> A, B
@@ -316,7 +358,7 @@ dataFrame.getIntegerColumn("age").map(value -> value + 2);
 
 Filter and select rows using predicates.
 ```java
-//keep users with age between 18 and 60
+//keep users with age between 18 and 60 (both bounds are excluded)
 users.filter(FilterPredicate.btwn("age",18,60));
 
 //find all users with age > 18 an first_name == "Max"
@@ -396,7 +438,7 @@ Direct access to groups in a grouping.
 DataGrouping grouping = users.groupBy("age","first_name");
 
 //Get all users that are called John and are 18 years old
-DataGroup group = grouping.findByGroupValues(18, "John");
+DataGroup group = grouping.findByGroupValues(18, "John").getGroup();
 ```
 It is possible to apply aggregation function to data groups.
 In this example, a column "max_age" is added to the grouping DataFrame. 

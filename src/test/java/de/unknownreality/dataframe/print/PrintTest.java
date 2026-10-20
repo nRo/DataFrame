@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -28,8 +28,8 @@ import de.unknownreality.dataframe.DataFrame;
 import de.unknownreality.dataframe.DataFrameLoaderTest;
 import de.unknownreality.dataframe.DataRow;
 import de.unknownreality.dataframe.type.DataFrameTypeManager;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.io.StringWriter;
 import java.util.Iterator;
@@ -65,23 +65,23 @@ public class PrintTest {
 
         //content lines (+header) + inner lines + outer lines
         int expected = (df.size() + 1) + df.size() + 2;
-        Assert.assertEquals(expected, lines.length);
+        Assertions.assertEquals(expected, lines.length);
 
         //cols * width + inner lines + outer lines
         int cols = df.getRow(0).size();
         int expectedRow = cols * width + cols - 1 + 2;
         Iterator<DataRow> dfIt = df.iterator();
         for (int i = 0; i < lines.length; i++) {
-            Assert.assertEquals(expectedRow, lines[i].length());
+            Assertions.assertEquals(expectedRow, lines[i].length());
             //top / bottom line
             if (i == 0 || i == lines.length - 1) {
-                Assert.assertEquals(corner, String.valueOf(lines[i].charAt(0)));
-                Assert.assertEquals(corner, String.valueOf(lines[i].charAt(lines[i].length() - 1)));
+                Assertions.assertEquals(corner, String.valueOf(lines[i].charAt(0)));
+                Assertions.assertEquals(corner, String.valueOf(lines[i].charAt(lines[i].length() - 1)));
                 for (int j = 1; j < expectedRow - 1; j++) {
                     if (j % (width + 1) == 0) {
-                        Assert.assertEquals(joint, String.valueOf(lines[i].charAt(j)));
+                        Assertions.assertEquals(joint, String.valueOf(lines[i].charAt(j)));
                     } else {
-                        Assert.assertEquals(hline, String.valueOf(lines[i].charAt(j)));
+                        Assertions.assertEquals(hline, String.valueOf(lines[i].charAt(j)));
                     }
                 }
                 continue;
@@ -90,22 +90,22 @@ public class PrintTest {
 
             //inner line
             if (i % 2 == 0) {
-                Assert.assertEquals(joint, String.valueOf(lines[i].charAt(0)));
-                Assert.assertEquals(joint, String.valueOf(lines[i].charAt(lines[i].length() - 1)));
+                Assertions.assertEquals(joint, String.valueOf(lines[i].charAt(0)));
+                Assertions.assertEquals(joint, String.valueOf(lines[i].charAt(lines[i].length() - 1)));
                 for (int j = 1; j < expectedRow - 1; j++) {
                     if (j % (width + 1) == 0) {
-                        Assert.assertEquals(joint, String.valueOf(lines[i].charAt(j)));
+                        Assertions.assertEquals(joint, String.valueOf(lines[i].charAt(j)));
                     } else {
-                        Assert.assertEquals(hline, String.valueOf(lines[i].charAt(j)));
+                        Assertions.assertEquals(hline, String.valueOf(lines[i].charAt(j)));
                     }
                 }
                 continue;
             }
-            Assert.assertEquals(vline, String.valueOf(lines[i].charAt(0)));
-            Assert.assertEquals(vline, String.valueOf(lines[i].charAt(lines[i].length() - 1)));
+            Assertions.assertEquals(vline, String.valueOf(lines[i].charAt(0)));
+            Assertions.assertEquals(vline, String.valueOf(lines[i].charAt(lines[i].length() - 1)));
             for (int j = 1; j < expectedRow - 1; j++) {
                 if (j % (width + 1) == 0) {
-                    Assert.assertEquals(vline, String.valueOf(lines[i].charAt(j)));
+                    Assertions.assertEquals(vline, String.valueOf(lines[i].charAt(j)));
                 }
             }
             //header
@@ -152,7 +152,7 @@ public class PrintTest {
         StringWriter sw = new StringWriter();
         df.write(sw, printer);
         String[] lines = sw.toString().split("\\r?\\n");
-        Assert.assertEquals("│abcdefg...  │1.50000000  │", lines[9]);
+        Assertions.assertEquals("│abcdefg...  │1.50000000  │", lines[9]);
 
         printer = PrinterBuilder.create()
                 .withAutoWidth("testA")
@@ -160,12 +160,12 @@ public class PrintTest {
         sw = new StringWriter();
         df.write(sw, printer);
         lines = sw.toString().split("\\r?\\n");
-        Assert.assertEquals("│abcdefghijklmnopqrstuvwxyz │1.50000000  │", lines[9]);
+        Assertions.assertEquals("│abcdefghijklmnopqrstuvwxyz │1.50000000  │", lines[9]);
     }
 
     private void assertContent(String expected, String line, int width, int col) {
 
         String content = line.substring(1 + col + col * width, 1 + col + (col + 1) * width).trim();
-        Assert.assertEquals(expected, content);
+        Assertions.assertEquals(expected, content);
     }
 }

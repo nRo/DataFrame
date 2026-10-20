@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -31,10 +31,8 @@ import de.unknownreality.dataframe.csv.CSVReader;
 import de.unknownreality.dataframe.csv.CSVReaderBuilder;
 import de.unknownreality.dataframe.filter.FilterPredicate;
 import de.unknownreality.dataframe.group.DataFrameGroupingTest;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -47,31 +45,31 @@ import java.nio.file.Files;
  * Created by Alex on 12.03.2016.
  */
 public class DataFrameLoaderTest {
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
-
 
     @Test
-    public void legacyReaderTest() throws IOException {
-        DataFrame legacy = CSVReaderBuilder.create()
-                .containsHeader(true)
+    public void builderFromIteratorTest() throws IOException {
+        CSVReader reader = CSVReaderBuilder.create()
+                .withHeader(true)
                 .withHeaderPrefix("")
                 .withSeparator(';')
-                .loadResource("data_grouping.csv", DataFrameGroupingTest.class.getClassLoader())
-                .toDataFrame()
+                .build();
+        DataFrame frame = DataFrame.builder()
+                .from(reader.load("data_grouping.csv", DataFrameGroupingTest.class.getClassLoader()))
                 .addColumn(new IntegerColumn("ID"))
                 .addColumn(new StringColumn("NAME"))
                 .addColumn(new IntegerColumn("VALUE")).build();
+        Assertions.assertEquals(3, frame.getColumns().size());
+        Assertions.assertTrue(frame.size() > 0);
     }
     @Test
     public void loaderTest() throws IOException {
 
         DataFrame res = DataFrame.fromCSV("loader_test.csv", DataFrameLoaderTest.class.getClassLoader(), ';', false);
-        Assert.assertEquals(5, res.size());
-        Assert.assertEquals(3, res.getColumns().size());
+        Assertions.assertEquals(5, res.size());
+        Assertions.assertEquals(3, res.getColumns().size());
         CSVReader csvReader = CSVReaderBuilder.create().withSeparator(';').withHeader(false).build();
         DataFrame test = DataFrame.load("loader_test.csv",DataFrameLoaderTest.class.getClassLoader(),csvReader);
-        Assert.assertEquals(res,test);
+        Assertions.assertEquals(res,test);
 
         File tmpFile = File.createTempFile("dataframe", ".csv");
         res.writeCSV(tmpFile,';', false);
@@ -83,26 +81,26 @@ public class DataFrameLoaderTest {
 
 
 
-        Assert.assertEquals(res, url);
+        Assertions.assertEquals(res, url);
         res.write(tmpFile);
         DataFrame file = DataFrame.load(tmpFile);
-        Assert.assertEquals(file, url);
+        Assertions.assertEquals(file, url);
 
         byte[] data = Files.readAllBytes(tmpFile.toPath());
         DataFrame d = DataFrame.load(data);
-        Assert.assertEquals(file, d);
+        Assertions.assertEquals(file, d);
 
         String s = new String(data,"UTF-8");
         d = DataFrame.load(s);
-        Assert.assertEquals(file, d);
+        Assertions.assertEquals(file, d);
 
 
         d = DataFrame.load(new FileInputStream(tmpFile));
-        Assert.assertEquals(file, d);
+        Assertions.assertEquals(file, d);
 
 
         d = DataFrame.load(new FileReader(tmpFile));
-        Assert.assertEquals(file, d);
+        Assertions.assertEquals(file, d);
         tmpFile.delete();
 
 
@@ -122,13 +120,13 @@ public class DataFrameLoaderTest {
 
         DataFrame dataFrameB = DataFrameLoader.loadResource("loader_test.csv", "loader_test.csv.meta", DataFrameLoaderTest.class.getClassLoader());
 
-        Assert.assertEquals(dataFrame, dataFrameB);
+        Assertions.assertEquals(dataFrame, dataFrameB);
     }
 
     @Test
     public void testMetaReader() throws Exception {
         DataFrame dataFrame = DataFrameLoader.loadResource("loader_test.csv", "loader_test.csv.meta", DataFrameLoaderTest.class.getClassLoader());
-        Assert.assertEquals(5, dataFrame.size());
+        Assertions.assertEquals(5, dataFrame.size());
 
         /**
          1;1.2;A
@@ -141,16 +139,16 @@ public class DataFrameLoaderTest {
         Double[] values = new Double[]{1.2, 1.4, 1.6, 1.1, 1.2};
         for (int i = 0; i < dataFrame.size(); i++) {
             DataRow row = dataFrame.getRow(i);
-            Assert.assertEquals(i + 1, (int) row.getInteger("id"));
-            Assert.assertEquals(desc[i], row.getString("description"));
-            Assert.assertEquals(values[i], row.getDouble("value"));
+            Assertions.assertEquals(i + 1, (int) row.getInteger("id"));
+            Assertions.assertEquals(desc[i], row.getString("description"));
+            Assertions.assertEquals(values[i], row.getDouble("value"));
 
         }
 
 
-        Assert.assertEquals(IntegerColumn.class, dataFrame.getColumn("id").getClass());
-        Assert.assertEquals(DoubleColumn.class, dataFrame.getColumn("value").getClass());
-        Assert.assertEquals(StringColumn.class, dataFrame.getColumn("description").getClass());
+        Assertions.assertEquals(IntegerColumn.class, dataFrame.getColumn("id").getClass());
+        Assertions.assertEquals(DoubleColumn.class, dataFrame.getColumn("value").getClass());
+        Assertions.assertEquals(StringColumn.class, dataFrame.getColumn("description").getClass());
 
 
         FilterPredicate predicate = FilterPredicate.and(
@@ -159,7 +157,7 @@ public class DataFrameLoaderTest {
         );
         dataFrame = DataFrameLoader.loadResource("loader_test.csv", "loader_test.csv.meta",
                 DataFrameLoaderTest.class.getClassLoader(), predicate);
-        Assert.assertEquals(3, dataFrame.size());
+        Assertions.assertEquals(3, dataFrame.size());
 
         /**
          1;1.2;A
@@ -171,16 +169,16 @@ public class DataFrameLoaderTest {
         values = new Double[]{1.2, 1.6, 1.1};
         for (int i = 0; i < dataFrame.size(); i++) {
             DataRow row = dataFrame.getRow(i);
-            Assert.assertEquals(ids[i], (int) row.getInteger("id"));
-            Assert.assertEquals(desc[i], row.getString("description"));
-            Assert.assertEquals(values[i], row.getDouble("value"));
+            Assertions.assertEquals(ids[i], (int) row.getInteger("id"));
+            Assertions.assertEquals(desc[i], row.getString("description"));
+            Assertions.assertEquals(values[i], row.getDouble("value"));
 
         }
 
 
-        Assert.assertEquals(IntegerColumn.class, dataFrame.getColumn("id").getClass());
-        Assert.assertEquals(DoubleColumn.class, dataFrame.getColumn("value").getClass());
-        Assert.assertEquals(StringColumn.class, dataFrame.getColumn("description").getClass());
+        Assertions.assertEquals(IntegerColumn.class, dataFrame.getColumn("id").getClass());
+        Assertions.assertEquals(DoubleColumn.class, dataFrame.getColumn("value").getClass());
+        Assertions.assertEquals(StringColumn.class, dataFrame.getColumn("description").getClass());
     }
 
 

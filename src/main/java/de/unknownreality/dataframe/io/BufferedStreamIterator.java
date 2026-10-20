@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -34,22 +34,47 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.NoSuchElementException;
 
 /**
+ * Row iterator that reads rows from a buffered character stream.
+ * The iterator is {@link AutoCloseable} and closes the underlying reader automatically after the last row has been read.
+ * <p>
  * Created by Alex on 19.05.2017.
+ *
+ * @param <R> row type
  */
-public abstract class BufferedStreamIterator<R extends Row<?, ?>> implements RowIterator<R> {
+public abstract class BufferedStreamIterator<R extends Row<?, ?>> implements RowIterator<R>, AutoCloseable {
     private static final Logger log = LoggerFactory.getLogger(BufferedStreamIterator.class);
     private final BufferedReader reader;
     private R next;
 
 
+    /**
+     * Creates an iterator that decodes the stream using UTF-8
+     *
+     * @param stream input stream
+     */
     public BufferedStreamIterator(InputStream stream) {
+        this(stream, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Creates an iterator that decodes the stream using the specified charset
+     *
+     * @param stream  input stream
+     * @param charset charset used to decode the stream
+     */
+    public BufferedStreamIterator(InputStream stream, Charset charset) {
         if (stream == null) {
             throw new DataFrameRuntimeException("input stream is null");
         }
-        this.reader = new BufferedReader(new InputStreamReader(stream));
+        if (charset == null) {
+            throw new DataFrameRuntimeException("charset is null");
+        }
+        this.reader = new BufferedReader(new InputStreamReader(stream, charset));
     }
 
     public BufferedStreamIterator(BufferedReader reader){
@@ -61,6 +86,9 @@ public abstract class BufferedStreamIterator<R extends Row<?, ?>> implements Row
 
     protected void loadNext(){
         next = getNext();
+        if (next == null) {
+            close();
+        }
     }
 
     protected String getLine() throws IOException {
@@ -78,6 +106,7 @@ public abstract class BufferedStreamIterator<R extends Row<?, ?>> implements Row
                 getLine();
             } catch (IOException e) {
                 close();
+                throw new DataFrameRuntimeException("error skipping rows", e);
             }
         }
     }
@@ -85,6 +114,7 @@ public abstract class BufferedStreamIterator<R extends Row<?, ?>> implements Row
     /**
      * closes this iterator
      */
+    @Override
     public void close() {
         try {
             reader.close();

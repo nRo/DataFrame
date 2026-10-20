@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -33,25 +33,20 @@ import de.unknownreality.dataframe.csv.CSVReaderBuilder;
 import de.unknownreality.dataframe.filter.FilterPredicate;
 import de.unknownreality.dataframe.sort.SortColumn;
 import de.unknownreality.dataframe.type.DataFrameTypeManager;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Created by Alex on 12.03.2016.
  */
 public class DataFrameTest {
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
-
 
     @Test
     public void testCreation() {
@@ -62,22 +57,22 @@ public class DataFrameTest {
         dataFrame.removeColumn("value");
         dataFrame.addColumn(Double.class, "value");
         dataFrame.append(1, "A", "B", 1d);
-        Assert.assertEquals(1, dataFrame.size());
+        Assertions.assertEquals(1, dataFrame.size());
         dataFrame.addColumn(StringColumn.class, "full", row -> row.getString("first") + "-" + row.getString("last"));
-        Assert.assertEquals("A-B", dataFrame.getRow(0).getString("full"));
+        Assertions.assertEquals("A-B", dataFrame.getRow(0).getString("full"));
         dataFrame.addColumn(Integer.class, "int_value", DataFrameTypeManager.createNew(), row -> row.getNumber("value").intValue());
-        Assert.assertEquals(1, (int) dataFrame.getRow(0).getInteger("int_value"));
+        Assertions.assertEquals(1, (int) dataFrame.getRow(0).getInteger("int_value"));
         dataFrame.removeColumn(dataFrame.getIntegerColumn("int_value"));
         dataFrame.addColumn(Integer.class, "int_value");
         int colIndex = dataFrame.getHeader().getIndex("int_value");
-        Assert.assertEquals(5, colIndex);
-        Assert.assertEquals(true, dataFrame.getRow(0).isNA(colIndex));
+        Assertions.assertEquals(5, colIndex);
+        Assertions.assertEquals(true, dataFrame.getRow(0).isNA(colIndex));
         dataFrame.removeColumn("int_value");
 
         int oldSize = dataFrame.size();
 
         dataFrame.removeColumn("___");
-        Assert.assertEquals(oldSize, dataFrame.size());
+        Assertions.assertEquals(oldSize, dataFrame.size());
 
         DataFrame dataFrame2 = new DefaultDataFrame();
         dataFrame2.addColumn(new IntegerColumn("id"));
@@ -97,15 +92,15 @@ public class DataFrameTest {
         }
         dataFrame = dataFrame.concat(dataFrame2);
         dataFrame.addStringColumn("null_test");
-        Assert.assertEquals(2, dataFrame.size());
-        Assert.assertEquals(2d, dataFrame.getRow(1).toDouble("value"), 0d);
-        Assert.assertEquals("NA", dataFrame.getRow(1).getString("null_test"));
-        Assert.assertEquals(true, dataFrame.getRow(1).isNA("null_test"));
+        Assertions.assertEquals(2, dataFrame.size());
+        Assertions.assertEquals(2d, dataFrame.getRow(1).toDouble("value"), 0d);
+        Assertions.assertEquals("NA", dataFrame.getRow(1).getString("null_test"));
+        Assertions.assertEquals(true, dataFrame.getRow(1).isNA("null_test"));
 
 
-        Assert.assertEquals(valueColumn, dataFrame2.getDoubleColumn("value"));
-        Assert.assertEquals(valueColumn, dataFrame2.getNumberColumn("value"));
-        Assert.assertEquals(valueColumn, dataFrame2.getColumn("value"));
+        Assertions.assertEquals(valueColumn, dataFrame2.getDoubleColumn("value"));
+        Assertions.assertEquals(valueColumn, dataFrame2.getNumberColumn("value"));
+        Assertions.assertEquals(valueColumn, dataFrame2.getColumn("value"));
     }
 
     @Test
@@ -150,29 +145,29 @@ public class DataFrameTest {
 
 
 
-        Assert.assertEquals(df, df2);
+        Assertions.assertEquals(df, df2);
 
         df.iterator();
 
 
-        Assert.assertEquals(header.length, df.getHeader().size());
+        Assertions.assertEquals(header.length, df.getHeader().size());
         for (int i = 0; i < header.length; i++) {
-            Assert.assertEquals(header[i], df.getHeader().get(i));
+            Assertions.assertEquals(header[i], df.getHeader().get(i));
         }
-        Assert.assertEquals(col1.length, df.size());
+        Assertions.assertEquals(col1.length, df.size());
         int i = 0;
         for (DataRow row : df) {
-            Assert.assertEquals(col1[i], row.get(0));
-            Assert.assertEquals(col2[i], row.get(1));
-            Assert.assertEquals(col3[i].equals("") ? Values.NA : col3[i], row.get(2));
-            Assert.assertEquals(col4[i], row.get(3));
+            Assertions.assertEquals(col1[i], row.get(0));
+            Assertions.assertEquals(col2[i], row.get(1));
+            Assertions.assertEquals(col3[i].equals("") ? Values.NA : col3[i], row.get(2));
+            Assertions.assertEquals(col4[i], row.get(3));
 
-            Assert.assertEquals(col1[i], row.get(header[0]));
-            Assert.assertEquals(col2[i], row.get(header[1]));
-            Assert.assertEquals(col3[i].equals("") ? Values.NA : col3[i], row.get(header[2]));
-            Assert.assertEquals(col4[i], row.get(header[3]));
+            Assertions.assertEquals(col1[i], row.get(header[0]));
+            Assertions.assertEquals(col2[i], row.get(header[1]));
+            Assertions.assertEquals(col3[i].equals("") ? Values.NA : col3[i], row.get(header[2]));
+            Assertions.assertEquals(col4[i], row.get(header[3]));
 
-            Assert.assertEquals(i, row.toDouble("E").intValue());
+            Assertions.assertEquals(i, row.toDouble("E").intValue());
             row.getInteger(0);
             row.getDouble(1);
             row.getString(2);
@@ -183,12 +178,12 @@ public class DataFrameTest {
         DataRow row = df.getRow(1);
         row.set("A", 999);
 
-        Assert.assertEquals(Integer.valueOf(999), df.getRow(1).getInteger("A"));
+        Assertions.assertEquals(Integer.valueOf(999), df.getRow(1).getInteger("A"));
         row.set("A", null);
-        Assert.assertEquals(true, df.getRow(1).isNA("A"));
+        Assertions.assertEquals(true, df.getRow(1).isNA("A"));
 
         row.set("A", Values.NA);
-        Assert.assertEquals(true, df.getRow(1).isNA("A"));
+        Assertions.assertEquals(true, df.getRow(1).isNA("A"));
         df.getColumn("A").sort();
     }
 
@@ -197,13 +192,13 @@ public class DataFrameTest {
         DataFrame df = DataFrame.create()
                 .addIntegerColumn("x");
         df.append(1).append(2);
-        Assert.assertEquals(2,df.size());
-        Assert.assertEquals(1,df.getColumns().size());
-        Assert.assertEquals(2,df.getIntegerColumn("x").size());
+        Assertions.assertEquals(2,df.size());
+        Assertions.assertEquals(1,df.getColumns().size());
+        Assertions.assertEquals(2,df.getIntegerColumn("x").size());
         df.clear();
-        Assert.assertEquals(0,df.size());
-        Assert.assertEquals(1,df.getColumns().size());
-        Assert.assertEquals(0,df.getIntegerColumn("x").size());
+        Assertions.assertEquals(0,df.size());
+        Assertions.assertEquals(1,df.getColumns().size());
+        Assertions.assertEquals(0,df.getIntegerColumn("x").size());
     }
 
     @Test
@@ -242,29 +237,29 @@ public class DataFrameTest {
 
 
 
-        Assert.assertEquals(1l, df.getRow(2).get("H"));
-        Assert.assertEquals(1l, df.getRow(2).getLong("H").longValue());
-        Assert.assertEquals(1l, df.getRow(2).getLong(7).longValue());
-        Assert.assertEquals(1l, df.getRow(2).getLong("H").longValue());
-        Assert.assertEquals(1l, df.getRow(2).getLong(7).longValue());
+        Assertions.assertEquals(1l, df.getRow(2).get("H"));
+        Assertions.assertEquals(1l, df.getRow(2).getLong("H").longValue());
+        Assertions.assertEquals(1l, df.getRow(2).getLong(7).longValue());
+        Assertions.assertEquals(1l, df.getRow(2).getLong("H").longValue());
+        Assertions.assertEquals(1l, df.getRow(2).getLong(7).longValue());
 
-        Assert.assertEquals(df.getRow(2).getNumber("I").doubleValue(), df.getRow(2).getNumber("H").doubleValue(),0d);
-        Assert.assertEquals(new Short((short)1), df.getRow(2).getShort("G"));
-        Assert.assertEquals(new Short((short)1), df.getRow(2).getShort(6));
+        Assertions.assertEquals(df.getRow(2).getNumber("I").doubleValue(), df.getRow(2).getNumber("H").doubleValue(),0d);
+        Assertions.assertEquals(new Short((short)1), df.getRow(2).getShort("G"));
+        Assertions.assertEquals(new Short((short)1), df.getRow(2).getShort(6));
 
-        Assert.assertEquals(new Byte((byte) 1), df.getRow(2).getByte("F"));
-        Assert.assertEquals(new Byte((byte) 1), df.getRow(2).getByte(5));
+        Assertions.assertEquals(new Byte((byte) 1), df.getRow(2).getByte("F"));
+        Assertions.assertEquals(new Byte((byte) 1), df.getRow(2).getByte(5));
 
-        Assert.assertEquals(1f, df.getRow(2).getFloat("I"),0f);
-        Assert.assertEquals(1f, df.getRow(2).getFloat(8),0f);
+        Assertions.assertEquals(1f, df.getRow(2).getFloat("I"),0f);
+        Assertions.assertEquals(1f, df.getRow(2).getFloat(8),0f);
 
-        Assert.assertEquals((Integer)2, df.getRow(2).getInteger("A"));
-        Assert.assertEquals((Integer)2, df.getRow(2).getInteger(0));
+        Assertions.assertEquals((Integer)2, df.getRow(2).getInteger("A"));
+        Assertions.assertEquals((Integer)2, df.getRow(2).getInteger(0));
 
-        Assert.assertEquals((Double)5d, df.getRow(2).getDouble("B"));
-        Assert.assertEquals((Double)5d, df.getRow(2).getDouble(1));
-        Assert.assertEquals("Y", df.getRow(2).getString("C"));
-        Assert.assertEquals("Y", df.getRow(2).getString(2));
+        Assertions.assertEquals((Double)5d, df.getRow(2).getDouble("B"));
+        Assertions.assertEquals((Double)5d, df.getRow(2).getDouble(1));
+        Assertions.assertEquals("Y", df.getRow(2).getString("C"));
+        Assertions.assertEquals("Y", df.getRow(2).getString(2));
     }
 
     @Test
@@ -288,32 +283,32 @@ public class DataFrameTest {
                         FilterPredicate.ne("name", "a").and(FilterPredicate.ne("name", "b")),
                         FilterPredicate.lt("x", 4).or(FilterPredicate.gt("x", 3))
                 ));
-        Assert.assertEquals(2, filtered.size());
+        Assertions.assertEquals(2, filtered.size());
 
         filtered = dataFrame.select(
                 FilterPredicate.eq("z", true).nor(FilterPredicate.eq("v", true))
         );
-        Assert.assertEquals(1, filtered.size());
+        Assertions.assertEquals(1, filtered.size());
 
         filtered = dataFrame.select(
                 FilterPredicate.eq("z", true).xor(FilterPredicate.eq("v", true))
         );
-        Assert.assertEquals(2, filtered.size());
+        Assertions.assertEquals(2, filtered.size());
 
         filtered = dataFrame.select(
                 FilterPredicate.in("name", new String[]{"a", "b"}).neg()
         );
-        Assert.assertEquals(2, filtered.size());
-        Assert.assertEquals("c", filtered.getRow(0).getString("name"));
-        Assert.assertEquals("d", filtered.getRow(1).getString("name"));
+        Assertions.assertEquals(2, filtered.size());
+        Assertions.assertEquals("c", filtered.getRow(0).getString("name"));
+        Assertions.assertEquals("d", filtered.getRow(1).getString("name"));
 
         filtered = dataFrame.select(
                 FilterPredicate.eq("name", "a").neg()
         );
-        Assert.assertEquals(3, filtered.size());
-        Assert.assertEquals("b", filtered.getRow(0).getString("name"));
-        Assert.assertEquals("c", filtered.getRow(1).getString("name"));
-        Assert.assertEquals("d", filtered.getRow(2).getString("name"));
+        Assertions.assertEquals(3, filtered.size());
+        Assertions.assertEquals("b", filtered.getRow(0).getString("name"));
+        Assertions.assertEquals("c", filtered.getRow(1).getString("name"));
+        Assertions.assertEquals("d", filtered.getRow(2).getString("name"));
 
     }
 
@@ -347,15 +342,15 @@ public class DataFrameTest {
         dataFrame2.append("c", 3d, 3, false, true, "abc");
         dataFrame2.append("d", 4d, 2, false, false, "123");
 
-        Assert.assertEquals(dataFrame, dataFrame2);
+        Assertions.assertEquals(dataFrame, dataFrame2);
 
         DataRow r = dataFrame2.getRow(0);
         r.set("name", "abc");
         dataFrame2.update(r);
-        Assert.assertNotEquals(dataFrame, dataFrame2);
+        Assertions.assertNotEquals(dataFrame, dataFrame2);
 
         DataFrame dataFrame3 = dataFrame.copy();
-        Assert.assertEquals(dataFrame, dataFrame3);
+        Assertions.assertEquals(dataFrame, dataFrame3);
 
 
     }
@@ -363,11 +358,11 @@ public class DataFrameTest {
     @Test
     public void testNA() throws IOException {
 
-        Assert.assertEquals(true, Values.NA.isNA(Values.NA));
-        Assert.assertEquals(true, Values.NA.isNA("NA"));
-        Assert.assertEquals(true, Values.NA.isNA(null));
-        Assert.assertEquals(false, Values.NA.isNA(1));
-        Assert.assertEquals(false, Values.NA.isNA("na"));
+        Assertions.assertEquals(true, Values.NA.isNA(Values.NA));
+        Assertions.assertEquals(true, Values.NA.isNA("NA"));
+        Assertions.assertEquals(true, Values.NA.isNA(null));
+        Assertions.assertEquals(false, Values.NA.isNA(1));
+        Assertions.assertEquals(false, Values.NA.isNA("na"));
 
 
         String[] header = new String[]{"A", "B", "C", "D"};
@@ -395,29 +390,29 @@ public class DataFrameTest {
         df.addDoubleColumn("test2");
 
         for (DataRow row : df.rows()) {
-            Assert.assertEquals(Values.NA, row.get("test"));
-            Assert.assertEquals(Values.NA, row.get("test2"));
+            Assertions.assertEquals(Values.NA, row.get("test"));
+            Assertions.assertEquals(Values.NA, row.get("test2"));
 
             if (i == 2) {
-                Assert.assertEquals(true, row.isNA("B"));
+                Assertions.assertEquals(true, row.isNA("B"));
             } else {
-                Assert.assertEquals(false, row.isNA("B"));
+                Assertions.assertEquals(false, row.isNA("B"));
             }
             if (i == 3) {
-                // Assert.assertEquals(true, row.isNA("C"));
-                Assert.assertEquals(Values.NA, row.get("C"));
+                // Assertions.assertEquals(true, row.isNA("C"));
+                Assertions.assertEquals(Values.NA, row.get("C"));
             } else {
-                Assert.assertEquals(false, row.isNA("C"));
+                Assertions.assertEquals(false, row.isNA("C"));
             }
             i++;
         }
 
         DoubleColumn dc = df.getDoubleColumn("B");
-        Assert.assertEquals(col2.length, dc.size());
-        Assert.assertEquals(12d, dc.sum(), 0d);
-        Assert.assertEquals(3d, dc.mean(), 0d);
-        Assert.assertEquals(5d, dc.max(), 0d);
-        Assert.assertEquals(2d, dc.min(), 0d);
+        Assertions.assertEquals(col2.length, dc.size());
+        Assertions.assertEquals(12d, dc.sum(), 0d);
+        Assertions.assertEquals(3d, dc.mean(), 0d);
+        Assertions.assertEquals(5d, dc.max(), 0d);
+        Assertions.assertEquals(2d, dc.min(), 0d);
 
     }
 
@@ -437,10 +432,10 @@ public class DataFrameTest {
         DataFrame test = dataFrame
                 .selectColumns("a")
                 .where("b > 3");
-        Assert.assertEquals(1,test.getColumns().size());
-        Assert.assertEquals(2,test.size());
-        Assert.assertEquals(1d,test.getRow(0).get("a"));
-        Assert.assertEquals(2d,test.getRow(1).get("a"));
+        Assertions.assertEquals(1,test.getColumns().size());
+        Assertions.assertEquals(2,test.size());
+        Assertions.assertEquals(1d,test.getRow(0).get("a"));
+        Assertions.assertEquals(2d,test.getRow(1).get("a"));
 
         test = dataFrame
                 .selectColumns(
@@ -448,12 +443,12 @@ public class DataFrameTest {
                         dataFrame.getColumn("a"),
                         dataFrame.getColumn("b"))
                 .where("c",true);
-        Assert.assertEquals(3,test.getColumns().size());
-        Assert.assertEquals(2,test.size());
-        Assert.assertEquals("A",test.getRow(0).get("name"));
-        Assert.assertEquals("B",test.getRow(1).get("name"));
-        Assert.assertEquals(1d,test.getRow(0).get("a"));
-        Assert.assertEquals(2d,test.getRow(1).get("a"));
+        Assertions.assertEquals(3,test.getColumns().size());
+        Assertions.assertEquals(2,test.size());
+        Assertions.assertEquals("A",test.getRow(0).get("name"));
+        Assertions.assertEquals("B",test.getRow(1).get("name"));
+        Assertions.assertEquals(1d,test.getRow(0).get("a"));
+        Assertions.assertEquals(2d,test.getRow(1).get("a"));
 
 
         test = dataFrame
@@ -461,21 +456,21 @@ public class DataFrameTest {
                         dataFrame.getColumn("name"),
                         dataFrame.getColumn("c"))
                 .where(FilterPredicate.leColumn("b","a"));
-        Assert.assertEquals(2,test.getColumns().size());
-        Assert.assertEquals(2,test.size());
-        Assert.assertEquals("C",test.getRow(0).get("name"));
-        Assert.assertEquals("D",test.getRow(1).get("name"));
-        Assert.assertEquals(false,test.getRow(0).get("c"));
-        Assert.assertEquals(false,test.getRow(1).get("c"));
+        Assertions.assertEquals(2,test.getColumns().size());
+        Assertions.assertEquals(2,test.size());
+        Assertions.assertEquals("C",test.getRow(0).get("name"));
+        Assertions.assertEquals("D",test.getRow(1).get("name"));
+        Assertions.assertEquals(false,test.getRow(0).get("c"));
+        Assertions.assertEquals(false,test.getRow(1).get("c"));
 
         test = dataFrame
                 .selectColumns("name").allRows();
-        Assert.assertEquals(1,test.getColumns().size());
-        Assert.assertEquals(4,test.size());
-        Assert.assertEquals("A",test.getRow(0).get("name"));
-        Assert.assertEquals("B",test.getRow(1).get("name"));
-        Assert.assertEquals("C",test.getRow(2).get("name"));
-        Assert.assertEquals("D",test.getRow(3).get("name"));
+        Assertions.assertEquals(1,test.getColumns().size());
+        Assertions.assertEquals(4,test.size());
+        Assertions.assertEquals("A",test.getRow(0).get("name"));
+        Assertions.assertEquals("B",test.getRow(1).get("name"));
+        Assertions.assertEquals("C",test.getRow(2).get("name"));
+        Assertions.assertEquals("D",test.getRow(3).get("name"));
     }
 
     @Test
@@ -491,19 +486,19 @@ public class DataFrameTest {
 
         DataRows rows = dataFrame.getRows();
         DataFrame dataFrameB = rows.toDataFrame();
-        Assert.assertEquals("A", rows.get(0).get("name"));
+        Assertions.assertEquals("A", rows.get(0).get("name"));
         dataFrame.sort("a", SortColumn.Direction.Descending);
-        Assert.assertEquals("A", dataFrameB.getValue(0,0));
-        Assert.assertEquals("B", dataFrame.getValue(0,0));
+        Assertions.assertEquals("A", dataFrameB.getValue(0,0));
+        Assertions.assertEquals("B", dataFrame.getValue(0,0));
 
         try {
-            Assert.assertEquals("B", rows.get(0).get("name"));
+            Assertions.assertEquals("B", rows.get(0).get("name"));
             fail("Expected a DataFrameRuntimeException to be thrown");
         } catch (DataFrameRuntimeException dataFrameRuntimeException) {
             assertEquals(dataFrameRuntimeException.getMessage(), "row is no longer valid, the dataframe changed since the row object was created");
         }
         rows = dataFrame.getRows();
-        Assert.assertEquals("B", rows.get(0).get("name"));
+        Assertions.assertEquals("B", rows.get(0).get("name"));
 
     }
 
@@ -520,52 +515,52 @@ public class DataFrameTest {
         List<String> names = dataFrame.getStringColumn("name").toList();
         List<Integer> values = dataFrame.getIntegerColumn("int").toList();
 
-        Assert.assertEquals(3,names.size());
-        Assert.assertEquals(3,values.size());
-        Assert.assertEquals("A",names.get(0));
-        Assert.assertEquals("B",names.get(1));
-        Assert.assertEquals("C",names.get(2));
-        Assert.assertEquals(1,(int)values.get(0));
-        Assert.assertEquals(2,(int)values.get(1));
-        Assert.assertEquals(3,(int)values.get(2));
+        Assertions.assertEquals(3,names.size());
+        Assertions.assertEquals(3,values.size());
+        Assertions.assertEquals("A",names.get(0));
+        Assertions.assertEquals("B",names.get(1));
+        Assertions.assertEquals("C",names.get(2));
+        Assertions.assertEquals(1,(int)values.get(0));
+        Assertions.assertEquals(2,(int)values.get(1));
+        Assertions.assertEquals(3,(int)values.get(2));
 
         names.remove("A");
         values.remove(1);
 
-        Assert.assertEquals(2,names.size());
-        Assert.assertEquals(2,values.size());
+        Assertions.assertEquals(2,names.size());
+        Assertions.assertEquals(2,values.size());
 
-        Assert.assertEquals(3,dataFrame.getStringColumn("name").size());
-        Assert.assertEquals(3,dataFrame.getIntegerColumn("int").size());
+        Assertions.assertEquals(3,dataFrame.getStringColumn("name").size());
+        Assertions.assertEquals(3,dataFrame.getIntegerColumn("int").size());
 
 
         List<String> namesIm = dataFrame.getStringColumn("name").asList();
         List<Integer> valuesIm = dataFrame.getIntegerColumn("int").asList();
 
-        Assert.assertEquals(3,namesIm.size());
-        Assert.assertEquals(3,valuesIm.size());
-        Assert.assertEquals("A",namesIm.get(0));
-        Assert.assertEquals("B",namesIm.get(1));
-        Assert.assertEquals("C",namesIm.get(2));
-        Assert.assertEquals(1,(int)valuesIm.get(0));
-        Assert.assertEquals(2,(int)valuesIm.get(1));
-        Assert.assertEquals(3,(int)valuesIm.get(2));
+        Assertions.assertEquals(3,namesIm.size());
+        Assertions.assertEquals(3,valuesIm.size());
+        Assertions.assertEquals("A",namesIm.get(0));
+        Assertions.assertEquals("B",namesIm.get(1));
+        Assertions.assertEquals("C",namesIm.get(2));
+        Assertions.assertEquals(1,(int)valuesIm.get(0));
+        Assertions.assertEquals(2,(int)valuesIm.get(1));
+        Assertions.assertEquals(3,(int)valuesIm.get(2));
 
-        Assert.assertEquals(1,valuesIm.indexOf(2));
-        Assert.assertEquals(-1,valuesIm.indexOf(5));
+        Assertions.assertEquals(1,valuesIm.indexOf(2));
+        Assertions.assertEquals(-1,valuesIm.indexOf(5));
 
         Object[] oArr = valuesIm.toArray();
-        Assert.assertEquals(3,oArr.length);
-        Assert.assertEquals(2,oArr[1]);
+        Assertions.assertEquals(3,oArr.length);
+        Assertions.assertEquals(2,oArr[1]);
 
         Integer[] iArr = valuesIm.toArray(new Integer[0]);
-        Assert.assertEquals(3,iArr.length);
-        Assert.assertEquals((Integer)2,iArr[1]);
+        Assertions.assertEquals(3,iArr.length);
+        Assertions.assertEquals((Integer)2,iArr[1]);
 
         iArr = valuesIm.toArray(new Integer[4]);
-        Assert.assertEquals(4,iArr.length);
-        Assert.assertEquals((Integer)2,iArr[1]);
-        Assert.assertEquals(null,iArr[3]);
+        Assertions.assertEquals(4,iArr.length);
+        Assertions.assertEquals((Integer)2,iArr[1]);
+        Assertions.assertEquals(null,iArr[3]);
         try {
             namesIm.add("D");
             namesIm.remove("A");
@@ -590,39 +585,41 @@ public class DataFrameTest {
         DataFrame head = df.head();
         DataFrame tail = df.tail();
 
-        Assert.assertEquals(DefaultDataFrame.DEFAULT_HEAD_SIZE,head.size());
-        Assert.assertEquals(0,head.getValue(0,0));
-        Assert.assertEquals("0s",head.getValue(1,0));
+        Assertions.assertEquals(DefaultDataFrame.DEFAULT_HEAD_SIZE,head.size());
+        Assertions.assertEquals(0,head.getValue(0,0));
+        Assertions.assertEquals("0s",head.getValue(1,0));
 
-        Assert.assertEquals(19,head.getValue(0,head.size() - 1));
-        Assert.assertEquals("19s",head.getValue(1,head.size() - 1));
+        Assertions.assertEquals(19,head.getValue(0,head.size() - 1));
+        Assertions.assertEquals("19s",head.getValue(1,head.size() - 1));
 
         int tMin = 100 - DefaultDataFrame.DEFAULT_TAIL_SIZE;
-        Assert.assertEquals(tMin,tail.getValue(0,0));
-        Assert.assertEquals(tMin+"s",tail.getValue(1,0));
+        Assertions.assertEquals(tMin,tail.getValue(0,0));
+        Assertions.assertEquals(tMin+"s",tail.getValue(1,0));
 
-        Assert.assertEquals(99,tail.getValue(0,tail.size()- 1));
-        Assert.assertEquals(99+"s",tail.getValue(1,tail.size() - 1));
+        Assertions.assertEquals(99,tail.getValue(0,tail.size()- 1));
+        Assertions.assertEquals(99+"s",tail.getValue(1,tail.size() - 1));
 
-        Assert.assertEquals(DefaultDataFrame.DEFAULT_HEAD_SIZE,tail.size());
+        Assertions.assertEquals(DefaultDataFrame.DEFAULT_HEAD_SIZE,tail.size());
 
         for(int i = 0; i  < DefaultDataFrame.DEFAULT_HEAD_SIZE;i++){
-            Assert.assertEquals(Integer.valueOf(i),head.getRow(i).getInteger(0));
-            Assert.assertEquals(i+"s",head.getRow(i).getString(1));
+            Assertions.assertEquals(Integer.valueOf(i),head.getRow(i).getInteger(0));
+            Assertions.assertEquals(i+"s",head.getRow(i).getString(1));
         }
 
         for(int i = 0; i  < DefaultDataFrame.DEFAULT_TAIL_SIZE;i++){
             int idx = df.size() - DefaultDataFrame.DEFAULT_TAIL_SIZE + i;
-            Assert.assertEquals(Integer.valueOf(idx),tail.getRow(i).getInteger(0));
-            Assert.assertEquals(idx+"s",tail.getRow(i).getString(1));
+            Assertions.assertEquals(Integer.valueOf(idx),tail.getRow(i).getInteger(0));
+            Assertions.assertEquals(idx+"s",tail.getRow(i).getString(1));
         }
     }
 
-    @Test(expected = DataFrameRuntimeException.class)
+    @Test
     public void testColumnSelectErrors(){
-        DataFrame df = NoConstructorDataFrame.create();
-        df.append("A",1d,5, true);
-        df.selectColumns("name").allRows();
+        Assertions.assertThrows(DataFrameRuntimeException.class, () -> {
+            DataFrame df = NoConstructorDataFrame.create();
+            df.append("A",1d,5, true);
+            df.selectColumns("name").allRows();
+        });
     }
     private static class NoConstructorDataFrame extends DefaultDataFrame{
         private NoConstructorDataFrame(){}

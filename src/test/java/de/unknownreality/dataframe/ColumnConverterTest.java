@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -24,13 +24,11 @@
 
 package de.unknownreality.dataframe;
 
-import de.unknownreality.dataframe.DataFrame;
-import de.unknownreality.dataframe.DataFrameException;
 import de.unknownreality.dataframe.column.DoubleColumn;
 import de.unknownreality.dataframe.column.IntegerColumn;
 import de.unknownreality.dataframe.transform.StringColumnConverter;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * Created by Alex on 28.06.2017.
@@ -52,8 +50,8 @@ public class ColumnConverterTest {
         IntegerColumn integers = StringColumnConverter.convert(dataFrame.getStringColumn("integer"),IntegerColumn.class);
 
         for(int i = 0; i < dataFrame.size(); i++){
-            Assert.assertEquals((Double)Double.parseDouble(dataFrame.getRow(i).getString("double")), doubles.get(i));
-            Assert.assertEquals((Integer) Integer.parseInt(dataFrame.getRow(i).getString("integer")), integers.get(i));
+            Assertions.assertEquals((Double)Double.parseDouble(dataFrame.getRow(i).getString("double")), doubles.get(i));
+            Assertions.assertEquals((Integer) Integer.parseInt(dataFrame.getRow(i).getString("integer")), integers.get(i));
         }
     }
 }

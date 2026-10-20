@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -25,10 +25,8 @@
 package de.unknownreality.dataframe;
 
 import de.unknownreality.dataframe.io.FileFormat;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -37,17 +35,14 @@ import java.io.StringWriter;
  * Created by Alex on 12.03.2016.
  */
 public class DataFrameWriterTest {
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
-
 
 
     @Test
     public void writerTest() throws IOException {
 
         DataFrame res = DataFrame.fromCSV("loader_test.csv", DataFrameWriterTest.class.getClassLoader(), ';', false);
-        Assert.assertEquals(5, res.size());
-        Assert.assertEquals(3, res.getColumns().size());
+        Assertions.assertEquals(5, res.size());
+        Assertions.assertEquals(3, res.getColumns().size());
 
         StringWriter stringWriter = new StringWriter();
         res.write(stringWriter);
@@ -55,11 +50,11 @@ public class DataFrameWriterTest {
 
         DataFrame res2 = DataFrame.load(content, FileFormat.TSV);
 
-        Assert.assertEquals(res, res2);
+        Assertions.assertEquals(res, res2);
 
         res2 = DataFrame.load(content.getBytes(), FileFormat.TSV);
 
-        Assert.assertEquals(res, res2);
+        Assertions.assertEquals(res, res2);
     }
 
 

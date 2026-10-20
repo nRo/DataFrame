@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -32,10 +32,8 @@ import de.unknownreality.dataframe.csv.CSVReader;
 import de.unknownreality.dataframe.csv.CSVReaderBuilder;
 import de.unknownreality.dataframe.group.DataFrameGroupingTest;
 import de.unknownreality.dataframe.join.impl.DefaultJoinUtil;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
@@ -43,9 +41,6 @@ import java.io.IOException;
  * Created by Alex on 12.03.2016.
  */
 public class DataFrameJoinTest {
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
-
     @Test
     public void testReader() throws IOException {
         /*
@@ -67,7 +62,7 @@ public class DataFrameJoinTest {
                 .build();
 
         DataFrame geneDataFrame = DataFrameLoader.load("data_join_a.csv", DataFrameGroupingTest.class.getClassLoader(), csvReader);
-        Assert.assertEquals(4, geneDataFrame.size());
+        Assertions.assertEquals(4, geneDataFrame.size());
 
 
          /*
@@ -90,7 +85,7 @@ public class DataFrameJoinTest {
         DataFrame transcriptDataFrame = DataFrameLoader.load("data_join_b.csv", DataFrameGroupingTest.class.getClassLoader(), csvReader);
 
 
-        Assert.assertEquals(4, transcriptDataFrame.size());
+        Assertions.assertEquals(4, transcriptDataFrame.size());
 
         /*
            GENE_ID;FPKM.A;CHR;TRANSCRIPT_ID;FPKM.B;TRANSCRIPT_NUMBER
@@ -99,7 +94,7 @@ public class DataFrameJoinTest {
             B;4;2;TC;6;1
          */
         JoinedDataFrame innerJoin = geneDataFrame.joinInner(transcriptDataFrame, "GENE_ID");
-        Assert.assertEquals(3, innerJoin.size());
+        Assertions.assertEquals(3, innerJoin.size());
         checkJoinedRow(innerJoin.getRow(0), "A", 5d, "1", "TA", 7d, 1);
         checkJoinedRow(innerJoin.getRow(1), "A", 5d, "1", "TB", 3d, 2);
         checkJoinedRow(innerJoin.getRow(2), "B", 4d, "2", "TC", 6d, 1);
@@ -115,7 +110,7 @@ public class DataFrameJoinTest {
             ;;;TD;E;4;1
          */
         JoinedDataFrame outerJoin = geneDataFrame.joinOuter(transcriptDataFrame, "GENE_ID");
-        Assert.assertEquals(6, outerJoin.size());
+        Assertions.assertEquals(6, outerJoin.size());
         checkJoinedRow(outerJoin.getRow(0), "A", 5d, "1", "TA", 7d, 1);
         checkJoinedRow(outerJoin.getRow(1), "A", 5d, "1", "TB", 3d, 2);
         checkJoinedRow(outerJoin.getRow(2), "B", 4d, "2", "TC", 6d, 1);
@@ -133,7 +128,7 @@ public class DataFrameJoinTest {
             D;;;;
          */
         JoinedDataFrame leftJoin = geneDataFrame.joinLeft(transcriptDataFrame, "GENE_ID");
-        Assert.assertEquals(5, leftJoin.size());
+        Assertions.assertEquals(5, leftJoin.size());
         checkJoinedRow(leftJoin.getRow(0), "A", 5d, "1", "TA", 7d, 1);
         checkJoinedRow(leftJoin.getRow(1), "A", 5d, "1", "TB", 3d, 2);
         checkJoinedRow(leftJoin.getRow(2), "B", 4d, "2", "TC", 6d, 1);
@@ -149,29 +144,29 @@ public class DataFrameJoinTest {
             ;;;TD;E;4;1
          */
         JoinedDataFrame rightJoin = geneDataFrame.joinRight(transcriptDataFrame, "GENE_ID");
-        Assert.assertEquals(4, rightJoin.size());
+        Assertions.assertEquals(4, rightJoin.size());
         checkJoinedRow(rightJoin.getRow(0), "A", 5d, "1", "TA", 7d, 1);
         checkJoinedRow(rightJoin.getRow(1), "A", 5d, "1", "TB", 3d, 2);
         checkJoinedRow(rightJoin.getRow(2), "B", 4d, "2", "TC", 6d, 1);
         checkJoinedRow(rightJoin.getRow(3), "E", Values.NA, Values.NA, "TD", 4d, 1);
 
-        Assert.assertTrue(rightJoin.getJoinInfo().isB(transcriptDataFrame));
-        Assert.assertFalse(rightJoin.getJoinInfo().isA(transcriptDataFrame));
-        Assert.assertEquals(0, rightJoin.getJoinInfo().getJoinedIndex("GENE_ID", transcriptDataFrame));
-        Assert.assertEquals("FPKM" + DefaultJoinUtil.JOIN_SUFFIX_B, rightJoin.getJoinInfo().getJoinedHeader("FPKM", transcriptDataFrame));
-        Assert.assertEquals("FPKM" + DefaultJoinUtil.JOIN_SUFFIX_A, rightJoin.getJoinInfo().getJoinedHeaderA("FPKM"));
-        Assert.assertEquals(4, rightJoin.getJoinInfo().getJoinedIndexB("FPKM"));
+        Assertions.assertTrue(rightJoin.getJoinInfo().isB(transcriptDataFrame));
+        Assertions.assertFalse(rightJoin.getJoinInfo().isA(transcriptDataFrame));
+        Assertions.assertEquals(0, rightJoin.getJoinInfo().getJoinedIndex("GENE_ID", transcriptDataFrame));
+        Assertions.assertEquals("FPKM" + DefaultJoinUtil.JOIN_SUFFIX_B, rightJoin.getJoinInfo().getJoinedHeader("FPKM", transcriptDataFrame));
+        Assertions.assertEquals("FPKM" + DefaultJoinUtil.JOIN_SUFFIX_A, rightJoin.getJoinInfo().getJoinedHeaderA("FPKM"));
+        Assertions.assertEquals(4, rightJoin.getJoinInfo().getJoinedIndexB("FPKM"));
 
     }
 
 
     private static void checkJoinedRow(DataRow row, Object geneId, Object gene_fpkm, Object chr, Object transcriptId, Object transcript_fpkm, Object transcriptNumber) {
-        Assert.assertEquals(geneId, row.get("GENE_ID"));
-        Assert.assertEquals(gene_fpkm, row.get("FPKM" + DefaultJoinUtil.JOIN_SUFFIX_A));
-        Assert.assertEquals(chr, row.get("CHR"));
-        Assert.assertEquals(transcriptId, row.get("TRANSCRIPT_ID"));
-        Assert.assertEquals(transcript_fpkm, row.get("FPKM" + DefaultJoinUtil.JOIN_SUFFIX_B));
-        Assert.assertEquals(transcriptNumber, row.get("TRANSCRIPT_NUMBER"));
+        Assertions.assertEquals(geneId, row.get("GENE_ID"));
+        Assertions.assertEquals(gene_fpkm, row.get("FPKM" + DefaultJoinUtil.JOIN_SUFFIX_A));
+        Assertions.assertEquals(chr, row.get("CHR"));
+        Assertions.assertEquals(transcriptId, row.get("TRANSCRIPT_ID"));
+        Assertions.assertEquals(transcript_fpkm, row.get("FPKM" + DefaultJoinUtil.JOIN_SUFFIX_B));
+        Assertions.assertEquals(transcriptNumber, row.get("TRANSCRIPT_NUMBER"));
     }
 
 

@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -34,6 +34,8 @@ import de.unknownreality.dataframe.common.header.Header;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 
@@ -42,13 +44,27 @@ import java.util.Map;
  */
 public abstract class DataWriter {
 
+    /**
+     * Returns the charset used to encode binary output. Defaults to UTF-8.
+     *
+     * @return charset used by this writer
+     */
     public Charset getCharset() {
-        return Charset.defaultCharset();
+        return StandardCharsets.UTF_8;
     }
 
     public void write(OutputStream os, DataContainer<? extends Header<?>, ? extends Row<?, ?>> dataContainer) {
         BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os, getCharset()));
         write(bufferedWriter, dataContainer);
+        flush(bufferedWriter);
+    }
+
+    private static void flush(BufferedWriter writer) {
+        try {
+            writer.flush();
+        } catch (IOException e) {
+            throw new DataFrameRuntimeException("error flushing the writer", e);
+        }
     }
 
     /**
@@ -66,7 +82,9 @@ public abstract class DataWriter {
     }
 
     public void write(Writer writer, DataContainer<?, ?> dataContainer) {
-        write(initWriter(writer), dataContainer);
+        BufferedWriter bufferedWriter = initWriter(writer);
+        write(bufferedWriter, dataContainer);
+        flush(bufferedWriter);
     }
 
 
@@ -86,8 +104,13 @@ public abstract class DataWriter {
     }
 
     public void write(File file, DataContainer<? extends Header<?>, ? extends Row<?, ?>> dataContainer) {
-        if (file.getParentFile() != null && !file.getParentFile().isDirectory()) {
-            file.getParentFile().mkdirs();
+        try {
+            File parent = file.getAbsoluteFile().getParentFile();
+            if (parent != null) {
+                Files.createDirectories(parent.toPath());
+            }
+        } catch (IOException e) {
+            throw new DataFrameRuntimeException(String.format("error creating directory for file '%s'", file.getAbsolutePath()), e);
         }
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), getCharset()))) {
             write(writer, dataContainer);

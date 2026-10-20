@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -24,16 +24,10 @@
 
 package de.unknownreality.dataframe;
 
-import de.unknownreality.dataframe.DataFrame;
-import de.unknownreality.dataframe.DataFrameLoader;
-import de.unknownreality.dataframe.DataRow;
-import de.unknownreality.dataframe.Values;
 import de.unknownreality.dataframe.io.FileFormat;
 import de.unknownreality.dataframe.transform.CountTransformer;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
@@ -41,9 +35,6 @@ import java.io.IOException;
  * Created by Alex on 12.03.2016.
  */
 public class DataFrameTransformTest {
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
-
     @Test
     public void testTransform() throws IOException {
         String[] header = new String[]{"A", "B", "C", "D"};
@@ -58,23 +49,23 @@ public class DataFrameTransformTest {
 
         DataFrame counts = df.getColumn("A").transform(new CountTransformer());
         for(DataRow row : counts){
-            Assert.assertEquals(1,(int)row.getInteger(CountTransformer.COUNTS_COLUMN));
+            Assertions.assertEquals(1,(int)row.getInteger(CountTransformer.COUNTS_COLUMN));
         }
 
         counts = df.getColumn("B").transform(new CountTransformer(false));
         counts.setPrimaryKey("B");
-        Assert.assertEquals(4,counts.size());
-        Assert.assertEquals(2,(int)counts.selectByPrimaryKey(2d).getInteger(CountTransformer.COUNTS_COLUMN));
-        Assert.assertEquals(1,(int)counts.selectByPrimaryKey(3d).getInteger(CountTransformer.COUNTS_COLUMN));
-        Assert.assertEquals(1,(int)counts.selectByPrimaryKey(5d).getInteger(CountTransformer.COUNTS_COLUMN));
-        Assert.assertEquals(1,(int)counts.selectByPrimaryKey(5d).getInteger(CountTransformer.COUNTS_COLUMN));
-        Assert.assertEquals(1,(int)counts.selectByPrimaryKey(Values.NA).getInteger(CountTransformer.COUNTS_COLUMN));
+        Assertions.assertEquals(4,counts.size());
+        Assertions.assertEquals(2,(int)counts.selectByPrimaryKey(2d).getInteger(CountTransformer.COUNTS_COLUMN));
+        Assertions.assertEquals(1,(int)counts.selectByPrimaryKey(3d).getInteger(CountTransformer.COUNTS_COLUMN));
+        Assertions.assertEquals(1,(int)counts.selectByPrimaryKey(5d).getInteger(CountTransformer.COUNTS_COLUMN));
+        Assertions.assertEquals(1,(int)counts.selectByPrimaryKey(5d).getInteger(CountTransformer.COUNTS_COLUMN));
+        Assertions.assertEquals(1,(int)counts.selectByPrimaryKey(Values.NA).getInteger(CountTransformer.COUNTS_COLUMN));
 
         counts = df.getColumn("C").transform(new CountTransformer(true));
         counts.setPrimaryKey("C");
-        Assert.assertEquals(2,counts.size());
-        Assert.assertEquals(3,(int)counts.selectByPrimaryKey("X").getInteger(CountTransformer.COUNTS_COLUMN));
-        Assert.assertEquals(1,(int)counts.selectByPrimaryKey("Y").getInteger(CountTransformer.COUNTS_COLUMN));
+        Assertions.assertEquals(2,counts.size());
+        Assertions.assertEquals(3,(int)counts.selectByPrimaryKey("X").getInteger(CountTransformer.COUNTS_COLUMN));
+        Assertions.assertEquals(1,(int)counts.selectByPrimaryKey("Y").getInteger(CountTransformer.COUNTS_COLUMN));
 
     }
 

@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -24,8 +24,6 @@
 
 package de.unknownreality.dataframe.csv;
 
-import de.unknownreality.dataframe.DataFrame;
-import de.unknownreality.dataframe.DataFrameBuilder;
 import de.unknownreality.dataframe.common.StringSplitter;
 import de.unknownreality.dataframe.io.BufferedStreamIterator;
 import de.unknownreality.dataframe.io.ColumnInformation;
@@ -70,20 +68,14 @@ public class CSVIterator extends BufferedStreamIterator<CSVRow> implements DataI
         for (String col : columnSettings.getSelectColumns()) {
             selectedColumnsIndex.put(col, j++);
         }
-        //loadNext();
-        initHeader();
-
+        try {
+            initHeader();
+        } catch (RuntimeException | Error e) {
+            close();
+            throw e;
+        }
     }
 
-    /**
-     * Creates a DataFrameBuilder using this CSV iterator
-     * @return DataFrameBuilder {@link DataFrameBuilder}
-     * @deprecated use {@link DataFrame#fromCSV} or {@link DataFrame#load} instead.
-     */
-    @Deprecated
-    public DataFrameBuilder toDataFrame(){
-        return DataFrameBuilder.createFrom(this);
-    }
 
     /**
      * Reads and created the csv header
@@ -207,7 +199,7 @@ public class CSVIterator extends BufferedStreamIterator<CSVRow> implements DataI
             return new CSVRow(header, values, lineNumber);
 
         } catch (Exception e) {
-            log.error("error reading file: {}:{}", lineNumber, e);
+            log.error("error reading csv row {}", lineNumber, e);
             close();
             throw new CSVRuntimeException(String.format("error reading csv row: %d", lineNumber),e);
         }

@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -274,7 +274,7 @@ public class StringRow<T, H extends Header<T>> implements Row<String, T>, Iterab
 
     /**
      * Converts a value to a specific type.
-     * This method returns <tt>null</tt> if anything goes wrong.
+     * This method returns <code>null</code> if anything goes wrong.
      *
      * @param value value to convert
      * @param cl    resulting class

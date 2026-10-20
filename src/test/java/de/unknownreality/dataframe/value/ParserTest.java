@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -26,25 +26,25 @@ package de.unknownreality.dataframe.value;
 
 import de.unknownreality.dataframe.type.DataFrameTypeManager;
 import de.unknownreality.dataframe.type.ValueTypeNotFoundException;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.text.ParseException;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ParserTest {
     @Test
     public void testParserUtil() throws ParseException, ValueTypeNotFoundException {
-        Assert.assertEquals((Integer) 1, DataFrameTypeManager.get().parse(Integer.class, "1"));
+        Assertions.assertEquals((Integer) 1, DataFrameTypeManager.get().parse(Integer.class, "1"));
 
-        Assert.assertEquals((Double) 1.5, DataFrameTypeManager.get().parse(Double.class, "1.5"));
+        Assertions.assertEquals((Double) 1.5, DataFrameTypeManager.get().parse(Double.class, "1.5"));
 
 
-        Assert.assertEquals(true, DataFrameTypeManager.get().parse(Boolean.class, "t"));
-        Assert.assertEquals(false, DataFrameTypeManager.get().parse(Boolean.class, "f"));
-        Assert.assertEquals(true, DataFrameTypeManager.get().parse(Boolean.class, "T"));
-        Assert.assertEquals(false, DataFrameTypeManager.get().parse(Boolean.class, "F"));
+        Assertions.assertEquals(true, DataFrameTypeManager.get().parse(Boolean.class, "t"));
+        Assertions.assertEquals(false, DataFrameTypeManager.get().parse(Boolean.class, "f"));
+        Assertions.assertEquals(true, DataFrameTypeManager.get().parse(Boolean.class, "T"));
+        Assertions.assertEquals(false, DataFrameTypeManager.get().parse(Boolean.class, "F"));
 
 
         try {
@@ -59,12 +59,12 @@ public class ParserTest {
         } catch (ParseException parseException) {
         }
 
-        Assert.assertNull(DataFrameTypeManager.get().parseOrNull(Double.class, "x"));
-        Assert.assertNull(DataFrameTypeManager.get().parseOrNull(ParserTest.class, "x"));
+        Assertions.assertNull(DataFrameTypeManager.get().parseOrNull(Double.class, "x"));
+        Assertions.assertNull(DataFrameTypeManager.get().parseOrNull(ParserTest.class, "x"));
 
 
-        Assert.assertTrue(DataFrameTypeManager.get().typeExists(Double.class));
-        Assert.assertFalse(DataFrameTypeManager.get().typeExists(ParserTest.class));
+        Assertions.assertTrue(DataFrameTypeManager.get().typeExists(Double.class));
+        Assertions.assertFalse(DataFrameTypeManager.get().typeExists(ParserTest.class));
 
         try {
             DataFrameTypeManager.get().getValueType(ParserTest.class);
@@ -86,10 +86,10 @@ public class ParserTest {
         }
 
         Integer[] integers = DataFrameTypeManager.get().parse(Integer[].class, "1,2,3");
-        Assert.assertEquals(3,integers.length);
-        Assert.assertEquals((Integer)1,integers[0]);
-        Assert.assertEquals((Integer)2,integers[1]);
-        Assert.assertEquals((Integer)3,integers[2]);
+        Assertions.assertEquals(3,integers.length);
+        Assertions.assertEquals((Integer)1,integers[0]);
+        Assertions.assertEquals((Integer)2,integers[1]);
+        Assertions.assertEquals((Integer)3,integers[2]);
 
         try {
             DataFrameTypeManager.get().parse(ParserTest[].class, "x");

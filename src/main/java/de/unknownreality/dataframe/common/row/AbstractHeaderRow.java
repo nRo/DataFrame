@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -28,6 +28,8 @@ import de.unknownreality.dataframe.DataFrameRuntimeException;
 import de.unknownreality.dataframe.common.Row;
 import de.unknownreality.dataframe.common.header.TypeHeader;
 import de.unknownreality.dataframe.type.ValueType;
+
+import java.util.Objects;
 
 public abstract class AbstractHeaderRow<T, H extends TypeHeader<T>, V> implements Row<V, T> {
     private final int index;
@@ -93,8 +95,8 @@ public abstract class AbstractHeaderRow<T, H extends TypeHeader<T>, V> implement
     @Override
     public Boolean getBoolean(int index) {
         Object value = get(index);
-        if (value instanceof Boolean) {
-            return (boolean) value;
+        if (value instanceof Boolean bool) {
+            return bool;
         }
         throw new DataFrameRuntimeException("no boolean value in col " + index + " (" + value + ")");
     }
@@ -118,8 +120,8 @@ public abstract class AbstractHeaderRow<T, H extends TypeHeader<T>, V> implement
      */
     public Number getNumber(int index) {
         Object value = get(index);
-        if (value instanceof Number) {
-            return (Number) value;
+        if (value instanceof Number number) {
+            return number;
         }
         throw new DataFrameRuntimeException("no number value in col " + index + " (" + value + ")");
     }
@@ -155,16 +157,15 @@ public abstract class AbstractHeaderRow<T, H extends TypeHeader<T>, V> implement
      */
     public Double toDouble(int index){
         V v = get(index);
-        try{
-            return ((Number) v).doubleValue();
+        if (v instanceof Number number) {
+            return number.doubleValue();
         }
-        catch (Exception e){
-            // try parsing now
+        if (v == null) {
+            return Double.NaN;
         }
-        try{
+        try {
             return Double.parseDouble(String.valueOf(v));
-        }
-        catch (Exception e){
+        } catch (NumberFormatException e) {
             return Double.NaN;
         }
     }
@@ -342,6 +343,9 @@ public abstract class AbstractHeaderRow<T, H extends TypeHeader<T>, V> implement
             return true;
         }
         AbstractHeaderRow<?,?,?> r = (AbstractHeaderRow<?,?,?>)o;
+        if (size() != r.size()) {
+            return false;
+        }
         for(int i = 0; i < size(); i++){
             if(get(i) == null && r.get(i) == null){
                 continue;
@@ -354,5 +358,14 @@ public abstract class AbstractHeaderRow<T, H extends TypeHeader<T>, V> implement
             }
         }
         return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 1;
+        for (int i = 0; i < size(); i++) {
+            hash = 31 * hash + Objects.hashCode(get(i));
+        }
+        return hash;
     }
 }

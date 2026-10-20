@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -50,10 +50,10 @@ public class Indices {
     }
 
     /**
-     * Returns <tt>true</tt> if the specified column is part of at least one index.
+     * Returns <code>true</code> if the specified column is part of at least one index.
      *
      * @param column input column
-     * @return <tt>true</tt> if column is part of an index
+     * @return <code>true</code> if column is part of an index
      */
     public boolean isIndexColumn(DataFrameColumn<?, ?> column) {
         return columnIndexMap.containsKey(column);
@@ -244,10 +244,10 @@ public class Indices {
 
 
     /**
-     * Returns <tt>true</tt> if an index with the specified name exists
+     * Returns <code>true</code> if an index with the specified name exists
      *
      * @param name name of index
-     * @return <tt>true</tt> if index with input name exists
+     * @return <code>true</code> if index with input name exists
      */
     public boolean containsIndex(String name) {
         return indexMap.containsKey(name);

@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -26,13 +26,13 @@ package de.unknownreality.dataframe.index;
 
 import de.unknownreality.dataframe.index.interval.Interval;
 import de.unknownreality.dataframe.index.interval.IntervalSearchTree;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
 import static de.unknownreality.dataframe.common.NumberUtil.ge;
 import static de.unknownreality.dataframe.common.NumberUtil.le;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 /**

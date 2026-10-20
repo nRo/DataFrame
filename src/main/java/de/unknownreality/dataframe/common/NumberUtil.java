@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -103,17 +103,17 @@ public class NumberUtil {
     }
 
     public static boolean isSpecialNumber(Number number) {
-        if(number instanceof Double && !Double.isFinite((Double)number)){
-            return true;
+        if (number instanceof Double d) {
+            return !Double.isFinite(d);
         }
-        return number instanceof Float && !Float.isFinite((Float)number);
+        return number instanceof Float f && !Float.isFinite(f);
     }
 
     public static BigDecimal toBigDecimal(Number number) {
-        if (number instanceof BigDecimal)
-            return (BigDecimal) number;
-        if (number instanceof BigInteger)
-            return new BigDecimal((BigInteger) number);
+        if (number instanceof BigDecimal bigDecimal)
+            return bigDecimal;
+        if (number instanceof BigInteger bigInteger)
+            return new BigDecimal(bigInteger);
         if (number instanceof Byte || number instanceof Short
                 || number instanceof Integer || number instanceof Long)
             return BigDecimal.valueOf(number.longValue());

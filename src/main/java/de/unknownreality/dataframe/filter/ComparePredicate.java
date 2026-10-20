@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -120,10 +120,10 @@ public class ComparePredicate extends FilterPredicate {
     }
 
     /**
-     * Returns <tt>true</tt> if the row is valid for this predicate
+     * Returns <code>true</code> if the row is valid for this predicate
      *
      * @param row tested row
-     * @return <tt>true</tt> if the row is valid
+     * @return <code>true</code> if the row is valid
      */
     @Override
     public boolean valid(Row<?, String> row) {

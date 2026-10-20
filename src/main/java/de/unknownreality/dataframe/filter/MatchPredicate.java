@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -57,10 +57,10 @@ public class MatchPredicate extends FilterPredicate {
     }
 
     /**
-     * Returns <tt>true</tt> if the row column value matches the pattern
+     * Returns <code>true</code> if the row column value matches the pattern
      *
      * @param row tested row
-     * @return <tt>true</tt> of row column value matches pattern
+     * @return <code>true</code> of row column value matches pattern
      */
     @Override
     public boolean valid(Row<?, String> row) {

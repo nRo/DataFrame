@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -67,7 +67,7 @@ public class StringSplitter {
 
     /**
      * Split an input string at a specified split-character  into several parts.
-     * <tt>"</tt> and <tt>'</tt> are considered during the process.
+     * <code>"</code> and <code>'</code> are considered during the process.
      * <p><code>"testA    testB   testB" -&gt; [testA,testB,testC]</code></p>
      * <p><code>"'testA    testB'   testB" -&gt; [testA    testB,testC]</code></p>
      *
@@ -85,7 +85,7 @@ public class StringSplitter {
 
     /**
      * Split an input string at a specified split-character  into several parts.
-     * <tt>"</tt> and <tt>'</tt> are considered during the process.
+     * <code>"</code> and <code>'</code> are considered during the process.
      * <p><code>"testA    testB   testB" -&gt; [testA,testB,testC]</code></p>
      * <p><code>"'testA    testB'   testB" -&gt; [testA    testB,testC]</code></p>
      *
@@ -99,7 +99,7 @@ public class StringSplitter {
 
     /**
      * Split an input string at a specified split-character  into several parts.
-     * <tt>"</tt> and <tt>'</tt> are considered during the process.
+     * <code>"</code> and <code>'</code> are considered during the process.
      * <p><code>"testA    testB   testB" -&gt; [testA,testB,testC]</code></p>
      * <p><code>"'testA    testB'   testB" -&gt; [testA    testB,testC]</code></p>
      *

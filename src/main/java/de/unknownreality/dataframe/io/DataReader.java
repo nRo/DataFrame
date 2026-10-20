@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -30,27 +30,39 @@ import de.unknownreality.dataframe.common.Row;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
 
 /**
+ * Base class for readers that create a {@link DataIterator} from different sources.
+ * <p>
+ * All binary sources (file, url, resource, bytes and input stream) are decoded using {@link #getCharset()},
+ * which defaults to UTF-8 independent of the platform charset.
+ * Gzip compressed binary sources are detected automatically.
+ * If the iterator can not be created, streams opened by this reader are closed.
+ * <p>
  * Created by Alex on 17.06.2017.
  */
 public abstract class DataReader<R extends Row<?, ?>, C extends DataIterator<R>> {
 
+    /**
+     * Returns the charset used to decode binary input. Defaults to UTF-8.
+     *
+     * @return charset used by this reader
+     */
     public Charset getCharset() {
-        return Charset.defaultCharset();
+        return StandardCharsets.UTF_8;
     }
 
     public C load(File file) {
+        String description = String.format("file '%s'", file.getAbsolutePath());
+        InputStream is;
         try {
-            if (GZipUtil.isGzipped(file)) {
-                InputStream is = new GZIPInputStream(new FileInputStream(file));
-                return load(is);
-            }
-            return load(new InputStreamReader(new FileInputStream(file), getCharset()));
+            is = new FileInputStream(file);
         } catch (IOException e) {
-            throw new DataFrameRuntimeException(String.format("error loading file '%s'", file.getAbsolutePath()), e);
+            throw new DataFrameRuntimeException(String.format("error loading %s", description), e);
         }
+        return loadStream(is, description);
     }
 
     public C load(String content) {
@@ -59,8 +71,14 @@ public abstract class DataReader<R extends Row<?, ?>, C extends DataIterator<R>>
     }
 
     public C load(String resource, ClassLoader classLoader) {
+        if (classLoader == null) {
+            throw new DataFrameRuntimeException(String.format("error loading resource '%s': class loader is null", resource));
+        }
         InputStream is = classLoader.getResourceAsStream(resource);
-        return load(is);
+        if (is == null) {
+            throw new DataFrameRuntimeException(String.format("resource '%s' not found", resource));
+        }
+        return loadStream(is, String.format("resource '%s'", resource));
     }
 
     public C load(URL url) {
@@ -70,18 +88,58 @@ public abstract class DataReader<R extends Row<?, ?>, C extends DataIterator<R>>
         } catch (IOException e) {
             throw new DataFrameRuntimeException(String.format("error opening url stream '%s'", url), e);
         }
-        return load(is);
+        return loadStream(is, String.format("url '%s'", url));
     }
 
     public C load(byte[] bytes) {
         ByteArrayInputStream is = new ByteArrayInputStream(bytes);
-        return load(is);
+        return loadStream(is, "byte array");
     }
 
     public C load(InputStream is) {
-        InputStreamReader reader = new InputStreamReader(is);
-        return load(reader);
+        if (is == null) {
+            throw new DataFrameRuntimeException("input stream is null");
+        }
+        return loadStream(is, "input stream");
     }
 
     public abstract C load(Reader reader);
+
+    /**
+     * Creates a {@link Reader} for a binary stream.
+     * Gzip compressed streams are decompressed and the bytes are decoded using {@link #getCharset()}
+     *
+     * @param is binary input stream
+     * @return reader that decodes the stream
+     * @throws IOException if the stream header can not be read
+     */
+    protected Reader open(InputStream is) throws IOException {
+        InputStream in = is.markSupported() ? is : new BufferedInputStream(is);
+        if (GZipUtil.isGzipped(in)) {
+            in = new GZIPInputStream(in);
+        }
+        return new InputStreamReader(in, getCharset());
+    }
+
+    private C loadStream(InputStream is, String description) {
+        Reader reader = null;
+        try {
+            reader = open(is);
+            return load(reader);
+        } catch (IOException e) {
+            close(is);
+            throw new DataFrameRuntimeException(String.format("error loading %s", description), e);
+        } catch (RuntimeException | Error e) {
+            close(reader != null ? reader : is);
+            throw e;
+        }
+    }
+
+    private static void close(Closeable closeable) {
+        try {
+            closeable.close();
+        } catch (IOException ignored) {
+            // the original failure is more important than a failing close
+        }
+    }
 }

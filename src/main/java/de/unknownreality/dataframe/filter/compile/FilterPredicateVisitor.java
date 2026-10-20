@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright (c) 2019 Alexander Grün
+ *  * Copyright (c) 2019-2026 Alexander Grün
  *  *
  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
  *  * of this software and associated documentation files (the "Software"), to deal
@@ -73,14 +73,12 @@ public class FilterPredicateVisitor extends PredicateBaseVisitor<FilterPredicate
     private static FilterPredicate createPredicate(FilterPredicate predicateA, FilterPredicate predicateB, String operation){
         PredicateOperation predicateOperation = PredicateOperation.find(operation);
 
-        switch (predicateOperation){
-            case AND: return FilterPredicate.and(predicateA,predicateB);
-            case OR: return FilterPredicate.or(predicateA,predicateB);
-            case XOR: return FilterPredicate.xor(predicateA,predicateB);
-            case NOR: return FilterPredicate.nor(predicateA,predicateB);
-
-            default: throw new PredicateCompilerException(String.format("unsupported predicate operation '%s'",operation));
-
-        }
+        return switch (predicateOperation) {
+            case AND -> FilterPredicate.and(predicateA, predicateB);
+            case OR -> FilterPredicate.or(predicateA, predicateB);
+            case XOR -> FilterPredicate.xor(predicateA, predicateB);
+            case NOR -> FilterPredicate.nor(predicateA, predicateB);
+            default -> throw new PredicateCompilerException(String.format("unsupported predicate operation '%s'", operation));
+        };
     }
 }
